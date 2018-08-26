@@ -1,0 +1,1 @@
+项目目录下运行命令： mvn mybatis-generator:generate -e

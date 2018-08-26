@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<classPathEntry location="${classPathEntry.mysql.location}" />
+	<context id="mysqlTables" targetRuntime="MyBatis3">
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://127.0.0.1:3306/cloud-pay?characterEncoding=utf8"
+			userId="root" password="root">
+		</jdbcConnection>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		<javaModelGenerator targetPackage="com.cloud.pay.common.entity"
+			targetProject="${javaModelGenerator.targetProject}">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<sqlMapGenerator targetPackage="mapper"
+			targetProject="${sqlMapGenerator.targetProject}">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.cloud.pay.common.mapper" targetProject="${javaClientGenerator.targetProject}">
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<table tableName="t_bank" domainObjectName="Bank"></table>
+		<table tableName="t_channel" domainObjectName="Channel"></table>
+	</context>
+</generatorConfiguration>

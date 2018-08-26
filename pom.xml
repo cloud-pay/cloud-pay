@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.cloud.pay</groupId>
+	<artifactId>cloud-pay-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<modules>
+		<module>cloud-pay-common</module>
+		<module>cloud-pay-merchant</module>
+		<module>cloud-pay-channel-interface</module>
+		<module>cloud-pay-channel</module>
+		<module>cloud-pay-trade</module>
+		<module>cloud-pay-recon</module>
+		<!-- 统计分析  -->
+		<module>cloud-pay-stat</module>
+		<module>cloud-pay-admin</module>
+	</modules>
+</project>

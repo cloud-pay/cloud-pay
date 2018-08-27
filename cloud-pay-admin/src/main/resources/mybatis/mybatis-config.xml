@@ -17,6 +17,8 @@
 		<typeAlias type="com.cloud.pay.admin.entity.User" alias="user"  />
 		<typeAlias type="com.cloud.pay.admin.entity.Role" alias="role"  />
 		<typeAlias type="com.cloud.pay.admin.util.ParameterMap" alias="pm"/>
+		<typeAlias type="com.cloud.pay.common.entity.Bank" alias="Bank"  />
+		<typeAlias type="com.cloud.pay.common.entity.Channel" alias="Channel"  />
 	</typeAliases>
 	
 </configuration>

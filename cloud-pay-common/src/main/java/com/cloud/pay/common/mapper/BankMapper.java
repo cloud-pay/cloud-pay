@@ -1,5 +1,9 @@
 package com.cloud.pay.common.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.cloud.pay.common.entity.Bank;
 
 public interface BankMapper {
@@ -51,4 +55,6 @@ public interface BankMapper {
 	 * @mbggenerated Sun Aug 26 21:07:44 CST 2018
 	 */
 	int updateByPrimaryKey(Bank record);
+	
+	public List<Bank> getBankList(@Param("bankCode")String bankCode, @Param("bankName")String bankName);
 }

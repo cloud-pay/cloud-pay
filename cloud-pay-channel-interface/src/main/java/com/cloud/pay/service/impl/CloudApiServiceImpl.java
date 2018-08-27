@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.TradePayTypeHandlerFactory;
 import com.cloud.pay.channel.contants.ChannelType;
+import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
-import com.cloud.pay.service.ICloudApiService;
 
 /**
  * 渠道接口实现类

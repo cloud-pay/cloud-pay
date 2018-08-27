@@ -29,9 +29,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.cloud.pay</groupId>
-		    <artifactId>cloud-pay-channel</artifactId>
-		    <version>0.0.1-SNAPSHOT</version>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.8</version>
 		</dependency>
 	</dependencies>
 

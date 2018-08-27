@@ -1,36 +1,27 @@
-package com.cloud.pay.common.utils;
+package com.cloud.pay.channel.utils;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-/**
- * Spring 工具类
- * @author wangy
- */
-public class ApplicationContextHolder implements ApplicationContextAware {
+@Service
+public class ApplicationContextHolder implements ApplicationListener<ContextRefreshedEvent> {
+  
 
-    private static Logger log = LoggerFactory.getLogger(ApplicationContextAware.class);
+    private static ApplicationContext applicationContext = null;
 
-
-    private static ApplicationContext applicationContext;
-
-    @SuppressWarnings("all")
-    @Override
-    public void setApplicationContext(ApplicationContext context)
-            throws BeansException {
-        if (ApplicationContextHolder.applicationContext != null) {
-            throw new IllegalStateException(
-                    "ApplicationContextHolder already holded 'applicationContext'.");
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		if(applicationContext == null){
+            applicationContext = event.getApplicationContext();
         }
-        ApplicationContextHolder.applicationContext = context;
-        log.info("holded applicationContext,displayName:" + applicationContext.getDisplayName());
-    }
 
-    public static ApplicationContext getApplicationContext() {
+	}
+	
+	public static ApplicationContext getApplicationContext() {
         if (applicationContext == null)
             throw new IllegalStateException(
                     "'applicationContext' property is null,ApplicationContextHolder not yet init.");
@@ -68,4 +59,6 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     public static void cleanHolder() {
         applicationContext = null;
     }
+
+
 }

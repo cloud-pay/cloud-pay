@@ -1,8 +1,5 @@
 package com.cloud.pay.channel.service;
 
-import org.springframework.stereotype.Component;
-
-import com.cloud.pay.channel.vo.BaseTradeReqVO;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
@@ -11,7 +8,6 @@ import com.cloud.pay.channel.vo.PayTradeReqVO;
  * 渠道接口入口
  * @author wangy
  */
-@Component
 public interface ICloudApiService {
     
 	/**

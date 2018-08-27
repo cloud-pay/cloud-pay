@@ -9,10 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.cloud.pay.channel.contants.ChannelType;
-import com.cloud.pay.channel.service.ITradePayExecutor;
+import com.cloud.pay.channel.handler.ITradePayExecutor;
+import com.cloud.pay.channel.utils.ApplicationContextHolder;
 import com.cloud.pay.channel.vo.BaseTradeReqVO;
 import com.cloud.pay.common.exception.CloudApiExcetion;
-import com.cloud.pay.common.utils.ApplicationContextHolder;
 
 /**
  * 渠道接口简单工厂
@@ -42,7 +42,7 @@ public class TradePayTypeHandlerFactory {
 	 * @param tradeType
 	 * @return
 	 */
-	public ITradePayExecutor<BaseTradeReqVO> getTradePayHandler(String tradeType) {
+	public ITradePayExecutor getTradePayHandler(String tradeType) {
 		 return getHandler(tradePayMapper, tradeType);
 	}
 	
@@ -51,7 +51,7 @@ public class TradePayTypeHandlerFactory {
 	 * @param tradeType
 	 * @return
 	 */
-	public ITradePayExecutor<BaseTradeReqVO> getTradePayQueryHandler(String tradeType) {
+	public ITradePayExecutor getTradePayQueryHandler(String tradeType) {
 		  return getHandler(tradePayQueryMapper, tradeType);
 	}
 	

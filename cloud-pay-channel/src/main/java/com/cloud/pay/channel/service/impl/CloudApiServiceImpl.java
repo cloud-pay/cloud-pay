@@ -1,4 +1,4 @@
-package com.cloud.pay.service.impl;
+package com.cloud.pay.channel.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.TradePayTypeHandlerFactory;
 import com.cloud.pay.channel.contants.ChannelType;
+import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.service.ICloudApiService;
+import com.cloud.pay.channel.vo.BaseTradeReqVO;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
@@ -28,7 +30,8 @@ public class CloudApiServiceImpl implements ICloudApiService {
 	public BaseTradeResVO pay(PayTradeReqVO tradeReq) {
 		log.info("渠道接口：收到代付请求，请求参数：{}",tradeReq);
 		//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
-		BaseTradeResVO resVO = tradePayTypeHandlerFactory.getTradePayHandler(ChannelType.BOHAI.getChannelCode()).execute(tradeReq);
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradePayHandler(ChannelType.BOHAI.getChannelCode());
+		BaseTradeResVO resVO = tradePayExecutor.execute(tradeReq);
 		log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		return resVO;
 	}

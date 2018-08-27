@@ -1,15 +1,17 @@
-package com.cloud.pay.channel.vo;
+package com.cloud.pay.channel.vo.bohai;
 
 import java.math.BigDecimal;
 
 /**
- * 代付渠道请求接口请求参数
+ * 单笔实时代付
  * @author wangy
  */
-public class PayTradeReqVO extends BaseTradeReqVO {
+public class BohaiCloudTradePayParam extends BohaiCloudTradeParam {
 
-	private static final long serialVersionUID = -8713903284380287558L;
+	private static final long serialVersionUID = -8979777858664514276L;
 
+	private String date; //代付交易日期
+	
 	private String pyrAct; //付款人账号
 	
 	private String pyrNam; //付款人账户名
@@ -22,11 +24,19 @@ public class PayTradeReqVO extends BaseTradeReqVO {
 	
 	private String pyeNam; //收款人账户名
 	
-	private String pyeBnk;  //收款人清算行行号
+	private String pyeBnk; //收款人清算行行号
 	
 	private BigDecimal amt; //交易金额
 	
 	private String postscript; //附言
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
 
 	public String getPyrAct() {
 		return pyrAct;
@@ -99,5 +109,6 @@ public class PayTradeReqVO extends BaseTradeReqVO {
 	public void setPostscript(String postscript) {
 		this.postscript = postscript;
 	}
+	
 	
 }

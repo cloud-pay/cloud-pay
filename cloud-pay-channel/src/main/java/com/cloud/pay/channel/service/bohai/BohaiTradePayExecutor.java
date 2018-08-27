@@ -1,4 +1,4 @@
-package com.cloud.pay.channel.bohai;
+package com.cloud.pay.channel.service.bohai;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

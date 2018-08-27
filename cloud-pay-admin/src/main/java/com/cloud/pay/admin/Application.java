@@ -10,9 +10,9 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.http.HttpStatus;
 
-@MapperScan("com.cloud.pay.admin.dao")
+@MapperScan(basePackages={"com.cloud.pay.admin.dao", "com.cloud.pay.common.mapper"})
 @ServletComponentScan
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages="com.cloud.pay")
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
 
 	public static void main(String[] args) {

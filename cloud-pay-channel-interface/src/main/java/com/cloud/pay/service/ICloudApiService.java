@@ -3,7 +3,9 @@ package com.cloud.pay.service;
 import org.springframework.stereotype.Component;
 
 import com.cloud.pay.channel.vo.BaseTradeReqVO;
-import com.cloud.pay.channel.vo.BaseTradeResVo;
+import com.cloud.pay.channel.vo.BaseTradeResVO;
+import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.PayTradeReqVO;
 
 /**
  * 渠道接口入口
@@ -13,9 +15,16 @@ import com.cloud.pay.channel.vo.BaseTradeResVo;
 public interface ICloudApiService {
     
 	/**
-	 * 交易接口
+	 * 代付接口
 	 * @param tradeReq 请求参数和响应参数先以基类代替，实际编码时替换为实际接口的请求参数和响应参数
 	 * @return
 	 */
-	BaseTradeResVo trade(BaseTradeReqVO tradeReq);
+	BaseTradeResVO pay(PayTradeReqVO reqVO);
+	
+	/**
+	 * 代付结果查询
+	 * @param tradeReq
+	 * @return
+	 */
+	BaseTradeResVO queryPay(PayTradeQueryReqVO tradeReq);
 }

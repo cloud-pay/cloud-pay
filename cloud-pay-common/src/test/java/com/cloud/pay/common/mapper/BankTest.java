@@ -19,4 +19,9 @@ public class BankTest {
 	public void selectByPrimaryKeyTest() {
 		System.out.println(bankMapper.selectByPrimaryKey(1));
 	}
+	
+	@Test
+	public void getBankListTest() {
+		System.out.println(bankMapper.getBankList("12", "name"));
+	}
 }

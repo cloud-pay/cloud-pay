@@ -3,19 +3,20 @@ package com.cloud.pay.channel.service;
 import org.springframework.stereotype.Component;
 
 import com.cloud.pay.channel.vo.BaseTradeReqVO;
-import com.cloud.pay.channel.vo.BaseTradeResVo;
+import com.cloud.pay.channel.vo.BaseTradeResVO;
 
 /**
  * 代付接口
  * @author wangy
  */
 @Component
-public interface ITradePayExecutor {
+public interface ITradePayExecutor<M extends BaseTradeReqVO> {
   
 	/**
 	 * 
 	 * @param reqVO
 	 * @return
 	 */
-	BaseTradeResVo execute(BaseTradeReqVO reqVO);
+	BaseTradeResVO execute(M reqVO);
+	
 }

@@ -33,7 +33,7 @@ import java.security.cert.X509Certificate;
 public class XmlSignature {
 
 	/**
-     * 加签
+       * 加签
      * @param document
      * @param messageType
      * @param privateKey

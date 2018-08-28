@@ -1,5 +1,6 @@
 package com.cloud.pay.admin.controller;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -18,34 +19,34 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
-import com.cloud.pay.common.entity.Bank;
-import com.cloud.pay.common.service.BankService;
+import com.cloud.pay.common.entity.Channel;
+import com.cloud.pay.common.service.ChannelService;
 
 @Controller
-@RequestMapping("/bank")
-public class BankController extends BaseController{
+@RequestMapping("/channel")
+public class ChannelController extends BaseController{
 	
-	private Logger log = LoggerFactory.getLogger(BankController.class);
+	private Logger log = LoggerFactory.getLogger(ChannelController.class);
 	
 	@Autowired
-	private BankService bankService;
+	private ChannelService channelService;
 	
-	private String menuUrl = "bank/list";
+	private String menuUrl = "channel/list";
 	
 	/**
-	 * 联行号列表
+	 * 渠道列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model, String bankCode, String bankName){
+	public Object list(Model model, String channelCode, String channelName){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		model.addAttribute("banks", bankService.getBankList(bankCode, bankName));
+		model.addAttribute("channels", channelService.getchannelList(channelCode, channelName));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
-		return "page/bank/list";
+		return "page/channel/list";
 	}
 	
 	/**
-	 * 添加联行号
+	 * 添加渠道
 	 * @return
 	 */
 	@RequestMapping(value="/add",method=RequestMethod.POST)
@@ -53,14 +54,21 @@ public class BankController extends BaseController{
 	public Object add(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			Bank bank = new Bank();
+			Channel channel = new Channel();
 			ParameterMap map = this.getParameterMap();
-			bank.setBankCode(map.getString("bankCode"));
-			bank.setBankName(map.getString("bankName"));
+			channel.setChannelCode(map.getString("channelCode"));
+			channel.setChannelName(map.getString("channelName"));
+			channel.setChannelMerchantId(map.getString("channelMerchantId"));
+			channel.setChannelType(Integer.parseInt(map.getString("channelType")));
+			channel.setFeeType(Integer.parseInt(map.getString("feeType")));
+			channel.setFee(new BigDecimal(map.getString("fee")));
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			bank.setModifer(userId);
-			bank.setModifyTime(new Date());
-			bankService.save(bank);
+			channel.setCreator(userId);
+			channel.setCreateTime(new Date());
+			channel.setModifer(userId);
+			channel.setModifyTime(new Date());
+			channel.setId(Integer.parseInt(map.getString("id")));
+			channelService.save(channel);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -71,7 +79,7 @@ public class BankController extends BaseController{
 	
 	
 	/**
-	 * 编辑联行号
+	 * 编辑渠道
 	 * @return
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
@@ -79,15 +87,19 @@ public class BankController extends BaseController{
 	public Object edit(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			Bank bank = new Bank();
+			Channel channel = new Channel();
 			ParameterMap map = this.getParameterMap();
-			bank.setBankCode(map.getString("bankCode"));
-			bank.setBankName(map.getString("bankName"));
+			channel.setChannelCode(map.getString("channelCode"));
+			channel.setChannelName(map.getString("channelName"));
+			channel.setChannelMerchantId(map.getString("channelMerchantId"));
+			channel.setChannelType(Integer.parseInt(map.getString("channelType")));
+			channel.setFeeType(Integer.parseInt(map.getString("feeType")));
+			channel.setFee(new BigDecimal(map.getString("fee")));
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			bank.setModifer(userId);
-			bank.setModifyTime(new Date());
-			bank.setId(Integer.parseInt(map.getString("id")));
-			bankService.update(bank);
+			channel.setModifer(userId);
+			channel.setModifyTime(new Date());
+			channel.setId(Integer.parseInt(map.getString("id")));
+			channelService.update(channel);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -98,7 +110,7 @@ public class BankController extends BaseController{
 	
 	
 	/**
-	 * 删除联行号
+	 * 删除渠道
 	 * @return
 	 */
 	@RequestMapping(value="/del",method=RequestMethod.POST)
@@ -107,7 +119,7 @@ public class BankController extends BaseController{
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
 			Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
-			bankService.del(id);
+			channelService.del(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

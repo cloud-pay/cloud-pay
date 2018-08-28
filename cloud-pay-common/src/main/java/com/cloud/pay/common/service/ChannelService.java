@@ -1,5 +1,7 @@
 package com.cloud.pay.common.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,10 @@ public class ChannelService {
 	public int del(Integer id) {
 		log.info("根据ChannelID[{}]删除：{}", id);
 		return channelMapper.deleteByPrimaryKey(id);
+	}
+	
+	public List<Channel> getchannelList(String channelCode, String channelName){
+		return channelMapper.getChannelList(channelCode, channelName);
 	}
 
 }

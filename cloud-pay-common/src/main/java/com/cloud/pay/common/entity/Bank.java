@@ -162,4 +162,23 @@ public class Bank {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Bank [id=");
+		builder.append(id);
+		builder.append(", bankCode=");
+		builder.append(bankCode);
+		builder.append(", bankName=");
+		builder.append(bankName);
+		builder.append(", modifer=");
+		builder.append(modifer);
+		builder.append(", modifyTime=");
+		builder.append(modifyTime);
+		builder.append("]");
+		return builder.toString();
+	}
+    
+    
 }

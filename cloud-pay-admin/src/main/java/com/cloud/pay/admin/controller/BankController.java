@@ -1,5 +1,7 @@
 package com.cloud.pay.admin.controller;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,9 @@ public class BankController extends BaseController{
 			ParameterMap map = this.getParameterMap();
 			bank.setBankCode(map.getString("bankCode"));
 			bank.setBankName(map.getString("bankName"));
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			bank.setModifer(userId);
+			bank.setModifyTime(new Date());
 			bankService.save(bank);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,15 +71,29 @@ public class BankController extends BaseController{
 	
 	
 	/**
-	 * 编辑用户
+	 * 编辑联行号
 	 * @return
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	@ResponseBody
 	public Object edit(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		return "";
-//		return userService.edit(this.getParameterMap());
+		try {
+			Bank bank = new Bank();
+			ParameterMap map = this.getParameterMap();
+			bank.setBankCode(map.getString("bankCode"));
+			bank.setBankName(map.getString("bankName"));
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			bank.setModifer(userId);
+			bank.setModifyTime(new Date());
+			bank.setId(Integer.parseInt(map.getString("id")));
+			bankService.update(bank);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	
@@ -86,8 +105,15 @@ public class BankController extends BaseController{
 	@ResponseBody
 	public Object del(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		return "";
-//		return userService.del(this.getParameterMap());
+		try {
+			Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
+			bankService.del(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	

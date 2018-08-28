@@ -130,7 +130,7 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="getBankList" resultType="com.cloud.pay.common.entity.Bank">
+  <select id="getBankList" resultMap="BaseResultMap">
 	 	SELECT 
 			<include refid="Base_Column_List" />
 		FROM 

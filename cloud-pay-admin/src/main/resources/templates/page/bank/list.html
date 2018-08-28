@@ -96,7 +96,7 @@ div.cbp label.font{
 <section class="content">
 	 <div class="box">
             <div class="box-header">
-              <h3 class="box-title">联行号列表</h3>
+              <h3 class="box-title"></h3>
               <br><br>
               <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addBank"><i class="fa fa-plus"></i> &nbsp;&nbsp;新增</button>
             </div>
@@ -118,13 +118,15 @@ div.cbp label.font{
                   <td th:text="${stat.count}">序号</td>
                   <td th:text="${bank.bankCode}">联行号</td>
                   <td th:text="${bank.bankName}">开户支行</td>
-                  <td th:text="${bank.modifyTime}">更新时间</td>
+                  <td th:text="${#dates.format(bank.modifyTime,'yyyy-MM-dd HH:mm:ss')}">更新时间</td>
                   <td th:text="${bank.modifer}">更新人</td>
                   <td>
                   	<div th:if="${bank.id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
-	                  		th:onclick="'editBank(\''+${bank.id}+'\',\''+${bank.bankCode}+'\',\''+${bank.bankName}+'\',\''+${bank.bankName}+'\');'">
+	                  		th:onclick="'editBank(\''+${bank.id}+'\',\''+${bank.bankCode}+'\',\''+${bank.bankName}+'\');'">
 	                  		<i class="fa fa-edit"></i> 编辑</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" 
+	                  		th:onclick="'delBank(\''+${bank.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
                   	</div>
                   	<div th:if="${bank.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>
@@ -158,14 +160,14 @@ div.cbp label.font{
 				  <input type="hidden" name="url" value=""/>
 				  <input type="hidden" name="bankId" value=""/>			  
 				  <div class="form-group">
-				    <label for="username" class="col-sm-2 control-label">联行号</label>
+				    <label for="bankCode" class="col-sm-2 control-label">联行号</label>
 				    <div class="col-sm-10">
 				      <input type="text" class="form-control" name="bankCode" value="" id="bankCode" placeholder="联行号">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
-				    <label for="nick_name" class="col-sm-2 control-label">开户支行</label>
+				    <label for="bankName" class="col-sm-2 control-label">开户支行</label>
 				    <div class="col-sm-10">
 				      <input type="text" class="form-control" name="bankName" value="" id="bankName" placeholder="开户支行">
 				    </div>
@@ -209,7 +211,7 @@ $(function(){
     });
 	
 	$("#addBank").click(function(){
-		reloadModelData(_ctx+"/bank/add","联行号新增","新增","","","","","","","add");
+		reloadModelData(_ctx+"/bank/add","联行号新增","新增","","","");
 		$("#bankModal").modal("show");
 	});
 	
@@ -244,13 +246,13 @@ $(function(){
 })
 
 //删除用户
-function delUser(userId,path){
-	if(confirm("你确定要删除此用户吗？")){
+function delBank(bankId){
+	if(confirm("你确定要删除此联行号吗？")){
 		$.ajax({
 			type:"POST",
 			url:_ctx+"/bank/del",
 			dataType:"json",
-			data:{user_id:userId,pic_path:path},
+			data:{id:bankId},
 			cache:false,
 			success:function(data){
 				if(data.status == 'success'){
@@ -264,9 +266,9 @@ function delUser(userId,path){
 }
 
 //编辑用户
-function editUser(user_id,username,nickName,path){
-	console.log(user_id+","+username+","+nickName+","+path);
-	reloadModelData(_ctx+"/bank/edit","编辑用户","更新",user_id,"",path,username,nickName,"","edit");
+function editBank(bankId,bankCode,bankName){
+	console.log(bankId+","+bankCode+","+bankName);
+	reloadModelData(_ctx+"/bank/edit","编辑联行号","更新",bankId,bankCode,bankName);
 	$("#bankModal").modal("show");
 }
 
@@ -286,22 +288,13 @@ function checkAccount(bankName,bankCode){
 }
 
 //加载模态框的数据
-function reloadModelData(url,title,btntext,user_id,pics,oldpath,username,nick_name,password,type){
+function reloadModelData(url,title,btntext,bankId,bankCode,bankName){
 	$("#bankModal #usermodelHead").text(title);
 	$("#bankModal #imgSubmit").text(btntext);
-	$("#showImg").attr("src",oldpath);
 	$("input[name='url']").val(url);
-	$("input[name='user_id']").val(user_id);
-	$("input[name='pics']").val(pics);
-	$("input[name='oldpath']").val(oldpath);
-	$("input[name='username']").val(username);
-	$("input[name='nick_name']").val(nick_name);
-	$("input[name='password']").val(password);
-	if(type == 'add'){
-		$("input[name='username']").attr("disabled",false);
-	}else{
-		$("input[name='username']").attr("disabled",true);
-	}
+	$("input[name='bankId']").val(bankId);
+	$("input[name='bankCode']").val(bankCode);
+	$("input[name='bankName']").val(bankName);
 }
 
 </script>

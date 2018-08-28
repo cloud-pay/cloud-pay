@@ -22,6 +22,6 @@ public class BankTest {
 	
 	@Test
 	public void getBankListTest() {
-		System.out.println(bankMapper.getBankList("12", "name"));
+		System.out.println(bankMapper.getBankList("001", null));
 	}
 }

@@ -1,5 +1,6 @@
 package com.cloud.pay.admin.controller;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -18,34 +19,35 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
-import com.cloud.pay.common.entity.Bank;
-import com.cloud.pay.common.service.BankService;
+import com.cloud.pay.trade.entity.AmountLimit;
+import com.cloud.pay.trade.service.AmountLimitService;
 
 @Controller
-@RequestMapping("/bank")
-public class BankController extends BaseController{
+@RequestMapping("/amountLimit")
+public class AmountLimitController extends BaseController{
 	
-	private Logger log = LoggerFactory.getLogger(BankController.class);
+	private Logger log = LoggerFactory.getLogger(AmountLimitController.class);
 	
 	@Autowired
-	private BankService bankService;
+	private AmountLimitService amountLimitService;
 	
-	private String menuUrl = "bank/list";
+	private String menuUrl = "amountLimit/list";
 	
 	/**
-	 * 联行号列表
+	 * 限额列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model, String bankCode, String bankName){
+	public Object list(Model model, Integer type, String orgName, String merchantName, Date startTime,
+			Date endTime){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		model.addAttribute("banks", bankService.getBankList(bankCode, bankName));
+		model.addAttribute("amountLimits", amountLimitService.getAmountLimitList(type, orgName, merchantName, startTime, endTime));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
-		return "page/bank/list";
+		return "page/amountLimit/list";
 	}
 	
 	/**
-	 * 添加联行号
+	 * 添加限额
 	 * @return
 	 */
 	@RequestMapping(value="/add",method=RequestMethod.POST)
@@ -53,14 +55,16 @@ public class BankController extends BaseController{
 	public Object add(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			Bank bank = new Bank();
+			AmountLimit amountLimit = new AmountLimit();
 			ParameterMap map = this.getParameterMap();
-			bank.setBankCode(map.getString("bankCode"));
-			bank.setBankName(map.getString("bankName"));
+			amountLimit.setMerchantId(Integer.parseInt(map.getString("merchantId")));
+			amountLimit.setType(Integer.parseInt(map.getString("type")));
+			amountLimit.setPeriod(Integer.parseInt(map.getString("period")));
+			amountLimit.setAmountLimit(new BigDecimal(map.getString("amountLimit")));
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			bank.setModifer(userId);
-			bank.setModifyTime(new Date());
-			bankService.save(bank);
+			amountLimit.setModifer(userId);
+			amountLimit.setModifyTime(new Date());
+			amountLimitService.save(amountLimit);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -71,7 +75,7 @@ public class BankController extends BaseController{
 	
 	
 	/**
-	 * 编辑联行号
+	 * 编辑限额
 	 * @return
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
@@ -79,15 +83,17 @@ public class BankController extends BaseController{
 	public Object edit(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			Bank bank = new Bank();
+			AmountLimit amountLimit = new AmountLimit();
 			ParameterMap map = this.getParameterMap();
-			bank.setBankCode(map.getString("bankCode"));
-			bank.setBankName(map.getString("bankName"));
+			amountLimit.setMerchantId(Integer.parseInt(map.getString("merchantId")));
+			amountLimit.setType(Integer.parseInt(map.getString("type")));
+			amountLimit.setPeriod(Integer.parseInt(map.getString("period")));
+			amountLimit.setAmountLimit(new BigDecimal(map.getString("amountLimit")));
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			bank.setModifer(userId);
-			bank.setModifyTime(new Date());
-			bank.setId(Integer.parseInt(map.getString("id")));
-			bankService.update(bank);
+			amountLimit.setModifer(userId);
+			amountLimit.setModifyTime(new Date());
+			amountLimit.setId(Integer.parseInt(map.getString("id")));
+			amountLimitService.update(amountLimit);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -98,7 +104,7 @@ public class BankController extends BaseController{
 	
 	
 	/**
-	 * 删除联行号
+	 * 删除限额
 	 * @return
 	 */
 	@RequestMapping(value="/del",method=RequestMethod.POST)
@@ -107,7 +113,7 @@ public class BankController extends BaseController{
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
 			Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
-			bankService.del(id);
+			amountLimitService.del(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

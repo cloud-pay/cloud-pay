@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.trade.mapper.AmountLimitMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.trade.entity.AmountLimit" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="amount_limit" property="amountLimit" jdbcType="DECIMAL" />
+    <result column="modifer" property="modifer" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, merchant_id, period, amount_limit, modifer, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_amount_limit
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_amount_limit
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.trade.entity.AmountLimit" >
+    insert into t_amount_limit (id, type, merchant_id, 
+      period, amount_limit,modifer, modify_time)
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, 
+      #{period,jdbcType=INTEGER}, #{amountLimit,jdbcType=DECIMAL},
+      #{modifer,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cloud.pay.trade.entity.AmountLimit" >
+    insert into t_amount_limit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="merchantId != null" >
+        merchant_id,
+      </if>
+      <if test="period != null" >
+        period,
+      </if>
+      <if test="amountLimit != null" >
+        amount_limit,
+      </if>
+      <if test="modifer != null" >
+        modifer,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="period != null" >
+        #{period,jdbcType=INTEGER},
+      </if>
+      <if test="amountLimit != null" >
+        #{amountLimit,jdbcType=DECIMAL},
+      </if>
+      <if test="modifer != null" >
+        #{modifer,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.trade.entity.AmountLimit" >
+    update t_amount_limit
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        merchant_id = #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="period != null" >
+        period = #{period,jdbcType=INTEGER},
+      </if>
+      <if test="amountLimit != null" >
+        amount_limit = #{amountLimit,jdbcType=DECIMAL},
+      </if>
+      <if test="modifer != null" >
+        modifer = #{modifer,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.trade.entity.AmountLimit" >
+    update t_amount_limit
+    set type = #{type,jdbcType=INTEGER},
+      merchant_id = #{merchantId,jdbcType=INTEGER},
+      period = #{period,jdbcType=INTEGER},
+      amount_limit = #{amountLimit,jdbcType=DECIMAL},
+      modifer = #{modifer,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getAmountLimitList" resultMap="BaseResultMap">
+	 	SELECT 
+			l.id, l.type, l.merchant_id, l.period, l.amount_limit, l.modifer, l.modify_time
+		FROM 
+			t_amount_limit l, t_merchant_base_info m
+		where l.merchant_id = m.id
+	  <if test="type != null" >
+        and l.type = #{type,jdbcType=INTEGER}
+      </if>
+      <if test="orgName != null" >
+       and m.name like concat ('%',#{orgName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="merchantName != null" >
+       and m.name like concat ('%',#{merchantName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="startTime != null" >
+       and l.modify_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and l.modify_time &lt; #{endTime}
+      </if>
+	 </select>
+
+</mapper>

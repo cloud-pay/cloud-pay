@@ -1,5 +1,9 @@
 package com.cloud.pay.common.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.cloud.pay.common.entity.Channel;
 
 public interface ChannelMapper {
@@ -53,4 +57,6 @@ public interface ChannelMapper {
      * @mbggenerated Sun Aug 26 21:07:44 CST 2018
      */
     int updateByPrimaryKey(Channel record);
+    
+    public List<Channel> getChannelList(@Param("channelCode")String channelCode, @Param("channelName")String channelName);
 }

@@ -15,18 +15,24 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<cloud.pay.version>0.0.1-SNAPSHOT</cloud.pay.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.cloud.pay</groupId>
+			<artifactId>cloud-pay-trade</artifactId>
+			<version>${cloud.pay.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cloud.pay</groupId>
 			<artifactId>cloud-pay-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${cloud.pay.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloud.pay</groupId>
 			<artifactId>cloud-pay-channel-interface</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${cloud.pay.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

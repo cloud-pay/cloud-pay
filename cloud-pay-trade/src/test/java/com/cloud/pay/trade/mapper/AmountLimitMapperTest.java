@@ -1,4 +1,6 @@
-package com.cloud.pay.common.mapper;
+package com.cloud.pay.trade.mapper;
+
+import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,18 +12,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-public class BankTest {
+public class AmountLimitMapperTest {
 
 	@Autowired
-	private BankMapper bankMapper;
+	private AmountLimitMapper amountLimitMapper;
 	
 	@Test
-	public void selectByPrimaryKeyTest() {
-		System.out.println(bankMapper.selectByPrimaryKey(1));
-	}
-	
-	@Test
-	public void getBankListTest() {
-		System.out.println(bankMapper.getBankList("001", null));
+	public void getAmountLimitListTest() {
+		System.out.println(amountLimitMapper.getAmountLimitList(1, "mingc","mingc", new Date(), new Date()));
 	}
 }

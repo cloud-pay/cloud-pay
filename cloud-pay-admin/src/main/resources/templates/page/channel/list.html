@@ -125,7 +125,8 @@ div.cbp label.font{
                   <td>
                   	<div th:if="${channel.id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
-	                  		th:onclick="'editChannel(\''+${channel.id}+'\',\''+${channel.channelCode}+'\',\''+${channel.channelName}+'\');'">
+	                  		th:onclick="'editChannel(\''+${channel.id}+'\',\''+${channel.channelCode}+'\',\''+${channel.channelName}+'\'
+	                  			,\''+${channel.channelMerchantId}+'\',\''+${channel.channelType}+'\',\''+${channel.feeType}+'\',\''+${channel.fee}+'\');'">
 	                  		<i class="fa fa-edit"></i> 编辑</span>
 	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" 
 	                  		th:onclick="'delChannel(\''+${channel.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
@@ -175,6 +176,33 @@ div.cbp label.font{
 				    </div>
 				  </div>
 				  
+				  <div class="form-group">
+				    <label for="channelType" class="col-sm-2 control-label">通道类型</label>
+				    <div class="col-sm-10">
+					    <select name="channelType" class="form-control">
+					      <option value="1" selected="selected" >代付</option>
+					    </select>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="channelMerchantId" class="col-sm-2 control-label">通道商户号</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" name="channelMerchantId" value="" id="channelName" placeholder="通道商户号">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <div class="form-group">
+					    <label for="feeType" class="col-sm-2 control-label">通道费率</label>
+					    <div class="col-sm-10">
+						    <select name="feeType" class="form-control">
+						      <option value="1" selected="selected" >按比例计算</option>
+						      <option value="2">按笔数计算</option>
+						    </select>
+						    <input type="text" class="form-control" name="fee" value="" id="fee" placeholder="费率">（%）
+					    </div>
+					  </div>
+				  </div>
+				  
 				 </form>
 			</div>
 			<div class="modal-footer">
@@ -213,7 +241,7 @@ $(function(){
     });
 	
 	$("#addChannel").click(function(){
-		reloadModelData(_ctx+"/channel/add","通道新增","新增","","","");
+		reloadModelData(_ctx+"/channel/add","通道新增","新增","","","","","","","");
 		$("#channelModal").modal("show");
 	});
 	
@@ -223,8 +251,12 @@ $(function(){
 		var url = $("input[name='url']").val();
 		var channelName= $("input[name='channelName']").val();
 		var channelCode= $("input[name='channelCode']").val();
+		var channelMerchantId= $("input[name='channelMerchantId']").val();
+		var channelType= $("[name='channelType']").val();
+		var feeType= $("[name='feeType']").val();
+		var fee= $("input[name='fee']").val();
 		if(url == _ctx+'/channel/add'){
-			if(!checkAccount(channelName,channelCode)){
+			if(!checkAccount(channelName,channelCode,channelMerchantId,fee)){
 				return false;
 			}
 		}
@@ -233,7 +265,9 @@ $(function(){
 			url:url,
 			cache:false,
 			dataType:"json",
-			data:{id:channelId,channelName:channelName,channelCode:channelCode},
+			data:{id:channelId,channelName:channelName,channelCode:channelCode,
+				channelMerchantId:channelMerchantId,channelType:channelType,
+				feeType:feeType,fee:fee},
 			success:function(data){
 				if(data.status == 'success'){
 					$("#channelModal").modal("hide");
@@ -268,14 +302,14 @@ function delChannel(channelId){
 }
 
 //编辑用户
-function editChannel(channelId,channelCode,channelName){
+function editChannel(channelId,channelCode,channelName,channelMerchantId,channelType,feeType,fee){
 	console.log(channelId+","+channelCode+","+channelName);
-	reloadModelData(_ctx+"/channel/edit","编辑通道","更新",channelId,channelCode,channelName);
+	reloadModelData(_ctx+"/channel/edit","编辑通道","更新",channelId,channelCode,channelName,channelMerchantId,channelType,feeType,fee);
 	$("#channelModal").modal("show");
 }
 
 //验证数据
-function checkAccount(channelName,channelCode){
+function checkAccount(channelName,channelCode,channelMerchantId,fee){
 	if(channelName == ''){
 		$("input[name='channelName']").focus();
 		alert("通道名称不能为空");
@@ -286,17 +320,31 @@ function checkAccount(channelName,channelCode){
 		alert("通道编号不能为空");
 		return false;
 	}
+	if(channelMerchantId == ''){
+		$("input[name='channelMerchantId']").focus();
+		alert("通道商户号不能为空");
+		return false;
+	}
+	if(fee == ''){
+		$("input[name='fee']").focus();
+		alert("费率不能为空");
+		return false;
+	}
 	return true;
 }
 
 //加载模态框的数据
-function reloadModelData(url,title,btntext,channelId,channelCode,channelName){
+function reloadModelData(url,title,btntext,channelId,channelCode,channelName,channelMerchantId,channelType,feeType,fee){
 	$("#channelModal #usermodelHead").text(title);
 	$("#channelModal #imgSubmit").text(btntext);
 	$("input[name='url']").val(url);
 	$("input[name='channelId']").val(channelId);
 	$("input[name='channelCode']").val(channelCode);
 	$("input[name='channelName']").val(channelName);
+	$("input[name='channelMerchantId']").val(channelMerchantId);
+	$("#channelModal [name='channelType']").val(channelType);
+	$("#channelModal [name='feeType']").val(feeType);
+	$("input[name='fee']").val(fee);
 }
 
 </script>

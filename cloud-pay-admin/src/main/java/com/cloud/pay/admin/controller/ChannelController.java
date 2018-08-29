@@ -67,7 +67,6 @@ public class ChannelController extends BaseController{
 			channel.setCreateTime(new Date());
 			channel.setModifer(userId);
 			channel.setModifyTime(new Date());
-			channel.setId(Integer.parseInt(map.getString("id")));
 			channelService.save(channel);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -13,7 +13,7 @@
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
-		<javaModelGenerator targetPackage="com.cloud.pay.common.entity"
+		<javaModelGenerator targetPackage="com.cloud.pay.trade.entity"
 			targetProject="${javaModelGenerator.targetProject}">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
@@ -23,10 +23,10 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<javaClientGenerator type="XMLMAPPER"
-			targetPackage="com.cloud.pay.common.mapper" targetProject="${javaClientGenerator.targetProject}">
+			targetPackage="com.cloud.pay.trade.mapper" targetProject="${javaClientGenerator.targetProject}">
 			<property name="enableSubPackages" value="false" />
 		</javaClientGenerator>
-		<table tableName="t_bank" domainObjectName="Bank"></table>
-		<table tableName="t_channel" domainObjectName="Channel"></table>
+		<table tableName="t_amount_limit" domainObjectName="AmountLimit"></table>
+		<table tableName="t_merchant_route_conf" domainObjectName="MerchantRouteConf"></table>
 	</context>
 </generatorConfiguration>

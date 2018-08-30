@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.cloud.pay.trade.dto.AmountLimitDTO;
 import com.cloud.pay.trade.entity.AmountLimit;
 
 public interface AmountLimitMapper {
@@ -21,7 +22,7 @@ public interface AmountLimitMapper {
 
 	int updateByPrimaryKey(AmountLimit record);
 
-	public List<AmountLimit> getAmountLimitList(@Param("type") Integer type, @Param("orgName") String orgName,
+	public List<AmountLimitDTO> getAmountLimitList(@Param("type") Integer type, @Param("orgName") String orgName,
 			@Param("merchantName") String merchantName, @Param("startTime") Date startTime,
 			@Param("endTime") Date endTime);
 }

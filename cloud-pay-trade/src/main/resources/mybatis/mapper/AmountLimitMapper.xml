@@ -113,9 +113,20 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="getAmountLimitList" resultMap="BaseResultMap">
+  
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.AmountLimitDTO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="amount_limit" property="amountLimit" jdbcType="DECIMAL" />
+    <result column="modifer" property="modifer" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="getAmountLimitList" resultMap="BaseResultDTO">
 	 	SELECT 
-			l.id, l.type, l.merchant_id, l.period, l.amount_limit, l.modifer, l.modify_time
+			l.id, l.type, m.merchant_name, l.period, l.amount_limit, l.modifer, l.modify_time
 		FROM 
 			t_amount_limit l, t_merchant_base_info m
 		where l.merchant_id = m.id

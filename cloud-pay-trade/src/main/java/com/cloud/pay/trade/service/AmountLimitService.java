@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cloud.pay.trade.dto.AmountLimitDTO;
 import com.cloud.pay.trade.entity.AmountLimit;
 import com.cloud.pay.trade.mapper.AmountLimitMapper;
 
@@ -34,8 +35,15 @@ public class AmountLimitService {
 		return amountLimitMapper.deleteByPrimaryKey(id);
 	}
 
-	public List<AmountLimit> getAmountLimitList(Integer type, String orgName, String merchantName, Date startTime,
+	public List<AmountLimitDTO> getAmountLimitList(Integer type, String orgName, String merchantName, Date startTime,
 			Date endTime) {
-		return amountLimitMapper.getAmountLimitList(type, orgName, merchantName, startTime, endTime);
+		List<AmountLimitDTO> dtos =  amountLimitMapper.getAmountLimitList(type, orgName, merchantName, startTime, endTime);
+		for(AmountLimitDTO dto : dtos) {
+			if(dto.getType() == 3) {
+				dto.setOrgName(dto.getMerchantName());
+				dto.setOrgName("");
+			}
+		}
+		return dtos;
 	}
 }

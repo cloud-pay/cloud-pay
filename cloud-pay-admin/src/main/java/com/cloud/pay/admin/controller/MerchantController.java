@@ -1,6 +1,5 @@
 package com.cloud.pay.admin.controller;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,26 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
-import com.cloud.pay.admin.entity.Const;
 import com.cloud.pay.admin.entity.ResponseModel;
 import com.cloud.pay.admin.entity.ResultEnum;
-import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.merchant.service.MerchantService;
-import com.cloud.pay.trade.constant.AmountLimitConstant;
-import com.cloud.pay.trade.entity.AmountLimit;
-import com.cloud.pay.trade.service.AmountLimitService;
 
 @Controller
-@RequestMapping("/amountLimit")
-public class AmountLimitController extends BaseController{
+@RequestMapping("/merchant")
+public class MerchantController extends BaseController{
 	
-	private Logger log = LoggerFactory.getLogger(AmountLimitController.class);
-	
-	@Autowired
-	private AmountLimitService amountLimitService;
+	private Logger log = LoggerFactory.getLogger(MerchantController.class);
 	
 	@Autowired
 	private MerchantService merchantService;
@@ -41,7 +33,17 @@ public class AmountLimitController extends BaseController{
 	private String menuUrl = "amountLimit/list";
 	
 	/**
-	 * 限额列表
+	 * 商戶列表
+	 * @return
+	 */
+	@RequestMapping(value="/dtos",method=RequestMethod.GET)
+	@ResponseBody
+	public String dtos(Model model, Integer type){
+		return JSON.toJSONString(merchantService.getMerchantDTOs(type));
+	}
+	
+	/**
+	 * 商戶列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
@@ -60,14 +62,12 @@ public class AmountLimitController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("amountLimits", amountLimitService.getAmountLimitList(type, orgName, merchantName, startTime, endTime));
-		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
 		return "page/amountLimit/list";
 	}
 	
 	/**
-	 * 添加限额
+	 * 添加商戶
 	 * @return
 	 */
 	@RequestMapping(value="/add",method=RequestMethod.POST)
@@ -75,18 +75,7 @@ public class AmountLimitController extends BaseController{
 	public Object add(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			AmountLimit amountLimit = new AmountLimit();
 			ParameterMap map = this.getParameterMap();
-			amountLimit.setType(Integer.parseInt(map.getString("type")));
-			if(AmountLimitConstant.PER_LIMIT != amountLimit.getType()) {
-				amountLimit.setMerchantId(Integer.parseInt(map.getString("merchantId")));
-				amountLimit.setPeriod(Integer.parseInt(map.getString("period")));
-			}
-			amountLimit.setAmountLimit(new BigDecimal(map.getString("amountLimit")));
-			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			amountLimit.setModifer(userId);
-			amountLimit.setModifyTime(new Date());
-			amountLimitService.save(amountLimit);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -97,7 +86,7 @@ public class AmountLimitController extends BaseController{
 	
 	
 	/**
-	 * 编辑限额
+	 * 编辑商戶
 	 * @return
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
@@ -105,17 +94,7 @@ public class AmountLimitController extends BaseController{
 	public Object edit(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			AmountLimit amountLimit = new AmountLimit();
 			ParameterMap map = this.getParameterMap();
-			amountLimit.setMerchantId(Integer.parseInt(map.getString("merchantId")));
-			amountLimit.setType(Integer.parseInt(map.getString("type")));
-			amountLimit.setPeriod(Integer.parseInt(map.getString("period")));
-			amountLimit.setAmountLimit(new BigDecimal(map.getString("amountLimit")));
-			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			amountLimit.setModifer(userId);
-			amountLimit.setModifyTime(new Date());
-			amountLimit.setId(Integer.parseInt(map.getString("id")));
-			amountLimitService.update(amountLimit);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -126,7 +105,7 @@ public class AmountLimitController extends BaseController{
 	
 	
 	/**
-	 * 删除限额
+	 * 删除商戶
 	 * @return
 	 */
 	@RequestMapping(value="/del",method=RequestMethod.POST)
@@ -135,7 +114,6 @@ public class AmountLimitController extends BaseController{
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
 			Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
-			amountLimitService.del(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

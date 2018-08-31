@@ -10,6 +10,8 @@ public class AmountLimitDTO {
 
 	private String orgName;
 
+	private Integer merchantId;
+
 	private String merchantName;
 
 	private Integer period;
@@ -84,6 +86,14 @@ public class AmountLimitDTO {
 		this.modifyTime = modifyTime;
 	}
 
+	public Integer getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -93,6 +103,8 @@ public class AmountLimitDTO {
 		builder.append(type);
 		builder.append(", orgName=");
 		builder.append(orgName);
+		builder.append(", merchantId=");
+		builder.append(merchantId);
 		builder.append(", merchantName=");
 		builder.append(merchantName);
 		builder.append(", period=");

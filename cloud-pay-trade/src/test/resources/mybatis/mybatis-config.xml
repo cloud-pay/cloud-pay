@@ -13,8 +13,8 @@
     </settings>
 
 	<typeAliases>
-		<typeAlias type="com.cloud.pay.common.entity.Bank" alias="Bank"  />
-		<typeAlias type="com.cloud.pay.common.entity.Channel" alias="Channel"  />
+		<typeAlias type="com.cloud.pay.trade.entity.AmountLimit" alias="AmountLimit"  />
+		<typeAlias type="com.cloud.pay.trade.entity.MerchantRouteConf" alias="MerchantRouteConf"  />
 	</typeAliases>
 	
 </configuration>

@@ -118,6 +118,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
     <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
     <result column="period" property="period" jdbcType="INTEGER" />
     <result column="amount_limit" property="amountLimit" jdbcType="DECIMAL" />
@@ -126,18 +127,18 @@
   </resultMap>
   <select id="getAmountLimitList" resultMap="BaseResultDTO">
 	 	SELECT 
-			l.id, l.type, m.merchant_name, l.period, l.amount_limit, l.modifer, l.modify_time
+			l.id, l.type, l.merchant_id, m.name merchant_name, l.period, l.amount_limit, l.modifer, l.modify_time
 		FROM 
-			t_amount_limit l, t_merchant_base_info m
-		where l.merchant_id = m.id
+			t_amount_limit l left join t_merchant_base_info m on l.merchant_id = m.id
+		where 1=1
 	  <if test="type != null" >
         and l.type = #{type,jdbcType=INTEGER}
       </if>
-      <if test="orgName != null" >
-       and m.name like concat ('%',#{orgName,jdbcType=VARCHAR},'%')
+      <if test="orgName != null and orgName != ''" >
+       and m.name like concat('%',#{orgName,jdbcType=VARCHAR},'%')
       </if>
-      <if test="merchantName != null" >
-       and m.name like concat ('%',#{merchantName,jdbcType=VARCHAR},'%')
+      <if test="merchantName != null and merchantName != ''" >
+       and m.name like concat('%',#{merchantName,jdbcType=VARCHAR},'%')
       </if>
       <if test="startTime != null" >
        and l.modify_time &gt; #{startTime}

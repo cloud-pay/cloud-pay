@@ -98,7 +98,7 @@ div.cbp label.font{
             <div class="box-header">
               <h3 class="box-title">路由列表</h3>
               <br><br>
-              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addUser"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加路由</button>
+              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addRoute"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加路由</button>
               <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
 					<button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
@@ -173,21 +173,27 @@ div.cbp label.font{
 	                </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${QX.query == '1'}" th:each="user,stat :${users}">
+                <tr th:if="${QX.query == '1'}" th:each="route,stat :${merchantRouteConfs}">
                   <td th:text="${stat.count}">1</td>
-                  <td th:text="${user.user_id}">主体类型</td>
-                  
-                  <td th:text="${user.username}">通道名称</td>
-                  <td th:text="${user.nick_name}">是否需要垫资</td>
-                  <td th:text="${user.create_time}">更新时间</td>
+                  <td th:text="${route.type}">主体类型</td>
+                  <td th:text="${route.orgName}">合作机构名称</td>
+				  <td th:text="${route.merchantName}">商户名称</td>
+                  <td th:text="${route.channelName}">通道名称</td>
+                  <td th:text="${route.loaning}">是否需要垫资</td>
+				  <td th:text="${route.loaningOrgName}">垫资机构名称</td>
+				  <td th:text="${route.loaningAmount}">垫资限额</td>
+                  <td th:text="${route.create_time}">更新时间</td>
                   <td>
-                  	<div th:if="${user.user_id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="给路由分配角色" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRole(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 分配角色</span>
-	                  	<span data-toggle="tooltip" title="编辑路由信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
-	                  	<span data-toggle="tooltip" title="删除路由" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
+                  	<div th:if="${route.id != 1 || meid == '1'}">
+	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
+							th:onclick="'editRoute(\''+${route.id}+'\',\''+${route.type}+'\',\''+${route.merchantId}+'\',\''+${route.channelId}+'\'
+							,\''+${route.loaning}+'\',\''+${route.loaningOrgId}+'\',\''+${route.loaningAmount}+'\');'">
+							<i class="fa fa-edit"></i> 编辑
+						</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delRoute(\''+${route.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
-                  	<div th:if="${user.user_id == 1 && meid != '1'}">
+                  	<div th:if="${route.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>
                   	</div>
                   </td>
@@ -217,62 +223,54 @@ div.cbp label.font{
 			<div class="modal-body">
 				<form class="form-horizontal"  role="form">
 				  <input type="hidden" name="url" value=""/>
-				  <input type="hidden" name="user_id" value=""/>
+				  <input type="hidden" name="id" value=""/>
 				  <input type="hidden" name="pics" value=""/>
 				  <input type="hidden" name="oldpath" value=""/>
 				  <div class="form-group">
-					    <label for="menu_type" class="col-sm-2 control-label">主体类型</label>
+					    <label for="type" class="col-sm-2 control-label">主体类型</label>
 					    <div class="col-sm-10">
-						    <select name="menu_type" class="form-control">
-						      <option value="1">系统</option>
-						      <option value="2" selected="selected" >业务</option>
+						    <select name="type" class="form-control">
+						      <option value="">请选择</option>
+							  <option value="1">合作机构</option>
+							  <option value="2">商户</option>
 						    </select>
 					    </div>
 					  </div>
 				
 				  <div class="form-group">
-					    <label for="menu_type" class="col-sm-2 control-label">所属机构</label>
+					    <label for="merchantId" class="col-sm-2 control-label">所属机构</label>
 					    <div class="col-sm-10">
-						    <select name="menu_type" class="form-control">
-						      <option value="1">系统</option>
-						      <option value="2" selected="selected" >业务</option>
-						    </select>
+						    <input class="form-control" name="merchantId" value="" id="merchantId">
 					    </div>
 					  </div>
 				  <div class="form-group">
-					    <label for="menu_type" class="col-sm-2 control-label">通道名称</label>
+					    <label for="channelId" class="col-sm-2 control-label">通道名称</label>
 					    <div class="col-sm-10">
-						    <select name="menu_type" class="form-control">
-						      <option value="1">系统</option>
-						      <option value="2" selected="selected" >业务</option>
+						    <input class="form-control" name="channelId" value="" id="channelId">
+					    </div>
+					  </div>
+				  
+				  <div class="form-group">
+					    <label for="loaning" class="col-sm-2 control-label">是否需要垫资</label>
+					    <div class="col-sm-10">
+						    <select name="loaning" class="form-control">
+						      <option value="0">否</option>
+						      <option value="1">是</option>
 						    </select>
 					    </div>
 					  </div>
 				  
 				  <div class="form-group">
-					    <label for="menu_type" class="col-sm-2 control-label">是否需要垫资</label>
+					    <label for="loaningOrgId" class="col-sm-2 control-label">垫资机构名称</label>
 					    <div class="col-sm-10">
-						    <select name="menu_type" class="form-control">
-						      <option value="1">系统</option>
-						      <option value="2" selected="selected" >业务</option>
-						    </select>
+						    <input class="form-control" name="loaningOrgId" value="" id="loaningOrgId">
 					    </div>
 					  </div>
 				  
 				  <div class="form-group">
-					    <label for="menu_type" class="col-sm-2 control-label">垫资机构名称</label>
-					    <div class="col-sm-10">
-						    <select name="menu_type" class="form-control">
-						      <option value="1">系统</option>
-						      <option value="2" selected="selected" >业务</option>
-						    </select>
-					    </div>
-					  </div>
-				  
-				  <div class="form-group">
-				    <label for="password" class="col-sm-2 control-label">垫资限额</label>
+				    <label for="loaningAmount" class="col-sm-2 control-label">垫资限额</label>
 				    <div class="col-sm-10">
-				      <input type="number" class="form-control" name="menu_order" value="" id="menu_order" placeholder="垫资限额">
+				      <input type="number" class="form-control" name="loaningAmount" value="" id="loaningAmount" placeholder="垫资限额">
 				    </div>
 				  </div>
 				  
@@ -285,29 +283,6 @@ div.cbp label.font{
 		</div>
 	</div>
 </div>
-
-<!-- 角色权限模态框 -->
-<div class="modal fade" id="edituserRoleModal" tabindex="-1" role="dialog"
-	aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="userRoleModelHead">编辑角色权限</h4>
-			</div>
-			<div class="modal-body">
-				<div class="cbp">
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-				<button type="submit" class="btn btn-success"  id="roleSubmit" >确定</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 
 <script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
 <script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
@@ -398,22 +373,24 @@ $(function(){
   	  	"pageLength"  : 10
     });
 	
-	$("#addUser").click(function(){
-		reloadModelData(_ctx+"/merchantRouteConf/add","添加路由","添加","","","","","","","add");
+	$("#addRoute").click(function(){
+		reloadModelData(_ctx+"/merchantRouteConf/add","添加路由","添加","","","","","","","");
 		$("#routeModal").modal("show");
 	});
 	
 	//确认按钮
 	$("#imgSubmit").click(function(){
-		var userId = $("input[name='user_id']").val();
-		var oldpath = $("input[name='oldpath']").val();
+		var routeId = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
-		var base64Img= $("input[name='pics']").val();
-		var username= $("input[name='username']").val();
-		var nickName= $("input[name='nick_name']").val();
-		var password= $("input[name='password']").val();
+		var type = $("[name='type']").val();
+		var merchantId = $("input[name='merchantId']").val();
+		var merchantId = $("input[name='merchantId']").val();
+		var channelId= $("input[name='channelId']").val();
+		var loaning= $("[name='loaning']").val();
+		var loaningOrgId= $("input[name='loaningOrgId']").val();
+		var loaningAmount= $("input[name='loaningAmount']").val();
 		if(url == _ctx+'/merchantRouteConf/add'){
-			if(!checkAccount(username,nickName,password)){
+			if(!checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount)){
 				return false;
 			}
 		}
@@ -422,7 +399,7 @@ $(function(){
 			url:url,
 			cache:false,
 			dataType:"json",
-			data:{user_id:userId,oldpath:oldpath,username:username,password:password,nick_name:nickName,pics:base64Img,time:new Date().getTime()},
+			data:{id:routeId,merchantId:merchantId,channelId:channelId,loaning:loaning,loaningAmount:loaningAmount,loaningOrgId:loaningOrgId,type:type},
 			success:function(data){
 				if(data.status == 'success'){
 					$("#routeModal").modal("hide");
@@ -434,38 +411,16 @@ $(function(){
 		});
 	});
 	
-	//确认按钮
-	$("#roleSubmit").click(function(){
-		var ids="";
-		$("input[name='roleids']:checked").each(function(){
-			ids = ids + $(this).val() +",";
-		});
-		var userId = $("input[name='role_user_id']").val();
-		$.ajax({
-			type:"POST",
-			url:_ctx+"/merchantRouteConf/editRole",
-			cache:false,
-			dataType:"json",
-			data:{user_id:userId,ids:ids,time:new Date().getTime()},
-			success:function(data){
-				if(data.status == 'success'){
-					window.location.href= window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-	});
 })
 
 //删除路由
-function delUser(userId,path){
+function delRoute(routeId){
 	if(confirm("你确定要删除此路由吗？")){
 		$.ajax({
 			type:"POST",
 			url:_ctx+"/merchantRouteConf/del",
 			dataType:"json",
-			data:{user_id:userId,pic_path:path},
+			data:{id:routeId},
 			cache:false,
 			success:function(data){
 				if(data.status == 'success'){
@@ -478,112 +433,47 @@ function delUser(userId,path){
 	}
 }
 
-//分配角色
-function allotRole(userId){
-	$(".modal-body .cbp p").remove();
-	$.ajax({
-		type:"GET",
-		url:_ctx+"/merchantRouteConf/getRole",
-		dataType:"json",
-		data:{user_id:userId,time:new Date().getTime()},
-		cache:false,
-		success:function(data){
-			if(data.status == 'success'){
-				var str = "<p><input type='hidden' name='role_user_id' value='"+userId+"' />";
-				var arr = data.data;
-				for(var i =0;i<arr.length;i++){
-					var rolestr = "";
-					if(arr[i].checked){
-						rolestr="<p><input type='checkbox' name='roleids' id='id"+(i+1)+"' value='"+arr[i].role_id+"' class='chk_1' checked />";
-					}else{
-						rolestr="<p><input type='checkbox' name='roleids' id='id"+(i+1)+"' value='"+arr[i].role_id+"' class='chk_1'/>";
-					}
-					rolestr = rolestr +"<label for='id"+(i+1)+"'></label><label data-toggle='tooltip' title='"+arr[i].role_desc+"' data-placement='right' class='font'>"+arr[i].role_name+"</label></p>";
-					str = str + rolestr;
-				}
-				$(".modal-body .cbp").append(str);
-				//这是为了让title 属性生效
-				$.getScript("/js/tip.js");
-				$("#edituserRoleModal").modal("show");
-			}else{
-				alert(data.msg);
-			}
-		}
-	});
-}
-
 //编辑路由
-function editUser(user_id,username,nickName,path){
-	console.log(user_id+","+username+","+nickName+","+path);
-	reloadModelData(_ctx+"/merchantRouteConf/edit","编辑路由","更新",user_id,"",path,username,nickName,"","edit");
+function editRoute(id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+	console.log(id+","+type+","+merchantId+","+channelId+","+loaning+","+loaningOrgId+","+loaningAmount);
+	reloadModelData(_ctx+"/merchantRouteConf/edit","编辑路由","更新",id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount);
 	$("#routeModal").modal("show");
 }
 
 //验证数据
-function checkAccount(username,nickName,password){
-	if(username == ''){
-		$("input[name='username']").focus();
+function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+	if(type == ''){
+		$("input[name='type']").focus();
 		alert("路由名不能为空");
 		return false;
 	}
-	if(nickName == ''){
-		$("input[name='nick_name']").focus();
+	if(type == ''){
+		$("input[name='type']").focus();
 		alert("昵称不能为空");
 		return false;
 	}
-	if(password == ''){
-		$("input[name='password']").focus();
+	if(type == ''){
+		$("input[name='type']").focus();
 		alert("密码不能为空");
-		return false;
-	}else if(password.length < 4){
-		$("input[name='password']").focus();
-		alert("密码个数不能少于4位");
 		return false;
 	}
 	return true;
 }
 
 //加载模态框的数据
-function reloadModelData(url,title,btntext,user_id,pics,oldpath,username,nick_name,password,type){
+function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
 	$("#routeModal #usermodelHead").text(title);
 	$("#routeModal #imgSubmit").text(btntext);
-	$("#showImg").attr("src",oldpath);
 	$("input[name='url']").val(url);
-	$("input[name='user_id']").val(user_id);
-	$("input[name='pics']").val(pics);
-	$("input[name='oldpath']").val(oldpath);
-	$("input[name='username']").val(username);
-	$("input[name='nick_name']").val(nick_name);
-	$("input[name='password']").val(password);
-	if(type == 'add'){
-		$("input[name='username']").attr("disabled",false);
-	}else{
-		$("input[name='username']").attr("disabled",true);
-	}
+	
+	$("input[name='id']").val(id);
+	$("[name='type']").val(type);
+	$("input[name='merchantId']").val(merchantId);
+	$("input[name='channelId']").val(channelId);
+	$("[name='loaning']").val(loaning);
+	$("input[name='loaningOrgId']").val(loaningOrgId);
+	$("input[name='loaningAmount']").val(loaningAmount);
 }
-
-var input = document.getElementById("imgfile");
- if (typeof (FileReader) === 'undefined') {
-     result.innerHTML = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
-     input.setAttribute('disabled', 'disabled');
- } else {
-     input.addEventListener('change', readFile, false);
- }
-function readFile() {
-	var file = this.files[0];
-     //判断是否是图片类型
-     if (!/image\/\w+/.test(file.type)) {
-         alert("只能选择图片");
-         return false;
-    }
-     var reader = new FileReader();
-     reader.readAsDataURL(file);
-     reader.onload = function (e) {
-     	base64Code=this.result;
-     	$("#routeModal input[name='pics']").val(this.result);
-     	$("#showImg").attr("src",this.result);
-     }
-  }
 
 </script>
 </body>

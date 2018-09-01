@@ -1,10 +1,5 @@
 package com.cloud.pay.channel.vo.bohai;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import com.cloud.pay.channel.vo.CloudTradeParam;
 
 /**

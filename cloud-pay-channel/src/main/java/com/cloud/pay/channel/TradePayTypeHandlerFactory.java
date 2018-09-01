@@ -8,10 +8,10 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.cloud.pay.channel.contants.ChannelType;
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.utils.ApplicationContextHolder;
 import com.cloud.pay.channel.vo.BaseTradeReqVO;
+import com.cloud.pay.common.contants.ChannelType;
 import com.cloud.pay.common.exception.CloudApiExcetion;
 
 /**
@@ -23,6 +23,7 @@ public class TradePayTypeHandlerFactory {
    
 	private final Map<String,String> tradePayMapper = new HashMap<>(); //代付通道执行类
 	private final Map<String,String> tradePayQueryMapper = new HashMap<>(); //代付结果查询通道执行类
+	private final Map<String,String> tradeUnionPayMapper = new HashMap<>(); //银行银联代付通道
     
 	/**
 	 * 启动的时候将渠道接口信息直接加载到内存
@@ -33,8 +34,9 @@ public class TradePayTypeHandlerFactory {
 	@PostConstruct
 	public void init() {
 		//渤海银行
-		tradePayMapper.put(ChannelType.BOHAI.getChannelCode(), "bohaiTradePayExecutor");
-		tradePayQueryMapper.put(ChannelType.BOHAI.getChannelCode(), "bohaiTradeQueryExecutor");
+		tradePayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiTradePayExecutor");
+		tradePayQueryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiTradeQueryExecutor");
+		tradeUnionPayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiUnionTradePayExecutor");
 	}
 	
 	/**
@@ -53,6 +55,15 @@ public class TradePayTypeHandlerFactory {
 	 */
 	public ITradePayExecutor getTradePayQueryHandler(String tradeType) {
 		  return getHandler(tradePayQueryMapper, tradeType);
+	}
+	
+	/**
+	 * 根据交易类型获取银联代付渠道执行类
+	 * @param tradeType
+	 * @return
+	 */
+	public ITradePayExecutor getTradeUnionPayHandler(String tradeType) {
+		  return getHandler(tradeUnionPayMapper,tradeType);
 	}
 	
 	private <T> T getHandler(Map<String, String> mapper, String tradeType) {

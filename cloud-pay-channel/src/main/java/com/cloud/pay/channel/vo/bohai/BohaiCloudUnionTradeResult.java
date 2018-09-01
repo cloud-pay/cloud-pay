@@ -8,36 +8,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.cloud.pay.common.contants.ChannelContants;
 
 /**
- * 渤海单笔实时代付响应结果
+ * 单笔银联代付响应结果
  * @author wangy
  */
-@XmlRootElement(name = ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCS)
+@XmlRootElement(name = ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCUR)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BohaiCloudTradePayResult extends BohaiCloudTradeErrorResult {
+public class BohaiCloudUnionTradeResult extends BohaiCloudTradeErrorResult {
 
-	private static final long serialVersionUID = 5026232140980716389L;
+	private static final long serialVersionUID = 3903218812611919161L;
    
 	@XmlElement
 	private String actDat;//银行会计日期
 	
-	public BohaiCloudTradePayResult() {
+	public BohaiCloudUnionTradeResult() {
 		
 	}
 	
-	public BohaiCloudTradePayResult(String rspCode) {
+	public BohaiCloudUnionTradeResult(String rspCode) {
 		this.rspCode = rspCode;
 	}
 	
-	public BohaiCloudTradePayResult(String rspCode,String rspMsg) {
+	public BohaiCloudUnionTradeResult(String rspCode,String rspMsg) {
 		this.rspCode = rspCode;
 		this.rspMsg = rspMsg;
 	}
   
-	public BohaiCloudTradePayResult(String rspCode,String errorCode,String errorMessage) {
+	public BohaiCloudUnionTradeResult(String rspCode,String errorCode,String errorMessage) {
 		this.rspCode = rspCode;
 		this.errorCode = errorCode;
 		this.errorMessage = errorMessage;
 	}
+
 	public String getActDat() {
 		return actDat;
 	}
@@ -45,22 +46,4 @@ public class BohaiCloudTradePayResult extends BohaiCloudTradeErrorResult {
 	public void setActDat(String actDat) {
 		this.actDat = actDat;
 	}
-
-	public String getRspCode() {
-		return rspCode;
-	}
-
-	public void setRspCode(String rspCode) {
-		this.rspCode = rspCode;
-	}
-
-	public String getRspMsg() {
-		return rspMsg;
-	}
-
-	public void setRspMsg(String rspMsg) {
-		this.rspMsg = rspMsg;
-	}
-	
-	
 }

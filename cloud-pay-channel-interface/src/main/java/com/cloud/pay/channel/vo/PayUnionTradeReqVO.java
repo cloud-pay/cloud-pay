@@ -4,21 +4,17 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * 代付渠道请求接口请求参数
+ * 单笔银联代付请求
  * @author wangy
  */
-public class PayTradeReqVO extends BaseTradeReqVO {
+public class PayUnionTradeReqVO extends BaseTradeReqVO {
 
-	private static final long serialVersionUID = -8713903284380287558L;
+	private static final long serialVersionUID = -9064159508272187840L;
 
 	@NotBlank(message = "付款人账号不能为空")
 	@Length(max = 32,message = "付款人账号最长32位")
@@ -38,19 +34,22 @@ public class PayTradeReqVO extends BaseTradeReqVO {
 	@Length(max = 32,message = "收款人账号最长32位")
 	private String payeeAccount; //收款人账号
 	
+	
 	@NotBlank(message = "收款人账号名不能为空")
 	@Length(max = 120,message = "收款人账户名最长120位")
 	private String payeeName; //收款人账户名
 	
-	@NotBlank(message = "收款人清算行行号不能为空")
-	@Length(max = 14,message = "收款人账户名最长14位")
-	private String payeeBankCode;  //收款人清算行行号
+	@Length(max = 32,message = "证件类别最长32位")
+	private String idType;
+	
+	@Length(max = 120,message = "证件号码最长120位")
+	private String idNo;
 	
 	@NotNull(message = "交易金额不能为空")
 	@Digits(integer=18,fraction=2)
-	private BigDecimal amt; //交易金额
+	private BigDecimal amt;
 	
-	private String postscript; //附言
+	private String postscript;
 
 	public String getPayerAccount() {
 		return payerAccount;
@@ -100,12 +99,20 @@ public class PayTradeReqVO extends BaseTradeReqVO {
 		this.payeeName = payeeName;
 	}
 
-	public String getPayeeBankCode() {
-		return payeeBankCode;
+	public String getIdType() {
+		return idType;
 	}
 
-	public void setPayeeBankCode(String payeeBankCode) {
-		this.payeeBankCode = payeeBankCode;
+	public void setIdType(String idType) {
+		this.idType = idType;
+	}
+
+	public String getIdNo() {
+		return idNo;
+	}
+
+	public void setIdNo(String idNo) {
+		this.idNo = idNo;
 	}
 
 	public BigDecimal getAmt() {

@@ -1,4 +1,4 @@
-/*
+﻿/*
 Navicat MySQL Data Transfer
 
 Source Server         : localhost
@@ -27,7 +27,7 @@ CREATE TABLE `t_amount_limit` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `type` int(1) DEFAULT NULL COMMENT '限制类型',
   `merchant_id` int(11) DEFAULT NULL COMMENT '商户id',
-  `period` int(1) NOT NULL COMMENT '统计周期',
+  `period` int(1) NULL COMMENT '统计周期',
   `amount_limit` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='限额配置信息';
@@ -147,8 +147,8 @@ CREATE TABLE `t_merchant_apply_base_info` (
   `type` int(1) DEFAULT NULL COMMENT '类型(1代理商，2第三方支付，3垫资商，4企业商户，5个人商户)',
   `industry_category` varchar(255) DEFAULT NULL COMMENT '行业类别',
   `legal` varchar(100) DEFAULT NULL COMMENT '法人',
-  `city` varchar(100) NOT NULL COMMENT '所属城市',
-  `address` varchar(255) NOT NULL COMMENT '详细地址',
+  `city` varchar(100) NULL COMMENT '所属城市',
+  `address` varchar(255) NULL COMMENT '详细地址',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `mobile` varchar(12) DEFAULT NULL COMMENT '手机号码',
   `status` int(1) DEFAULT NULL COMMENT '申请状态(1待审核，2审核通过，3审核不通过)',
@@ -213,8 +213,8 @@ CREATE TABLE `t_merchant_base_info` (
   `type` int(1) DEFAULT NULL COMMENT '类型(1代理商，2第三方支付，3垫资商，4企业商户，5个人商户)',
   `industry_category` varchar(255) DEFAULT NULL COMMENT '行业类别',
   `legal` varchar(100) DEFAULT NULL COMMENT '法人',
-  `city` varchar(100) NOT NULL COMMENT '所属城市',
-  `address` varchar(255) NOT NULL COMMENT '详细地址',
+  `city` varchar(100) NULL COMMENT '所属城市',
+  `address` varchar(255) NULL COMMENT '详细地址',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `mobile` varchar(12) DEFAULT NULL COMMENT '手机号码',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
@@ -252,6 +252,7 @@ CREATE TABLE `t_merchant_fee_conf` (
 DROP TABLE IF EXISTS `t_merchant_route_conf`;
 CREATE TABLE `t_merchant_route_conf` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `type` int(1) DEFAULT NULL COMMENT '主体类型',
   `channel_id` int(11) DEFAULT NULL COMMENT '渠道ID',
   `merchant_id` int(11) DEFAULT NULL COMMENT '商户ID',
   `loaning` int(1) DEFAULT NULL COMMENT '是否垫资（0不垫资，1垫资）',

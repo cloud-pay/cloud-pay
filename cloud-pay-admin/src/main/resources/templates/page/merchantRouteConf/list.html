@@ -84,12 +84,11 @@ div.cbp label.font{
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    	西游记告诉我们：凡是有后台的妖怪都被接走了，
-    <small>凡是没后台的都被一棒子打死了</small>
+    	 当前位置：路由管理
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
-    <li class="active">用户管理</li>
+    <li class="active">路由管理</li>
   </ol>
 </section>
 
@@ -97,35 +96,43 @@ div.cbp label.font{
 <section class="content">
 	 <div class="box">
             <div class="box-header">
-              <h3 class="box-title">用户列表</h3>
+              <h3 class="box-title">路由列表</h3>
               <br><br>
-              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addUser"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加用户</button>
-              <button class="btn btn-large btn-primary" type="button" id="search">查询</button>
-  									<button class="btn btn-large" type="button">重置</button>
+              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addUser"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加路由</button>
+              <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
+					<button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
 				  
 				  <div class="row clearfix">
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="id">编号</label>
-											<input type="text" class="form-control" id="id" name="id"></input>		
+											<label for="search_type">编号</label>
+										    <select name="search_type" class="form-control">
+										      <option value="">请选择</option>
+										      <option value="1">合作机构</option>
+										      <option value="2">商户</option>
+										    </select>
 										</div>
 									</div>
 								</div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="ruleNo">编号</label>
-											<input type="text" class="form-control" id="ruleNo" name="ruleNo"></input>		
+											<label for="search_status">状态</label>
+										    <select name="search_status" class="form-control">
+										      <option value="">请选择</option>
+										      <option value="1">正常</option>
+										      <option value="0">冻结</option>
+										    </select>
 										</div>
 									</div>
 								</div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="ruleName">名称</label>
-											<input type="text" class="form-control" id="ruleName" name="ruleName" maxlength="20"></input>		
+											<label for="search_merchantName">商户名称</label>
+											<input type="text" class="form-control" id="search_merchantName" name="search_merchantName" maxlength="20"></input>		
 										</div>
 									</div>
 								</div>
@@ -175,9 +182,9 @@ div.cbp label.font{
                   <td th:text="${user.create_time}">更新时间</td>
                   <td>
                   	<div th:if="${user.user_id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="给用户分配角色" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRole(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 分配角色</span>
-	                  	<span data-toggle="tooltip" title="编辑用户信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
-	                  	<span data-toggle="tooltip" title="删除用户" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
+	                  	<span data-toggle="tooltip" title="给路由分配角色" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRole(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 分配角色</span>
+	                  	<span data-toggle="tooltip" title="编辑路由信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
+	                  	<span data-toggle="tooltip" title="删除路由" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${user.user_id == 1 && meid != '1'}">
@@ -187,7 +194,7 @@ div.cbp label.font{
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >
                 	<td colspan="7" align="center">
-						<h2>此用户无权限查看该页面</h2>
+						<h2>此路由无权限查看该页面</h2>
                 	</td>
                 </tr>
                 </tbody>
@@ -198,14 +205,14 @@ div.cbp label.font{
 
 
 <!-- 新增或修改的模态框 -->
-<div class="modal fade" id="userModal" tabindex="-1" role="dialog"
+<div class="modal fade" id="routeModal" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="usermodelHead">添加用户</h4>
+				<h4 class="modal-title text-center" id="usermodelHead">添加路由</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal"  role="form">
@@ -316,12 +323,28 @@ div.cbp label.font{
 <script>
 $(function(){
 	
-	//确认按钮
-	$("#search").click(function(){
-		var createDateBegin = $("input[name='createDateBegin']").val();
-		var createDateEnd = $("input[name='createDateEnd']").val();
-		alert(window.location.href+'?createDateBegin='+createDateBegin);
-		window.location.href = window.location.href+'?createDateBegin='+createDateBegin;
+	//查询按钮事件
+	$("#searchBtn").off().on("click",function(){
+		var search_type = $("[name='search_type']").val();
+		var search_status = $("[name='search_status']").val();
+		var search_merchantName = $("#search_merchantName").val();
+		var createDateBegin = $("#createDateBegin").val();
+		var createDateEnd = $("#createDateEnd").val();
+		window.location.href = _ctx+'/merchantRouteConf/list'
+			+'?type='+search_type
+			+'&status='+search_status
+			+'&merchantName='+search_merchantName
+			+'&createDateBegin='+createDateBegin
+			+'&createDateEnd='+createDateEnd;
+	});
+
+	//重置按钮事件
+	$("#resetBtn").off().on("click",function(){
+		$("[name='search_type']").val('');
+		$("#search_status").val('');
+		$("#search_merchantName").val('');
+		$("#createDateBegin").val('');
+		$("#createDateEnd").val('');
 	});
 	
 	initDateTimepicker();
@@ -376,8 +399,8 @@ $(function(){
     });
 	
 	$("#addUser").click(function(){
-		reloadModelData(_ctx+"/user/add","添加用户","添加","","","","","","","add");
-		$("#userModal").modal("show");
+		reloadModelData(_ctx+"/merchantRouteConf/add","添加路由","添加","","","","","","","add");
+		$("#routeModal").modal("show");
 	});
 	
 	//确认按钮
@@ -389,7 +412,7 @@ $(function(){
 		var username= $("input[name='username']").val();
 		var nickName= $("input[name='nick_name']").val();
 		var password= $("input[name='password']").val();
-		if(url == _ctx+'/user/add'){
+		if(url == _ctx+'/merchantRouteConf/add'){
 			if(!checkAccount(username,nickName,password)){
 				return false;
 			}
@@ -402,7 +425,7 @@ $(function(){
 			data:{user_id:userId,oldpath:oldpath,username:username,password:password,nick_name:nickName,pics:base64Img,time:new Date().getTime()},
 			success:function(data){
 				if(data.status == 'success'){
-					$("#userModal").modal("hide");
+					$("#routeModal").modal("hide");
 					window.location.href=window.location.href;
 				}else{
 					alert(data.msg);
@@ -420,7 +443,7 @@ $(function(){
 		var userId = $("input[name='role_user_id']").val();
 		$.ajax({
 			type:"POST",
-			url:_ctx+"/user/editRole",
+			url:_ctx+"/merchantRouteConf/editRole",
 			cache:false,
 			dataType:"json",
 			data:{user_id:userId,ids:ids,time:new Date().getTime()},
@@ -435,12 +458,12 @@ $(function(){
 	});
 })
 
-//删除用户
+//删除路由
 function delUser(userId,path){
-	if(confirm("你确定要删除此用户吗？")){
+	if(confirm("你确定要删除此路由吗？")){
 		$.ajax({
 			type:"POST",
-			url:_ctx+"/user/del",
+			url:_ctx+"/merchantRouteConf/del",
 			dataType:"json",
 			data:{user_id:userId,pic_path:path},
 			cache:false,
@@ -460,7 +483,7 @@ function allotRole(userId){
 	$(".modal-body .cbp p").remove();
 	$.ajax({
 		type:"GET",
-		url:_ctx+"/user/getRole",
+		url:_ctx+"/merchantRouteConf/getRole",
 		dataType:"json",
 		data:{user_id:userId,time:new Date().getTime()},
 		cache:false,
@@ -489,18 +512,18 @@ function allotRole(userId){
 	});
 }
 
-//编辑用户
+//编辑路由
 function editUser(user_id,username,nickName,path){
 	console.log(user_id+","+username+","+nickName+","+path);
-	reloadModelData(_ctx+"/user/edit","编辑用户","更新",user_id,"",path,username,nickName,"","edit");
-	$("#userModal").modal("show");
+	reloadModelData(_ctx+"/merchantRouteConf/edit","编辑路由","更新",user_id,"",path,username,nickName,"","edit");
+	$("#routeModal").modal("show");
 }
 
 //验证数据
 function checkAccount(username,nickName,password){
 	if(username == ''){
 		$("input[name='username']").focus();
-		alert("用户名不能为空");
+		alert("路由名不能为空");
 		return false;
 	}
 	if(nickName == ''){
@@ -522,8 +545,8 @@ function checkAccount(username,nickName,password){
 
 //加载模态框的数据
 function reloadModelData(url,title,btntext,user_id,pics,oldpath,username,nick_name,password,type){
-	$("#userModal #usermodelHead").text(title);
-	$("#userModal #imgSubmit").text(btntext);
+	$("#routeModal #usermodelHead").text(title);
+	$("#routeModal #imgSubmit").text(btntext);
 	$("#showImg").attr("src",oldpath);
 	$("input[name='url']").val(url);
 	$("input[name='user_id']").val(user_id);
@@ -557,7 +580,7 @@ function readFile() {
      reader.readAsDataURL(file);
      reader.onload = function (e) {
      	base64Code=this.result;
-     	$("#userModal input[name='pics']").val(this.result);
+     	$("#routeModal input[name='pics']").val(this.result);
      	$("#showImg").attr("src",this.result);
      }
   }

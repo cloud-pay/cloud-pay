@@ -2,7 +2,10 @@ package com.cloud.pay.channel.service;
 
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
+import com.cloud.pay.channel.vo.PayTradeResVO;
+import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
 
 /**
  * 渠道接口入口
@@ -12,15 +15,23 @@ public interface ICloudApiService {
     
 	/**
 	 * 代付接口
-	 * @param tradeReq 请求参数和响应参数先以基类代替，实际编码时替换为实际接口的请求参数和响应参数
+	 * @param tradeReq
 	 * @return
 	 */
-	BaseTradeResVO pay(PayTradeReqVO reqVO);
+	PayTradeResVO pay(PayTradeReqVO reqVO);
 	
 	/**
 	 * 代付结果查询
 	 * @param tradeReq
 	 * @return
 	 */
-	BaseTradeResVO queryPay(PayTradeQueryReqVO tradeReq);
+	PayTradeQueryResVO queryPay(PayTradeQueryReqVO tradeReq);
+	
+	
+	/**
+	 * 单笔银联代付
+	 * @param reqVO
+	 * @return
+	 */
+	PayTradeResVO unionPay(PayUnionTradeReqVO reqVO);
 }

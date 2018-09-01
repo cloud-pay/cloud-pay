@@ -12,7 +12,7 @@ import java.util.Map;
  * 实体转换类
  * @author admin
  */
-public class BeanUtils {
+public class ChannelBeanUtils {
 
 	/**
         * 实体对象转成Map

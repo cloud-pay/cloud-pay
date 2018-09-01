@@ -99,49 +99,27 @@ div.cbp label.font{
               <h3 class="box-title"></h3>
               <br><br>
               <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addChannel"><i class="fa fa-plus"></i> &nbsp;&nbsp;新增</button>
+            	<button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
+					<button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
 		 <!-- 查询 -->
 		 <div class="row clearfix">
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="id">编号</label>
-											<input type="text" class="form-control" id="id" name="id"></input>		
-										</div>
-									</div>
-								</div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
-									<div class="form-group">
-										<div class="form-line">
-											<label for="ruleNo">编号</label>
-											<input type="text" class="form-control" id="ruleNo" name="ruleNo"></input>		
+											<label for="search_channelCode">编号</label>
+											<input type="text" class="form-control" id="search_channelCode" name="search_channelCode"></input>		
 										</div>
 									</div>
 								</div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="ruleName">名称</label>
-											<input type="text" class="form-control" id="ruleName" name="ruleName" maxlength="20"></input>		
+											<label for="search_">名称</label>
+											<input type="text" class="form-control" id="search_channelName" name="search_channelName" maxlength="20"></input>		
 										</div>
 									</div>
 								</div>
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
-									<div class="form-group">
-										<div class="form-line">
-											<label for="createDateBegin">创建开始日期</label>
-											<input type="text" class="form-control" id="createDateBegin" name="createDateBegin" readonly></input>		
-										</div>
-									</div>
-								</div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
-									<div class="form-group">
-										<div class="form-line">
-											<label for="createDateEnd">创建结束日期</label>
-											<input type="text" class="form-control" id="createDateEnd" name="createDateEnd" readonly></input>		
-										</div>
-									</div>
-								</div>		
 							</div>
 		 <!-- 查询结束 -->
             <!-- /.box-header -->
@@ -276,40 +254,20 @@ div.cbp label.font{
 <script>
 $(function(){
 	
-	initDateTimepicker();
-	//初始化日期插件
-	function initDateTimepicker(){
-		$("#createDateBegin").datetimepicker({
-			format:'yyyy-mm-dd hh:ii:ss',
-			language:'zh-CN',
-//			locale:moment.locale('zh-cn'),
-			todayBtn:true,
-			autoclose:true,
-//			todayHignlight:true,
-//			maxView:"year",
-//			minView:"hour",
-			showMeridian:1,
-			pickerPosition:"bottom-left"
-//			startDate:new Date()
-		}).on('click',function(e){
-			$("#createDateBegin").datetimepicker('setEndDate',$("#createDateEnd").val());
-		});
-		$("#createDateEnd").datetimepicker({
-			format:'yyyy-mm-dd hh:ii:ss',
-			language:'zh-CN',
-//			locale:moment.locale('zh-cn'),
-			todayBtn:true,
-			autoclose:true,
-//			todayHignlight:true,
-//			maxView:"year",
-//			minView:"hour",
-			showMeridian:1,
-			pickerPosition:"bottom-left"
-//			startDate:new Date()
-		}).on('click',function(e){
-			$("#createDateEnd").datetimepicker('setStartDate',$("#createDateBegin").val());
-		});
-	}
+	//查询按钮事件
+	$("#searchBtn").off().on("click",function(){
+		var search_channelCode = $("#search_channelCode").val();
+		var search_channelName = $("#search_channelName").val();
+		window.location.href = _ctx+'/channel/list'
+			+'?channelCode='+search_channelCode
+			+'&chaneelName='+search_channelName;
+	});
+
+	//重置按钮事件
+	$("#resetBtn").off().on("click",function(){
+		$("#search_channelCode").val('');
+		$("#search_channelName").val('');
+	});
 	
 	 //提示框
     $("[data-toggle='tooltip']").tooltip();

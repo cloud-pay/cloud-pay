@@ -107,7 +107,7 @@ div.cbp label.font{
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="search_type">编号</label>
+											<label for="search_type">主体类型</label>
 										    <select name="search_type" class="form-control">
 										      <option value="">请选择</option>
 										      <option value="1">合作机构</option>
@@ -173,16 +173,21 @@ div.cbp label.font{
 	                </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${QX.query == '1'}" th:each="route,stat :${merchantRouteConfs}">
-                  <td th:text="${stat.count}">1</td>
+                <tr th:if="${QX.query == '1'}" th:each="route,stat :${merchantRoutes}">
                   <td th:text="${route.type}">主体类型</td>
-                  <td th:text="${route.orgName}">合作机构名称</td>
-				  <td th:text="${route.merchantName}">商户名称</td>
+                  <td th:if="${route.type == 1}" th:text="${route.merchantName}"></td>
+                  <td th:if="${route.type == 2}"></td>
+                  <td th:if="${route.type == 1}"></td>
+                  <td th:if="${route.type == 2}" th:text="${route.merchantName}"></td>
                   <td th:text="${route.channelName}">通道名称</td>
-                  <td th:text="${route.loaning}">是否需要垫资</td>
+                  <td th:if="${route.loaning == 1}" th:text="是"></td>
+				  <td th:if="${route.loaning == 0}" th:text="否"></td>
 				  <td th:text="${route.loaningOrgName}">垫资机构名称</td>
 				  <td th:text="${route.loaningAmount}">垫资限额</td>
-                  <td th:text="${route.create_time}">更新时间</td>
+				  <td th:if="${route.status == 1}" th:text="正常"></td>
+				  <td th:if="${route.status == 0}" th:text="冻结"></td>
+                  <td th:text="${#dates.format(route.modifyTime,'yyyy-MM-dd HH:mm:ss')}">更新时间</td>
+                  <td th:text="${route.modifer}">更新人</td>
                   <td>
                   	<div th:if="${route.id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
@@ -191,6 +196,8 @@ div.cbp label.font{
 							<i class="fa fa-edit"></i> 编辑
 						</span>
 	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delRoute(\''+${route.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${route.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${route.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${route.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${route.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${route.id == 1 && meid != '1'}">
@@ -316,7 +323,7 @@ $(function(){
 	//重置按钮事件
 	$("#resetBtn").off().on("click",function(){
 		$("[name='search_type']").val('');
-		$("#search_status").val('');
+		$("[name='search_status']").val('');
 		$("#search_merchantName").val('');
 		$("#createDateBegin").val('');
 		$("#createDateEnd").val('');
@@ -421,6 +428,32 @@ function delRoute(routeId){
 			url:_ctx+"/merchantRouteConf/del",
 			dataType:"json",
 			data:{id:routeId},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					window.location.href=window.location.href;
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
+}
+
+//删除路由
+function updateStatus(routeId, status){
+    var msg='';
+    if(status == 0) {
+    	msg = '你确定要冻结此路由吗？';
+    } else {
+    	msg = '你确定要解冻此路由吗？';
+    }
+	if(confirm(msg)){
+		$.ajax({
+			type:"POST",
+			url:_ctx+"/merchantRouteConf/updateStatus",
+			dataType:"json",
+			data:{id:routeId, status : status},
 			cache:false,
 			success:function(data){
 				if(data.status == 'success'){

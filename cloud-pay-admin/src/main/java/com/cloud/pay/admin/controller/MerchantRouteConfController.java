@@ -21,6 +21,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.trade.constant.MerchantRouteConstant;
 import com.cloud.pay.trade.entity.MerchantRouteConf;
 import com.cloud.pay.trade.service.MerchantRouteConfService;
 
@@ -77,6 +78,7 @@ public class MerchantRouteConfController extends BaseController{
 			conf.setLoaning(Integer.parseInt(map.getString("loaning")));
 			conf.setLoaningOrgId(Integer.parseInt(map.getString("loaningOrgId")));
 			conf.setLoaningAmount(new BigDecimal(map.getString("loaningAmount")));
+			conf.setStatus(MerchantRouteConstant.NORMAL);
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			conf.setCreator(userId);
 			conf.setCreateTime(new Date());
@@ -103,7 +105,12 @@ public class MerchantRouteConfController extends BaseController{
 		try {
 			MerchantRouteConf conf = new MerchantRouteConf();
 			ParameterMap map = this.getParameterMap();
-			conf.setStatus(Integer.parseInt(map.getString("status")));
+			conf.setType(Integer.parseInt(map.getString("type")));
+			conf.setMerchantId(Integer.parseInt(map.getString("merchantId")));
+			conf.setChannelId(Integer.parseInt(map.getString("channelId")));
+			conf.setLoaning(Integer.parseInt(map.getString("loaning")));
+			conf.setLoaningOrgId(Integer.parseInt(map.getString("loaningOrgId")));
+			conf.setLoaningAmount(new BigDecimal(map.getString("loaningAmount")));
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			conf.setModifer(userId);
 			conf.setModifyTime(new Date());
@@ -138,7 +145,7 @@ public class MerchantRouteConfController extends BaseController{
 	}
 	
 	/**
-	 * 删除商戶路由配置
+	 * 冻结/解冻商戶路由配置
 	 * @return
 	 */
 	@RequestMapping(value="/updateStatus",method=RequestMethod.POST)

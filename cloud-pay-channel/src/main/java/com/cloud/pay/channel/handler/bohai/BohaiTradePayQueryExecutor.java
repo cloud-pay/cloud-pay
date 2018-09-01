@@ -46,7 +46,7 @@ public class BohaiTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudTra
 			return buildQueryResult(resVO,result);
 		}catch(Exception e) {
 			log.error("代付结果查询-渤海代付查询失败：{}",e);
-			resVO = new PayTradeQueryResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,"9000","暂时系统异常");
+			resVO = new PayTradeQueryResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,"9000","系统异常");
 		}
 		log.info("渠道接口：代付结果查询结束，响应参数：{}",resVO);
 		return resVO;

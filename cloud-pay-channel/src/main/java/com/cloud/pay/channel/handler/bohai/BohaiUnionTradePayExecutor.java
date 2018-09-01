@@ -37,7 +37,7 @@ public class BohaiUnionTradePayExecutor extends BohaiTradeExecutor<BohaiCloudUni
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
 			log.error("渠道接口：单笔银联代付失败，错误消息:{}",e);
-			resVO = new PayTradeResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,"9000","暂时系统异常");
+			resVO = new PayTradeResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,"9000","系统异常");
 		}
 		return resVO;
 	}

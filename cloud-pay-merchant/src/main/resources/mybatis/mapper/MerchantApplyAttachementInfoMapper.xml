@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.merchant.mapper.MerchantApplyAttachementInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="attachement_type" property="attachementType" jdbcType="INTEGER" />
+    <result column="attachement_path" property="attachementPath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, version, merchant_id, attachement_type, attachement_path
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_apply_attachement_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_merchant_apply_attachement_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo" >
+    insert into t_merchant_apply_attachement_info (id, version, merchant_id, 
+      attachement_type, attachement_path)
+    values (#{id,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, 
+      #{attachementType,jdbcType=INTEGER}, #{attachementPath,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo" >
+    insert into t_merchant_apply_attachement_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="merchantId != null" >
+        merchant_id,
+      </if>
+      <if test="attachementType != null" >
+        attachement_type,
+      </if>
+      <if test="attachementPath != null" >
+        attachement_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="attachementType != null" >
+        #{attachementType,jdbcType=INTEGER},
+      </if>
+      <if test="attachementPath != null" >
+        #{attachementPath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo" >
+    update t_merchant_apply_attachement_info
+    <set >
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        merchant_id = #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="attachementType != null" >
+        attachement_type = #{attachementType,jdbcType=INTEGER},
+      </if>
+      <if test="attachementPath != null" >
+        attachement_path = #{attachementPath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo" >
+    update t_merchant_apply_attachement_info
+    set version = #{version,jdbcType=INTEGER},
+      merchant_id = #{merchantId,jdbcType=INTEGER},
+      attachement_type = #{attachementType,jdbcType=INTEGER},
+      attachement_path = #{attachementPath,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

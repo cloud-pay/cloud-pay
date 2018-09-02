@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantFeeInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="pay_fee_type" property="payFeeType" jdbcType="INTEGER" />
+    <result column="pay_fee" property="payFee" jdbcType="DECIMAL" />
+    <result column="loan_fee_type" property="loanFeeType" jdbcType="INTEGER" />
+    <result column="loan_fee" property="loanFee" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, merchant_id, pay_fee_type, pay_fee, loan_fee_type, loan_fee
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_fee_conf
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_merchant_fee_conf
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantFeeInfo" >
+    insert into t_merchant_fee_conf (id, merchant_id, pay_fee_type, 
+      pay_fee, loan_fee_type, loan_fee
+      )
+    values (#{id,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, #{payFeeType,jdbcType=INTEGER}, 
+      #{payFee,jdbcType=DECIMAL}, #{loanFeeType,jdbcType=INTEGER}, #{loanFee,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cloud.pay.merchant.entity.MerchantFeeInfo" >
+    insert into t_merchant_fee_conf
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="merchantId != null" >
+        merchant_id,
+      </if>
+      <if test="payFeeType != null" >
+        pay_fee_type,
+      </if>
+      <if test="payFee != null" >
+        pay_fee,
+      </if>
+      <if test="loanFeeType != null" >
+        loan_fee_type,
+      </if>
+      <if test="loanFee != null" >
+        loan_fee,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="payFeeType != null" >
+        #{payFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="payFee != null" >
+        #{payFee,jdbcType=DECIMAL},
+      </if>
+      <if test="loanFeeType != null" >
+        #{loanFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="loanFee != null" >
+        #{loanFee,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantFeeInfo" >
+    update t_merchant_fee_conf
+    <set >
+      <if test="merchantId != null" >
+        merchant_id = #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="payFeeType != null" >
+        pay_fee_type = #{payFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="payFee != null" >
+        pay_fee = #{payFee,jdbcType=DECIMAL},
+      </if>
+      <if test="loanFeeType != null" >
+        loan_fee_type = #{loanFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="loanFee != null" >
+        loan_fee = #{loanFee,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantFeeInfo" >
+    update t_merchant_fee_conf
+    set merchant_id = #{merchantId,jdbcType=INTEGER},
+      pay_fee_type = #{payFeeType,jdbcType=INTEGER},
+      pay_fee = #{payFee,jdbcType=DECIMAL},
+      loan_fee_type = #{loanFeeType,jdbcType=INTEGER},
+      loan_fee = #{loanFee,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

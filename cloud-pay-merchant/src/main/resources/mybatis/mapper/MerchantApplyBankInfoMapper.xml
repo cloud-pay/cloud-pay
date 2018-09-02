@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.merchant.mapper.MerchantApplyBankInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantApplyBankInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="bank_id" property="bankId" jdbcType="INTEGER" />
+    <result column="bank_card_no" property="bankCardNo" jdbcType="VARCHAR" />
+    <result column="bank_account_type" property="bankAccountType" jdbcType="INTEGER" />
+    <result column="bank_account_name" property="bankAccountName" jdbcType="VARCHAR" />
+    <result column="cert_type" property="certType" jdbcType="INTEGER" />
+    <result column="cert_no" property="certNo" jdbcType="VARCHAR" />
+    <result column="mobile_no" property="mobileNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, version, merchant_id, bank_name, bank_id, bank_card_no, bank_account_type, bank_account_name, 
+    cert_type, cert_no, mobile_no
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_apply_bank_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_merchant_apply_bank_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBankInfo" >
+    insert into t_merchant_apply_bank_info (id, version, merchant_id, 
+      bank_name, bank_id, bank_card_no, 
+      bank_account_type, bank_account_name, cert_type, 
+      cert_no, mobile_no)
+    values (#{id,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, 
+      #{bankName,jdbcType=VARCHAR}, #{bankId,jdbcType=INTEGER}, #{bankCardNo,jdbcType=VARCHAR}, 
+      #{bankAccountType,jdbcType=INTEGER}, #{bankAccountName,jdbcType=VARCHAR}, #{certType,jdbcType=INTEGER}, 
+      #{certNo,jdbcType=VARCHAR}, #{mobileNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBankInfo" >
+    insert into t_merchant_apply_bank_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="merchantId != null" >
+        merchant_id,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="bankId != null" >
+        bank_id,
+      </if>
+      <if test="bankCardNo != null" >
+        bank_card_no,
+      </if>
+      <if test="bankAccountType != null" >
+        bank_account_type,
+      </if>
+      <if test="bankAccountName != null" >
+        bank_account_name,
+      </if>
+      <if test="certType != null" >
+        cert_type,
+      </if>
+      <if test="certNo != null" >
+        cert_no,
+      </if>
+      <if test="mobileNo != null" >
+        mobile_no,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankId != null" >
+        #{bankId,jdbcType=INTEGER},
+      </if>
+      <if test="bankCardNo != null" >
+        #{bankCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccountType != null" >
+        #{bankAccountType,jdbcType=INTEGER},
+      </if>
+      <if test="bankAccountName != null" >
+        #{bankAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="certType != null" >
+        #{certType,jdbcType=INTEGER},
+      </if>
+      <if test="certNo != null" >
+        #{certNo,jdbcType=VARCHAR},
+      </if>
+      <if test="mobileNo != null" >
+        #{mobileNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBankInfo" >
+    update t_merchant_apply_bank_info
+    <set >
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null" >
+        merchant_id = #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="bankName != null" >
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankId != null" >
+        bank_id = #{bankId,jdbcType=INTEGER},
+      </if>
+      <if test="bankCardNo != null" >
+        bank_card_no = #{bankCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccountType != null" >
+        bank_account_type = #{bankAccountType,jdbcType=INTEGER},
+      </if>
+      <if test="bankAccountName != null" >
+        bank_account_name = #{bankAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="certType != null" >
+        cert_type = #{certType,jdbcType=INTEGER},
+      </if>
+      <if test="certNo != null" >
+        cert_no = #{certNo,jdbcType=VARCHAR},
+      </if>
+      <if test="mobileNo != null" >
+        mobile_no = #{mobileNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBankInfo" >
+    update t_merchant_apply_bank_info
+    set version = #{version,jdbcType=INTEGER},
+      merchant_id = #{merchantId,jdbcType=INTEGER},
+      bank_name = #{bankName,jdbcType=VARCHAR},
+      bank_id = #{bankId,jdbcType=INTEGER},
+      bank_card_no = #{bankCardNo,jdbcType=VARCHAR},
+      bank_account_type = #{bankAccountType,jdbcType=INTEGER},
+      bank_account_name = #{bankAccountName,jdbcType=VARCHAR},
+      cert_type = #{certType,jdbcType=INTEGER},
+      cert_no = #{certNo,jdbcType=VARCHAR},
+      mobile_no = #{mobileNo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

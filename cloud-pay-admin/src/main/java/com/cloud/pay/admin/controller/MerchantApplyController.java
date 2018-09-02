@@ -22,7 +22,7 @@ import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.merchant.service.MerchantService;
 
 @Controller
-@RequestMapping("/merchant")
+@RequestMapping("/merchantApply")
 public class MerchantApplyController extends BaseController{
 	
 	private Logger log = LoggerFactory.getLogger(MerchantApplyController.class);

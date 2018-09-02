@@ -168,5 +168,18 @@
       <if test="channelName != null and channelName != ''" >
        and channel_name like concat('%',#{channelName,jdbcType=VARCHAR},'%')
       </if>
-     </select>
+  </select>
+  
+   <select id="getUnInitChannelList" resultMap="BaseResultMap">
+		select
+		 <include refid="Base_Column_List" />
+		from t_channel t
+		where not exists (
+		    select c.ID 
+		    from t_channel c,t_recon r
+		     where c.id = r.CHANNEL_ID 
+		     and r.ACCOUNT_DATE = #{accountDate,jdbcType=DATE} 
+		     and t.id = c.id
+		)
+  </select>
 </mapper>

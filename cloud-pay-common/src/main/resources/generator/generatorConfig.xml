@@ -13,7 +13,7 @@
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
-		<javaModelGenerator targetPackage="com.cloud.pay.merchant.entity"
+		<javaModelGenerator targetPackage="com.cloud.pay.recon.entity"
 			targetProject="${javaModelGenerator.targetProject}">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
@@ -23,16 +23,18 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<javaClientGenerator type="XMLMAPPER"
-			targetPackage="com.cloud.pay.merchant.mapper" targetProject="${javaClientGenerator.targetProject}">
+			targetPackage="com.cloud.pay.recon.mapper" targetProject="${javaClientGenerator.targetProject}">
 			<property name="enableSubPackages" value="false" />
 		</javaClientGenerator>
-		<table tableName="t_merchant_apply_attachement_info" domainObjectName="MerchantApplyAttachementInfo"></table>
-		<table tableName="t_merchant_apply_bank_info" domainObjectName="MerchantApplyBankInfo"></table>
+		<table tableName="t_recon" domainObjectName="Recon"></table>
+		<table tableName="t_recon_channel_bohai" domainObjectName="ReconChannelBohai"></table>
+		<table tableName="t_recon_exception_trade" domainObjectName="ReconExceptionBohai"></table>
+		<!-- <table tableName="t_merchant_apply_bank_info" domainObjectName="MerchantApplyBankInfo"></table>
 		<table tableName="t_merchant_apply_base_info" domainObjectName="MerchantApplyBaseInfo"></table>
 		<table tableName="t_merchant_apply_fee_conf" domainObjectName="MerchantApplyFeeInfo"></table>
 		
 		<table tableName="t_merchant_attachement_info" domainObjectName="MerchantAttachementInfo"></table>
 		<table tableName="t_merchant_bank_info" domainObjectName="MerchantBankInfo"></table>
-		<table tableName="t_merchant_fee_conf" domainObjectName="MerchantFeeInfo"></table>
+		<table tableName="t_merchant_fee_conf" domainObjectName="MerchantFeeInfo"></table> -->
 	</context>
 </generatorConfiguration>

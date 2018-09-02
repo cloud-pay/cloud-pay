@@ -12,11 +12,11 @@ import org.springframework.http.HttpStatus;
 
 @MapperScan(basePackages={"com.cloud.pay.admin.dao", 
 		"com.cloud.pay.common.mapper", "com.cloud.pay.trade.mapper", 
-		"com.cloud.pay.merchant.mapper"})
+		"com.cloud.pay.merchant.mapper","com.cloud.pay.recon.mapper"})
 @ServletComponentScan
 @SpringBootApplication(scanBasePackages="com.cloud.pay")
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
-
+	
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}

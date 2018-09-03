@@ -1,5 +1,6 @@
 package com.cloud.pay.common.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -59,4 +60,13 @@ public interface ChannelMapper {
     int updateByPrimaryKey(Channel record);
     
     public List<Channel> getChannelList(@Param("channelCode")String channelCode, @Param("channelName")String channelName);
+    
+    
+    /**
+       * 获取未初始化对账的渠道
+     * @param channelId
+     * @param accountDate
+     * @return
+     */
+    List<Channel> getUnInitChannelList(Date accountDate);
 }

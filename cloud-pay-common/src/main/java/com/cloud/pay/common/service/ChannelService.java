@@ -1,5 +1,6 @@
 package com.cloud.pay.common.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -33,8 +34,20 @@ public class ChannelService {
 		return channelMapper.deleteByPrimaryKey(id);
 	}
 	
+	public Channel selectById(Integer id) {
+	    return channelMapper.selectByPrimaryKey(id);
+	}
+	
 	public List<Channel> getchannelList(String channelCode, String channelName){
 		return channelMapper.getChannelList(channelCode, channelName);
 	}
-
+   
+	/**
+	 * 根据记账日期获取未初始化对账的渠道信息
+	 * @param accountDate
+	 * @return
+	 */
+	public List<Channel> getUnInitChannelList(Date accountDate){
+		return channelMapper.getUnInitChannelList(accountDate);
+	}
 }

@@ -38,7 +38,7 @@ public class MerchantController extends BaseController{
 	 */
 	@RequestMapping(value="/dtos",method=RequestMethod.GET)
 	@ResponseBody
-	public String dtos(Model model, Integer type){
+	public String dtos(Model model, String type){
 		return JSON.toJSONString(merchantService.getMerchantDTOs(type));
 	}
 	

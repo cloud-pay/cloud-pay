@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantBaseInfo" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="short_name" property="shortName" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -19,7 +20,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, org_id, name, short_name, type, industry_category, legal, city, address, email, 
+    id, org_id, code, name, short_name, type, industry_category, legal, city, address, email, 
     mobile, creator, create_time, modifer, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -33,13 +34,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantBaseInfo" >
-    insert into t_merchant_base_info (id, org_id, name, 
+    insert into t_merchant_base_info (id, org_id, code, name, 
       short_name, type, industry_category, 
       legal, city, address, 
       email, mobile, creator, 
       create_time, modifer, modify_time
       )
-    values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{shortName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{industryCategory,jdbcType=VARCHAR}, 
       #{legal,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
@@ -149,6 +150,9 @@
       <if test="orgId != null" >
         org_id = #{orgId,jdbcType=INTEGER},
       </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
@@ -194,6 +198,7 @@
   <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantBaseInfo" >
     update t_merchant_base_info
     set org_id = #{orgId,jdbcType=INTEGER},
+      code = #{code,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       short_name = #{shortName,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
@@ -219,8 +224,11 @@
 		FROM 
 			t_merchant_base_info
 		where 1=1
-	  <if test="type != null" >
-        and l.type = #{type,jdbcType=INTEGER}
+	  <if test="type != null and type == 'org' " >
+        and type in (1,2,3)
+      </if>
+      <if test="type != null and type == 'merchant' " >
+        and type in (4,5)
       </if>
 	 </select>
 </mapper>

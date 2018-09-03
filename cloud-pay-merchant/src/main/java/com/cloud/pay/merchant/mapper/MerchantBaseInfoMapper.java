@@ -59,5 +59,5 @@ public interface MerchantBaseInfoMapper {
      */
     int updateByPrimaryKey(MerchantBaseInfo record);
     
-    List<MerchantDTO> getMerchantDTOs(@Param("type")Integer type);
+    List<MerchantDTO> getMerchantDTOs(@Param("type") String type);
 }

@@ -13,41 +13,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
 import com.cloud.pay.admin.entity.ResponseModel;
 import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.merchant.service.MerchantApplyService;
 import com.cloud.pay.merchant.service.MerchantService;
 
 @Controller
-@RequestMapping("/merchant")
+@RequestMapping("/merchantApply")
 public class MerchantApplyController extends BaseController{
 	
 	private Logger log = LoggerFactory.getLogger(MerchantApplyController.class);
 	
 	@Autowired
+	private MerchantApplyService merchantApplyService;
+	
+	@Autowired
 	private MerchantService merchantService;
 	
-	private String menuUrl = "amountLimit/list";
-	
-	/**
-	 * 商戶列表
-	 * @return
-	 */
-	@RequestMapping(value="/dtos",method=RequestMethod.GET)
-	@ResponseBody
-	public String dtos(Model model, Integer type){
-		return JSON.toJSONString(merchantService.getMerchantDTOs(type));
-	}
+	private String menuUrl = "merchantApply/list";
 	
 	/**
 	 * 商戶列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model, Integer type, String orgName, String merchantName, String createDateBegin,
+	public Object list(Model model, Integer orgId, String code, String name, Integer status, String createDateBegin,
 			String createDateEnd){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -62,8 +55,9 @@ public class MerchantApplyController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
-		return "page/amountLimit/list";
+		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, startTime, endTime));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
+		return "page/merchant/merchantApplyList";
 	}
 	
 	/**

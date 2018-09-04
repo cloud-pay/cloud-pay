@@ -235,81 +235,152 @@ div.cbp label.font{
 				<h4 class="modal-title text-center" id="usermodelHead">添加商户</h4>
 			</div>
 			<div class="modal-body">
-				<form class="form-horizontal"  role="form">
+				<form class="form-horizontal" role="form">
 				  <input type="hidden" name="url" value=""/>
 				  <input type="hidden" name="id" value=""/>
-				  <input type="hidden" name="pics" value=""/>
-				  <input type="hidden" name="oldpath" value=""/>
+				  <h2>基础资料： </h2>
 				  <div class="form-group">
-					    <label for="type" class="col-sm-2 control-label">主体类型</label>
-					    <div class="col-sm-10">
+					    <label for="orgId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所属机构</label>
+					    <div class="col-sm-4">
+						    <select name="orgId" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						    </select>
+					    </div>
+					    <label for="type" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户类型</label>
+					    <div class="col-sm-4">
 						    <select name="type" class="form-control">
 						      <option value="">请选择</option>
-							  <option value="1">合作机构</option>
-							  <option value="2">商户</option>
+							  <option value="4">企业商户</option>
+							  <option value="5">个人商户</option>
 						    </select>
 					    </div>
 					  </div>
 				
 				  <div class="form-group">
-					    <label for="merchantId" class="col-sm-2 control-label">所属机构</label>
-					    <div class="col-sm-10">
-						    <input class="form-control" name="merchantId" value="" id="merchantId">
+					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户名称</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="name" value="" id="name">
 					    </div>
-					  </div>
-				  <div class="form-group">
-					    <label for="channelId" class="col-sm-2 control-label">通道名称</label>
-					    <div class="col-sm-10">
-						    <input class="form-control" name="channelId" value="" id="channelId">
+					    <label for="shortName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户简称</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="shortName" value="" id="shortName">
 					    </div>
 					  </div>
 					  
-				  <div class="row">
-	                <div class="form-group col-lg-4">
-	                    <div class="input-group">
-	                        <span class="input-group-addon">户名</span>
-	                        <input class="form-control" type="text" name="bankAccountName" value="" id="bankAccountName">
-	                    </div>
-	                </div>
-	                <div class="form-group col-lg-4">
-	                    <div class="input-group">
-	                        <span class="input-group-addon">证件类型</span>
-	                        <select name="certType" class="form-control">
-							  <option value="1">身份证</option>
+					<div class="form-group">
+					    <label for="industryCategory" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>行业类别</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="industryCategory" value="" id="industryCategory">
+					    </div>
+					    <label for="city" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所在城市</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="city" value="" id="city">
+					    </div>
+					  </div>
+					  
+					<div class="form-group">
+					    <label for="address" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>详细地址</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="address" value="" id="address">
+					    </div>
+					    <label for="legal" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="legal" value="" id="legal">
+					    </div>
+					  </div>
+					 <div class="form-group">
+					    <label for="email" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>邮箱</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="email" value="" id="email">
+					    </div>
+					    <label for="mobile" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人手机</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="mobile" value="" id="mobile">
+					    </div>
+					  </div>
+					  <h2>结算资料： </h2>
+					  <div class="form-group">
+					    <label for="bankName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>开户银行</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="bankName" value="" id="bankName">
+					    </div>
+					    <label for="bankId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>联行号</label>
+					    <div class="col-sm-4">
+						    <select name="bankId" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
 						    </select>
-	                    </div>
-	                </div>
-	                <div class="form-group col-lg-4">
-	                    <div class="input-group">
-	                        <span class="input-group-addon">证件号码</span>
-	                        <input class="form-control" type="text" name="certNo" value="" id="certNo">
-	                    </div>
-	                </div>
-	              </div>
-				  
-				  <div class="form-group">
-					    <label for="bankAccountType" class="col-sm-2 control-label">账户类型</label>
-					    <div class="col-sm-10">
+					    </div>
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="bankCardNo" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>银行卡号</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="bankCardNo" value="" id="bankCardNo">
+					    </div>
+					    <label for="bankAccountType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>账户类型</label>
+					    <div class="col-sm-4">
 						    <select name="bankAccountType" class="form-control">
+						      <option value="">请选择</option>
 						      <option value="1">企业</option>
 						      <option value="2">个人</option>
 						    </select>
 					    </div>
 					  </div>
-				  
-				  <div class="form-group">
-					    <label for="loaningOrgId" class="col-sm-2 control-label">垫资机构名称</label>
-					    <div class="col-sm-10">
-						    <input class="form-control" name="loaningOrgId" value="" id="loaningOrgId">
+					  
+					  <div class="form-group">
+					    <label for="bankAccountName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>户名</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="bankAccountName" value="" id="bankAccountName">
+					    </div>
+					    <label for="certType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>证件类型</label>
+					    <div class="col-sm-4">
+						    <select name="certType" class="form-control">
+						      <option value="1">身份证</option>
+						    </select>
 					    </div>
 					  </div>
-				  
-				  <div class="form-group">
-				    <label for="loaningAmount" class="col-sm-2 control-label">垫资限额</label>
-				    <div class="col-sm-10">
-				      <input type="number" class="form-control" name="loaningAmount" value="" id="loaningAmount" placeholder="垫资限额">
-				    </div>
-				  </div>
+					  
+					  <div class="form-group">
+					    <label for="certNo" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>证件号码</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="certNo" value="" id="certNo">
+					    </div>
+					    <label for="mobileNo" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>手机号码</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="mobileNo" value="" id="mobileNo">
+					    </div>
+					  </div>
+					  
+					  <h2>费率设置： </h2>
+					  <div class="form-group">
+					    <label for="payFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>代付费率</label>
+					    <div class="col-sm-4">
+						    <select name="payFeeType" class="form-control">
+						      <option value="1">按比例计算</option>
+						      <option value="2">按笔数计算</option>
+						    </select>
+					    </div>
+					    <div class="col-sm-3">
+						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率（%）">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="loanFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>垫资费率</label>
+					    <div class="col-sm-4">
+						    <select name="loanFeeType" class="form-control">
+						      <option value="1">按比例计算</option>
+						      <option value="2">按笔数计算</option>
+						    </select>
+					    </div>
+					    <div class="col-sm-3">
+						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率（%）">
+					    </div>
+					  </div>
+					  
+					  <h2>证件上传： </h2>
+	                
 				  
 				 </form>
 			</div>

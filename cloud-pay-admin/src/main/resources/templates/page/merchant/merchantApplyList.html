@@ -182,30 +182,29 @@ div.cbp label.font{
                 </thead>
                 <tbody>
                 <tr th:if="${QX.query == '1'}" th:each="merchant,stat :${merchantApplys}">
-                  <td th:text="${merchant.type}">主体类型</td>
-                  <td th:if="${merchant.type == 1}" th:text="${merchant.merchantName}"></td>
-                  <td th:if="${merchant.type == 2}"></td>
-                  <td th:if="${merchant.type == 1}"></td>
-                  <td th:if="${merchant.type == 2}" th:text="${merchant.merchantName}"></td>
-                  <td th:text="${merchant.channelName}">通道名称</td>
-                  <td th:if="${merchant.loaning == 1}" th:text="是"></td>
-				  <td th:if="${merchant.loaning == 0}" th:text="否"></td>
-				  <td th:text="${merchant.loaningOrgName}">垫资机构名称</td>
-				  <td th:text="${merchant.loaningAmount}">垫资限额</td>
-				  <td th:if="${merchant.status == 1}" th:text="正常"></td>
+                  <td th:text="${merchant.code}"></td>
+                  <td th:text="${merchant.name}"></td>
+                  <td th:if="${merchant.type == 1}" th:text="代理商"></td>
+                  <td th:if="${merchant.type == 2}" th:text="第三方支付"></td>
+                  <td th:if="${merchant.type == 3}" th:text="垫资商"></td>
+                  <td th:if="${merchant.type == 4}" th:text="企业商户"></td>
+                  <td th:if="${merchant.type == 5}" th:text="个人商户"></td>
+                  <td th:text="${merchant.orgName}"></td>
+                  <td th:if="${merchant.status == 1}" th:text="正常"></td>
 				  <td th:if="${merchant.status == 0}" th:text="冻结"></td>
-                  <td th:text="${#dates.format(merchant.modifyTime,'yyyy-MM-dd HH:mm:ss')}">更新时间</td>
-                  <td th:text="${merchant.modifer}">更新人</td>
+				  <td th:text="${#dates.format(merchant.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${merchant.creator}"></td>
+                  <td th:text="${#dates.format(merchant.modifyTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${merchant.modifer}"></td>
                   <td>
                   	<div th:if="${merchant.id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
-							th:onclick="'editMerchant(\''+${merchant.id}+'\',\''+${merchant.type}+'\',\''+${merchant.merchantId}+'\',\''+${merchant.channelId}+'\'
-							,\''+${merchant.loaning}+'\',\''+${merchant.loaningOrgId}+'\',\''+${merchant.loaningAmount}+'\');'">
+							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
 							<i class="fa fa-edit"></i> 编辑
 						</span>
-	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delRoute(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delMerchantApply(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
 	                  	<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
-	                  	<span data-toggle="tooltip" title="删除" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
@@ -228,7 +227,7 @@ div.cbp label.font{
 <!-- 新增或修改的模态框 -->
 <div class="modal fade" id="merchantModal" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
@@ -264,13 +263,36 @@ div.cbp label.font{
 						    <input class="form-control" name="channelId" value="" id="channelId">
 					    </div>
 					  </div>
+					  
+				  <div class="row">
+	                <div class="form-group col-lg-4">
+	                    <div class="input-group">
+	                        <span class="input-group-addon">户名</span>
+	                        <input class="form-control" type="text" name="bankAccountName" value="" id="bankAccountName">
+	                    </div>
+	                </div>
+	                <div class="form-group col-lg-4">
+	                    <div class="input-group">
+	                        <span class="input-group-addon">证件类型</span>
+	                        <select name="certType" class="form-control">
+							  <option value="1">身份证</option>
+						    </select>
+	                    </div>
+	                </div>
+	                <div class="form-group col-lg-4">
+	                    <div class="input-group">
+	                        <span class="input-group-addon">证件号码</span>
+	                        <input class="form-control" type="text" name="certNo" value="" id="certNo">
+	                    </div>
+	                </div>
+	              </div>
 				  
 				  <div class="form-group">
-					    <label for="loaning" class="col-sm-2 control-label">是否需要垫资</label>
+					    <label for="bankAccountType" class="col-sm-2 control-label">账户类型</label>
 					    <div class="col-sm-10">
-						    <select name="loaning" class="form-control">
-						      <option value="0">否</option>
-						      <option value="1">是</option>
+						    <select name="bankAccountType" class="form-control">
+						      <option value="1">企业</option>
+						      <option value="2">个人</option>
 						    </select>
 					    </div>
 					  </div>
@@ -392,9 +414,48 @@ $(function(){
     });
 	
 	$("#addMerchant").click(function(){
-		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","","","","","","","");
+		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","");
 		$("#merchantModal").modal("show");
 	});
+	
+	var bankInfo = function(id, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status) {
+		 this.id = id;
+		 this.orgId = orgId;
+		 this.name = name;
+		 this.shortName = shortName;
+		 this.type = type;
+		 this.industryCategory = industryCategory;
+		 this.legal = legal;
+		 this.city = city;
+		 this.address = address;
+		 this.email = email;
+		 this.mobile = mobile;
+		 this.status = status;
+	 }
+	var bankInfo = function(merchantId, bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
+		 this.merchantId = merchantId;
+		 this.bankName = bankName;
+		 this.bankId = bankId;
+		 this.bankCardNo = bankCardNo;
+		 this.bankAccontType = bankAccontType;
+		 this.bankAccountName = bankAccountName;
+		 this.certType = certType;
+		 this.certNo = certNo;
+		 this.mobileNo = mobileNo;
+	 }
+	var feeInfo = function(merchantId, payFeeType, payFee, loanFeeType, loanFee) {
+		this.merchantId = merchantId;
+		 this.payFeeType = payFeeType;
+		 this.payFee = payFee;
+		 this.loanFeeType = loanFeeType;
+		 this.loanFee = loanFee;
+	 }
+	 var feeInfo = function(merchantId, attachementType, attachementPath) {
+		this.merchantId = merchantId;
+		 this.attachementType = attachementType;
+		 this.attachementPath = attachementPath;
+	 }
+	 //JSON.stringify(feeInfo)
 	
 	//确认按钮
 	$("#imgSubmit").click(function(){
@@ -432,7 +493,7 @@ $(function(){
 })
 
 //删除商户
-function delRoute(routeId){
+function delMerchantApply(routeId){
 	if(confirm("你确定要删除此商户吗？")){
 		$.ajax({
 			type:"POST",
@@ -478,9 +539,9 @@ function updateStatus(routeId, status){
 }
 
 //编辑商户
-function editMerchant(id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
-	console.log(id+","+type+","+merchantId+","+channelId+","+loaning+","+loaningOrgId+","+loaningAmount);
-	reloadModelData(_ctx+"/merchantApply/edit","编辑商户","更新",id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount);
+function editMerchant(id){
+	console.log(id);
+	reloadModelData(_ctx+"/merchantApply/edit","编辑商户","更新",id);
 	$("#merchantModal").modal("show");
 }
 
@@ -505,18 +566,12 @@ function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmou
 }
 
 //加载模态框的数据
-function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+function reloadModelData(url,title,btntext,id){
 	$("#merchantModal #usermodelHead").text(title);
 	$("#merchantModal #imgSubmit").text(btntext);
 	$("input[name='url']").val(url);
-	
 	$("input[name='id']").val(id);
-	$("[name='type']").val(type);
-	$("input[name='merchantId']").val(merchantId);
-	$("input[name='channelId']").val(channelId);
-	$("[name='loaning']").val(loaning);
-	$("input[name='loaningOrgId']").val(loaningOrgId);
-	$("input[name='loaningAmount']").val(loaningAmount);
+	
 }
 
 </script>

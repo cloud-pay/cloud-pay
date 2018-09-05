@@ -238,6 +238,7 @@ div.cbp label.font{
 				<form class="form-horizontal" role="form">
 				  <input type="hidden" name="url" value=""/>
 				  <input type="hidden" name="id" value=""/>
+				  <input type="hidden" name="code" value=""/>
 				  <h2>基础资料： </h2>
 				  <div class="form-group">
 					    <label for="orgId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所属机构</label>
@@ -502,8 +503,9 @@ $(function(){
 		$("#merchantModal").modal("show");
 	});
 	
-	var BaseInfo = function(id, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
+	var BaseInfo = function(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
 		 this.id = id;
+		 this.code = code;
 		 this.orgId = orgId;
 		 this.name = name;
 		 this.shortName = shortName;
@@ -538,9 +540,9 @@ $(function(){
 	
 	//确认按钮
 	$("#imgSubmit").click(function(){
-		var merchantType = 'merchant';
 		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
+		var code = $("input[name='code']").val();
 		var orgId = $("[name='orgId']").val();
 		var type = $("[name='type']").val();
 		var name = $("input[name='name']").val();
@@ -551,7 +553,7 @@ $(function(){
 		var legal= $("input[name='legal']").val();
 		var email= $("input[name='email']").val();
 		var mobile= $("input[name='mobile']").val();
-		var baseInfo = new BaseInfo(id, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
+		var baseInfo = new BaseInfo(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
 		//alert(JSON.stringify(baseInfo));
 		var bankId = $("[name='bankId']").val();
 		var bankName = $("input[name='bankName']").val();
@@ -568,7 +570,7 @@ $(function(){
 		var loanFeeType = $("[name='loanFeeType']").val();
 		var loanFee = $("input[name='loanFee']").val();
 		var feeInfo = new FeeInfo(payFeeType, payFee, loanFeeType, loanFee);
-		alert(JSON.stringify(feeInfo));
+		//alert(JSON.stringify(feeInfo));
 		if(url == _ctx+'/merchantApply/add'){
 			if(!checkAccount()){
 				return false;
@@ -703,7 +705,29 @@ function reloadModelData(url,title,btntext,id){
 			cache:false,
 			success:function(data){
 				if(data.status == 'success'){
-					alert(data.data.baseInfo.id);
+					$("input[name='code']").val(data.data.baseInfo.code);
+					$("[name='orgId']").val(data.data.baseInfo.orgId);
+					$("[name='type']").val(data.data.baseInfo.type);
+					$("input[name='name']").val(data.data.baseInfo.name);
+					$("input[name='shortName']").val(data.data.baseInfo.shortName);
+					var industryCategory= $("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
+					$("[name='city']").val(data.data.baseInfo.city);
+					$("input[name='address']").val(data.data.baseInfo.address);
+					$("input[name='legal']").val(data.data.baseInfo.legal);
+					$("input[name='email']").val(data.data.baseInfo.email);
+					$("input[name='mobile']").val(data.data.baseInfo.mobile);
+					$("[name='bankId']").val(data.data.bankInfo.bankId);
+					$("input[name='bankName']").val(data.data.bankInfo.bankName);
+					$("[name='bankAccountType']").val(data.data.bankInfo.bankAccountType);
+					$("input[name='bankCardNo']").val(data.data.bankInfo.bankCardNo);
+					$("[name='certType']").val(data.data.bankInfo.certType);
+					$("input[name='bankAccountName']").val(data.data.bankInfo.bankAccountName);
+					$("input[name='certNo']").val(data.data.bankInfo.certNo);
+					$("input[name='mobileNo']").val(data.data.bankInfo.mobileNo);
+					$("[name='payFeeType']").val(data.data.feeInfo.payFeeType);
+					$("input[name='payFee']").val(data.data.feeInfo.payFee);
+					$("[name='loanFeeType']").val(data.data.feeInfo.loanFeeType);
+					$("input[name='loanFee']").val(data.data.feeInfo.loanFee);
 				}else{
 					alert(data.msg);
 				}

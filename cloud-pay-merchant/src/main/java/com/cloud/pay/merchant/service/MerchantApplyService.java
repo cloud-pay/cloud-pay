@@ -84,4 +84,20 @@ public class MerchantApplyService {
 		List<MerchantApplyAttachementInfo> attachementInfos = attachementInfoMapper.selectByMerchantId(id);
 		return merchantMap;
 	}
+	
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
+	public void update(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
+			MerchantApplyFeeInfo feeInfo, List<MerchantApplyAttachementInfo> attachementInfos) {
+		baseInfoMapper.updateByPrimaryKeySelective(baseInfo);
+		bankInfo.setMerchantId(baseInfo.getId());
+		bankInfoMapper.updateByPrimaryKeySelective(bankInfo);
+		feeInfo.setMerchantId(baseInfo.getId());
+		feeInfoMapper.updateByPrimaryKeySelective(feeInfo);
+		if(attachementInfos != null) {
+			for(MerchantApplyAttachementInfo att : attachementInfos) {
+				att.setMerchantId(baseInfo.getId());
+				attachementInfoMapper.updateByPrimaryKeySelective(att);
+			}
+		}
+	}
 }

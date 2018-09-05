@@ -35,7 +35,7 @@
     delete from t_merchant_apply_base_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo" >
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo"  useGeneratedKeys="true" keyProperty="id" >
     insert into t_merchant_apply_base_info (id, version, org_id, code,
       name, short_name, type, 
       industry_category, legal, city, 
@@ -164,6 +164,54 @@
       </if>
     </trim>
   </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo" >
+    update t_merchant_apply_base_info
+    <set >
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        org_Id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null" >
+        short_name = #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="industryCategory != null" >
+        industry_category = #{industryCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="legal != null" >
+        legal = #{legal,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="modifer != null" >
+        modifer = #{modifer,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
   <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo" >
     update t_merchant_apply_base_info
     set version = #{version,jdbcType=INTEGER},

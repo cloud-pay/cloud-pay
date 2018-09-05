@@ -107,6 +107,16 @@ public class MerchantApplyController extends BaseController{
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
 			ParameterMap map = this.getParameterMap();
+			String bank = map.getString("bankInfo");
+			String base = map.getString("baseInfo");
+			String fee = map.getString("feeInfo");
+			MerchantApplyBaseInfo baseInfo = JSON.parseObject(base, MerchantApplyBaseInfo.class);
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			baseInfo.setModifer(userId);
+			baseInfo.setModifyTime(new Date());
+			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
+			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
+			merchantApplyService.update(baseInfo, bankInfo, feeInfo, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

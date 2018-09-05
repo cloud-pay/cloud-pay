@@ -45,4 +45,6 @@ public interface MerchantApplyFeeInfoMapper {
      * @mbggenerated Sun Sep 02 09:06:42 CST 2018
      */
     int updateByPrimaryKey(MerchantApplyFeeInfo record);
+    
+    MerchantApplyFeeInfo selectByMerchantId(Integer id);
 }

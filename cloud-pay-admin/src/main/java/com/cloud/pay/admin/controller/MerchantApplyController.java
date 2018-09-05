@@ -13,11 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
+import com.cloud.pay.admin.entity.Const;
 import com.cloud.pay.admin.entity.ResponseModel;
 import com.cloud.pay.admin.entity.ResultEnum;
+import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
+import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
 import com.cloud.pay.merchant.service.MerchantApplyService;
 import com.cloud.pay.merchant.service.MerchantService;
 
@@ -70,6 +76,18 @@ public class MerchantApplyController extends BaseController{
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
 			ParameterMap map = this.getParameterMap();
+			String bank = map.getString("bankInfo");
+			String base = map.getString("baseInfo");
+			String fee = map.getString("feeInfo");
+			MerchantApplyBaseInfo baseInfo = JSON.parseObject(base, MerchantApplyBaseInfo.class);
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			baseInfo.setCreator(userId);
+			baseInfo.setCreateTime(new Date());
+			baseInfo.setModifer(userId);
+			baseInfo.setModifyTime(new Date());
+			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
+			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
+			merchantApplyService.save(baseInfo, bankInfo, feeInfo, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -116,5 +134,23 @@ public class MerchantApplyController extends BaseController{
 		return ResponseModel.getModel("ok", "success", null);
 	}
 	
+	/**
+	 * 获取商戶
+	 * @return
+	 */
+	@RequestMapping(value="/get",method=RequestMethod.GET)
+	@ResponseBody
+	public Object get(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			ParameterMap map = this.getParameterMap();
+			Integer id = Integer.parseInt(map.getString("id"));
+			return ResponseModel.getModel("ok", "success", null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+	}
 	
 }

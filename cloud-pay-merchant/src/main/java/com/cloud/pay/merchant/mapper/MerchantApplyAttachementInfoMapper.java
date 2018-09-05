@@ -1,5 +1,7 @@
 package com.cloud.pay.merchant.mapper;
 
+import java.util.List;
+
 import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
 
 public interface MerchantApplyAttachementInfoMapper {
@@ -14,4 +16,6 @@ public interface MerchantApplyAttachementInfoMapper {
     int updateByPrimaryKeySelective(MerchantApplyAttachementInfo record);
 
     int updateByPrimaryKey(MerchantApplyAttachementInfo record);
+    
+    List<MerchantApplyAttachementInfo> selectByMerchantId(Integer id);
 }

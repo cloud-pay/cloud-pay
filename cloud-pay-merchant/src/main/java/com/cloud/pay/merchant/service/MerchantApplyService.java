@@ -2,7 +2,9 @@ package com.cloud.pay.merchant.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantApplyDTO;
 import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
@@ -46,19 +49,21 @@ public class MerchantApplyService {
 	}
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
-	public int save(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
+	public void save(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
 			MerchantApplyFeeInfo feeInfo, List<MerchantApplyAttachementInfo> attachementInfos) {
 		baseInfo.setCode(getMerchantCode());
+		baseInfo.setStatus(MerchantConstant.AUDITING);
 		baseInfoMapper.insert(baseInfo);
 		bankInfo.setMerchantId(baseInfo.getId());
 		bankInfoMapper.insert(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.insert(feeInfo);
-		for(MerchantApplyAttachementInfo att : attachementInfos) {
-			att.setMerchantId(baseInfo.getId());
-			attachementInfoMapper.insert(att);
+		if(attachementInfos != null) {
+			for(MerchantApplyAttachementInfo att : attachementInfos) {
+				att.setMerchantId(baseInfo.getId());
+				attachementInfoMapper.insert(att);
+			}
 		}
-		return 1;
 	}
 	
 	private String getMerchantCode() {
@@ -68,5 +73,15 @@ public class MerchantApplyService {
 		String temp = (SEQ_OFFSET + String.valueOf(value));
 		temp = temp.substring(temp.length() - SEQ_OFFSET.length());
 		return date + temp;
+	}
+	
+	@Transactional
+	public Map<String, Object> select(Integer id) {
+		Map<String, Object> merchantMap = new HashMap<>();
+		merchantMap.put("baseInfo", baseInfoMapper.selectByPrimaryKey(id));
+		merchantMap.put("bankInfo", bankInfoMapper.selectByMerchantId(id));
+		merchantMap.put("feeInfo", feeInfoMapper.selectByMerchantId(id));
+		List<MerchantApplyAttachementInfo> attachementInfos = attachementInfoMapper.selectByMerchantId(id);
+		return merchantMap;
 	}
 }

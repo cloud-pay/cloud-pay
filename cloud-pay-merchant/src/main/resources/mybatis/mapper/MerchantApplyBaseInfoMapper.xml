@@ -189,6 +189,7 @@
   <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantApplyDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
     <result column="org_name" property="orgName" jdbcType="INTEGER" />
     <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
@@ -200,11 +201,11 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <select id="getMerchantApplyDTOs" resultMap="BaseResultDTO">
-	 	SELECT m.id, m.version, m.org_id, m.code, m.name, m.type, 
+	 	SELECT m.id, m.version, m.org_id, m1.name org_name, m.code, m.name, m.type, 
     m.status, m.creator, m.create_time, m.modifer, m.modify_time
 		FROM 
 			t_merchant_apply_base_info m
-			left join t_merchant_apply_base_info m1 on m.org_id = m1.id
+			left join t_merchant_base_info m1 on m.org_id = m1.id
 		where 1=1
 	  <if test="orgId != null" >
         and m.org_id = #{orgId,jdbcType=INTEGER}

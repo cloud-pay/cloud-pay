@@ -190,21 +190,21 @@ div.cbp label.font{
                   <td th:if="${merchant.type == 4}" th:text="企业商户"></td>
                   <td th:if="${merchant.type == 5}" th:text="个人商户"></td>
                   <td th:text="${merchant.orgName}"></td>
-                  <td th:if="${merchant.status == 1}" th:text="正常"></td>
-				  <td th:if="${merchant.status == 0}" th:text="冻结"></td>
+                  <td th:if="${merchant.status == 1}" th:text="待审核"></td>
+				  <td th:if="${merchant.status == 2}" th:text="审核通过"></td>
+				  <td th:if="${merchant.status == 3}" th:text="审核不通过"></td>
 				  <td th:text="${#dates.format(merchant.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${merchant.creator}"></td>
                   <td th:text="${#dates.format(merchant.modifyTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${merchant.modifer}"></td>
                   <td>
                   	<div th:if="${merchant.id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
+	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1' && merchant.status == 1}" class="btn btn-xs btn-info" 
 							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
 							<i class="fa fa-edit"></i> 编辑
 						</span>
 	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delMerchantApply(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
-	                  	<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
-	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
@@ -380,6 +380,19 @@ div.cbp label.font{
 					  </div>
 					  
 					  <h2>证件上传： </h2>
+					  <div class="form-group" data-toggle="tooltip" title="如果不修改则不需要选择文件">
+					    <label for="imgfile" class="col-sm-2 control-label">上传头像</label>
+					    <div class="col-sm-10">
+					      <a href="javascript:void(0)"><input type="file" class="form-control file" name="imgfile" value="" id="imgfile" placeholder="请选择文件"></a>
+					    </div>
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="imgfile" class="col-sm-2 control-label"></label>
+					    <div class="col-sm-10">
+					      <div><img src="" data-toggle="tooltip" title="当前头像或更新后的头像" id="showImg" style="width: 50px;"></div>
+					    </div>
+					  </div>
 	                
 				  
 				 </form>
@@ -489,7 +502,7 @@ $(function(){
 		$("#merchantModal").modal("show");
 	});
 	
-	var bankInfo = function(id, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status) {
+	var BaseInfo = function(id, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
 		 this.id = id;
 		 this.orgId = orgId;
 		 this.name = name;
@@ -501,10 +514,8 @@ $(function(){
 		 this.address = address;
 		 this.email = email;
 		 this.mobile = mobile;
-		 this.status = status;
 	 }
-	var bankInfo = function(merchantId, bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
-		 this.merchantId = merchantId;
+	var BankInfo = function(bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
 		 this.bankName = bankName;
 		 this.bankId = bankId;
 		 this.bankCardNo = bankCardNo;
@@ -514,42 +525,61 @@ $(function(){
 		 this.certNo = certNo;
 		 this.mobileNo = mobileNo;
 	 }
-	var feeInfo = function(merchantId, payFeeType, payFee, loanFeeType, loanFee) {
-		this.merchantId = merchantId;
+	var FeeInfo = function(payFeeType, payFee, loanFeeType, loanFee) {
 		 this.payFeeType = payFeeType;
 		 this.payFee = payFee;
 		 this.loanFeeType = loanFeeType;
 		 this.loanFee = loanFee;
 	 }
-	 var feeInfo = function(merchantId, attachementType, attachementPath) {
-		this.merchantId = merchantId;
+	 var AttachementInfo = function(attachementType, attachementPath) {
 		 this.attachementType = attachementType;
 		 this.attachementPath = attachementPath;
 	 }
-	 //JSON.stringify(feeInfo)
 	
 	//确认按钮
 	$("#imgSubmit").click(function(){
-		var routeId = $("input[name='id']").val();
+		var merchantType = 'merchant';
+		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
+		var orgId = $("[name='orgId']").val();
 		var type = $("[name='type']").val();
-		var merchantId = $("input[name='merchantId']").val();
-		var merchantId = $("input[name='merchantId']").val();
-		var channelId= $("input[name='channelId']").val();
-		var loaning= $("[name='loaning']").val();
-		var loaningOrgId= $("input[name='loaningOrgId']").val();
-		var loaningAmount= $("input[name='loaningAmount']").val();
+		var name = $("input[name='name']").val();
+		var shortName = $("input[name='shortName']").val();
+		var industryCategory= $("input[name='industryCategory']").val();
+		var city= $("[name='city']").val();
+		var address= $("input[name='address']").val();
+		var legal= $("input[name='legal']").val();
+		var email= $("input[name='email']").val();
+		var mobile= $("input[name='mobile']").val();
+		var baseInfo = new BaseInfo(id, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
+		//alert(JSON.stringify(baseInfo));
+		var bankId = $("[name='bankId']").val();
+		var bankName = $("input[name='bankName']").val();
+		var bankAccountType = $("[name='bankAccountType']").val();
+		var bankCardNo = $("input[name='bankCardNo']").val();
+		var certType = $("[name='certType']").val();
+		var bankAccountName = $("input[name='bankAccountName']").val();
+		var certNo = $("input[name='certNo']").val();
+		var mobileNo = $("input[name='mobileNo']").val();
+		var bankInfo = new BankInfo(bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo);
+		//alert(JSON.stringify(bankInfo));
+		var payFeeType = $("[name='payFeeType']").val();
+		var payFee = $("input[name='payFee']").val();
+		var loanFeeType = $("[name='loanFeeType']").val();
+		var loanFee = $("input[name='loanFee']").val();
+		var feeInfo = new FeeInfo(payFeeType, payFee, loanFeeType, loanFee);
+		alert(JSON.stringify(feeInfo));
 		if(url == _ctx+'/merchantApply/add'){
-			if(!checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount)){
+			if(!checkAccount()){
 				return false;
 			}
 		}
 		$.ajax({
 			type:"post",
-			url:url+'?merchantType=merchant',
+			url:url,
 			cache:false,
 			dataType:"json",
-			data:{id:routeId,merchantId:merchantId,channelId:channelId,loaning:loaning,loaningAmount:loaningAmount,loaningOrgId:loaningOrgId,type:type},
+			data:{baseInfo:JSON.stringify(baseInfo),bankInfo:JSON.stringify(bankInfo),feeInfo:JSON.stringify(feeInfo)},
 			success:function(data){
 				if(data.status == 'success'){
 					$("#merchantModal").modal("hide");
@@ -583,13 +613,13 @@ function delMerchantApply(routeId){
 	}
 }
 
-//删除商户
+//审核商户
 function updateStatus(routeId, status){
     var msg='';
-    if(status == 0) {
-    	msg = '你确定要冻结此商户吗？';
+    if(status == 2) {
+    	msg = '你确定此商户审核通过吗？';
     } else {
-    	msg = '你确定要解冻此商户吗？';
+    	msg = '你确定此商户审核不通过吗？';
     }
 	if(confirm(msg)){
 		$.ajax({
@@ -617,22 +647,44 @@ function editMerchant(id){
 }
 
 //验证数据
-function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
-	if(type == ''){
-		$("input[name='type']").focus();
-		alert("商户名不能为空");
+function checkAccount(){
+	var orgId = $("[name='orgId']").val();
+	if(orgId == ''){
+		$("[name='orgId']").focus();
+		alert("所属机构不能为空");
 		return false;
 	}
+	var type = $("[name='type']").val();
 	if(type == ''){
-		$("input[name='type']").focus();
-		alert("昵称不能为空");
+		$("[name='type']").focus();
+		alert("商户类型不能为空");
 		return false;
 	}
-	if(type == ''){
-		$("input[name='type']").focus();
-		alert("密码不能为空");
+	var name = $("input[name='name']").val();
+	if(name == ''){
+		$("input[name='name']").focus();
+		alert("商户名称不能为空");
 		return false;
 	}
+	var shortName = $("input[name='shortName']").val();
+	var industryCategory= $("input[name='industryCategory']").val();
+	var city= $("[name='city']").val();
+	var address= $("input[name='address']").val();
+	var legal= $("input[name='legal']").val();
+	var email= $("input[name='email']").val();
+	var mobile= $("input[name='mobile']").val();
+	var bankId = $("[name='bankId']").val();
+	var bankName = $("input[name='bankName']").val();
+	var bankAccountType = $("[name='bankAccountType']").val();
+	var bankCardNo = $("input[name='bankCardNo']").val();
+	var certType = $("[name='certType']").val();
+	var bankAccountName = $("input[name='bankAccountName']").val();
+	var certNo = $("input[name='certNo']").val();
+	var mobileNo = $("input[name='mobileNo']").val();
+	var payFeeType = $("[name='payFeeType']").val();
+	var payFee = $("input[name='payFee']").val();
+	var loanFeeType = $("[name='loanFeeType']").val();
+	var loanFee = $("input[name='loanFee']").val();
 	return true;
 }
 
@@ -642,9 +694,47 @@ function reloadModelData(url,title,btntext,id){
 	$("#merchantModal #imgSubmit").text(btntext);
 	$("input[name='url']").val(url);
 	$("input[name='id']").val(id);
-	
+	if(id != '') {
+		$.ajax({
+			type:"GET",
+			url:_ctx+"/merchantApply/get",
+			dataType:"json",
+			data:{id:id},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					alert(data);
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
 }
 
+var input = document.getElementById("imgfile");
+if (typeof (FileReader) === 'undefined') {
+    result.innerHTML = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
+    input.setAttribute('disabled', 'disabled');
+} else {
+    input.addEventListener('change', readFile, false);
+}
+function readFile() {
+	var file = this.files[0];
+	alert(file)
+    //判断是否是图片类型
+    if (!/image\/\w+/.test(file.type)) {
+        alert("只能选择图片");
+        return false;
+   }
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function (e) {
+    	base64Code=this.result;
+    	$("#merchantModal input[name='pics']").val(this.result);
+    	$("#showImg").attr("src",this.result);
+    }
+ }
 </script>
 </body>
 </html>

@@ -161,4 +161,10 @@
       mobile_no = #{mobileNo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByMerchantId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_apply_bank_info
+    where merchant_id = #{id,jdbcType=INTEGER}
+  </select>
 </mapper>

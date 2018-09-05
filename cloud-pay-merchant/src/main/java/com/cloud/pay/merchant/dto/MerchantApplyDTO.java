@@ -4,30 +4,35 @@ import java.util.Date;
 
 /**
  * 商户申请DTO
+ * 
  * @author xzq
  *
  */
 public class MerchantApplyDTO {
 
-    private Integer id;
-    
-    private String code;
+	private Integer id;
 
-    private String name;
-    
-    private String orgName;
+	private Integer version;
 
-    private Integer type;
+	private String code;
 
-    private Integer status;
+	private String name;
+	
+	private Integer orgId;
 
-    private String creator;
+	private String orgName;
 
-    private Date createTime;
+	private Integer type;
 
-    private String modifer;
+	private Integer status;
 
-    private Date modifyTime;
+	private String creator;
+
+	private Date createTime;
+
+	private String modifer;
+
+	private Date modifyTime;
 
 	public Integer getId() {
 		return id;
@@ -35,6 +40,14 @@ public class MerchantApplyDTO {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	public String getCode() {
@@ -108,6 +121,13 @@ public class MerchantApplyDTO {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-	
-	
+
+	public Integer getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Integer orgId) {
+		this.orgId = orgId;
+	}
+
 }

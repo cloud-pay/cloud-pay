@@ -165,6 +165,6 @@
     select 
     <include refid="Base_Column_List" />
     from t_merchant_apply_bank_info
-    where merchant_id = #{id,jdbcType=INTEGER}
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
   </select>
 </mapper>

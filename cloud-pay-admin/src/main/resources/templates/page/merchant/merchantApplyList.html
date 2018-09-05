@@ -703,7 +703,7 @@ function reloadModelData(url,title,btntext,id){
 			cache:false,
 			success:function(data){
 				if(data.status == 'success'){
-					alert(data);
+					alert(data.data.baseInfo.id);
 				}else{
 					alert(data.msg);
 				}

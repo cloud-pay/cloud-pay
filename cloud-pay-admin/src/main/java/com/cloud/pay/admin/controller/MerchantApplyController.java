@@ -145,7 +145,7 @@ public class MerchantApplyController extends BaseController{
 		try {
 			ParameterMap map = this.getParameterMap();
 			Integer id = Integer.parseInt(map.getString("id"));
-			return ResponseModel.getModel("ok", "success", null);
+			return ResponseModel.getModel("ok", "success", merchantApplyService.select(id));
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

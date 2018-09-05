@@ -90,4 +90,10 @@
       attachement_path = #{attachementPath,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByMerchantId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_apply_attachement_info
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
 </mapper>

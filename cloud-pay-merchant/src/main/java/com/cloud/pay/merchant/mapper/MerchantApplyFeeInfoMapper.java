@@ -1,5 +1,7 @@
 package com.cloud.pay.merchant.mapper;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
 
 public interface MerchantApplyFeeInfoMapper {
@@ -46,5 +48,5 @@ public interface MerchantApplyFeeInfoMapper {
      */
     int updateByPrimaryKey(MerchantApplyFeeInfo record);
     
-    MerchantApplyFeeInfo selectByMerchantId(Integer id);
+    MerchantApplyFeeInfo selectByMerchantId(@Param("merchantId")Integer merchantId);
 }

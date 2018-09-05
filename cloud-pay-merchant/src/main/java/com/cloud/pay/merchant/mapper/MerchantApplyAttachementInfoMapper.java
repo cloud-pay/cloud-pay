@@ -2,6 +2,8 @@ package com.cloud.pay.merchant.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
 
 public interface MerchantApplyAttachementInfoMapper {
@@ -17,5 +19,5 @@ public interface MerchantApplyAttachementInfoMapper {
 
     int updateByPrimaryKey(MerchantApplyAttachementInfo record);
     
-    List<MerchantApplyAttachementInfo> selectByMerchantId(Integer id);
+    List<MerchantApplyAttachementInfo> selectByMerchantId(@Param("merchantId")Integer merchantId);
 }

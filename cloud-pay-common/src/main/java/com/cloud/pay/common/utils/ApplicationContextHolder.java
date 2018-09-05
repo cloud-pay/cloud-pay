@@ -1,4 +1,4 @@
-package com.cloud.pay.channel.utils;
+package com.cloud.pay.common.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

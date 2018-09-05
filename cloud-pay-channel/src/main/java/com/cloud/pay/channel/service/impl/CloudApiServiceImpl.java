@@ -24,6 +24,8 @@ import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
+import com.cloud.pay.channel.vo.ReconDownFileReqVO;
+import com.cloud.pay.channel.vo.ReconDownFileResVO;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeQueryParam;
@@ -35,7 +37,7 @@ import com.cloud.pay.common.exception.CloudApiExcetion;
  * 渠道接口实现类
  * @author wangy
  */
-@Service
+@Service("cloudApiService")
 public class CloudApiServiceImpl implements ICloudApiService {
 	
 	private Logger log = LoggerFactory.getLogger(CloudApiServiceImpl.class);
@@ -75,7 +77,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			return result;
 		}
 		//TODO ...根据传入的订单交易渠道获取渠道信息
-		ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelCodeByChannelCode(tradeReq.getChannelCode()));
+		ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelCode(tradeReq.getChannelCode()));
 		 result = (PayTradeQueryResVO) tradePayExecutor.execute(tradeReq);
 		log.info("渠道接口：代付结果查询结束，响应参数：{}",result);
 		return result;
@@ -97,6 +99,18 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeUnionPayHandler(ChannelType.BOHAI.getChannelENName());
 		resVO = (PayTradeResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口：单笔银联代付，响应参数：{}",resVO);
+		return resVO;
+	}
+
+
+
+	@Override
+	public ReconDownFileResVO downReconFile(ReconDownFileReqVO reqVO) {
+		log.info("渠道接口：下载对账文件，请求参数：{}",reqVO);
+		ReconDownFileResVO resVO = null;
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.getChannelByChannelCode(reqVO.getChannelCode()));
+		resVO = (ReconDownFileResVO) tradePayExecutor.execute(reqVO);
+		log.info("渠道接口：下载对账文件，响应结果：{}",resVO);
 		return resVO;
 	}
 

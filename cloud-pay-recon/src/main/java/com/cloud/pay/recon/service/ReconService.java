@@ -1,7 +1,5 @@
 package com.cloud.pay.recon.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cloud.pay.common.contants.ChannelType;
 import com.cloud.pay.common.entity.Channel;
+import com.cloud.pay.common.exception.CloudApiExcetion;
 import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;
@@ -29,6 +29,9 @@ public class ReconService {
 	
 	@Autowired
 	private ChannelService channelService;
+	
+	@Autowired
+	private ReconChannelHandlerFactory reconChannelHandlerFactory;
 	
 	/**
 	 * 初始化对账数据
@@ -74,6 +77,7 @@ public class ReconService {
 		}
 		//修改对账记录状态为对账中
 		recon.setReconStatus(3);
+		recon.setFailReson("");
 		int i = reconMapper.updateByPrimaryKeySelective(recon);
 		log.info("渠道：{},对帐日期：{}对账开始",recon.getChannelId(),recon.getAccountDate());
 		//step 3 开启一个新的线程，后台对账
@@ -90,17 +94,22 @@ public class ReconService {
 		//根据对账记录，读取对应的渠道信息
 		Channel channel = channelService.selectById(recon.getChannelId());
 		if(null == channel) {
+			recon.setReconStatus(2);
 			recon.setFailReson("对账渠道不存在");
 			reconMapper.updateByPrimaryKey(recon);
 			return;
 		}
-		// step 1 调用渠道接口，下载对账文件
-		// step 2 将渠道成功交易表成功以及其他要素相匹配的记录更新为对账成功
-		// step 3 将渠道成功交易表失败以及其他要素相匹配的记录更新为对账成功
-		// step 4 将渠道失败交易表成功以及其他要素相匹配的记录生成异常订单数据（记录异常原因为：渠道失败平台成功）
-		// step 5 将渠道失败交易表失败以及其他要素相匹配的记录更新为对账失败
-		// step 6 将渠道成功但是交易表除订单号以外其他要素不匹配的记录生成异常订单数据（记录异常原因为：和渠道相关信息不匹配）
-		// step 7 将渠道失败但是交易表除订单号以外其他要素不匹配的记录生成异常订单数据(记录异常原因为：和渠道相关信息不匹配)
+		try {
+			IReconServiceHandler reconServiceHandler = reconChannelHandlerFactory.getHandler(ChannelType.getChannelByChannelCode(channel.getChannelCode()));
+			reconServiceHandler.handle(recon);
+		}catch(CloudPayException e) {
+			recon.setReconStatus(2);
+			log.error("对账出现异常：{}",e);
+			recon.setFailReson(e.getMessage());
+			reconMapper.updateByPrimaryKey(recon);
+			return;
+		}
+		
 		log.info("对账结束");
 	}
 	

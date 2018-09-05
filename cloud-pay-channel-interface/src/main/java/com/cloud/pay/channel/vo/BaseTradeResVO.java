@@ -27,6 +27,8 @@ public class BaseTradeResVO implements Serializable{
 	
 	private String errorMessage; //错误描述
 	
+	public BaseTradeResVO() {}
+	
 	public BaseTradeResVO(String errorCode,String errorMessage) {
 		this.errorCode = errorCode;
 		this.errorMessage = errorMessage;

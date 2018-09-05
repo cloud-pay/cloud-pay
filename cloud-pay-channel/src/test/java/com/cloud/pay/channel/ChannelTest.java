@@ -16,6 +16,8 @@ import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
+import com.cloud.pay.channel.vo.ReconDownFileReqVO;
+import com.cloud.pay.channel.vo.ReconDownFileResVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -74,6 +76,19 @@ public class ChannelTest {
 		reqVO.setAmt(new BigDecimal("99"));
 		PayTradeResVO response =cloudApiService.unionPay(reqVO);
 		System.out.println("===============================================");
+		System.out.println(response);
+	}
+	
+	/**
+	 * 下载对账文件
+	 */
+	@Test
+	public void downReconFile() {
+		ReconDownFileReqVO reqVO = new ReconDownFileReqVO();
+		reqVO.setMerchantNo("");
+		reqVO.setChannelCode("1");
+		reqVO.setReconDate("20180904");
+		ReconDownFileResVO response = cloudApiService.downReconFile(reqVO);
 		System.out.println(response);
 	}
 }

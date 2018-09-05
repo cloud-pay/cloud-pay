@@ -9,10 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
-import com.cloud.pay.channel.utils.ApplicationContextHolder;
-import com.cloud.pay.channel.vo.BaseTradeReqVO;
 import com.cloud.pay.common.contants.ChannelType;
 import com.cloud.pay.common.exception.CloudApiExcetion;
+import com.cloud.pay.common.utils.ApplicationContextHolder;
 
 /**
  * 渠道接口简单工厂
@@ -24,6 +23,7 @@ public class TradePayTypeHandlerFactory {
 	private final Map<String,String> tradePayMapper = new HashMap<>(); //代付通道执行类
 	private final Map<String,String> tradePayQueryMapper = new HashMap<>(); //代付结果查询通道执行类
 	private final Map<String,String> tradeUnionPayMapper = new HashMap<>(); //银行银联代付通道
+	private final Map<String,String> tradeDownReconFileMapper = new HashMap<>();//下载对账文件 
     
 	/**
 	 * 启动的时候将渠道接口信息直接加载到内存
@@ -37,6 +37,7 @@ public class TradePayTypeHandlerFactory {
 		tradePayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiTradePayExecutor");
 		tradePayQueryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiTradeQueryExecutor");
 		tradeUnionPayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiUnionTradePayExecutor");
+		tradeDownReconFileMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiDownReconFileExecutor");
 	}
 	
 	/**
@@ -64,6 +65,15 @@ public class TradePayTypeHandlerFactory {
 	 */
 	public ITradePayExecutor getTradeUnionPayHandler(String tradeType) {
 		  return getHandler(tradeUnionPayMapper,tradeType);
+	}
+	
+	/**
+	 * 获取对账文件下载执行类
+	 * @param tradeType
+	 * @return
+	 */
+	public ITradePayExecutor getTradeDownReconFileHandler(String tradeType) {
+		  return getHandler(tradeDownReconFileMapper,tradeType);
 	}
 	
 	private <T> T getHandler(Map<String, String> mapper, String tradeType) {

@@ -110,8 +110,8 @@ div.cbp label.font{
 											<label for="search_orgId">所属机构</label>
 										    <select name="search_orgId" class="form-control">
 										      <option value="">请选择</option>
-										      <option value="1">合作机构</option>
-										      <option value="2">商户</option>
+										      <option value="org">合作机构</option>
+										      <option value="merchant">商户</option>
 										    </select>
 										</div>
 									</div>
@@ -182,30 +182,29 @@ div.cbp label.font{
                 </thead>
                 <tbody>
                 <tr th:if="${QX.query == '1'}" th:each="merchant,stat :${merchantApplys}">
-                  <td th:text="${merchant.type}">主体类型</td>
-                  <td th:if="${merchant.type == 1}" th:text="${merchant.merchantName}"></td>
-                  <td th:if="${merchant.type == 2}"></td>
-                  <td th:if="${merchant.type == 1}"></td>
-                  <td th:if="${merchant.type == 2}" th:text="${merchant.merchantName}"></td>
-                  <td th:text="${merchant.channelName}">通道名称</td>
-                  <td th:if="${merchant.loaning == 1}" th:text="是"></td>
-				  <td th:if="${merchant.loaning == 0}" th:text="否"></td>
-				  <td th:text="${merchant.loaningOrgName}">垫资机构名称</td>
-				  <td th:text="${merchant.loaningAmount}">垫资限额</td>
-				  <td th:if="${merchant.status == 1}" th:text="正常"></td>
-				  <td th:if="${merchant.status == 0}" th:text="冻结"></td>
-                  <td th:text="${#dates.format(merchant.modifyTime,'yyyy-MM-dd HH:mm:ss')}">更新时间</td>
-                  <td th:text="${merchant.modifer}">更新人</td>
+                  <td th:text="${merchant.code}"></td>
+                  <td th:text="${merchant.name}"></td>
+                  <td th:if="${merchant.type == 1}" th:text="代理商"></td>
+                  <td th:if="${merchant.type == 2}" th:text="第三方支付"></td>
+                  <td th:if="${merchant.type == 3}" th:text="垫资商"></td>
+                  <td th:if="${merchant.type == 4}" th:text="企业商户"></td>
+                  <td th:if="${merchant.type == 5}" th:text="个人商户"></td>
+                  <td th:text="${merchant.orgName}"></td>
+                  <td th:if="${merchant.status == 1}" th:text="待审核"></td>
+				  <td th:if="${merchant.status == 2}" th:text="审核通过"></td>
+				  <td th:if="${merchant.status == 3}" th:text="审核不通过"></td>
+				  <td th:text="${#dates.format(merchant.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${merchant.creator}"></td>
+                  <td th:text="${#dates.format(merchant.modifyTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${merchant.modifer}"></td>
                   <td>
                   	<div th:if="${merchant.id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" 
-							th:onclick="'editMerchant(\''+${merchant.id}+'\',\''+${merchant.type}+'\',\''+${merchant.merchantId}+'\',\''+${merchant.channelId}+'\'
-							,\''+${merchant.loaning}+'\',\''+${merchant.loaningOrgId}+'\',\''+${merchant.loaningAmount}+'\');'">
+	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1' && merchant.status == 1}" class="btn btn-xs btn-info" 
+							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
 							<i class="fa fa-edit"></i> 编辑
 						</span>
-	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delRoute(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
-	                  	<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
-	                  	<span data-toggle="tooltip" title="删除" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delMerchantApply(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
+	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
@@ -228,7 +227,7 @@ div.cbp label.font{
 <!-- 新增或修改的模态框 -->
 <div class="modal fade" id="merchantModal" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
@@ -236,58 +235,166 @@ div.cbp label.font{
 				<h4 class="modal-title text-center" id="usermodelHead">添加商户</h4>
 			</div>
 			<div class="modal-body">
-				<form class="form-horizontal"  role="form">
+				<form class="form-horizontal" role="form">
 				  <input type="hidden" name="url" value=""/>
 				  <input type="hidden" name="id" value=""/>
-				  <input type="hidden" name="pics" value=""/>
-				  <input type="hidden" name="oldpath" value=""/>
+				  <input type="hidden" name="code" value=""/>
+				  <h2>基础资料： </h2>
 				  <div class="form-group">
-					    <label for="type" class="col-sm-2 control-label">主体类型</label>
-					    <div class="col-sm-10">
+					    <label for="orgId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所属机构</label>
+					    <div class="col-sm-4">
+						    <select name="orgId" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						    </select>
+					    </div>
+					    <label for="type" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户类型</label>
+					    <div class="col-sm-4">
 						    <select name="type" class="form-control">
 						      <option value="">请选择</option>
-							  <option value="1">合作机构</option>
-							  <option value="2">商户</option>
+							  <option value="4">企业商户</option>
+							  <option value="5">个人商户</option>
 						    </select>
 					    </div>
 					  </div>
 				
 				  <div class="form-group">
-					    <label for="merchantId" class="col-sm-2 control-label">所属机构</label>
-					    <div class="col-sm-10">
-						    <input class="form-control" name="merchantId" value="" id="merchantId">
+					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户名称</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="name" value="" id="name">
+					    </div>
+					    <label for="shortName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户简称</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="shortName" value="" id="shortName">
 					    </div>
 					  </div>
-				  <div class="form-group">
-					    <label for="channelId" class="col-sm-2 control-label">通道名称</label>
-					    <div class="col-sm-10">
-						    <input class="form-control" name="channelId" value="" id="channelId">
+					  
+					<div class="form-group">
+					    <label for="industryCategory" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>行业类别</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="industryCategory" value="" id="industryCategory">
+					    </div>
+					    <label for="city" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所在城市</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="city" value="" id="city">
 					    </div>
 					  </div>
-				  
-				  <div class="form-group">
-					    <label for="loaning" class="col-sm-2 control-label">是否需要垫资</label>
-					    <div class="col-sm-10">
-						    <select name="loaning" class="form-control">
-						      <option value="0">否</option>
-						      <option value="1">是</option>
+					  
+					<div class="form-group">
+					    <label for="address" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>详细地址</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="address" value="" id="address">
+					    </div>
+					    <label for="legal" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="legal" value="" id="legal">
+					    </div>
+					  </div>
+					 <div class="form-group">
+					    <label for="email" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>邮箱</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="email" value="" id="email">
+					    </div>
+					    <label for="mobile" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人手机</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="mobile" value="" id="mobile">
+					    </div>
+					  </div>
+					  <h2>结算资料： </h2>
+					  <div class="form-group">
+					    <label for="bankName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>开户银行</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="bankName" value="" id="bankName">
+					    </div>
+					    <label for="bankId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>联行号</label>
+					    <div class="col-sm-4">
+						    <select name="bankId" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
 						    </select>
 					    </div>
 					  </div>
-				  
-				  <div class="form-group">
-					    <label for="loaningOrgId" class="col-sm-2 control-label">垫资机构名称</label>
-					    <div class="col-sm-10">
-						    <input class="form-control" name="loaningOrgId" value="" id="loaningOrgId">
+					  
+					  <div class="form-group">
+					    <label for="bankCardNo" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>银行卡号</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="bankCardNo" value="" id="bankCardNo">
+					    </div>
+					    <label for="bankAccountType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>账户类型</label>
+					    <div class="col-sm-4">
+						    <select name="bankAccountType" class="form-control">
+						      <option value="">请选择</option>
+						      <option value="1">企业</option>
+						      <option value="2">个人</option>
+						    </select>
 					    </div>
 					  </div>
-				  
-				  <div class="form-group">
-				    <label for="loaningAmount" class="col-sm-2 control-label">垫资限额</label>
-				    <div class="col-sm-10">
-				      <input type="number" class="form-control" name="loaningAmount" value="" id="loaningAmount" placeholder="垫资限额">
-				    </div>
-				  </div>
+					  
+					  <div class="form-group">
+					    <label for="bankAccountName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>户名</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="bankAccountName" value="" id="bankAccountName">
+					    </div>
+					    <label for="certType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>证件类型</label>
+					    <div class="col-sm-4">
+						    <select name="certType" class="form-control">
+						      <option value="1">身份证</option>
+						    </select>
+					    </div>
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="certNo" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>证件号码</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="certNo" value="" id="certNo">
+					    </div>
+					    <label for="mobileNo" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>手机号码</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="mobileNo" value="" id="mobileNo">
+					    </div>
+					  </div>
+					  
+					  <h2>费率设置： </h2>
+					  <div class="form-group">
+					    <label for="payFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>代付费率</label>
+					    <div class="col-sm-4">
+						    <select name="payFeeType" class="form-control">
+						      <option value="1">按比例计算</option>
+						      <option value="2">按笔数计算</option>
+						    </select>
+					    </div>
+					    <div class="col-sm-3">
+						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率（%）">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="loanFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>垫资费率</label>
+					    <div class="col-sm-4">
+						    <select name="loanFeeType" class="form-control">
+						      <option value="1">按比例计算</option>
+						      <option value="2">按笔数计算</option>
+						    </select>
+					    </div>
+					    <div class="col-sm-3">
+						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率（%）">
+					    </div>
+					  </div>
+					  
+					  <h2>证件上传： </h2>
+					  <div class="form-group" data-toggle="tooltip" title="如果不修改则不需要选择文件">
+					    <label for="imgfile" class="col-sm-2 control-label">上传头像</label>
+					    <div class="col-sm-10">
+					      <a href="javascript:void(0)"><input type="file" class="form-control file" name="imgfile" value="" id="imgfile" placeholder="请选择文件"></a>
+					    </div>
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="imgfile" class="col-sm-2 control-label"></label>
+					    <div class="col-sm-10">
+					      <div><img src="" data-toggle="tooltip" title="当前头像或更新后的头像" id="showImg" style="width: 50px;"></div>
+					    </div>
+					  </div>
+	                
 				  
 				 </form>
 			</div>
@@ -392,32 +499,89 @@ $(function(){
     });
 	
 	$("#addMerchant").click(function(){
-		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","","","","","","","");
+		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","");
 		$("#merchantModal").modal("show");
 	});
 	
+	var BaseInfo = function(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
+		 this.id = id;
+		 this.code = code;
+		 this.orgId = orgId;
+		 this.name = name;
+		 this.shortName = shortName;
+		 this.type = type;
+		 this.industryCategory = industryCategory;
+		 this.legal = legal;
+		 this.city = city;
+		 this.address = address;
+		 this.email = email;
+		 this.mobile = mobile;
+	 }
+	var BankInfo = function(bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
+		 this.bankName = bankName;
+		 this.bankId = bankId;
+		 this.bankCardNo = bankCardNo;
+		 this.bankAccontType = bankAccontType;
+		 this.bankAccountName = bankAccountName;
+		 this.certType = certType;
+		 this.certNo = certNo;
+		 this.mobileNo = mobileNo;
+	 }
+	var FeeInfo = function(payFeeType, payFee, loanFeeType, loanFee) {
+		 this.payFeeType = payFeeType;
+		 this.payFee = payFee;
+		 this.loanFeeType = loanFeeType;
+		 this.loanFee = loanFee;
+	 }
+	 var AttachementInfo = function(attachementType, attachementPath) {
+		 this.attachementType = attachementType;
+		 this.attachementPath = attachementPath;
+	 }
+	
 	//确认按钮
 	$("#imgSubmit").click(function(){
-		var routeId = $("input[name='id']").val();
+		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
+		var code = $("input[name='code']").val();
+		var orgId = $("[name='orgId']").val();
 		var type = $("[name='type']").val();
-		var merchantId = $("input[name='merchantId']").val();
-		var merchantId = $("input[name='merchantId']").val();
-		var channelId= $("input[name='channelId']").val();
-		var loaning= $("[name='loaning']").val();
-		var loaningOrgId= $("input[name='loaningOrgId']").val();
-		var loaningAmount= $("input[name='loaningAmount']").val();
+		var name = $("input[name='name']").val();
+		var shortName = $("input[name='shortName']").val();
+		var industryCategory= $("input[name='industryCategory']").val();
+		var city= $("[name='city']").val();
+		var address= $("input[name='address']").val();
+		var legal= $("input[name='legal']").val();
+		var email= $("input[name='email']").val();
+		var mobile= $("input[name='mobile']").val();
+		var baseInfo = new BaseInfo(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
+		//alert(JSON.stringify(baseInfo));
+		var bankId = $("[name='bankId']").val();
+		var bankName = $("input[name='bankName']").val();
+		var bankAccountType = $("[name='bankAccountType']").val();
+		var bankCardNo = $("input[name='bankCardNo']").val();
+		var certType = $("[name='certType']").val();
+		var bankAccountName = $("input[name='bankAccountName']").val();
+		var certNo = $("input[name='certNo']").val();
+		var mobileNo = $("input[name='mobileNo']").val();
+		var bankInfo = new BankInfo(bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo);
+		//alert(JSON.stringify(bankInfo));
+		var payFeeType = $("[name='payFeeType']").val();
+		var payFee = $("input[name='payFee']").val();
+		var loanFeeType = $("[name='loanFeeType']").val();
+		var loanFee = $("input[name='loanFee']").val();
+		var feeInfo = new FeeInfo(payFeeType, payFee, loanFeeType, loanFee);
+		//alert(JSON.stringify(feeInfo));
 		if(url == _ctx+'/merchantApply/add'){
-			if(!checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount)){
+			if(!checkAccount()){
 				return false;
 			}
 		}
 		$.ajax({
 			type:"post",
-			url:url+'?merchantType=merchant',
+			url:url,
 			cache:false,
 			dataType:"json",
-			data:{id:routeId,merchantId:merchantId,channelId:channelId,loaning:loaning,loaningAmount:loaningAmount,loaningOrgId:loaningOrgId,type:type},
+			data:{baseInfo:JSON.stringify(baseInfo),bankInfo:JSON.stringify(bankInfo),feeInfo:JSON.stringify(feeInfo)},
 			success:function(data){
 				if(data.status == 'success'){
 					$("#merchantModal").modal("hide");
@@ -432,7 +596,7 @@ $(function(){
 })
 
 //删除商户
-function delRoute(routeId){
+function delMerchantApply(routeId){
 	if(confirm("你确定要删除此商户吗？")){
 		$.ajax({
 			type:"POST",
@@ -451,13 +615,13 @@ function delRoute(routeId){
 	}
 }
 
-//删除商户
+//审核商户
 function updateStatus(routeId, status){
     var msg='';
-    if(status == 0) {
-    	msg = '你确定要冻结此商户吗？';
+    if(status == 2) {
+    	msg = '你确定此商户审核通过吗？';
     } else {
-    	msg = '你确定要解冻此商户吗？';
+    	msg = '你确定此商户审核不通过吗？';
     }
 	if(confirm(msg)){
 		$.ajax({
@@ -478,47 +642,123 @@ function updateStatus(routeId, status){
 }
 
 //编辑商户
-function editMerchant(id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
-	console.log(id+","+type+","+merchantId+","+channelId+","+loaning+","+loaningOrgId+","+loaningAmount);
-	reloadModelData(_ctx+"/merchantApply/edit","编辑商户","更新",id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount);
+function editMerchant(id){
+	console.log(id);
+	reloadModelData(_ctx+"/merchantApply/edit","编辑商户","更新",id);
 	$("#merchantModal").modal("show");
 }
 
 //验证数据
-function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
-	if(type == ''){
-		$("input[name='type']").focus();
-		alert("商户名不能为空");
+function checkAccount(){
+	var orgId = $("[name='orgId']").val();
+	if(orgId == ''){
+		$("[name='orgId']").focus();
+		alert("所属机构不能为空");
 		return false;
 	}
+	var type = $("[name='type']").val();
 	if(type == ''){
-		$("input[name='type']").focus();
-		alert("昵称不能为空");
+		$("[name='type']").focus();
+		alert("商户类型不能为空");
 		return false;
 	}
-	if(type == ''){
-		$("input[name='type']").focus();
-		alert("密码不能为空");
+	var name = $("input[name='name']").val();
+	if(name == ''){
+		$("input[name='name']").focus();
+		alert("商户名称不能为空");
 		return false;
 	}
+	var shortName = $("input[name='shortName']").val();
+	var industryCategory= $("input[name='industryCategory']").val();
+	var city= $("[name='city']").val();
+	var address= $("input[name='address']").val();
+	var legal= $("input[name='legal']").val();
+	var email= $("input[name='email']").val();
+	var mobile= $("input[name='mobile']").val();
+	var bankId = $("[name='bankId']").val();
+	var bankName = $("input[name='bankName']").val();
+	var bankAccountType = $("[name='bankAccountType']").val();
+	var bankCardNo = $("input[name='bankCardNo']").val();
+	var certType = $("[name='certType']").val();
+	var bankAccountName = $("input[name='bankAccountName']").val();
+	var certNo = $("input[name='certNo']").val();
+	var mobileNo = $("input[name='mobileNo']").val();
+	var payFeeType = $("[name='payFeeType']").val();
+	var payFee = $("input[name='payFee']").val();
+	var loanFeeType = $("[name='loanFeeType']").val();
+	var loanFee = $("input[name='loanFee']").val();
 	return true;
 }
 
 //加载模态框的数据
-function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+function reloadModelData(url,title,btntext,id){
 	$("#merchantModal #usermodelHead").text(title);
 	$("#merchantModal #imgSubmit").text(btntext);
 	$("input[name='url']").val(url);
-	
 	$("input[name='id']").val(id);
-	$("[name='type']").val(type);
-	$("input[name='merchantId']").val(merchantId);
-	$("input[name='channelId']").val(channelId);
-	$("[name='loaning']").val(loaning);
-	$("input[name='loaningOrgId']").val(loaningOrgId);
-	$("input[name='loaningAmount']").val(loaningAmount);
+	if(id != '') {
+		$.ajax({
+			type:"GET",
+			url:_ctx+"/merchantApply/get",
+			dataType:"json",
+			data:{id:id},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					$("input[name='code']").val(data.data.baseInfo.code);
+					$("[name='orgId']").val(data.data.baseInfo.orgId);
+					$("[name='type']").val(data.data.baseInfo.type);
+					$("input[name='name']").val(data.data.baseInfo.name);
+					$("input[name='shortName']").val(data.data.baseInfo.shortName);
+					var industryCategory= $("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
+					$("[name='city']").val(data.data.baseInfo.city);
+					$("input[name='address']").val(data.data.baseInfo.address);
+					$("input[name='legal']").val(data.data.baseInfo.legal);
+					$("input[name='email']").val(data.data.baseInfo.email);
+					$("input[name='mobile']").val(data.data.baseInfo.mobile);
+					$("[name='bankId']").val(data.data.bankInfo.bankId);
+					$("input[name='bankName']").val(data.data.bankInfo.bankName);
+					$("[name='bankAccountType']").val(data.data.bankInfo.bankAccountType);
+					$("input[name='bankCardNo']").val(data.data.bankInfo.bankCardNo);
+					$("[name='certType']").val(data.data.bankInfo.certType);
+					$("input[name='bankAccountName']").val(data.data.bankInfo.bankAccountName);
+					$("input[name='certNo']").val(data.data.bankInfo.certNo);
+					$("input[name='mobileNo']").val(data.data.bankInfo.mobileNo);
+					$("[name='payFeeType']").val(data.data.feeInfo.payFeeType);
+					$("input[name='payFee']").val(data.data.feeInfo.payFee);
+					$("[name='loanFeeType']").val(data.data.feeInfo.loanFeeType);
+					$("input[name='loanFee']").val(data.data.feeInfo.loanFee);
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
 }
 
+var input = document.getElementById("imgfile");
+if (typeof (FileReader) === 'undefined') {
+    result.innerHTML = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
+    input.setAttribute('disabled', 'disabled');
+} else {
+    input.addEventListener('change', readFile, false);
+}
+function readFile() {
+	var file = this.files[0];
+	alert(file)
+    //判断是否是图片类型
+    if (!/image\/\w+/.test(file.type)) {
+        alert("只能选择图片");
+        return false;
+   }
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function (e) {
+    	base64Code=this.result;
+    	$("#merchantModal input[name='pics']").val(this.result);
+    	$("#showImg").attr("src",this.result);
+    }
+ }
 </script>
 </body>
 </html>

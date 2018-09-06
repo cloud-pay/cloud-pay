@@ -5,6 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="version" property="version" jdbcType="INTEGER" />
     <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="short_name" property="shortName" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -21,7 +22,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, version, org_id, name, short_name, type, industry_category, legal, city, address, 
+    id, version, org_id, code, name, short_name, type, industry_category, legal, city, address, 
     email, mobile, status, creator, create_time, modifer, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -34,14 +35,14 @@
     delete from t_merchant_apply_base_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo" >
-    insert into t_merchant_apply_base_info (id, version, org_id, 
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo"  useGeneratedKeys="true" keyProperty="id" >
+    insert into t_merchant_apply_base_info (id, version, org_id, code,
       name, short_name, type, 
       industry_category, legal, city, 
       address, email, mobile, 
       status, creator, create_time, 
       modifer, modify_time)
-    values (#{id,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{industryCategory,jdbcType=VARCHAR}, #{legal,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
       #{address,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
@@ -59,6 +60,9 @@
       </if>
       <if test="orgId != null" >
         org_id,
+      </if>
+      <if test="code != null" >
+        code,
       </if>
       <if test="name != null" >
         name,
@@ -113,6 +117,9 @@
       <if test="orgId != null" >
         #{orgId,jdbcType=INTEGER},
       </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
@@ -157,11 +164,60 @@
       </if>
     </trim>
   </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo" >
+    update t_merchant_apply_base_info
+    <set >
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        org_Id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null" >
+        short_name = #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="industryCategory != null" >
+        industry_category = #{industryCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="legal != null" >
+        legal = #{legal,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="modifer != null" >
+        modifer = #{modifer,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
   <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantApplyBaseInfo" >
     update t_merchant_apply_base_info
     set version = #{version,jdbcType=INTEGER},
       org_id = #{orgId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
       short_name = #{shortName,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       industry_category = #{industryCategory,jdbcType=VARCHAR},
@@ -177,4 +233,45 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantApplyDTO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="org_name" property="orgName" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modifer" property="modifer" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="getMerchantApplyDTOs" resultMap="BaseResultDTO">
+	 	SELECT m.id, m.version, m.org_id, m1.name org_name, m.code, m.name, m.type, 
+    m.status, m.creator, m.create_time, m.modifer, m.modify_time
+		FROM 
+			t_merchant_apply_base_info m
+			left join t_merchant_base_info m1 on m.org_id = m1.id
+		where 1=1
+	  <if test="orgId != null" >
+        and m.org_id = #{orgId,jdbcType=INTEGER}
+      </if>
+      <if test="code != null and code != ''" >
+        and m.code = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null and name != ''" >
+        and m.name like concat('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="status != null" >
+        and m.status = #{status,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+        and m.modify_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+        and m.modify_time &lt; #{endTime}
+      </if>
+	 </select>
 </mapper>

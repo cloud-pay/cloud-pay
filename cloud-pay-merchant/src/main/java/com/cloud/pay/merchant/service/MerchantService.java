@@ -14,7 +14,7 @@ public class MerchantService {
 	@Autowired
 	private MerchantBaseInfoMapper merchantBaseInfoMapper;
 	
-	public List<MerchantDTO> getMerchantDTOs(Integer type) {
+	public List<MerchantDTO> getMerchantDTOs(String type) {
 		return merchantBaseInfoMapper.getMerchantDTOs(type);
 	}
 	

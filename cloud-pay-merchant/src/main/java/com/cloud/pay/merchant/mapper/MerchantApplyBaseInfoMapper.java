@@ -1,5 +1,11 @@
 package com.cloud.pay.merchant.mapper;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.cloud.pay.merchant.dto.MerchantApplyDTO;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 
 public interface MerchantApplyBaseInfoMapper {
@@ -32,4 +38,8 @@ public interface MerchantApplyBaseInfoMapper {
      * @mbggenerated Sun Sep 02 09:06:42 CST 2018
      */
     int updateByPrimaryKey(MerchantApplyBaseInfo record);
+    
+    List<MerchantApplyDTO> getMerchantApplyDTOs(@Param("orgId") Integer orgId, @Param("code") String code,
+			@Param("name") String name,@Param("status") Integer status, @Param("startTime") Date startTime,
+			@Param("endTime") Date endTime);
 }

@@ -1,5 +1,7 @@
 package com.cloud.pay.merchant.mapper;
 
+import java.util.Date;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +9,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-public class MerchantBaseInfoMapperTest {
+public class MerchantApplyBaseInfoMapperTest {
 
 	@Autowired
-	private MerchantBaseInfoMapper merchantBaseInfoMapper;
+	private MerchantApplyBaseInfoMapper merchantBaseInfoMapper;
 	
 	@Test
 	public void selectByPrimaryKeyTest() {
@@ -21,7 +25,14 @@ public class MerchantBaseInfoMapperTest {
 	}
 	
 	@Test
-	public void getBankListTest() {
-		System.out.println(merchantBaseInfoMapper.getMerchantDTOs("1"));
+	public void getMerchantApplyDTOsTest() {
+		System.out.println(merchantBaseInfoMapper.getMerchantApplyDTOs(1, "1", "2", 1, new Date(), new Date()));
+	}
+	
+	@Test
+	public void insertTest() {
+		MerchantApplyBaseInfo base = new MerchantApplyBaseInfo();
+		merchantBaseInfoMapper.insert(base);
+		System.out.println(base.getId());
 	}
 }

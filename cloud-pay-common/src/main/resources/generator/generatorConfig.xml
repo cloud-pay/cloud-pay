@@ -26,8 +26,8 @@
 			targetPackage="com.cloud.pay.recon.mapper" targetProject="${javaClientGenerator.targetProject}">
 			<property name="enableSubPackages" value="false" />
 		</javaClientGenerator>
-		<table tableName="t_recon" domainObjectName="Recon"></table>
-		<table tableName="t_recon_channel_bohai" domainObjectName="ReconChannelBohai"></table>
+		<!-- <table tableName="t_recon" domainObjectName="Recon"></table>
+		<table tableName="t_recon_channel_bohai" domainObjectName="ReconChannelBohai"></table> -->
 		<table tableName="t_recon_exception_trade" domainObjectName="ReconExceptionBohai"></table>
 		<!-- <table tableName="t_merchant_apply_bank_info" domainObjectName="MerchantApplyBankInfo"></table>
 		<table tableName="t_merchant_apply_base_info" domainObjectName="MerchantApplyBaseInfo"></table>

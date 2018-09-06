@@ -2,6 +2,8 @@ package com.cloud.pay.recon.mapper;
 
 import com.cloud.pay.recon.entity.ReconChannelBohai;
 import com.cloud.pay.recon.entity.ReconChannelBohaiExample;
+
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -111,5 +113,12 @@ public interface ReconChannelBohaiMapper {
      * 更新平帐记录（上游对账文件里面没有记账日期，所以这里暂时不考虑时间参数）
      * @return
      */
-    int updateReconStatusFlat();
+    int updateReconStatusFlat(String reconDate);
+    
+    /**
+      * 更新短款记录为不平帐
+     * @param reconDate
+     * @return
+     */
+    int updateShortUnflat(String reconDate);
 }

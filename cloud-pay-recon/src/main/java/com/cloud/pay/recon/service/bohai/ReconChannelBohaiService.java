@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.common.exception.CloudPayException;
+import com.cloud.pay.common.utils.DateUtil;
 import com.cloud.pay.recon.constant.ReconTypeEnum;
 import com.cloud.pay.recon.constant.bohai.ReconReturnCodeEnum;
 import com.cloud.pay.recon.entity.ReconChannelBohai;
@@ -90,13 +91,22 @@ public class ReconChannelBohaiService {
 	/**
 	 * 更新平帐记录
 	 */
-	public void updateReconStatusFlat() throws CloudPayException{
+	public void updateReconStatusFlat(Date reconDate) throws CloudPayException{
 		log.info("对账-渤海银行-更新平帐记录");
 		try {
-		   reconChannelBohaiMapper.updateReconStatusFlat();
+		   reconChannelBohaiMapper.updateReconStatusFlat(DateUtil.formatDate(reconDate,"yyyy-MM-dd"));
 		}catch(Exception e) {
 			throw new CloudPayException("更新平帐记录失败");
 		}
 		log.info("对账-渤海银行-更新平帐记录完成");
+	}
+	
+	/**
+	 * 更新短款记录为不平帐
+	 * @param reconDate
+	 * @return
+	 */
+	public int updateShortUnflat(String reconDate){
+		return reconChannelBohaiMapper.updateShortUnflat(reconDate);
 	}
 }

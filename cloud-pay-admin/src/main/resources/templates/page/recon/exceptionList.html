@@ -96,9 +96,8 @@ div.cbp label.font{
 <section class="content">
 	 <div class="box">
             <div class="box-header">
-              <h3 class="box-title">对账列表</h3>
+              <h3 class="box-title">异常订单数据明细</h3>
               <br><br>
-              <button class="btn btn-success btn-sm" id="initRecon">初始化</button>
               <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
 			  <button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
@@ -106,7 +105,7 @@ div.cbp label.font{
 			   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 					<div class="form-group">
 						<div class="form-line">
-							<label for="channelName">通道名称</label>
+							<label for="channelName">所属机构</label>
 							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>		
 						</div>
 					</div>
@@ -114,22 +113,16 @@ div.cbp label.font{
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 					<div class="form-group">
 						<div class="form-line">
-							<label for="accountDate">交易日期</label>
-							<input type="text" class="form-control" id="accountDate" name="accountDate" maxlength="20"></input>		
+							<label for="channelName">选择商户</label>
+							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>		
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 				    <div class="form-group">
 				        <div class="form-line">
-							<label for="reconStatus">对账状态</label>
-							<select name="reconStatus" id="reconStatus" class="form-control">
-							  <option value="">所有</option>
-						      <option value="0">未对账</option>
-						      <option value="1">对账成功</option>
-						      <option value="2">对账失败</option>
-						      <option value="3">对账中</option>
-						    </select>
+							<label for="reconStatus">订单编号</label>
+							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>	
 						</div>
 					  </div>
 				</div>
@@ -139,40 +132,27 @@ div.cbp label.font{
               <table id="reconList" class="table table-bordered table-striped">
                 <thead>
 	                <tr>
-	                  <th>序号</th>
-	                  <th >交易日期</th>
-	                  <th>通道名称</th>
-	                  <th>订单总笔数</th>
-	                  <th>订单总金额(元)</th>
-					  <th>异常订单数据</th>
-					  <th>对账状态</th>
-					  <th>失败原因</th>
-	                  <th>操作</th>
+	                  <th>订单编号</th>
+	                  <th>付款人账号</th>
+	                  <th>付款人账户名</th>
+	                  <th>收款人账号</th>
+	                  <th>收款人账户名</th>
+					  <th>交易状态</th>
+					  <th>交易金额（元）</th>
+	                  <th>异常原因</th>
 	                </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${QX.query == '1'}" th:each="recon,stat :${recons}">
-                   <td th:text="${stat.count}">1</td>
-                   <td th:text="${#dates.format(recon.accountDate,'yyyy-MM-dd')}" ></td>
-                   <td th:text="${recon.channelName}"></td>
-                   <td th:text="${recon.tradeTotal}"></td>
-                   <td th:text="${recon.tradeAmtTotal}"></td>
-                   <td>
-                      <div th:if="${recon.exceptionTotal > 0}">
-                          <a th:href="@{/recon/exceptionList(channelId=${recon.channelId},reconId=${recon.id})}" th:text="${recon.exceptionTotal}"> </a>
-                      </div>
-                   </td>
-                   <td th:if="${recon.reconStatus == 0}" th:text="未对账"></td>
-                   <td th:if="${recon.reconStatus == 1}" th:text="对账成功"></td>
-                   <td th:if="${recon.reconStatus == 2}" th:text="对账失败"></td>
-                    <td th:if="${recon.reconStatus == 3}" th:text="对账中"></td>
-                   <td th:text="${recon.failReson}"></td>
-                   <td>
-                  	<div>
-                  	   <span data-toggle="tooltip" title="对账" th:if="${recon.reconStatus == 0}" class="btn btn-xs btn-info" th:onclick="'reconcile(\''+${recon.id}+'\');'"><i class="fa fa-balance-scale"></i> 对账</span>
-                  	   <span data-toggle="tooltip" title="重新对账" th:if="${recon.reconStatus == 2}" class="btn btn-xs btn-info" th:onclick="'reconcile(\''+${recon.id}+'\');'"><i class="fa fa-refresh"></i> 重新对账</span>
-                  	</div>
-                   </td>
+                <tr th:if="${QX.query == '1'}" th:each="exception,stat :${exceptionList}">
+                   <td th:text="${exception.orderNo}"></td>
+                   <td th:text="${exception.payerAccount}"></td>
+                   <td th:text="${exception.payerName}"></td>
+                   <td th:text="${exception.payeeAccount}"></td>
+                   <td th:text="${exception.payeeName}"></td>
+                   <td th:if="${exception.tradeStatus == '1'}" th:text="交易成功"></td>
+                   <td th:if="${exception.tradeStatus == '2'}" th:text="交易失败"></td>
+                   <td th:text="${exception.tradeAmount}"></td>
+                   <td th:text="${exception.exceptionReason}"></td>
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >
                 	<td colspan="9" align="center">
@@ -204,7 +184,7 @@ $(function(){
 		var channelName = $("#channelName").val();
 		var accountDate = $("#accountDate").val();
 		var reconStatus = $("#reconStatus").val();
-		window.location.href = _ctx+'/recon/list'
+		window.location.href = _ctx+'/recon/exceptionList'
 			+'?channelName='+channelName
 			+'&tradeDate='+accountDate
 			+'&reconStatus='+reconStatus;
@@ -216,25 +196,7 @@ $(function(){
 		$("#accountDate").val('');
 		$("#reconStatus").val('');
 	});
-	
-	initDateTimepicker();
-	//初始化日期插件
-	function initDateTimepicker(){
-		$("#accountDate").datetimepicker({
-			format:'yyyy-mm-dd',
-			language:'zh-CN',
-//			locale:moment.locale('zh-cn'),
-			todayBtn:true,
-			autoclose:true,
-//			todayHignlight:true,
-//			maxView:"year",
-			minView: "month",
-			pickerPosition:"bottom-left"
-//			startDate:new Date()
-		}).on('click',function(e){
-			$("#accountDate").datetimepicker('setEndDate',$("#accountDate").val());
-		});
-	}
+
 	
 	
 	 //提示框
@@ -251,41 +213,9 @@ $(function(){
   	  	"pagingType"  : "full_numbers",
   	  	"pageLength"  : 10
     });
-	
-    $("#initRecon").click(function(){
-    	$.ajax({
-			type:"GET",
-			url:_ctx+"/recon/init",
-			dataType:"json",
-			cache:false,
-			success:function(data){
-				if(data.status == 'success'){
-					window.location.href=window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-    });
-	
+		
 })
 
-function reconcile(id){
-	$.ajax({
-		type:"POST",
-		url:_ctx+"/recon/recon",
-		dataType:"json",
-		data:{id:id},
-		cache:false,
-		success:function(data){
-			if(data.status == 'success'){
-				window.location.href=window.location.href;
-			}else{
-				alert(data.msg);
-			}
-		}
-	});
-}
 
 </script>
 </body>

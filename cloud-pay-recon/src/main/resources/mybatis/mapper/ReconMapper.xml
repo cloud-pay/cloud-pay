@@ -384,6 +384,7 @@
   <select id="queryReconList" resultMap= "BaseResultDTO">
       select 
        r.ID,
+       r.CHANNEL_ID,
        r.ACCOUNT_DATE,
        c.channel_name,
        r.TRADE_TOTAL,

@@ -1,5 +1,6 @@
 package com.cloud.pay.recon.mapper;
 
+import com.cloud.pay.recon.dto.ReconExceptionBohaiDTO;
 import com.cloud.pay.recon.entity.ReconExceptionBohai;
 import com.cloud.pay.recon.entity.ReconExceptionBohaiExample;
 import java.util.List;
@@ -98,7 +99,22 @@ public interface ReconExceptionBohaiMapper {
       * 生成短款异常数据
      * @param reconDate
      */
-    int insertShortPlat(String reconDate);
+    int insertShortPlat(@Param("reconDate") String reconDate,@Param("channelId")  Integer channelId);
+    
+    /**
+      * 根据渠道编号获取异常数据数量
+     * @param channelId
+     * @return
+     */
+    Long selectCountByChannelId(Integer channelId);
+    
+    /**
+      * 查询异常数据明细
+     * @param channdId
+     * @param reconId
+     * @return
+     */
+    List<ReconExceptionBohaiDTO> selectListByParam(@Param("channelId")Integer channelId,@Param("reconId")Integer reconId);
     
     
 }

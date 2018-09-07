@@ -20,6 +20,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.util.DateUtil;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.common.exception.CloudPayException;
+import com.cloud.pay.recon.service.ReconExceptionService;
 import com.cloud.pay.recon.service.ReconService;
 
 @Controller
@@ -32,6 +33,9 @@ public class ReconController extends BaseController {
 	
 	@Autowired
 	private ReconService reconService;
+	
+	@Autowired
+	private ReconExceptionService reconExceptionService;
 	
 	/**
 	 * 对账列表
@@ -49,6 +53,22 @@ public class ReconController extends BaseController {
 		}
 		model.addAttribute("recons",reconService.queryReconList(reconStatus, channelName, date));
 		return "page/recon/list";
+	}
+	
+	/**
+	 * 异常数据
+	 * @param model
+	 * @param reconId
+	 * @param channelId
+	 * @return
+	 */
+	@RequestMapping(value="/exceptionList",method=RequestMethod.GET)
+	public Object exceptionList(Model model,Integer reconId,Integer channelId) {
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){
+			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
+		}
+		model.addAttribute("exceptionList", reconExceptionService.selectListByParam(channelId, reconId));
+		return "page/recon/exceptionList";
 	}
 	
 	/**

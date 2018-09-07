@@ -203,8 +203,8 @@ div.cbp label.font{
 							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
 							<i class="fa fa-edit"></i> 编辑
 						</span>
-	                  	<span data-toggle="tooltip" title="删除" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delMerchantApply(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
-	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
@@ -302,6 +302,7 @@ div.cbp label.font{
 					  </div>
 					  <h2>结算资料： </h2>
 					  <div class="form-group">
+					  	<input type="hidden" name="bankInfoId" value=""/>
 					    <label for="bankName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>开户银行</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="bankName" value="" id="bankName">
@@ -356,6 +357,7 @@ div.cbp label.font{
 					  
 					  <h2>费率设置： </h2>
 					  <div class="form-group">
+					  	<input type="hidden" name="feeId" value=""/>
 					    <label for="payFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>代付费率</label>
 					    <div class="col-sm-4">
 						    <select name="payFeeType" class="form-control">
@@ -401,6 +403,48 @@ div.cbp label.font{
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
 				<button type="submit" class="btn btn-success"  id="imgSubmit" >确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 审批模态框 -->
+<div class="modal fade" id="auditModal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="usermodelHead">审核</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+				  <input type="hidden" name="auditUrl" value=""/>
+				  <input type="hidden" name="auditId" value=""/>
+				  <div class="form-group">
+					    <label for="auditStatus" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>审核状态</label>
+					    <div class="col-sm-10">
+						    <select name="auditStatus" class="form-control">
+						      <option value="">请选择</option>
+							  <option value="2">审核通过</option>
+							  <option value="3">审核不通过</option>
+						    </select>
+					    </div>
+					  </div>
+				
+				  <div class="form-group">
+					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>审核意见</label>
+					    <div class="col-sm-10">
+					        <textarea class="form-control" rows="3" name="auditOptinion" id="name"></textarea>
+					    </div>
+					  </div>
+				  
+				 </form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+				<button type="submit" class="btn btn-success"  id="auditSubmit" >确定</button>
 			</div>
 		</div>
 	</div>
@@ -517,7 +561,8 @@ $(function(){
 		 this.email = email;
 		 this.mobile = mobile;
 	 }
-	var BankInfo = function(bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
+	var BankInfo = function(id, bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
+		 this.id = id;
 		 this.bankName = bankName;
 		 this.bankId = bankId;
 		 this.bankCardNo = bankCardNo;
@@ -527,7 +572,8 @@ $(function(){
 		 this.certNo = certNo;
 		 this.mobileNo = mobileNo;
 	 }
-	var FeeInfo = function(payFeeType, payFee, loanFeeType, loanFee) {
+	var FeeInfo = function(id, payFeeType, payFee, loanFeeType, loanFee) {
+		 this.id = id;
 		 this.payFeeType = payFeeType;
 		 this.payFee = payFee;
 		 this.loanFeeType = loanFeeType;
@@ -542,6 +588,8 @@ $(function(){
 	$("#imgSubmit").click(function(){
 		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
+		alert(url)
+		return false;
 		var code = $("input[name='code']").val();
 		var orgId = $("[name='orgId']").val();
 		var type = $("[name='type']").val();
@@ -555,6 +603,7 @@ $(function(){
 		var mobile= $("input[name='mobile']").val();
 		var baseInfo = new BaseInfo(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
 		//alert(JSON.stringify(baseInfo));
+		var bankInfoId = $("input[name='bankInfoId']").val();
 		var bankId = $("[name='bankId']").val();
 		var bankName = $("input[name='bankName']").val();
 		var bankAccountType = $("[name='bankAccountType']").val();
@@ -563,13 +612,14 @@ $(function(){
 		var bankAccountName = $("input[name='bankAccountName']").val();
 		var certNo = $("input[name='certNo']").val();
 		var mobileNo = $("input[name='mobileNo']").val();
-		var bankInfo = new BankInfo(bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo);
+		var bankInfo = new BankInfo(bankInfoId, bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo);
 		//alert(JSON.stringify(bankInfo));
+		var feeId = $("input[name='feeId']").val();
 		var payFeeType = $("[name='payFeeType']").val();
 		var payFee = $("input[name='payFee']").val();
 		var loanFeeType = $("[name='loanFeeType']").val();
 		var loanFee = $("input[name='loanFee']").val();
-		var feeInfo = new FeeInfo(payFeeType, payFee, loanFeeType, loanFee);
+		var feeInfo = new FeeInfo(feeId, payFeeType, payFee, loanFeeType, loanFee);
 		//alert(JSON.stringify(feeInfo));
 		if(url == _ctx+'/merchantApply/add'){
 			if(!checkAccount()){
@@ -596,42 +646,45 @@ $(function(){
 })
 
 //删除商户
-function delMerchantApply(routeId){
-	if(confirm("你确定要删除此商户吗？")){
-		$.ajax({
-			type:"POST",
-			url:_ctx+"/merchantApply/del",
-			dataType:"json",
-			data:{id:routeId},
-			cache:false,
-			success:function(data){
-				if(data.status == 'success'){
-					window.location.href=window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-	}
+function detail(id){
+	console.log(id);
+	reloadModelData("detail","商户详情","详情",id);
+	$("#merchantModal").modal("show");
 }
 
 //审核商户
-function updateStatus(routeId, status){
-    var msg='';
-    if(status == 2) {
+function audit(id){
+	console.log(id);
+	reloadModel(_ctx+"/merchantApply/audit","审核商户","审核",id);
+	$("#auditModal").modal("show");
+}
+
+function reloadModel(url,title,btntext,id){
+	$("input[name='url']").val(url);
+	$("input[name='id']").val(id);
+}
+//确认按钮
+$("#auditSubmit").click(function(){
+	var id = $("input[name='id']").val();
+	var url = $("input[name='url']").val();
+	var auditStatus = $("[name='auditStatus']").val();
+	var auditOptinion = $("[name='auditOptinion']").val();
+	var msg='';
+    if(auditStatus == 2) {
     	msg = '你确定此商户审核通过吗？';
-    } else {
+    } else if(auditStatus == 3){
     	msg = '你确定此商户审核不通过吗？';
     }
 	if(confirm(msg)){
 		$.ajax({
-			type:"POST",
-			url:_ctx+"/merchantApply/updateStatus",
-			dataType:"json",
-			data:{id:routeId, status : status},
+			type:"post",
+			url:url,
 			cache:false,
+			dataType:"json",
+			data:{id:id,status:auditStatus,auditOptinion:auditOptinion},
 			success:function(data){
 				if(data.status == 'success'){
+					$("#auditModal").modal("hide");
 					window.location.href=window.location.href;
 				}else{
 					alert(data.msg);
@@ -639,7 +692,7 @@ function updateStatus(routeId, status){
 			}
 		});
 	}
-}
+});
 
 //编辑商户
 function editMerchant(id){
@@ -710,12 +763,13 @@ function reloadModelData(url,title,btntext,id){
 					$("[name='type']").val(data.data.baseInfo.type);
 					$("input[name='name']").val(data.data.baseInfo.name);
 					$("input[name='shortName']").val(data.data.baseInfo.shortName);
-					var industryCategory= $("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
+					$("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
 					$("[name='city']").val(data.data.baseInfo.city);
 					$("input[name='address']").val(data.data.baseInfo.address);
 					$("input[name='legal']").val(data.data.baseInfo.legal);
 					$("input[name='email']").val(data.data.baseInfo.email);
 					$("input[name='mobile']").val(data.data.baseInfo.mobile);
+					$("input[name='bankInfoId']").val(data.data.baseInfo.id);
 					$("[name='bankId']").val(data.data.bankInfo.bankId);
 					$("input[name='bankName']").val(data.data.bankInfo.bankName);
 					$("[name='bankAccountType']").val(data.data.bankInfo.bankAccountType);
@@ -724,6 +778,7 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='bankAccountName']").val(data.data.bankInfo.bankAccountName);
 					$("input[name='certNo']").val(data.data.bankInfo.certNo);
 					$("input[name='mobileNo']").val(data.data.bankInfo.mobileNo);
+					$("input[name='feeId']").val(data.data.feeInfo.id);
 					$("[name='payFeeType']").val(data.data.feeInfo.payFeeType);
 					$("input[name='payFee']").val(data.data.feeInfo.payFee);
 					$("[name='loanFeeType']").val(data.data.feeInfo.loanFeeType);
@@ -733,6 +788,57 @@ function reloadModelData(url,title,btntext,id){
 				}
 			}
 		});
+	}
+	if("detail" == url) {
+		$("#imgSubmit").hide();
+		$("[name='orgId']").attr("readOnly","true");
+		$("[name='type']").attr("readOnly","true");
+		$("input[name='name']").attr("readOnly","true");
+		$("input[name='shortName']").attr("readOnly","true");
+		$("input[name='industryCategory']").attr("readOnly","true");
+		$("[name='city']").attr("readOnly","true");
+		$("input[name='address']").attr("readOnly","true");
+		$("input[name='legal']").attr("readOnly","true");
+		$("input[name='email']").attr("readOnly","true");
+		$("input[name='mobile']").attr("readOnly","true");
+		$("input[name='bankInfoId']").attr("readOnly","true");
+		$("[name='bankId']").attr("readOnly","true");
+		$("input[name='bankName']").attr("readOnly","true");
+		$("[name='bankAccountType']").attr("readOnly","true");
+		$("input[name='bankCardNo']").attr("readOnly","true");
+		$("[name='certType']").attr("readOnly","true");
+		$("input[name='bankAccountName']").attr("readOnly","true");
+		$("input[name='certNo']").attr("readOnly","true");
+		$("input[name='mobileNo']").attr("readOnly","true");
+		$("[name='payFeeType']").attr("readOnly","true");
+		$("input[name='payFee']").attr("readOnly","true");
+		$("[name='loanFeeType']").attr("readOnly","true");
+		$("input[name='loanFee']").attr("readOnly","true");
+	} else {
+		$("#imgSubmit").show();
+		$("[name='orgId']").attr("readOnly",false);
+		$("[name='type']").attr("readOnly",false);
+		$("input[name='name']").attr("readOnly",false);
+		$("input[name='shortName']").attr("readOnly",false);
+		$("input[name='industryCategory']").attr("readOnly",false);
+		$("[name='city']").attr("readOnly",false);
+		$("input[name='address']").attr("readOnly",false);
+		$("input[name='legal']").attr("readOnly",false);
+		$("input[name='email']").attr("readOnly",false);
+		$("input[name='mobile']").attr("readOnly",false);
+		$("input[name='bankInfoId']").attr("readOnly",false);
+		$("[name='bankId']").attr("readOnly",false);
+		$("input[name='bankName']").attr("readOnly",false);
+		$("[name='bankAccountType']").attr("readOnly",false);
+		$("input[name='bankCardNo']").attr("readOnly",false);
+		$("[name='certType']").attr("readOnly",false);
+		$("input[name='bankAccountName']").attr("readOnly",false);
+		$("input[name='certNo']").attr("readOnly",false);
+		$("input[name='mobileNo']").attr("readOnly",false);
+		$("[name='payFeeType']").attr("readOnly",false);
+		$("input[name='payFee']").attr("readOnly",false);
+		$("[name='loanFeeType']").attr("readOnly",false);
+		$("input[name='loanFee']").attr("readOnly",false);
 	}
 }
 

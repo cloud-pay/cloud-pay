@@ -16,6 +16,7 @@
     <result column="email" property="email" jdbcType="VARCHAR" />
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="audit_optinion" property="auditOptinion" jdbcType="VARCHAR" />
     <result column="creator" property="creator" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modifer" property="modifer" jdbcType="VARCHAR" />
@@ -23,7 +24,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, version, org_id, code, name, short_name, type, industry_category, legal, city, address, 
-    email, mobile, status, creator, create_time, modifer, modify_time
+    email, mobile, status, audit_optinion, creator, create_time, modifer, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -202,6 +203,9 @@
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="auditOptinion != null" >
+        audit_optinion = #{auditOptinion,jdbcType=VARCHAR},
       </if>
       <if test="modifer != null" >
         modifer = #{modifer,jdbcType=VARCHAR},

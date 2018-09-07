@@ -556,5 +556,15 @@ public class MerchantApplyBaseInfo {
 	public void setCode(String code) {
 		this.code = code;
 	}
-    
+	
+	private String auditOptinion;
+
+	public String getAuditOptinion() {
+		return auditOptinion;
+	}
+
+	public void setAuditOptinion(String auditOptinion) {
+		this.auditOptinion = auditOptinion;
+	}
+	
 }

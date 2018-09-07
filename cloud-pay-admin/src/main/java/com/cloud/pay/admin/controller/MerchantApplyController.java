@@ -127,15 +127,19 @@ public class MerchantApplyController extends BaseController{
 	
 	
 	/**
-	 * 删除商戶
+	 * 审核商戶
 	 * @return
 	 */
-	@RequestMapping(value="/del",method=RequestMethod.POST)
+	@RequestMapping(value="/audit",method=RequestMethod.POST)
 	@ResponseBody
-	public Object del(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+	public Object audit(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
 			Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
+			Integer status = Integer.parseInt(this.getParameterMap().getString("status"));
+			String auditOptinion = this.getParameterMap().getString("auditOptinion");
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			merchantApplyService.audit(id, status, auditOptinion, userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

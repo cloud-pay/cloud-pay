@@ -108,31 +108,55 @@ public class XmlSignature {
             }
         }
 
-
-    public static PrivateKey getPrivateKey(String priKeyPath, String privateKeyPassword,String keyAlias) throws Exception {
-        
-        if (privateKeyPassword == null) {
-            throw new RuntimeException("nullPointException: privateKeyPassword is null");
+       /**
+          *  获取私钥
+        * @param priKeyPath
+        * @param privateKeyPassword
+        * @param keyAlias
+        * @return
+        * @throws Exception
+        */
+       public static PrivateKey getPrivateKey(String priKeyPath, String privateKeyPassword,String keyAlias) throws Exception {
+            if (privateKeyPassword == null) {
+                throw new RuntimeException("nullPointException: privateKeyPassword is null");
+            }
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            InputStream inputStream = null;
+            try {
+	            inputStream =new FileInputStream(priKeyPath);
+	            keyStore.load(inputStream, privateKeyPassword.toCharArray());
+	            PrivateKey p =(PrivateKey) keyStore.getKey(keyAlias, privateKeyPassword.toCharArray());
+	            return p;
+            }finally {
+            	if(null != inputStream) {
+                  inputStream.close();	
+            	}
+            }
         }
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        InputStream inputStream = new FileInputStream(priKeyPath);
-        //new ByteArrayInputStream(privateKeyStream);
-        keyStore.load(inputStream, privateKeyPassword.toCharArray());
-        PrivateKey p =(PrivateKey) keyStore.getKey(keyAlias, privateKeyPassword.toCharArray());
-        return p;
-    }
 
+       /**
+           * 获取公钥
+        * @param pubKeyPath
+        * @return
+        * @throws Exception
+        */
         public static PublicKey getPublicKey(String pubKeyPath) throws Exception {
-//            if (publicKeyStream == null) {
-//                throw new RuntimeException("nullPointException: publicKey byte is null");
-//            }
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream inputStream = new FileInputStream(pubKeyPath);//new ByteArrayInputStream(publicKeyStream);
-            Certificate c = cf.generateCertificate(inputStream);
-            return c.getPublicKey();
+            InputStream inputStream = null;
+            try {
+	            inputStream = new FileInputStream(pubKeyPath);
+	            Certificate c = cf.generateCertificate(inputStream);
+	            return c.getPublicKey();
+            }finally {
+            	if(null != inputStream) {
+            	   inputStream.close();
+            	}
+            }
+            
         }
+        
         /**
-         * 实现dom4j向org.w3c.dom.Document的转换
+           * 实现dom4j向org.w3c.dom.Document的转换
          * @param doc
          * @return
          * @throws

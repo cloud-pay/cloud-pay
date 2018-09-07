@@ -40,7 +40,7 @@ public class FtpUtil {
 		ChannelSftp chSftp = (ChannelSftp) channel;
  
 		String ftpFilePath = ftpPath + "/" + fileName;
-		String localFilePath = localPath + File.separatorChar + fileName;
+//		String localFilePath = localPath + File.separatorChar + fileName;
 		//判断本地文件夹是否存在，不存在则创建
 		File file = new File(localPath);
 		if(!file.exists() && !file.isDirectory()) {

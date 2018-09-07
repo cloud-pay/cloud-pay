@@ -1,6 +1,7 @@
 package com.cloud.pay.recon.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +45,9 @@ public class ReconService {
 		if(StringUtils.isNotBlank(date)) {
 			DateUtil.fomatDate(date);
 		}else {
-			accountDate = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DATE,  -1);
+			accountDate = calendar.getTime();
 		}
 		List<Channel> channels = channelService.getUnInitChannelList(accountDate);
 		if(null == channels || channels.size() <= 0) {

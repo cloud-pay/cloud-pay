@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantApplyDTO;
 import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
@@ -50,7 +51,7 @@ public class MerchantApplyService {
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public void save(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
-			MerchantApplyFeeInfo feeInfo, List<MerchantApplyAttachementInfo> attachementInfos) {
+			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson) {
 		baseInfo.setCode(getMerchantCode());
 		baseInfo.setStatus(MerchantConstant.AUDITING);
 		baseInfoMapper.insert(baseInfo);
@@ -58,11 +59,8 @@ public class MerchantApplyService {
 		bankInfoMapper.insert(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.insert(feeInfo);
-		if(attachementInfos != null) {
-			for(MerchantApplyAttachementInfo att : attachementInfos) {
-				att.setMerchantId(baseInfo.getId());
-				attachementInfoMapper.insert(att);
-			}
+		if(attachementJson != null) {
+			
 		}
 	}
 	

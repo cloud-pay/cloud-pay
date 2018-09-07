@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cloud.pay.admin.controller.base.BaseController;
 import com.cloud.pay.admin.entity.Const;
 import com.cloud.pay.admin.entity.ResponseModel;
@@ -79,6 +80,7 @@ public class MerchantApplyController extends BaseController{
 			String bank = map.getString("bankInfo");
 			String base = map.getString("baseInfo");
 			String fee = map.getString("feeInfo");
+			String attachementInfo = map.getString("attachementInfo");
 			MerchantApplyBaseInfo baseInfo = JSON.parseObject(base, MerchantApplyBaseInfo.class);
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			baseInfo.setCreator(userId);
@@ -87,6 +89,7 @@ public class MerchantApplyController extends BaseController{
 			baseInfo.setModifyTime(new Date());
 			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
 			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
+			JSONObject json = JSON.parseObject(attachementInfo);
 			merchantApplyService.save(baseInfo, bankInfo, feeInfo, null);
 		} catch (Exception e) {
 			e.printStackTrace();

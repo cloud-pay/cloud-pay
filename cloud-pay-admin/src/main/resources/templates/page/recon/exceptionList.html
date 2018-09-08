@@ -102,31 +102,28 @@ div.cbp label.font{
 			  <button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
 			<div class="row clearfix">  
-			   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-					<div class="form-group">
-						<div class="form-line">
-							<label for="channelName">所属机构</label>
-							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>		
-						</div>
-					</div>
-				</div>
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-					<div class="form-group">
-						<div class="form-line">
-							<label for="channelName">选择商户</label>
-							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>		
+				    <div class="form-group">
+				        <div class="form-line">
+							<label for="orderNo">订单编号</label>
+							<input type="text" class="form-control" id="orderNo" name="orderNo" maxlength="20" th:value="${orderNo}"></input>	
 						</div>
-					</div>
+					  </div>
 				</div>
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 				    <div class="form-group">
 				        <div class="form-line">
-							<label for="reconStatus">订单编号</label>
-							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>	
+							<label for="exceptionType">异常原因</label>
+							<select name="exceptionType" id="exceptionType" class="form-control" th:value="${exceptionType}">
+							  <option value="">所有</option>
+						      <option value="1">短款</option>
+						      <option value="2">延期</option>
+						      <option value="3">数据不匹配</option>
+						    </select>
 						</div>
 					  </div>
 				</div>
-			</div>	
+			</div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="reconList" class="table table-bordered table-striped">
@@ -139,7 +136,8 @@ div.cbp label.font{
 	                  <th>收款人账户名</th>
 					  <th>交易状态</th>
 					  <th>交易金额（元）</th>
-	                  <th>异常原因</th>
+					  <th>异常原因</th>
+	                  <th>异常描述</th>
 	                </tr>
                 </thead>
                 <tbody>
@@ -152,6 +150,9 @@ div.cbp label.font{
                    <td th:if="${exception.tradeStatus == '1'}" th:text="交易成功"></td>
                    <td th:if="${exception.tradeStatus == '2'}" th:text="交易失败"></td>
                    <td th:text="${exception.tradeAmount}"></td>
+                   <td th:if="${exception.exceptionType == 1}" th:text="短款"></td>
+                   <td th:if="${exception.exceptionType == 2}" th:text="延期"></td>
+                   <td th:if="${exception.exceptionType == 3}" th:text="数据不匹配"></td>
                    <td th:text="${exception.exceptionReason}"></td>
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >
@@ -176,25 +177,32 @@ div.cbp label.font{
 <!-- AdminLTE App -->
 <script th:src="@{/dist/js/adminlte.min.js}"></script>
 <script th:src="@{/js/path.js}"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+var channelId = /*[[${channelId}]]*/;
+var reconId = /*[[${reconId}]]*/;
+/*]]>*/
+</script>
 <script>
+
 $(function(){
 	
 	//查询按钮事件
 	$("#searchBtn").off().on("click",function(){
-		var channelName = $("#channelName").val();
-		var accountDate = $("#accountDate").val();
-		var reconStatus = $("#reconStatus").val();
+		var orderNo = $("#orderNo").val();
+		var exceptionType = $("#exceptionType").val();
 		window.location.href = _ctx+'/recon/exceptionList'
-			+'?channelName='+channelName
-			+'&tradeDate='+accountDate
-			+'&reconStatus='+reconStatus;
+			+'?channelId='+channelId
+			+'&reconId='+reconId
+			+'&orderNo='+orderNo
+			+'&exceptionType='+exceptionType;
 	});
 
 	//重置按钮事件
 	$("#resetBtn").off().on("click",function(){
-		$("#channelName").val('');
-		$("#accountDate").val('');
-		$("#reconStatus").val('');
+		$("#orderNo").val('');
+		$("#exceptionType").val('');
 	});
 
 	

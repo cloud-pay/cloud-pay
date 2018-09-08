@@ -13,6 +13,8 @@ public class ReconExceptionBohaiDTO {
     private Date tradeTime;
     
     private Integer channelId;
+    
+    private Integer reconId;
 
     private String orderNo;
 
@@ -36,6 +38,8 @@ public class ReconExceptionBohaiDTO {
 
 
     private Date createTime;
+    
+    private Integer exceptionType;
 
     
     public Date getTradeTime() {
@@ -175,6 +179,26 @@ public class ReconExceptionBohaiDTO {
 
 	public void setTradeStatusDesc(String tradeStatusDesc) {
 		this.tradeStatusDesc = tradeStatusDesc;
+	}
+
+
+	public Integer getReconId() {
+		return reconId;
+	}
+
+
+	public void setReconId(Integer reconId) {
+		this.reconId = reconId;
+	}
+	
+
+	public Integer getExceptionType() {
+		return exceptionType;
+	}
+
+
+	public void setExceptionType(Integer exceptionType) {
+		this.exceptionType = exceptionType;
 	}
 
 

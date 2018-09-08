@@ -63,11 +63,15 @@ public class ReconController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="/exceptionList",method=RequestMethod.GET)
-	public Object exceptionList(Model model,Integer reconId,Integer channelId) {
+	public Object exceptionList(Model model,Integer reconId,Integer channelId,String orderNo,Integer exceptionType) {
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){
 			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
 		}
-		model.addAttribute("exceptionList", reconExceptionService.selectListByParam(channelId, reconId));
+		model.addAttribute("reconId", reconId);
+		model.addAttribute("channelId", channelId);
+		model.addAttribute("orderNo", orderNo);
+		model.addAttribute("exceptionType", exceptionType);
+		model.addAttribute("exceptionList", reconExceptionService.selectListByParam(channelId, reconId,orderNo,exceptionType));
 		return "page/recon/exceptionList";
 	}
 	

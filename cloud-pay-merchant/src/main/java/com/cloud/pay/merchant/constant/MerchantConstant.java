@@ -10,4 +10,13 @@ public class MerchantConstant {
 	public final static int AUDIT_YES = 2;
 	/** 审核不通过 */
 	public final static int AUDIT_NO = 3;
+	
+	/** 营业执照 */
+	public final static int BUSINESS = 1;
+	/** 银行卡 */
+	public final static int BANK_CARD = 2;
+	/** 身份证 */
+	public final static int CERT = 3;
+	/** 协议 */
+	public final static int PROTOCOL = 4;
 }

@@ -821,7 +821,7 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='email']").val(data.data.baseInfo.email);
 					$("input[name='mobile']").val(data.data.baseInfo.mobile);
 					$("input[name='bankInfoId']").val(data.data.baseInfo.id);
-					$("[name='bankId']").val(data.data.bankInfo.bankId);
+					$("[name='bankId']").val(data.data.bankInfo.id);
 					$("input[name='bankName']").val(data.data.bankInfo.bankName);
 					$("[name='bankAccountType']").val(data.data.bankInfo.bankAccountType);
 					$("input[name='bankCardNo']").val(data.data.bankInfo.bankCardNo);
@@ -834,6 +834,11 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='payFee']").val(data.data.feeInfo.payFee);
 					$("[name='loanFeeType']").val(data.data.feeInfo.loanFeeType);
 					$("input[name='loanFee']").val(data.data.feeInfo.loanFee);
+					
+					$("#showBusiness").attr("src",data.data.businessPath);
+					$("#showBankCard").attr("src",data.data.bankCardPath);
+					$("#showCert").attr("src",data.data.certPath);
+					$("#showProtocol").attr("src",data.data.protocolPath);
 				}else{
 					alert(data.msg);
 				}

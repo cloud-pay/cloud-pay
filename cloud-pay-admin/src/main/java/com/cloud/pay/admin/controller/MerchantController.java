@@ -15,11 +15,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
+import com.cloud.pay.admin.entity.Const;
 import com.cloud.pay.admin.entity.ResponseModel;
 import com.cloud.pay.admin.entity.ResultEnum;
+import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.service.BankService;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
+import com.cloud.pay.trade.entity.MerchantRouteConf;
 
 @Controller
 @RequestMapping("/merchant")
@@ -29,6 +34,9 @@ public class MerchantController extends BaseController{
 	
 	@Autowired
 	private MerchantService merchantService;
+	
+	@Autowired
+	private BankService bankService;
 	
 	private String menuUrl = "amountLimit/list";
 	
@@ -47,7 +55,7 @@ public class MerchantController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model, Integer type, String orgName, String merchantName, String createDateBegin,
+	public Object list(Model model, Integer orgId, String code, String name, String createDateBegin,
 			String createDateEnd){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -62,58 +70,29 @@ public class MerchantController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
-		return "page/amountLimit/list";
+		model.addAttribute("merchants", merchantService.getMerchantList(orgId, code, name, startTime, endTime));
+		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("banks", bankService.getBankList(null, null));
+		return "page/merchant/merchantList";
 	}
 	
 	/**
-	 * 添加商戶
+	 * 冻结/解冻商戶路由配置
 	 * @return
 	 */
-	@RequestMapping(value="/add",method=RequestMethod.POST)
+	@RequestMapping(value="/updateStatus",method=RequestMethod.POST)
 	@ResponseBody
-	public Object add(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		try {
-			ParameterMap map = this.getParameterMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
-		}
-		return ResponseModel.getModel("ok", "success", null);
-	}
-	
-	
-	/**
-	 * 编辑商戶
-	 * @return
-	 */
-	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	@ResponseBody
-	public Object edit(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		try {
-			ParameterMap map = this.getParameterMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
-		}
-		return ResponseModel.getModel("ok", "success", null);
-	}
-	
-	
-	/**
-	 * 删除商戶
-	 * @return
-	 */
-	@RequestMapping(value="/del",method=RequestMethod.POST)
-	@ResponseBody
-	public Object del(){
+	public Object updateStatus(){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		try {
-			Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
+			MerchantBaseInfo baseInfo = new MerchantBaseInfo();
+			ParameterMap map = this.getParameterMap();
+			baseInfo.setStatus(Integer.parseInt(map.getString("status")));
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			baseInfo.setModifer(userId);
+			baseInfo.setModifyTime(new Date());
+			baseInfo.setId(Integer.parseInt(map.getString("id")));
+			merchantService.update(baseInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -121,6 +100,5 @@ public class MerchantController extends BaseController{
 		}
 		return ResponseModel.getModel("ok", "success", null);
 	}
-	
 	
 }

@@ -14,6 +14,7 @@
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
     <result column="creator" property="creator" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modifer" property="modifer" jdbcType="VARCHAR" />
@@ -21,7 +22,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, org_id, code, name, short_name, type, industry_category, legal, city, address, email, 
-    mobile, creator, create_time, modifer, modify_time
+    mobile, status, creator, create_time, modifer, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -37,13 +38,13 @@
     insert into t_merchant_base_info (id, org_id, code, name, 
       short_name, type, industry_category, 
       legal, city, address, 
-      email, mobile, creator, 
+      email, mobile, status, creator, 
       create_time, modifer, modify_time
       )
     values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{shortName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{industryCategory,jdbcType=VARCHAR}, 
       #{legal,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{modifer,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -82,6 +83,9 @@
       </if>
       <if test="mobile != null" >
         mobile,
+      </if>
+      <if test="status != null" >
+        status,
       </if>
       <if test="creator != null" >
         creator,
@@ -129,6 +133,9 @@
       </if>
       <if test="mobile != null" >
         #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="creator != null" >
         #{creator,jdbcType=VARCHAR},
@@ -180,6 +187,9 @@
       <if test="mobile != null" >
         mobile = #{mobile,jdbcType=VARCHAR},
       </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
       <if test="creator != null" >
         creator = #{creator,jdbcType=VARCHAR},
       </if>
@@ -208,6 +218,7 @@
       address = #{address,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       mobile = #{mobile,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
       creator = #{creator,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       modifer = #{modifer,jdbcType=VARCHAR},
@@ -218,6 +229,13 @@
   <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="org_name" property="orgName" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="modifer" property="modifer" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <select id="getMerchantDTOs" resultMap="BaseResultDTO">
 	 	SELECT id, name
@@ -229,6 +247,29 @@
       </if>
       <if test="type != null and type == 'merchant' " >
         and type in (4,5)
+      </if>
+	 </select>
+	 <select id="getMerchantList" resultMap="BaseResultDTO">
+	 	SELECT m.id, m.org_id, m1.name org_name, m.code, m.name, m.type, 
+    m.status, m.modifer, m.modify_time
+		FROM 
+			t_merchant_base_info m
+			left join t_merchant_base_info m1 on m.org_id = m1.id
+		where 1=1
+	  <if test="orgId != null" >
+        and m.org_id = #{orgId,jdbcType=INTEGER}
+      </if>
+      <if test="code != null and code != ''" >
+        and m.code = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null and name != ''" >
+        and m.name like concat('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="startTime != null" >
+        and m.modify_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+        and m.modify_time &lt; #{endTime}
       </if>
 	 </select>
 </mapper>

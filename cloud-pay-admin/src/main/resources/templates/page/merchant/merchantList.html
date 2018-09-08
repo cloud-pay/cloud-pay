@@ -84,11 +84,11 @@ div.cbp label.font{
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    	 当前位置：商户操作信息
+    	 当前位置：商户信息
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
-    <li class="active">商户操作信息</li>
+    <li class="active">商户信息</li>
   </ol>
 </section>
 
@@ -110,7 +110,7 @@ div.cbp label.font{
 											<label for="search_orgId">所属机构</label>
 										    <select name="search_orgId" class="form-control">
 										      <option value="">请选择</option>
-										      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+										      <option th:each="merchant : ${orgs}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
 										    </select>
 										</div>
 									</div>
@@ -171,16 +171,14 @@ div.cbp label.font{
 	                  <th>商户名称</th>
 	                  <th>商户类型</th>
 	                  <th>所属机构</th>
-					  <th>审核状态</th>
-					  <th>经办时间</th>
-					  <th>经办人</th>
+					  <th>商户状态</th>
 	                  <th>更新时间</th>
 					  <th>更新人</th>
 	                  <th>操作</th>
 	                </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${QX.query == '1'}" th:each="merchant,stat :${merchantApplys}">
+                <tr th:if="${QX.query == '1'}" th:each="merchant,stat :${merchants}">
                   <td th:text="${merchant.code}"></td>
                   <td th:text="${merchant.name}"></td>
                   <td th:if="${merchant.type == 1}" th:text="代理商"></td>
@@ -189,22 +187,26 @@ div.cbp label.font{
                   <td th:if="${merchant.type == 4}" th:text="企业商户"></td>
                   <td th:if="${merchant.type == 5}" th:text="个人商户"></td>
                   <td th:text="${merchant.orgName}"></td>
-                  <td th:if="${merchant.status == 1}" th:text="待审核"></td>
-				  <td th:if="${merchant.status == 2}" th:text="审核通过"></td>
-				  <td th:if="${merchant.status == 3}" th:text="审核不通过"></td>
-				  <td th:text="${#dates.format(merchant.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
-                  <td th:text="${merchant.creator}"></td>
+                  <td th:if="${merchant.status == 1}" th:text="正常"></td>
+				  <td th:if="${merchant.status == 0}" th:text="冻结"></td>
                   <td th:text="${#dates.format(merchant.modifyTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${merchant.modifer}"></td>
                   <td>
                   	<div th:if="${merchant.id != 1 || meid == '1'}">
+                  	   <!--
 	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1' && merchant.status == 1}" class="btn btn-xs btn-info" 
 							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
 							<i class="fa fa-edit"></i> 编辑
 						</span>
-	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 冻结</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  		 -->
+                  		<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
+	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${mercahnt.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
+	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 通道商户号</span>
+	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 查看密钥</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>
@@ -244,7 +246,7 @@ div.cbp label.font{
 					    <div class="col-sm-4">
 						    <select name="orgId" class="form-control">
 						      <option value="">请选择</option>
-						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						      <option th:each="merchant : ${orgs}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
 						    </select>
 					    </div>
 					    <label for="type" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户类型</label>
@@ -517,7 +519,7 @@ $(function(){
 		var search_name = $("#search_name").val();
 		var createDateBegin = $("#createDateBegin").val();
 		var createDateEnd = $("#createDateEnd").val();
-		window.location.href = _ctx+'/merchantApply/list?merchantType=merchant'
+		window.location.href = _ctx+'/merchant/list?merchantType=merchant'
 			+'&orgId='+search_orgId
 			+'&status='+search_status
 			+'&merchantName='+search_name
@@ -588,7 +590,7 @@ $(function(){
     });
 	
 	$("#addMerchant").click(function(){
-		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","");
+		reloadModelData(_ctx+"/merchant/add","添加商户","添加","");
 		$("#merchantModal").modal("show");
 	});
 	
@@ -671,7 +673,7 @@ $(function(){
 		var bankCardPath = $("input[name='bankCardPath']").val();
 		var protocolPath = $("input[name='protocolPath']").val();
 		var attachementInfo = new AttachementInfo(businessPath, certPath, bankCardPath, protocolPath);
-		if(url == _ctx+'/merchantApply/add'){
+		if(url == _ctx+'/merchant/add'){
 			if(!checkAccount()){
 				return false;
 			}
@@ -702,39 +704,23 @@ function detail(id){
 	$("#merchantModal").modal("show");
 }
 
-//审核商户
-function audit(id){
-	console.log(id);
-	reloadModel(_ctx+"/merchantApply/audit","审核商户","审核",id);
-	$("#auditModal").modal("show");
-}
-
-function reloadModel(url,title,btntext,id){
-	$("input[name='url']").val(url);
-	$("input[name='id']").val(id);
-}
-//确认按钮
-$("#auditSubmit").click(function(){
-	var id = $("input[name='id']").val();
-	var url = $("input[name='url']").val();
-	var auditStatus = $("[name='auditStatus']").val();
-	var auditOptinion = $("[name='auditOptinion']").val();
-	var msg='';
-    if(auditStatus == 2) {
-    	msg = '你确定此商户审核通过吗？';
-    } else if(auditStatus == 3){
-    	msg = '你确定此商户审核不通过吗？';
+//删除商户
+function updateStatus(routeId, status){
+    var msg='';
+    if(status == 0) {
+    	msg = '你确定要冻结此商户吗？';
+    } else {
+    	msg = '你确定要解冻此商户吗？';
     }
 	if(confirm(msg)){
 		$.ajax({
-			type:"post",
-			url:url,
-			cache:false,
+			type:"POST",
+			url:_ctx+"/merchant/updateStatus",
 			dataType:"json",
-			data:{id:id,status:auditStatus,auditOptinion:auditOptinion},
+			data:{id:routeId, status : status},
+			cache:false,
 			success:function(data){
 				if(data.status == 'success'){
-					$("#auditModal").modal("hide");
 					window.location.href=window.location.href;
 				}else{
 					alert(data.msg);
@@ -742,12 +728,12 @@ $("#auditSubmit").click(function(){
 			}
 		});
 	}
-});
+}
 
 //编辑商户
 function editMerchant(id){
 	console.log(id);
-	reloadModelData(_ctx+"/merchantApply/edit","编辑商户","更新",id);
+	reloadModelData(_ctx+"/merchant/edit","编辑商户","更新",id);
 	$("#merchantModal").modal("show");
 }
 
@@ -802,7 +788,7 @@ function reloadModelData(url,title,btntext,id){
 	if(id != '') {
 		$.ajax({
 			type:"GET",
-			url:_ctx+"/merchantApply/get",
+			url:_ctx+"/merchant/get",
 			dataType:"json",
 			data:{id:id},
 			cache:false,

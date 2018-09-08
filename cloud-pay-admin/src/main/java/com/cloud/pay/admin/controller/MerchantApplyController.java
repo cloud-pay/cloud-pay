@@ -22,6 +22,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.service.BankService;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
@@ -39,6 +40,9 @@ public class MerchantApplyController extends BaseController{
 	
 	@Autowired
 	private MerchantService merchantService;
+	
+	@Autowired
+	private BankService bankService;
 	
 	private String menuUrl = "merchantApply/list";
 	
@@ -64,6 +68,7 @@ public class MerchantApplyController extends BaseController{
 		}
 		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, startTime, endTime));
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("banks", bankService.getBankList(null, null));
 		return "page/merchant/merchantApplyList";
 	}
 	

@@ -110,8 +110,7 @@ div.cbp label.font{
 											<label for="search_orgId">所属机构</label>
 										    <select name="search_orgId" class="form-control">
 										      <option value="">请选择</option>
-										      <option value="org">合作机构</option>
-										      <option value="merchant">商户</option>
+										      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
 										    </select>
 										</div>
 									</div>
@@ -311,7 +310,7 @@ div.cbp label.font{
 					    <div class="col-sm-4">
 						    <select name="bankId" class="form-control">
 						      <option value="">请选择</option>
-						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						      <option th:each="bank : ${banks}" th:value="${bank.id}" th:text="${bank.bankCode}">/option>
 						    </select>
 					    </div>
 					  </div>

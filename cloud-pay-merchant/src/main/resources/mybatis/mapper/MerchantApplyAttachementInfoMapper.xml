@@ -96,7 +96,7 @@
     from t_merchant_apply_attachement_info
     where merchant_id = #{merchantId,jdbcType=INTEGER}
   </select>
-  <update id="updateByPrimaryKey" >
+  <update id="updateByMerchantIdAndType" >
     update t_merchant_apply_attachement_info
     set attachement_path = #{path,jdbcType=VARCHAR}
     where merchant_id = #{merchantId,jdbcType=INTEGER}

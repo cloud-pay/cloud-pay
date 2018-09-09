@@ -23,6 +23,7 @@ import com.cloud.pay.common.entity.Channel;
 import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;
+import com.cloud.pay.recon.constant.ReconExceptionTypeEnum;
 import com.cloud.pay.recon.entity.Recon;
 import com.cloud.pay.recon.mapper.ReconMapper;
 import com.cloud.pay.recon.service.IReconServiceHandler;
@@ -69,24 +70,27 @@ public class BohaiReconService implements IReconServiceHandler {
 			throw new CloudPayException("获取对账文件失败");
 		}
 		String reconDate = DateUtil.formatDate(recon.getAccountDate(), "yyyy-MM-dd");
+		//删除异常数据明细
+		reconExceptionBohaiService.deleteByReconId(recon.getId());
 	    //解析对账文件，并讲对账数据保存到数据库
 		reconChannelBohaiService.saveChannelReconDate(downFileResVo.getFilePath());
 		//开始对账
 		//更新交易订单表数据和渠道对账表数据元素一致的记录的状态（更新对账状态为银行状态），标识渠道比对账表记录为平账
 		reconChannelBohaiService.updateReconStatusFlat(recon.getAccountDate());
-		
-		//step3 TODO.... 更新交易订单中存在但渠道不存在的记录的对账状态为延期对账
-		log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录");
+		log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录，记录异常数据类型为：短款");
 		int shortCount = reconChannelBohaiService.updateShortUnflat(reconDate);
 		if(shortCount > 0) {
-			reconExceptionBohaiService.insertShortPlat(reconDate,recon.getChannelId());
+			reconExceptionBohaiService.insertShortPlat(reconDate,recon.getChannelId(),recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_SHORT.getTypeCode());
 		}
+		log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
+		
+		
 		//step4 TODO.... 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
 		//step5 TODO.... 检查异常订单记录表里面是否存在延期的记录，并判断延期记录是否对账状态，如果对账状态认为失败，则讲记录标识为异常记录并设置错误为“延期后对账失败”
 		//step6 TODO.... 检查是否交易表中该渠道是否还有未对账未延期的记录
 		//step7 TODO.... 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
 	    int tradeCount = 100;
-	    Long exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId());
+	    Long exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId(),recon.getId());
 	    //recon.setTradeTotal(tradeCount);
 	    recon.setExceptionTotal(exceptionCount.intValue());
 	    if(exceptionCount > 0) {

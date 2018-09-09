@@ -23,8 +23,8 @@ public class ReconExceptionService {
 	  * @param reconDate
 	  * @return
 	  */
-	 public int insertShortPlat(String reconDate,Integer channelId) {
-		 return reconExceptionBohaiMapper.insertShortPlat(reconDate,channelId);
+	 public int insertShortPlat(String reconDate,Integer channelId,Integer reconId,Integer exceptionType) {
+		 return reconExceptionBohaiMapper.insertShortPlat(reconDate,channelId,reconId, exceptionType);
 	 }
 	 
 	 /**
@@ -32,11 +32,20 @@ public class ReconExceptionService {
 	  * @param channelId
 	  * @return
 	  */
-	 public Long selectCountByChannelId(Integer channelId) {
-		 return reconExceptionBohaiMapper.selectCountByChannelId(channelId);
+	 public Long selectCountByChannelId(Integer channelId,Integer reconId) {
+		 return reconExceptionBohaiMapper.selectCountByChannelId(channelId,reconId);
 	 }
 	 
-	 public List<ReconExceptionBohaiDTO> selectListByParam(Integer channelId,Integer reconId){
-		  return reconExceptionBohaiMapper.selectListByParam(channelId, reconId);
+	 public List<ReconExceptionBohaiDTO> selectListByParam(Integer channelId,Integer reconId,String orderNo,Integer exceptionType){
+		  return reconExceptionBohaiMapper.selectListByParam(channelId, reconId,orderNo,exceptionType);
+	 }
+	 
+	 /**
+	  *  根据对账ID删除异常数据
+	  * @param reconId
+	  * @return
+	  */
+	 public int deleteByReconId(Integer reconId) {
+		 return reconExceptionBohaiMapper.deleteByReconId(reconId);
 	 }
 }

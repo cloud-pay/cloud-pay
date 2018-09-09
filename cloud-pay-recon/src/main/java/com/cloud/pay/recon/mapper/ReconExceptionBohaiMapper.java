@@ -99,14 +99,15 @@ public interface ReconExceptionBohaiMapper {
       * 生成短款异常数据
      * @param reconDate
      */
-    int insertShortPlat(@Param("reconDate") String reconDate,@Param("channelId")  Integer channelId);
+    int insertShortPlat(@Param("reconDate") String reconDate,@Param("channelId")  Integer channelId, @Param("reocnId")  Integer reocnId,
+    		@Param("exceptionType")Integer exceptionType);
     
     /**
       * 根据渠道编号获取异常数据数量
      * @param channelId
      * @return
      */
-    Long selectCountByChannelId(Integer channelId);
+    Long selectCountByChannelId(@Param("channelId")Integer channelId,@Param("reconId")Integer reconId);
     
     /**
       * 查询异常数据明细
@@ -114,7 +115,13 @@ public interface ReconExceptionBohaiMapper {
      * @param reconId
      * @return
      */
-    List<ReconExceptionBohaiDTO> selectListByParam(@Param("channelId")Integer channelId,@Param("reconId")Integer reconId);
+    List<ReconExceptionBohaiDTO> selectListByParam(@Param("channelId")Integer channelId,@Param("reconId")Integer reconId,
+    		@Param("orderNo") String orderNo,@Param("exceptionType")Integer exceptionType);
     
-    
+    /**
+     * 根据对账Id删除异常明细
+     * @param reconId
+     * @return
+     */
+    int deleteByReconId(Integer reconId);
 }

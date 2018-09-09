@@ -98,7 +98,6 @@ div.cbp label.font{
             <div class="box-header">
               <h3 class="box-title">商户列表</h3>
               <br><br>
-              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addMerchant"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加商户</button>
               <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
 					<button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
@@ -193,17 +192,8 @@ div.cbp label.font{
                   <td th:text="${merchant.modifer}"></td>
                   <td>
                   	<div th:if="${merchant.id != 1 || meid == '1'}">
-                  	   <!--
-	                  	<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1' && merchant.status == 1}" class="btn btn-xs btn-info" 
-							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
-							<i class="fa fa-edit"></i> 编辑
-						</span>
-	                  	<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 冻结</span>
-	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
-	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
-                  		 -->
                   		<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
-	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${mercahnt.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 通道商户号</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 查看密钥</span>
@@ -449,7 +439,6 @@ div.cbp label.font{
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-				<button type="submit" class="btn btn-success"  id="imgSubmit" >确定</button>
 			</div>
 		</div>
 	</div>
@@ -589,122 +578,16 @@ $(function(){
   	  	"pageLength"  : 10
     });
 	
-	$("#addMerchant").click(function(){
-		reloadModelData(_ctx+"/merchant/add","添加商户","添加","");
-		$("#merchantModal").modal("show");
-	});
-	
-	var BaseInfo = function(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
-		 this.id = id;
-		 this.code = code;
-		 this.orgId = orgId;
-		 this.name = name;
-		 this.shortName = shortName;
-		 this.type = type;
-		 this.industryCategory = industryCategory;
-		 this.legal = legal;
-		 this.city = city;
-		 this.address = address;
-		 this.email = email;
-		 this.mobile = mobile;
-	 }
-	var BankInfo = function(id, bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
-		 this.id = id;
-		 this.bankName = bankName;
-		 this.bankId = bankId;
-		 this.bankCardNo = bankCardNo;
-		 this.bankAccontType = bankAccontType;
-		 this.bankAccountName = bankAccountName;
-		 this.certType = certType;
-		 this.certNo = certNo;
-		 this.mobileNo = mobileNo;
-	 }
-	var FeeInfo = function(id, payFeeType, payFee, loanFeeType, loanFee) {
-		 this.id = id;
-		 this.payFeeType = payFeeType;
-		 this.payFee = payFee;
-		 this.loanFeeType = loanFeeType;
-		 this.loanFee = loanFee;
-	 }
-	 var AttachementInfo = function(businessPath, certPath, bankCardPath, protocolPath) {
-		 this.businessPath = businessPath;
-		 this.certPath = certPath;
-		 this.bankCardPath = bankCardPath;
-		 this.protocolPath = protocolPath;
-	 }
-	
-	//确认按钮
-	$("#imgSubmit").click(function(){
-		var id = $("input[name='id']").val();
-		var url = $("input[name='url']").val();
-		var code = $("input[name='code']").val();
-		var orgId = $("[name='orgId']").val();
-		var type = $("[name='type']").val();
-		var name = $("input[name='name']").val();
-		var shortName = $("input[name='shortName']").val();
-		var industryCategory= $("input[name='industryCategory']").val();
-		var city= $("[name='city']").val();
-		var address= $("input[name='address']").val();
-		var legal= $("input[name='legal']").val();
-		var email= $("input[name='email']").val();
-		var mobile= $("input[name='mobile']").val();
-		var baseInfo = new BaseInfo(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
-		//alert(JSON.stringify(baseInfo));
-		var bankInfoId = $("input[name='bankInfoId']").val();
-		var bankId = $("[name='bankId']").val();
-		var bankName = $("input[name='bankName']").val();
-		var bankAccountType = $("[name='bankAccountType']").val();
-		var bankCardNo = $("input[name='bankCardNo']").val();
-		var certType = $("[name='certType']").val();
-		var bankAccountName = $("input[name='bankAccountName']").val();
-		var certNo = $("input[name='certNo']").val();
-		var mobileNo = $("input[name='mobileNo']").val();
-		var bankInfo = new BankInfo(bankInfoId, bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo);
-		//alert(JSON.stringify(bankInfo));
-		var feeId = $("input[name='feeId']").val();
-		var payFeeType = $("[name='payFeeType']").val();
-		var payFee = $("input[name='payFee']").val();
-		var loanFeeType = $("[name='loanFeeType']").val();
-		var loanFee = $("input[name='loanFee']").val();
-		var feeInfo = new FeeInfo(feeId, payFeeType, payFee, loanFeeType, loanFee);
-		//alert(JSON.stringify(feeInfo));
-		var businessPath = $("input[name='businessPath']").val();
-		var certPath = $("input[name='certPath']").val();
-		var bankCardPath = $("input[name='bankCardPath']").val();
-		var protocolPath = $("input[name='protocolPath']").val();
-		var attachementInfo = new AttachementInfo(businessPath, certPath, bankCardPath, protocolPath);
-		if(url == _ctx+'/merchant/add'){
-			if(!checkAccount()){
-				return false;
-			}
-		}
-		$.ajax({
-			type:"post",
-			url:url,
-			cache:false,
-			dataType:"json",
-			data:{baseInfo:JSON.stringify(baseInfo),bankInfo:JSON.stringify(bankInfo),feeInfo:JSON.stringify(feeInfo), attachementInfo:JSON.stringify(attachementInfo)},
-			success:function(data){
-				if(data.status == 'success'){
-					$("#merchantModal").modal("hide");
-					window.location.href=window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-	});
-	
 })
 
-//删除商户
+//商户详情
 function detail(id){
 	console.log(id);
 	reloadModelData("detail","商户详情","详情",id);
 	$("#merchantModal").modal("show");
 }
 
-//删除商户
+//修改状态
 function updateStatus(routeId, status){
     var msg='';
     if(status == 0) {
@@ -728,13 +611,6 @@ function updateStatus(routeId, status){
 			}
 		});
 	}
-}
-
-//编辑商户
-function editMerchant(id){
-	console.log(id);
-	reloadModelData(_ctx+"/merchant/edit","编辑商户","更新",id);
-	$("#merchantModal").modal("show");
 }
 
 //验证数据

@@ -24,7 +24,6 @@ import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.common.service.BankService;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
-import com.cloud.pay.trade.entity.MerchantRouteConf;
 
 @Controller
 @RequestMapping("/merchant")
@@ -73,6 +72,7 @@ public class MerchantController extends BaseController{
 		model.addAttribute("merchants", merchantService.getMerchantList(orgId, code, name, startTime, endTime));
 		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
+		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/merchant/merchantList";
 	}
 	
@@ -101,4 +101,22 @@ public class MerchantController extends BaseController{
 		return ResponseModel.getModel("ok", "success", null);
 	}
 	
+	/**
+	 * 获取商戶
+	 * @return
+	 */
+	@RequestMapping(value="/get",method=RequestMethod.GET)
+	@ResponseBody
+	public Object get(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			ParameterMap map = this.getParameterMap();
+			Integer id = Integer.parseInt(map.getString("id"));
+			return ResponseModel.getModel("ok", "success", merchantService.select(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+	}
 }

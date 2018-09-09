@@ -52,4 +52,6 @@ public interface MerchantFeeInfoMapper {
      * @mbggenerated Sun Sep 02 09:06:42 CST 2018
      */
     int updateByPrimaryKey(MerchantFeeInfo record);
+    
+    MerchantFeeInfo selectByMerchantId(@Param("merchantId")Integer merchantId);
 }

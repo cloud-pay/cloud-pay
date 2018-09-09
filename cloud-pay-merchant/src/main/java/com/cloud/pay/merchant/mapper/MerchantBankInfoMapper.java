@@ -32,4 +32,6 @@ public interface MerchantBankInfoMapper {
      * @mbggenerated Sun Sep 02 09:06:42 CST 2018
      */
     int updateByPrimaryKey(MerchantBankInfo record);
+    
+    MerchantBankInfo selectByMerchantId(@Param("merchantId")Integer merchantId);
 }

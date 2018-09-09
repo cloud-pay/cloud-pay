@@ -27,9 +27,9 @@ import com.cloud.pay.merchant.service.MerchantService;
 
 @Controller
 @RequestMapping("/merchant")
-public class MerchantController extends BaseController{
+public class OrgController extends BaseController{
 	
-	private Logger log = LoggerFactory.getLogger(MerchantController.class);
+	private Logger log = LoggerFactory.getLogger(OrgController.class);
 	
 	@Autowired
 	private MerchantService merchantService;

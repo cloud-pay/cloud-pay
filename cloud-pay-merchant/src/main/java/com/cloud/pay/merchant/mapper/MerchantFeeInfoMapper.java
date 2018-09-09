@@ -1,5 +1,7 @@
 package com.cloud.pay.merchant.mapper;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 
 public interface MerchantFeeInfoMapper {

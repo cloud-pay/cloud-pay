@@ -1,5 +1,9 @@
 package com.cloud.pay.merchant.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.cloud.pay.merchant.entity.MerchantAttachementInfo;
 
 public interface MerchantAttachementInfoMapper {

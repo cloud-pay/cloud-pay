@@ -158,7 +158,11 @@ public class BohaiReconService implements IReconServiceHandler {
 			reconExceptionBohai.setPayeeName(trade.getPayeeName());
 			reconExceptionBohai.setBankCode(trade.getPayeeBankCode());
 			reconExceptionBohai.setTradeAmount(trade.getTradeAmount());
-			reconExceptionBohai.setTradeStatus(trade.getStatus().toString());
+			String tradeStatus = "2";
+			if(null != trade.getStatus() && trade.getStatus() == 2) {
+				tradeStatus = "1";
+			}
+			reconExceptionBohai.setTradeStatus(tradeStatus);
 			reconExceptionBohai.setExceptionReason(reason);
 			reconExceptionBohai.setCreateTime(new Date());
 			reconExceptionBohais.add(reconExceptionBohai);

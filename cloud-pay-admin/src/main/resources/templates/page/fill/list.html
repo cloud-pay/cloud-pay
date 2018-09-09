@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/css-head :: css-head">
+</head>
+<style>
+	textarea{
+		width:100%;
+		height:100px;
+	}
+	
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+
+.chk_1{
+    display: none;
+}
+.chk_1 + label {
+	background-color: #FFF;
+	border: 1px solid #C1CACA;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+	padding: 9px;
+	border-radius: 5px;
+	display: inline-block;
+	position: relative;
+	margin-right: 30px;
+}
+.chk_1 + label:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+.chk_1:checked + label {
+	background-color: #ECF2F7;
+	border: 1px solid #92A1AC;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+	color: #243441;
+}
+
+.chk_1:checked + label:after {
+	content: '\2714';
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	color: #758794;
+	width: 100%;
+	text-align: center;
+	font-size: 1.4em;
+	padding: 1px 0 0 0;
+	vertical-align: text-top;
+}
+div.cbp label.font{
+	text-align: center;
+	font-size: 1.4em;
+	vertical-align: text-top;
+	margin-top: -15px;
+	margin-left: -10px;
+}
+
+</style>
+<body>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    	 当前位置：资金补登
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> 资金/对账管理</a></li>
+    <li class="active">资金补登</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	 <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">资金补登列表</h3>
+              <br><br>
+              <button class="btn btn-success btn-sm" id="addFillRecord">资金补登</button>
+              <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
+			  <button class="btn btn-sm" id="resetBtn">重置</button>
+            </div>
+			<div class="row clearfix">  
+			   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<div class="form-group">
+						<div class="form-line">
+							<label for="channelName">通道名称</label>
+							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>		
+						</div>
+					</div>
+				</div>
+			</div>	
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="reconList" class="table table-bordered table-striped">
+                <thead>
+	                <tr>
+	                  <th>合作机构编号</th>
+	                  <th>合作机构名称</th>
+	                  <th>合作机构账户编号</th>
+	                  <th>本次补登金额</th>
+	                  <th>备注</th>
+					  <th>状态</th>
+					  <th>更新人</th>
+					  <th>更新时间</th>
+	                  <th>操作</th>
+	                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${QX.query == '1'}" th:each="fillRecord,stat :${fillRecords}">
+                   <td th:text="${fillRecord.orgCode}" ></td>
+                   <td th:text="${fillRecord.orgName}"></td>
+                   <td></td>
+                   <td th:text="${fillRecord.fillAmount}"></td>
+                   <td th:text="${fillRecord.rmk}"></td>
+                   <td th:if="${fillRecord.status == 1}" th:text="正常"></td>
+                   <td th:if="${fillRecord.status == 2}" th:text="已冲正"></td>
+                   <td th:text="${fillRecord.updatorId}"></td>
+                   <td th:text="${#dates.format(fillRecord.updateTime,'yyyy-MM-dd hh:mm:ss')}"></td>
+                   <td>
+                  	<div>
+                  	   <span data-toggle="tooltip" title="冲正" th:if="${fillRecord.status == 1}" class="btn btn-xs btn-info" th:onclick="'reversal(\''+${fillRecord.id}+'\');'"><i class="fa fa-balance-scale"></i>冲正</span>
+                  	</div>
+                   </td>
+                </tr>
+                <tr th:unless="${QX.query == '1'}" >
+                	<td colspan="9" align="center">
+						<h2>此商户无权限查看该页面</h2>
+                	</td>
+                </tr>
+                </tbody>
+               </table>
+            </div>
+       </div>
+</section>
+<div class="modal fade" id="fillRecordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog"> 
+      <div class="modal-content">
+           <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="menumodelHead">资金补登</h4>
+		   </div>
+		   <div class="modal-body">
+		      <form class="form-horizontal" role="form">
+		         <input type="hidden" name="actionurl" value="/"/>
+		         <div class="form-group">
+		             <label for="org_id" class="col-sm-3 control-label">选择机构</label>
+		             <div class="col-sm-9">
+		                <input type="text" class="form-control" name="org_id" value="" id="org_id">
+		             </div>
+		         </div>
+		         <div class="form-group">
+		             <label for="max_fill_amount" class="col-sm-3 control-label">可补登最大金额</label>
+		             <div class="col-sm-7">
+		                <input type="text" class="form-control" name="max_fill_amount" value="" id="max_fill_amount">
+		             </div>
+		              <div class="col-sm-2">
+		                 <button type="button" class="btn btn-success" id="searchMaxFillAmount" >查询</button>
+		             </div>
+		         </div>
+		         <div class="form-group">
+		             <label for="fill_amount" class="col-sm-3 control-label">本次补登金额</label>
+		             <div class="col-sm-9">
+		                <input type="text" class="form-control" name="fill_amount" value="" id="fill_amount">
+		             </div>
+		         </div>
+		         <div class="form-group">
+		             <label for="fill_rmk" class="col-sm-3 control-label">备注</label>
+		             <div class="col-sm-9">
+		                <input type="text" class="form-control" name="fill_rmk" value="" id="fill_rmk">
+		             </div>
+		         </div>
+		      </form>
+		   </div>
+		   <div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-success" id="submitBtn" >确定</button>
+		   </div>
+      </div>
+  </div>
+</div>
+<script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
+<script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/ztree/js/jquery.ztree.core.js}"></script>
+<script th:src="@{/ztree/js/jquery.ztree.excheck.min.js}"></script>
+<script th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js}"></script> 
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+<script th:src="@{/js/path.js}"></script>
+<script>
+$(function(){
+	
+	//查询按钮事件
+	$("#searchBtn").off().on("click",function(){
+		var channelName = $("#channelName").val();
+		var accountDate = $("#accountDate").val();
+		var reconStatus = $("#reconStatus").val();
+		window.location.href = _ctx+'/fillRecord/list'
+			+'?channelName='+channelName
+			+'&tradeDate='+accountDate
+			+'&reconStatus='+reconStatus;
+	});
+
+	//重置按钮事件
+	$("#resetBtn").off().on("click",function(){
+		$("#channelName").val('');
+		$("#accountDate").val('');
+		$("#reconStatus").val('');
+	});
+	 //提示框
+    $("[data-toggle='tooltip']").tooltip();
+	//表格分页
+    $('#reconList').DataTable({
+    	"scrollX"	  : true,
+  		'paging'      : true,
+  	    'lengthChange': true,
+  	    'searching'   : true,
+  	    'ordering'    : true,
+  	    'info'        : true,
+  	    'autoWidth'   : false,
+  	  	"pagingType"  : "full_numbers",
+  	  	"pageLength"  : 10
+    });
+	
+    $("#addFillRecord").click(function(){
+    	reloadActionBtn(_ctx+"/fillRecord/add","确定");
+	  	$("#fillRecordModal").modal("show");
+    });
+    
+    $("#submitBtn").click(function(){
+    	var actionUrl = $("input[name='actionurl']").val();
+    	var orgId = $("input[name='org_id']").val();
+    	var maxFillAmount = $("input[name='max_fill_amount']").val();
+    	var fillAmount = $("input[name='fill_amount']").val();
+    	var fillRmk = $("input[name='fill_rmk']").val();
+    	$.ajax({
+    		type:"POST",
+    		url:actionUrl,
+    		data:{orgId:orgId,fillAmount:fillAmount,rmk:fillRmk},
+    		dataType:"json",
+    		cache:false,
+    		success:function(data){
+    			if(data.status == 'success'){
+    				$("#fillRecordModal").modal("hide");
+    				//刷新
+    				window.location.href=window.location.href;
+    			}else{
+    				alert(data.msg);
+    			}
+    		}
+    	});
+    });
+})
+  function reloadActionBtn(actionUrl,btnText){
+	  $("#fillRecordModal input[name='actionurl']").val(actionUrl);
+	  $("#submitBtn").text(btnText);
+  }
+</script>
+</body>
+</html>

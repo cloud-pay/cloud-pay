@@ -1,6 +1,5 @@
 package com.cloud.pay.admin.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
 import com.cloud.pay.admin.entity.ResponseModel;
 import com.cloud.pay.admin.entity.ResultEnum;
@@ -29,7 +27,7 @@ public class ReconController extends BaseController {
   
 	private Logger log = LoggerFactory.getLogger(ReconController.class);
 	
-	private String menuUrl = "recon/list";
+	private String menuUrl = "/recon/list";
 	
 	@Autowired
 	private ReconService reconService;

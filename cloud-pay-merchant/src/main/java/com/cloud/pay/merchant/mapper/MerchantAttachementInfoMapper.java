@@ -32,4 +32,6 @@ public interface MerchantAttachementInfoMapper {
      * @mbggenerated Sun Sep 02 09:06:42 CST 2018
      */
     int updateByPrimaryKey(MerchantAttachementInfo record);
+    
+    List<MerchantAttachementInfo> selectByMerchantId(@Param("merchantId")Integer merchantId);
 }

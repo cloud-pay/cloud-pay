@@ -528,4 +528,68 @@
       delete from t_recon_exception_trade
       where RECON_ID = #{reconId,jdbcType=INTEGER}
   </delete>
+  
+  <select id="selectListByExceptionType" resultMap= "BaseResultMap">
+       select 
+       <include refid="Base_Column_List" />
+       from t_recon_exception_trade t
+       where t.EXCEPTION_TYPE = #{exceptionType,jdbcType=INTEGER}
+  </select>
+  
+  <update id="updatePostPoneHis">
+      update t_trade t,t_recon_channel_bohai b,t_recon_exception_trade e
+	  set t.recon_status = b.TRADE_STATUS,
+		    t.recon_date = SYSDATE(),
+		    b.RECON_STATUS = 1
+		where e.ORDER_NO = t.order_no
+		AND e.ORDER_NO = b.TRADE_ORDER_NO
+		AND t.order_no = b.TRADE_ORDER_NO
+		AND e.EXCEPTION_TYPE = 2
+  </update>
+  
+  <delete id="deletePostPoneHis">
+       delete b from  t_trade t,t_recon_channel_bohai b,t_recon_exception_trade e
+	   where e.ORDER_NO = t.order_no
+	   AND e.ORDER_NO = b.TRADE_ORDER_NO
+	   AND t.order_no = b.TRADE_ORDER_NO
+	   AND e.EXCEPTION_TYPE = 2
+  </delete>
+  
+  <insert id="batchInsert">
+      insert into t_recon_exception_trade
+		(
+		 CHANNEL_ID,
+		 recon_id,
+		 order_no,
+		 payer_account,
+		 payer_name,
+		 payee_account,
+		 payee_name,
+		 bank_code,
+		 trade_amount,
+		 trade_status,
+		 trade_status_desc,
+		 exception_reason,
+		 EXCEPTION_TYPE,
+		 create_time
+		)
+       <foreach collection="list" item="item" index="index" separator="," > 
+       (
+         #{item.channelId,jdbcType=INTEGER}, 
+         #{item.reconId,jdbcType=INTEGER}, 
+         #{item.orderNo,jdbcType=VARCHAR}, 
+         #{item.payerAccount,jdbcType=VARCHAR}, 
+         #{item.payerName,jdbcType=VARCHAR}, 
+         #{item.payeeAccount,jdbcType=VARCHAR}, 
+         #{item.payeeName,jdbcType=VARCHAR}, 
+         #{item.bankCode,jdbcType=VARCHAR}, 
+         #{item.tradeAmount,jdbcType=DECIMAL}, 
+         #{item.tradeStatus,jdbcType=VARCHAR}, 
+         #{item.tradeStatusDesc,jdbcType=VARCHAR}, 
+         #{item.exceptionReason,jdbcType=VARCHAR}, 
+         #{item.exceptionType,jdbcType=INTEGER}, 
+         SYSDATE()
+       )
+       </foreach>
+  </insert>
 </mapper>

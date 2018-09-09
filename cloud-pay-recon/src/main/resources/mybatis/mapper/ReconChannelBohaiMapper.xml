@@ -469,4 +469,5 @@
 	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.order_no) 
 	and b.RECON_STATUS = 0
   </update>
+ 
 </mapper>

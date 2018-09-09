@@ -7,4 +7,11 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
   <artifactId>cloud-pay-recon</artifactId>
+  <dependencies> 
+     <dependency>
+			<groupId>com.cloud.pay</groupId>
+			<artifactId>cloud-pay-trade</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+	 </dependency>
+  </dependencies>
 </project>

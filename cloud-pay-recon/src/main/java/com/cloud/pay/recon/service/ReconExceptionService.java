@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.recon.dto.ReconExceptionBohaiDTO;
+import com.cloud.pay.recon.entity.ReconExceptionBohai;
 import com.cloud.pay.recon.mapper.ReconExceptionBohaiMapper;
 
 /**
@@ -47,5 +48,26 @@ public class ReconExceptionService {
 	  */
 	 public int deleteByReconId(Integer reconId) {
 		 return reconExceptionBohaiMapper.deleteByReconId(reconId);
+	 }
+	 
+	 public List<ReconExceptionBohai> selectListByExceptionType(Integer exceptionType){
+		 return reconExceptionBohaiMapper.selectListByExceptionType(exceptionType);
+	 }
+	 
+	   
+	 public int updatePostPoneHis() {
+		  return reconExceptionBohaiMapper.updatePostPoneHis();
+	 }
+	    
+	    /**
+	     * 删除历史延期对账成功的数据
+	     * @return
+	     */
+	 public int deletePostPoneHis() {
+		 return reconExceptionBohaiMapper.updatePostPoneHis();
+	 }
+	 
+	 public int batchInsert(List<ReconExceptionBohai> list) {
+		 return reconExceptionBohaiMapper.batchInsert(list);
 	 }
 }

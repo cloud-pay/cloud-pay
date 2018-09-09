@@ -124,4 +124,30 @@ public interface ReconExceptionBohaiMapper {
      * @return
      */
     int deleteByReconId(Integer reconId);
+    
+    /**
+     * 根据状态查询异常明细数据
+     * @param exceptionType
+     * @return
+     */
+    List<ReconExceptionBohai> selectListByExceptionType(Integer exceptionType);
+    
+    /**
+     * 历史延期数据对账
+     * @return
+     */
+    int updatePostPoneHis();
+    
+    /**
+     * 删除历史延期对账成功的数据
+     * @return
+     */
+    int deletePostPoneHis();
+    
+    /**
+     * 批量插入
+     * @param list
+     * @return
+     */
+    int batchInsert(List<ReconExceptionBohai> list);
 }

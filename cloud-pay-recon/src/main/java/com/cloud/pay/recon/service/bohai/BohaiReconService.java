@@ -25,9 +25,13 @@ import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;
 import com.cloud.pay.recon.constant.ReconExceptionTypeEnum;
 import com.cloud.pay.recon.entity.Recon;
+import com.cloud.pay.recon.entity.ReconExceptionBohai;
 import com.cloud.pay.recon.mapper.ReconMapper;
 import com.cloud.pay.recon.service.IReconServiceHandler;
 import com.cloud.pay.recon.service.ReconExceptionService;
+import com.cloud.pay.trade.dto.TradeDTO;
+import com.cloud.pay.trade.entity.Trade;
+import com.cloud.pay.trade.mapper.TradeMapper;
 
 /**
  * 渤海对账
@@ -45,6 +49,9 @@ public class BohaiReconService implements IReconServiceHandler {
 	
 	@Autowired
 	private ReconMapper reconMapper;
+	
+	@Autowired
+	private TradeMapper tradeMapper;
 	
 	@Autowired
 	private ReconChannelBohaiService reconChannelBohaiService;
@@ -74,19 +81,28 @@ public class BohaiReconService implements IReconServiceHandler {
 		reconExceptionBohaiService.deleteByReconId(recon.getId());
 	    //解析对账文件，并讲对账数据保存到数据库
 		reconChannelBohaiService.saveChannelReconDate(downFileResVo.getFilePath());
-		//开始对账
-		//更新交易订单表数据和渠道对账表数据元素一致的记录的状态（更新对账状态为银行状态），标识渠道比对账表记录为平账
+		//更新交易订单表数据和渠道对账表数据元素一致的记录的状态，标识渠道比对账表记录为平账
 		reconChannelBohaiService.updateReconStatusFlat(recon.getAccountDate());
-		log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录，记录异常数据类型为：短款");
+		//检查是否存在延期的记录，先更新延期记录
+		List<ReconExceptionBohai> postPoneRecord = reconExceptionBohaiService.selectListByExceptionType(ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode());
+	    if(null != postPoneRecord && postPoneRecord.size() > 0) {
+	    	log.info("处理历史延期对账数据");
+	    	reconExceptionBohaiService.updatePostPoneHis();
+	    	reconExceptionBohaiService.deletePostPoneHis();
+	    }
+		//更新渠道存在但交易表中不存在的记录
 		int shortCount = reconChannelBohaiService.updateShortUnflat(reconDate);
 		if(shortCount > 0) {
+			log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录，记录异常数据类型为：短款");
 			reconExceptionBohaiService.insertShortPlat(reconDate,recon.getChannelId(),recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_SHORT.getTypeCode());
 		}
-		log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
-		
+		List<TradeDTO> postPoneTrade = tradeMapper.selectLongRecord(reconDate);
+		if(null != postPoneTrade && postPoneTrade.size() > 0) {
+			log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
+			reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(postPoneTrade, recon.getId()));
+		}
 		
 		//step4 TODO.... 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
-		//step5 TODO.... 检查异常订单记录表里面是否存在延期的记录，并判断延期记录是否对账状态，如果对账状态认为失败，则讲记录标识为异常记录并设置错误为“延期后对账失败”
 		//step6 TODO.... 检查是否交易表中该渠道是否还有未对账未延期的记录
 		//step7 TODO.... 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
 	    int tradeCount = 100;
@@ -99,5 +115,32 @@ public class BohaiReconService implements IReconServiceHandler {
 	    	 recon.setReconStatus(1);
 	    }
 	    reconMapper.updateByPrimaryKey(recon);
+	}
+	
+	/**
+	 * 构建延期数据
+	 * @param trades
+	 * @param reconId
+	 * @return
+	 */
+	private List<ReconExceptionBohai> buildPostPoneExceptionDate(List<TradeDTO> trades,Integer reconId){
+		List<ReconExceptionBohai> reconExceptionBohais = new ArrayList<>();
+		for(TradeDTO trade:trades) {
+			ReconExceptionBohai reconExceptionBohai = new ReconExceptionBohai();
+			reconExceptionBohai.setChannelId(trade.getChannelId());
+			reconExceptionBohai.setReconId(reconId);
+			reconExceptionBohai.setExceptionType(ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode());
+			reconExceptionBohai.setOrderNo(trade.getOrderNo());
+			reconExceptionBohai.setPayerAccount(trade.getPayerBankCard());
+			reconExceptionBohai.setPayerName(trade.getPayerName());
+			reconExceptionBohai.setPayeeAccount(trade.getPayeeBankCard());
+			reconExceptionBohai.setPayeeName(trade.getPayeeName());
+			reconExceptionBohai.setBankCode(trade.getPayeeBankCode());
+			reconExceptionBohai.setTradeAmount(trade.getTradeAmount());
+			reconExceptionBohai.setTradeStatus(trade.getStatus().toString());
+			reconExceptionBohai.setExceptionReason("延期对账");
+			reconExceptionBohais.add(reconExceptionBohai);
+		}
+		return reconExceptionBohais;
 	}
 }

@@ -101,4 +101,11 @@ public interface TradeMapper {
      * @return
      */
     List<TradeDTO> selectLongRecord(String reconDate);
+    
+    /**
+     * 查询交易表和渠道订单号相同但其他要素不相等的记录
+     * @param reconDate
+     * @return
+     */
+    List<TradeDTO> selectExceptionRecord(String reconDate);
 }

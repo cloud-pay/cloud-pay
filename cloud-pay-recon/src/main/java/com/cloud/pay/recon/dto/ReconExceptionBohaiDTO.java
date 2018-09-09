@@ -40,6 +40,8 @@ public class ReconExceptionBohaiDTO {
     private Date createTime;
     
     private Integer exceptionType;
+    
+    private Integer exceptionCount;
 
     
     public Date getTradeTime() {
@@ -199,6 +201,17 @@ public class ReconExceptionBohaiDTO {
 
 	public void setExceptionType(Integer exceptionType) {
 		this.exceptionType = exceptionType;
+	}
+
+	
+
+	public Integer getExceptionCount() {
+		return exceptionCount;
+	}
+
+
+	public void setExceptionCount(Integer exceptionCount) {
+		this.exceptionCount = exceptionCount;
 	}
 
 

@@ -26,7 +26,7 @@ import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
 
 @Controller
-@RequestMapping("/merchant")
+@RequestMapping("/org")
 public class OrgController extends BaseController{
 	
 	private Logger log = LoggerFactory.getLogger(OrgController.class);

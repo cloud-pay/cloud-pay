@@ -45,8 +45,8 @@
     <result column="settle_status" property="settleStatus" jdbcType="INTEGER" />
     <result column="recon_date" property="reconDate" jdbcType="TIMESTAMP" />
     <result column="recon_status" property="reconStatus" jdbcType="INTEGER" />
-    <result column="payee_name" property="payeeName" jdbcType="VARCHAR" />
-    <result column="payee_bank_card" property="payeeBankCard" jdbcType="VARCHAR" />
+    <result column="payer_name" property="payerName" jdbcType="VARCHAR" />
+    <result column="payer_bank_card" property="payerBankCard" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -513,7 +513,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <select id="selectLongRecord" resultMap="BaseResultMap" parameterType="java.lang.String">   
+  <select id="selectLongRecord" resultMap="BaseResultDTO" parameterType="java.lang.String">   
        select t.id,
        t.order_no,
        t.merchant_id,
@@ -531,5 +531,24 @@
 	     AND NOT EXISTS  (select * from t_recon_channel_bohai b where t.order_no = b.trade_order_no)
 	     AND t.`status` = 2
          AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectExceptionRecord" resultMap="BaseResultDTO" parameterType="java.lang.String">
+     select  t.id,
+       t.order_no,
+       t.merchant_id,
+       t.trade_time,
+       t.trade_amount,
+       t.`status`,
+       t.channel_id,
+       t.payee_bank_card,
+       t.payee_bank_code,
+       t.payee_name,
+       i.bank_account_name payer_name,
+       i.bank_card_no payer_bank_card
+	 from t_trade t,t_merchant_bank_info i,t_recon_channel_bohai b
+	where t.order_no = b.TRADE_ORDER_NO
+	and b.RECON_STATUS = 0
+	AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
   </select>
 </mapper>

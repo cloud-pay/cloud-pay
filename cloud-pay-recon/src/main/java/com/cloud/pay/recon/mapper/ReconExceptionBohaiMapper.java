@@ -107,7 +107,7 @@ public interface ReconExceptionBohaiMapper {
      * @param channelId
      * @return
      */
-    Long selectCountByChannelId(@Param("channelId")Integer channelId,@Param("reconId")Integer reconId);
+    List<ReconExceptionBohaiDTO> selectCountByChannelId(@Param("channelId")Integer channelId,@Param("reconId")Integer reconId);
     
     /**
       * 查询异常数据明细

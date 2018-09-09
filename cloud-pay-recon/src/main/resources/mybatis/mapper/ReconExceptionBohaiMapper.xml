@@ -39,7 +39,9 @@
     <result column="TRADE_STATUS_DESC" property="tradeStatusDesc" jdbcType="VARCHAR" />
     <result column="EXCEPTION_REASON" property="exceptionReason" jdbcType="VARCHAR" />
     <result column="EXCEPTION_TYPE" property="exceptionType" jdbcType="INTEGER" />
+    <result column="EXCEPTION_COUNT" property="exceptionCount" jdbcType="INTEGER" />
   </resultMap>
+  
   <sql id="Example_Where_Clause" >
     <!--
       WARNING - @mbggenerated
@@ -497,8 +499,13 @@
 	and b.TRADE_STATUS = 1
   </insert>
   
-  <select id="selectCountByChannelId" parameterType="java.lang.Integer" resultType="java.lang.Long" >
-     select count(*) from t_recon_exception_trade where CHANNEL_ID = #{channelId,jdbcType=INTEGER} AND RECON_ID = #{reconId,jdbcType=INTEGER}
+  <select id="selectCountByChannelId" parameterType="java.lang.Integer" resultMap= "BaseResultDTO" >
+     select  EXCEPTION_TYPE ,
+     count(*) EXCEPTION_COUNT
+     from t_recon_exception_trade 
+     where CHANNEL_ID = #{channelId,jdbcType=INTEGER} 
+     AND RECON_ID = #{reconId,jdbcType=INTEGER}
+     group by EXCEPTION_TYPE 
   </select>
   
   <select id="selectListByParam" resultMap= "BaseResultDTO">
@@ -572,7 +579,7 @@
 		 exception_reason,
 		 EXCEPTION_TYPE,
 		 create_time
-		)
+		)values 
        <foreach collection="list" item="item" index="index" separator="," > 
        (
          #{item.channelId,jdbcType=INTEGER}, 
@@ -587,8 +594,8 @@
          #{item.tradeStatus,jdbcType=VARCHAR}, 
          #{item.tradeStatusDesc,jdbcType=VARCHAR}, 
          #{item.exceptionReason,jdbcType=VARCHAR}, 
-         #{item.exceptionType,jdbcType=INTEGER}, 
-         SYSDATE()
+         #{item.exceptionType,jdbcType=INTEGER},
+         #{item.createTime,jdbcType=TIMESTAMP}
        )
        </foreach>
   </insert>

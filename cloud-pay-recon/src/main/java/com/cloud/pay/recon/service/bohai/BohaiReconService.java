@@ -24,6 +24,7 @@ import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;
 import com.cloud.pay.recon.constant.ReconExceptionTypeEnum;
+import com.cloud.pay.recon.dto.ReconExceptionBohaiDTO;
 import com.cloud.pay.recon.entity.Recon;
 import com.cloud.pay.recon.entity.ReconExceptionBohai;
 import com.cloud.pay.recon.mapper.ReconMapper;
@@ -77,44 +78,64 @@ public class BohaiReconService implements IReconServiceHandler {
 			throw new CloudPayException("获取对账文件失败");
 		}
 		String reconDate = DateUtil.formatDate(recon.getAccountDate(), "yyyy-MM-dd");
-		//删除异常数据明细
-		reconExceptionBohaiService.deleteByReconId(recon.getId());
-	    //解析对账文件，并讲对账数据保存到数据库
-		reconChannelBohaiService.saveChannelReconDate(downFileResVo.getFilePath());
-		//更新交易订单表数据和渠道对账表数据元素一致的记录的状态，标识渠道比对账表记录为平账
-		reconChannelBohaiService.updateReconStatusFlat(recon.getAccountDate());
-		//检查是否存在延期的记录，先更新延期记录
-		List<ReconExceptionBohai> postPoneRecord = reconExceptionBohaiService.selectListByExceptionType(ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode());
-	    if(null != postPoneRecord && postPoneRecord.size() > 0) {
-	    	log.info("处理历史延期对账数据");
-	    	reconExceptionBohaiService.updatePostPoneHis();
-	    	reconExceptionBohaiService.deletePostPoneHis();
-	    }
-		//更新渠道存在但交易表中不存在的记录
-		int shortCount = reconChannelBohaiService.updateShortUnflat(reconDate);
-		if(shortCount > 0) {
-			log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录，记录异常数据类型为：短款");
-			reconExceptionBohaiService.insertShortPlat(reconDate,recon.getChannelId(),recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_SHORT.getTypeCode());
+		try {
+			//删除异常数据明细
+			reconExceptionBohaiService.deleteByReconId(recon.getId());
+		    //解析对账文件，并将对账数据保存到数据库
+			reconChannelBohaiService.saveChannelReconDate(downFileResVo.getFilePath());
+			//更新交易订单表数据和渠道对账表数据元素一致的记录的状态，标识渠道比对账表记录为平账
+			reconChannelBohaiService.updateReconStatusFlat(recon.getAccountDate());
+			//检查是否存在延期的记录，先更新延期记录
+			List<ReconExceptionBohai> postPoneRecord = reconExceptionBohaiService.selectListByExceptionType(ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode());
+		    if(null != postPoneRecord && postPoneRecord.size() > 0) {
+		    	log.info("处理历史延期对账数据");
+		    	reconExceptionBohaiService.updatePostPoneHis();
+		    	reconExceptionBohaiService.deletePostPoneHis();
+		    }
+			//更新渠道存在但交易表中不存在的记录
+			int shortCount = reconChannelBohaiService.updateShortUnflat(reconDate);
+			if(shortCount > 0) {
+				log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录，记录异常数据类型为：短款");
+				reconExceptionBohaiService.insertShortPlat(reconDate,recon.getChannelId(),recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_SHORT.getTypeCode());
+			}
+			List<TradeDTO> postPoneTrade = tradeMapper.selectLongRecord(reconDate);
+			if(null != postPoneTrade && postPoneTrade.size() > 0) {
+				log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
+				reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(postPoneTrade, recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode(),"延期对账"));
+			}
+			
+			//step4 TODO.... 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
+	        List<TradeDTO> exceptionTrade = tradeMapper.selectExceptionRecord(reconDate);
+	        if(null != exceptionTrade && exceptionTrade.size() > 0 ) {
+	        	log.info("更新不平帐的记录");
+	        	reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(exceptionTrade, recon.getId(), ReconExceptionTypeEnum.EXCEPTION_TYPE_MISMATH.getTypeCode(),"数据不匹配"));
+	        }
+			//step7 TODO.... 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
+		    int tradeCount = 100;
+		    List<ReconExceptionBohaiDTO> exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId(),recon.getId());
+		    int exceptionC = 0;
+		    int postPoneC = 0;
+		    if(null != exceptionCount && exceptionCount.size() > 0) {
+		    	for(ReconExceptionBohaiDTO exception:exceptionCount) {
+		    		if(exception.getExceptionType() == ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode()) {
+		    			postPoneC += exception.getExceptionCount();
+		    		}else {
+		    			exceptionC += exception.getExceptionCount();
+		    		}
+		    	}
+		    	if(exceptionC > 0) {
+		    		recon.setReconStatus(2);
+		    		recon.setFailReson("存在异常数据");
+		    	}else {
+		    		recon.setReconStatus(1);
+		    	}
+		    	recon.setExceptionTotal(exceptionC + postPoneC);
+		    }
+		    reconMapper.updateByPrimaryKey(recon);
+		}catch(Exception e) {
+			log.error("对账异常：{}",e);
+			throw new CloudPayException("对账异常：系统错误");
 		}
-		List<TradeDTO> postPoneTrade = tradeMapper.selectLongRecord(reconDate);
-		if(null != postPoneTrade && postPoneTrade.size() > 0) {
-			log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
-			reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(postPoneTrade, recon.getId()));
-		}
-		
-		//step4 TODO.... 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
-		//step6 TODO.... 检查是否交易表中该渠道是否还有未对账未延期的记录
-		//step7 TODO.... 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
-	    int tradeCount = 100;
-	    Long exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId(),recon.getId());
-	    //recon.setTradeTotal(tradeCount);
-	    recon.setExceptionTotal(exceptionCount.intValue());
-	    if(exceptionCount > 0) {
-	    	 recon.setReconStatus(2);
-	    }else{
-	    	 recon.setReconStatus(1);
-	    }
-	    reconMapper.updateByPrimaryKey(recon);
 	}
 	
 	/**
@@ -123,13 +144,13 @@ public class BohaiReconService implements IReconServiceHandler {
 	 * @param reconId
 	 * @return
 	 */
-	private List<ReconExceptionBohai> buildPostPoneExceptionDate(List<TradeDTO> trades,Integer reconId){
+	private List<ReconExceptionBohai> buildPostPoneExceptionDate(List<TradeDTO> trades,Integer reconId,Integer typeCode,String reason){
 		List<ReconExceptionBohai> reconExceptionBohais = new ArrayList<>();
 		for(TradeDTO trade:trades) {
 			ReconExceptionBohai reconExceptionBohai = new ReconExceptionBohai();
 			reconExceptionBohai.setChannelId(trade.getChannelId());
 			reconExceptionBohai.setReconId(reconId);
-			reconExceptionBohai.setExceptionType(ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode());
+			reconExceptionBohai.setExceptionType(typeCode);
 			reconExceptionBohai.setOrderNo(trade.getOrderNo());
 			reconExceptionBohai.setPayerAccount(trade.getPayerBankCard());
 			reconExceptionBohai.setPayerName(trade.getPayerName());
@@ -138,7 +159,8 @@ public class BohaiReconService implements IReconServiceHandler {
 			reconExceptionBohai.setBankCode(trade.getPayeeBankCode());
 			reconExceptionBohai.setTradeAmount(trade.getTradeAmount());
 			reconExceptionBohai.setTradeStatus(trade.getStatus().toString());
-			reconExceptionBohai.setExceptionReason("延期对账");
+			reconExceptionBohai.setExceptionReason(reason);
+			reconExceptionBohai.setCreateTime(new Date());
 			reconExceptionBohais.add(reconExceptionBohai);
 		}
 		return reconExceptionBohais;

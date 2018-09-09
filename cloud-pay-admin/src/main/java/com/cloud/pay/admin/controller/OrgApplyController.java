@@ -30,7 +30,7 @@ import com.cloud.pay.merchant.service.MerchantApplyService;
 import com.cloud.pay.merchant.service.MerchantService;
 
 @Controller
-@RequestMapping("/merchantApply")
+@RequestMapping("/orgApply")
 public class OrgApplyController extends BaseController{
 	
 	private Logger log = LoggerFactory.getLogger(OrgApplyController.class);

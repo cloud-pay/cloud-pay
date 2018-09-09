@@ -33,7 +33,7 @@ public class ReconExceptionService {
 	  * @param channelId
 	  * @return
 	  */
-	 public Long selectCountByChannelId(Integer channelId,Integer reconId) {
+	 public List<ReconExceptionBohaiDTO> selectCountByChannelId(Integer channelId,Integer reconId) {
 		 return reconExceptionBohaiMapper.selectCountByChannelId(channelId,reconId);
 	 }
 	 

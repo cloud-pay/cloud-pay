@@ -161,4 +161,50 @@
       audit_time = #{auditTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.BatchTradeDTO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+    <result column="payer_merchant_id" property="payerMerchantId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="auditor" property="auditor" jdbcType="VARCHAR" />
+    <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="getBatchTradeList" resultMap="BaseResultDTO" >
+	    SELECT
+		t.id,
+		t.batch_no,
+		t.trade_time,
+		t.total_amount,
+		t.total_count,
+		t.payer_merchant_id,
+		m.type,
+		m. NAME,
+		t. STATUS,
+		t.creator,
+		t.create_time,
+		t.auditor,
+		t.audit_time
+	FROM
+		t_batch_trade t,
+		t_merchant_base_info m
+	WHERE
+		t.payer_merchant_id = m.id
+	  <if test="status != null" >
+        and t.status = #{status,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and t.trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and t.trade_time &lt; #{endTime}
+      </if>
+  </select>
 </mapper>

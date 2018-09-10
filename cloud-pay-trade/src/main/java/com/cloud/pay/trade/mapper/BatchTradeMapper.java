@@ -1,5 +1,11 @@
 package com.cloud.pay.trade.mapper;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.entity.BatchTrade;
 
 public interface BatchTradeMapper {
@@ -13,4 +19,8 @@ public interface BatchTradeMapper {
     BatchTrade selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKey(BatchTrade record);
+    
+    List<BatchTradeDTO> getBatchTradeList(@Param("status") Integer status,
+			@Param("startTime") Date startTime,
+			@Param("endTime") Date endTime);
 }

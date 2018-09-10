@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.pay.merchant.mapper.MerchantChannelMapper">
+  <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantChannel">
+    <id column="merchant_id" jdbcType="INTEGER" property="merchantId" />
+    <id column="channel_id" jdbcType="INTEGER" property="channelId" />
+    <result column="merchant_channel_code" jdbcType="VARCHAR" property="merchantChannelCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    merchant_id, channel_id, merchant_channel_code
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantChannelKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_channel
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
+      and channel_id = #{channelId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantChannelKey">
+    delete from t_merchant_channel
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
+      and channel_id = #{channelId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantChannel">
+    insert into t_merchant_channel (merchant_id, channel_id, merchant_channel_code
+      )
+    values (#{merchantId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, #{merchantChannelCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantChannel">
+    update t_merchant_channel
+    set merchant_channel_code = #{merchantChannelCode,jdbcType=VARCHAR}
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
+      and channel_id = #{channelId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByMerchantid" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_channel
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
+</mapper>

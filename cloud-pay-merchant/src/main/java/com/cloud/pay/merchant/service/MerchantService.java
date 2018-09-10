@@ -13,14 +13,14 @@ import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantDTO;
 import com.cloud.pay.merchant.entity.MerchantAttachementInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
-import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
-import com.cloud.pay.merchant.entity.MerchantBankInfo;
-import com.cloud.pay.merchant.entity.MerchantBaseInfo;
-import com.cloud.pay.merchant.entity.MerchantFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantChannel;
+import com.cloud.pay.merchant.entity.MerchantSecret;
 import com.cloud.pay.merchant.mapper.MerchantAttachementInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
+import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
 import com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper;
+import com.cloud.pay.merchant.mapper.MerchantSecretMapper;
 
 @Service
 public class MerchantService {
@@ -36,6 +36,12 @@ public class MerchantService {
 	
 	@Autowired
 	private MerchantAttachementInfoMapper attachementInfoMapper;
+	
+	@Autowired
+	private MerchantSecretMapper merchantSecretMapper;
+	
+	@Autowired
+	private MerchantChannelMapper merchantChannelMapper;
 
 	public List<MerchantDTO> getMerchantDTOs(String type) {
 		return baseInfoMapper.getMerchantDTOs(type);
@@ -83,4 +89,11 @@ public class MerchantService {
 		return merchantMap;
 	}
 
+	public MerchantSecret slectSecret(Integer merchantId) {
+		return merchantSecretMapper.selectByPrimaryKey(merchantId);
+	}
+	
+	public List<MerchantChannel> selectChennels(Integer merchantId) {
+		return merchantChannelMapper.selectByMerchantId(merchantId);
+	}
 }

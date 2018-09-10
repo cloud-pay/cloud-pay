@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.stereotype.Component;
 
 public class ImgUtil {
 	

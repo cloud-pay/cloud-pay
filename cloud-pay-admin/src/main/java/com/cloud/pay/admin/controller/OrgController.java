@@ -37,7 +37,7 @@ public class OrgController extends BaseController{
 	@Autowired
 	private BankService bankService;
 	
-	private String menuUrl = "amountLimit/list";
+	private String menuUrl = "org/list";
 	
 	/**
 	 * 商戶列表
@@ -73,7 +73,7 @@ public class OrgController extends BaseController{
 		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
-		return "page/merchant/merchantList";
+		return "page/org/orgList";
 	}
 	
 	/**

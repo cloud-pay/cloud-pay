@@ -44,7 +44,7 @@ public class OrgApplyController extends BaseController{
 	@Autowired
 	private BankService bankService;
 	
-	private String menuUrl = "merchantApply/list";
+	private String menuUrl = "orgApply/list";
 	
 	/**
 	 * 商戶列表
@@ -69,7 +69,7 @@ public class OrgApplyController extends BaseController{
 		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, startTime, endTime));
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
-		return "page/merchant/merchantApplyList";
+		return "page/org/orgApplyList";
 	}
 	
 	/**

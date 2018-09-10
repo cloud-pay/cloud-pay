@@ -96,4 +96,13 @@ public class MerchantService {
 	public List<MerchantChannel> selectChennels(Integer merchantId) {
 		return merchantChannelMapper.selectByMerchantId(merchantId);
 	}
+	
+	/**
+	 * 根据具体商户类型查询商户信息
+	 * @param type
+	 * @return
+	 */
+	public List<MerchantDTO> selectMerchantByType(Integer type){
+		  return baseInfoMapper.getAdvanceMerchantList(type);
+	}
 }

@@ -3,6 +3,8 @@ package com.cloud.pay.recon.mapper;
 import com.cloud.pay.recon.dto.FillRecordDTO;
 import com.cloud.pay.recon.entity.FillRecord;
 import com.cloud.pay.recon.entity.FillRecordExample;
+
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -99,5 +101,6 @@ public interface FillRecordMapper {
      * 查询资金补登列表
      * @return
      */
-    List<FillRecordDTO> selectListByParam();
+    List<FillRecordDTO> selectListByParam(@Param("orgCode")String orgCode,@Param("orgName")String orgName,
+    		@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 }

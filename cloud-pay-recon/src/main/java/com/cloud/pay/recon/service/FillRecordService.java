@@ -1,5 +1,6 @@
 package com.cloud.pay.recon.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -23,8 +24,8 @@ public class FillRecordService {
 	 * 资金补登列表
 	 * @return
 	 */
-	public List<FillRecordDTO> selectListByParam(){
-		return fillRecordMapper.selectListByParam();
+	public List<FillRecordDTO> selectListByParam(String orgCode,String orgName,Date startTime,Date endTime){
+		return fillRecordMapper.selectListByParam(orgCode,orgName,startTime,endTime);
 	}
 	
 	public int insert(FillRecord fillRecord) {

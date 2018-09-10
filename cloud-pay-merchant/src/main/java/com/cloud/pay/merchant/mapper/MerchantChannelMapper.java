@@ -18,4 +18,6 @@ public interface MerchantChannelMapper {
     int updateByPrimaryKey(MerchantChannel record);
     
     List<MerchantChannel> selectByMerchantId(@Param("merchantId")Integer merchantId);
+    
+    
 }

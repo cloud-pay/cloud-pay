@@ -1,8 +1,10 @@
 package com.cloud.pay.admin.controller;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.recon.entity.FillRecord;
 import com.cloud.pay.recon.service.FillRecordService;
 
@@ -33,13 +36,33 @@ public class FillRecordController extends BaseController {
 	@Autowired
 	private FillRecordService fillRecordService;
 	
+	@Autowired
+	private MerchantService merchantService;
+	
 	
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model) {
+	public Object list(Model model,String orgCode,String orgName,String startDate,String endDate) {
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){
 			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
 		}
-		model.addAttribute("fillRecords",fillRecordService.selectListByParam());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date startTime = null;
+		Date endTime = null;
+		try {
+			if(StringUtils.isNotBlank(startDate)) {
+				startTime = sdf.parse(startDate+" 00:00:00");
+			}
+			if(StringUtils.isNotBlank(endDate)) {
+				endTime = sdf.parse(endDate + " 23:59:59");
+			}
+		} catch(Exception e) {
+		}
+		model.addAttribute("orgCode", orgCode);
+		model.addAttribute("orgName", orgName);
+		model.addAttribute("startDate", startDate);
+		model.addAttribute("endDate", endDate);
+		model.addAttribute("fillRecords",fillRecordService.selectListByParam(orgCode,orgName,startTime,endTime));
+		model.addAttribute("orgs", merchantService.selectMerchantByType(3));
 		return "page/fill/list";
 	}
 	
@@ -56,9 +79,11 @@ public class FillRecordController extends BaseController {
 		   FillRecord fillRecord = new FillRecord();
 		   fillRecord.setOrgId(Integer.parseInt(map.getString("orgId")));
 		   fillRecord.setFillAmount(new BigDecimal(map.getString("fillAmount")));
-		   fillRecord.setRmk(map.getString("rmk"));
+		   fillRecord.setStatus(1);
+		   fillRecord.setRmk(StringUtils.isNotBlank(map.getString("rmk"))?map.getString("rmk"):"");
 		   fillRecord.setUpdatorId(Integer.parseInt(userId));
 		   fillRecord.setUpdateTime(new Date());
+		   fillRecordService.insert(fillRecord);
 		}catch(Exception e) {
 			log.error("error:{}", e);
 			return ResponseModel.getModel("提交失败", "failed", null);

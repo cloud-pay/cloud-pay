@@ -103,23 +103,47 @@ div.cbp label.font{
 			  <button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
 			<div class="row clearfix">  
-			   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+			   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
 					<div class="form-group">
 						<div class="form-line">
-							<label for="channelName">通道名称</label>
-							<input type="text" class="form-control" id="channelName" name="channelName" maxlength="20"></input>		
+							<label for="search_org_code">合作机构编号</label>
+							<input type="text" class="form-control" id="search_org_code" name="search_org_code" th:value="${orgCode}" maxlength="20"></input>		
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+					<div class="form-group">
+						<div class="form-line">
+							<label for="search_org_name">合作机构名称</label>
+							<input type="text" class="form-control" id="search_org_name" name="search_org_name" th:value="${orgName}" maxlength="20"></input>		
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+					<div class="form-group">
+						<div class="form-line">
+							<label for="update_start_date">更新日期：起</label>
+							<input type="text" class="form-control" id="update_start_date" name="update_start_date" th:value="${startDate}"  maxlength="20"></input>		
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+					<div class="form-group">
+						<div class="form-line">
+							<label for="update_end_date">止</label>
+							<input type="text" class="form-control" id="update_end_date" name="update_end_date" th:value="${endDate}" maxlength="20"></input>		
 						</div>
 					</div>
 				</div>
 			</div>	
             <!-- /.box-header -->
             <div class="box-body">
-              <table id="reconList" class="table table-bordered table-striped">
+              <table id="fillRecordList" class="table table-bordered table-striped">
                 <thead>
 	                <tr>
 	                  <th>合作机构编号</th>
 	                  <th>合作机构名称</th>
-	                  <th>合作机构账户编号</th>
+	                  <th>合作机构账户编号</th> 
 	                  <th>本次补登金额</th>
 	                  <th>备注</th>
 					  <th>状态</th>
@@ -129,27 +153,27 @@ div.cbp label.font{
 	                </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${QX.query == '1'}" th:each="fillRecord,stat :${fillRecords}">
-                   <td th:text="${fillRecord.orgCode}" ></td>
-                   <td th:text="${fillRecord.orgName}"></td>
-                   <td></td>
-                   <td th:text="${fillRecord.fillAmount}"></td>
-                   <td th:text="${fillRecord.rmk}"></td>
-                   <td th:if="${fillRecord.status == 1}" th:text="正常"></td>
-                   <td th:if="${fillRecord.status == 2}" th:text="已冲正"></td>
-                   <td th:text="${fillRecord.updatorId}"></td>
-                   <td th:text="${#dates.format(fillRecord.updateTime,'yyyy-MM-dd hh:mm:ss')}"></td>
-                   <td>
-                  	<div>
-                  	   <span data-toggle="tooltip" title="冲正" th:if="${fillRecord.status == 1}" class="btn btn-xs btn-info" th:onclick="'reversal(\''+${fillRecord.id}+'\');'"><i class="fa fa-balance-scale"></i>冲正</span>
-                  	</div>
-                   </td>
-                </tr>
-                <tr th:unless="${QX.query == '1'}" >
-                	<td colspan="9" align="center">
-						<h2>此商户无权限查看该页面</h2>
-                	</td>
-                </tr>
+	                <tr th:if="${QX.query == '1'}" th:each="fillRecord :${fillRecords}">
+	                   <td th:text="${fillRecord.orgCode}" ></td>
+	                   <td th:text="${fillRecord.orgName}"></td>
+	                   <td></td>
+	                   <td th:text="${fillRecord.fillAmount}"></td>
+	                   <td th:text="${fillRecord.rmk}"></td>
+	                   <td th:if="${fillRecord.status == 1}" th:text="正常"></td>
+	                   <td th:if="${fillRecord.status == 2}" th:text="已冲正"></td>
+	                   <td th:text="${fillRecord.updatorId}"></td>
+	                   <td th:text="${#dates.format(fillRecord.updateTime,'yyyy-MM-dd hh:mm:ss')}"></td>
+	                   <td>
+	                  	<div>
+	                  	   <span data-toggle="tooltip" title="冲正" th:if="${fillRecord.status == 1}" class="btn btn-xs btn-info" th:onclick="'reversal(\''+${fillRecord.id}+'\');'"><i class="fa fa-balance-scale"></i>冲正</span>
+	                  	</div>
+	                   </td>
+	                </tr>
+	                <tr th:unless="${QX.query == '1'}" >
+	                	<td colspan="9" align="center">
+							<h2>此商户无权限查看该页面</h2>
+	                	</td>
+	                </tr>
                 </tbody>
                </table>
             </div>
@@ -169,7 +193,10 @@ div.cbp label.font{
 		         <div class="form-group">
 		             <label for="org_id" class="col-sm-3 control-label">选择机构</label>
 		             <div class="col-sm-9">
-		                <input type="text" class="form-control" name="org_id" value="" id="org_id">
+		                 <select name="org_id" id="org_id" class="form-control">
+								<option value="">请选择</option>
+								<option th:each="merchant : ${orgs}" th:value="${merchant.id}" th:text="${merchant.name}"></option>
+						 </select>
 		             </div>
 		         </div>
 		         <div class="form-group">
@@ -215,28 +242,51 @@ div.cbp label.font{
 <script th:src="@{/js/path.js}"></script>
 <script>
 $(function(){
-	
 	//查询按钮事件
 	$("#searchBtn").off().on("click",function(){
-		var channelName = $("#channelName").val();
-		var accountDate = $("#accountDate").val();
-		var reconStatus = $("#reconStatus").val();
+		var orgCode = $("#search_org_code").val();
+		var orgName = $("#search_org_name").val();
+		var startDate = $("#update_start_date").val();
+		var endDate = $("#update_end_date").val();
 		window.location.href = _ctx+'/fillRecord/list'
-			+'?channelName='+channelName
-			+'&tradeDate='+accountDate
-			+'&reconStatus='+reconStatus;
+			+'?orgCode='+orgCode
+			+'&orgName='+orgName
+			+'&startDate='+startDate
+			+'&endDate='+endDate;
 	});
 
 	//重置按钮事件
 	$("#resetBtn").off().on("click",function(){
-		$("#channelName").val('');
-		$("#accountDate").val('');
-		$("#reconStatus").val('');
+		$("#search_org_code").val('');
+		$("#search_org_name").val('');
+		$("#update_start_date").val('');
+		$("#update_end_date").val('');
 	});
+	
+	initDateTimepicker();
+	//初始化日期插件
+	function initDateTimepicker(){
+		$("#update_start_date").datetimepicker({
+			format:'yyyy-mm-dd',
+			language:'zh-CN',
+			todayBtn:true,
+			autoclose:true,
+			minView: "month",
+			pickerPosition:"bottom-left"
+		});
+		$("#update_end_date").datetimepicker({
+			format:'yyyy-mm-dd',
+			language:'zh-CN',
+			todayBtn:true,
+			autoclose:true,
+			minView: "month",
+			pickerPosition:"bottom-left"
+		});
+	}
 	 //提示框
     $("[data-toggle='tooltip']").tooltip();
 	//表格分页
-    $('#reconList').DataTable({
+    $('#fillRecordList').DataTable({
     	"scrollX"	  : true,
   		'paging'      : true,
   	    'lengthChange': true,
@@ -255,9 +305,19 @@ $(function(){
     
     $("#submitBtn").click(function(){
     	var actionUrl = $("input[name='actionurl']").val();
-    	var orgId = $("input[name='org_id']").val();
+    	var orgId = $("[name='org_id']").val();
+    	if(orgId == ''){
+    		$("[name='org_id']").focus();
+    		alert("所属机构不能为空");
+    		return false;
+    	}
     	var maxFillAmount = $("input[name='max_fill_amount']").val();
     	var fillAmount = $("input[name='fill_amount']").val();
+    	if(fillAmount == ''){
+    		$("input[name='fill_amount']").focus();
+    		alert("补登金额不能为空");
+    		return false;
+    	}
     	var fillRmk = $("input[name='fill_rmk']").val();
     	$.ajax({
     		type:"POST",

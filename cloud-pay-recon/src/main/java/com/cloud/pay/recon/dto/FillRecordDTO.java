@@ -17,6 +17,8 @@ public class FillRecordDTO {
 
     private Integer updatorId;
     
+    private String updator;
+    
     private String orgCode;
     
     private String orgName;
@@ -94,4 +96,14 @@ public class FillRecordDTO {
 	public void setOrgName(String orgName) {
 		this.orgName = orgName;
 	}
+
+	public String getUpdator() {
+		return updator;
+	}
+
+	public void setUpdator(String updator) {
+		this.updator = updator;
+	}
+	
+	
 }

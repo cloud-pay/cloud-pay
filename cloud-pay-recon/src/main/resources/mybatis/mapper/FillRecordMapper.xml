@@ -26,6 +26,7 @@
     <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR" />
     <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+    <result column="UPDATOR" property="updator" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -336,10 +337,25 @@
 	    f.`STATUS`,
 	    f.UPDATOR_ID,
 	    f.UPDATE_TIME,
+	    f.RMK,
 	    m.`code` org_code,
-	    m.`name` org_name
+	    m.`name` org_name,
+	    u.username updator
 	from 
-	    t_fill_record f,t_merchant_base_info m
+	    t_fill_record f,t_merchant_base_info m,sys_user u
 	where f.ORG_ID = m.id
+	and f.UPDATOR_ID = u.user_id 
+	<if test="orgCode != null and orgCode != ''" >
+	   and m.`code` = #{orgCode,jdbcType=VARCHAR}
+	</if>
+	<if test="orgName != null and orgName != ''" >
+	   and m.`name` like concat('%',#{orgName,jdbcType=VARCHAR},'%')
+	</if>
+	<if test="startTime != null" >
+        and f.UPDATE_TIME &gt; #{startTime}
+    </if>
+    <if test="endTime != null" >
+       and f.UPDATE_TIME &lt; #{endTime}
+    </if>
   </select>
 </mapper>

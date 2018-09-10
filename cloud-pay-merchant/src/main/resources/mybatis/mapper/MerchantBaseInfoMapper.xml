@@ -249,7 +249,7 @@
         and type in (4,5)
       </if>
 	 </select>
-	 <select id="getMerchantList" resultMap="BaseResultDTO">
+   <select id="getMerchantList" resultMap="BaseResultDTO">
 	 	SELECT m.id, m.org_id, m1.name org_name, m.code, m.name, m.type, 
     m.status, m.modifer, m.modify_time
 		FROM 
@@ -272,4 +272,14 @@
         and m.modify_time &lt; #{endTime}
       </if>
 	 </select>
+	 
+	<select id="getAdvanceMerchantList" resultMap="BaseResultDTO" parameterType="java.lang.Integer">
+	    SELECT id, name,code
+		FROM 
+			t_merchant_base_info
+		where 1=1
+	   <if test="type != null" >
+	      and type = #{type,jdbcType=INTEGER}
+	   </if>
+	</select>
 </mapper>

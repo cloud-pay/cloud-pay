@@ -15,7 +15,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<mybatis.generator.version>1.3.2</mybatis.generator.version>
-		<classPathEntry.mysql.location>/D:/apache-maven-3.5.2/repository/mysql/mysql-connector-java/5.1.43/mysql-connector-java-5.1.43.jar</classPathEntry.mysql.location>
+		<classPathEntry.mysql.location>/C:/maven/local_repository/mysql/mysql-connector-java/5.1.43/mysql-connector-java-5.1.43.jar</classPathEntry.mysql.location>
 
         <javaModelGenerator.targetProject>${basedir}/src/main/java</javaModelGenerator.targetProject>
 

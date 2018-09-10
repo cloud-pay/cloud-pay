@@ -312,3 +312,18 @@ CREATE TABLE `t_merchant_secret` (
   `secret` blob COMMENT '密钥',
   PRIMARY KEY (`merchant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户密钥';
+
+CREATE TABLE `t_batch_trade` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `batch_no` varchar(32) DEFAULT NULL COMMENT '批次号',
+  `trade_time` datetime DEFAULT NULL COMMENT '交易时间',
+  `total_amount` decimal(15,2) DEFAULT NULL COMMENT '总金额',
+  `total_count` int(11) DEFAULT NULL COMMENT '总笔数',
+  `payer_merchant_id` int(11) DEFAULT NULL COMMENT '付款方商户ID',
+  `status` int(1) DEFAULT NULL COMMENT '状态(1待审核，2审核通过，3审核不通过)',
+  `creator` varchar(255) DEFAULT NULL COMMENT '经办人',
+  `create_time` datetime DEFAULT NULL COMMENT '经办时间',
+  `auditor` varchar(255) DEFAULT NULL COMMENT '审核人',
+  `audit_time` datetime DEFAULT NULL COMMENT '审核时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='手工代付信息表';

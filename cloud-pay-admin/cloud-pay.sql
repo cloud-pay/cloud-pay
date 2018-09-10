@@ -305,10 +305,10 @@ CREATE TABLE `t_merchant_channel` (
   `channel_id` int(11) NOT NULL DEFAULT '0' COMMENT '渠道ID',
   `merchant_channel_code` varchar(255) DEFAULT NULL COMMENT '商户渠道编号',
   PRIMARY KEY (`merchant_id`,`channel_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户渠道备案信息'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户渠道备案信息';
 
 CREATE TABLE `t_merchant_secret` (
   `merchant_id` int(11) NOT NULL DEFAULT '0' COMMENT '商户ID',
   `secret` blob COMMENT '密钥',
   PRIMARY KEY (`merchant_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户密钥'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户密钥';

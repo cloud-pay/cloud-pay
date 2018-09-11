@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/css-head :: css-head">
+</head>
+<style>
+	textarea{
+		width:100%;
+		height:100px;
+	}
+	
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+
+.chk_1{
+    display: none;
+}
+.chk_1 + label {
+	background-color: #FFF;
+	border: 1px solid #C1CACA;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+	padding: 9px;
+	border-radius: 5px;
+	display: inline-block;
+	position: relative;
+	margin-right: 30px;
+}
+.chk_1 + label:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+.chk_1:checked + label {
+	background-color: #ECF2F7;
+	border: 1px solid #92A1AC;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+	color: #243441;
+}
+
+.chk_1:checked + label:after {
+	content: '\2714';
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	color: #758794;
+	width: 100%;
+	text-align: center;
+	font-size: 1.4em;
+	padding: 1px 0 0 0;
+	vertical-align: text-top;
+}
+div.cbp label.font{
+	text-align: center;
+	font-size: 1.4em;
+	vertical-align: text-top;
+	margin-top: -15px;
+	margin-left: -10px;
+}
+
+</style>
+<body>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    	 当前位置：手工代付管理
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
+    <li class="active">手工代付管理</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	 <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">手工代付列表</h3>
+              <br><br>
+              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addTrade"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加手工代付</button>
+              <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
+					<button class="btn btn-sm" id="resetBtn">重置</button>
+            </div>
+				  
+				  <div class="row clearfix">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
+									<div class="form-group">
+										<div class="form-line">
+											<label for="search_status">状态</label>
+										    <select name="search_status" class="form-control">
+										      <option value="">请选择</option>
+										      <option value="1">待审核</option>
+										      <option value="2">审核通过</option>
+										      <option value="3">审核不通过</option>
+										    </select>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
+									<div class="form-group">
+										<div class="form-line">
+											<label for="createDateBegin">更新开始日期</label>
+											<input type="text" class="form-control" id="createDateBegin" name="createDateBegin" readonly></input>		
+										</div>
+									</div>
+								</div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
+									<div class="form-group">
+										<div class="form-line">
+											<label for="createDateEnd">更新结束日期</label>
+											<input type="text" class="form-control" id="createDateEnd" name="createDateEnd" readonly></input>		
+										</div>
+									</div>
+								</div>		
+							</div>
+			
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="roleList" class="table table-bordered table-striped">
+                <thead>
+	                <tr>
+	                  <th>批次号</th>
+	                  <th>主体类型</th>
+	                  <th>合作机构名称</th>
+	                  <th>商户名称</th>
+	                  <th>交易时间</th>
+	                  <th>总金额</th>
+					  <th>总笔数</th>
+					  <th>状态</th>
+					  <th>经办时间</th>
+					  <th>经办人</th>
+	                  <th>审核时间</th>
+					  <th>审核人</th>
+	                  <th>操作</th>
+	                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${QX.query == '1'}" th:each="trade,stat :${batchTrades}">
+                  <td th:text="${trade.batchNo}"></td>
+                  <td th:text="${trade.type}"></td>
+                  <td th:if="${trade.type == 1}" th:text="${trade.name}"></td>
+                  <td th:if="${trade.type == 2}"></td>
+                  <td th:if="${trade.type == 1}"></td>
+                  <td th:if="${trade.type == 2}" th:text="${trade.name}"></td>
+                  <td th:th:text="${#dates.format(trade.tradeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+				  <td th:text="${trade.totalAmount}"></td>
+				  <td th:text="${trade.totalCount}"></td>
+				  <td th:if="${trade.status == 1}" th:text="待审核"></td>
+				  <td th:if="${trade.status == 2}" th:text="审核通过"></td>
+				  <td th:if="${trade.status == 3}" th:text="审核不通过"></td>
+				  <td th:text="${#dates.format(trade.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${trade.creator}"></td>
+                  <td th:text="${#dates.format(trade.auditTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${trade.auditor}"></td>
+                  <td>
+                  	<div th:if="${trade.id != 1 || meid == '1'}">
+	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${trade.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${trade.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	</div>
+                  	<div th:if="${trade.id == 1 && meid != '1'}">
+	                  	<span><i class="fa fa-lock"></i></span>
+                  	</div>
+                  </td>
+                </tr>
+                <tr th:unless="${QX.query == '1'}" >
+                	<td colspan="7" align="center">
+						<h2>此手工代付无权限查看该页面</h2>
+                	</td>
+                </tr>
+                </tbody>
+               </table>
+               
+       </div>
+</section>
+
+
+<!-- 新增或修改的模态框 -->
+<div class="modal fade" id="tradeModal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="usermodelHead">添加手工代付</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal"  role="form">
+				  <input type="hidden" name="url" value=""/>
+				  <input type="hidden" name="id" value=""/>
+				  <input type="hidden" name="pics" value=""/>
+				  <input type="hidden" name="oldpath" value=""/>
+				  <div class="form-group">
+					    <label for="type" class="col-sm-2 control-label">主体类型</label>
+					    <div class="col-sm-10">
+						    <select name="type" class="form-control">
+						      <option value="">请选择</option>
+							  <option value="1">合作机构</option>
+							  <option value="2">商户</option>
+						    </select>
+					    </div>
+					  </div>
+				
+				  <div class="form-group">
+					    <label for="merchantId" class="col-sm-2 control-label">所属机构</label>
+					    <div class="col-sm-10">
+						    <input class="form-control" name="merchantId" value="" id="merchantId">
+					    </div>
+					  </div>
+				  <div class="form-group">
+					    <label for="channelId" class="col-sm-2 control-label">通道名称</label>
+					    <div class="col-sm-10">
+						    <input class="form-control" name="channelId" value="" id="channelId">
+					    </div>
+					  </div>
+				  
+				  <div class="form-group">
+					    <label for="loaning" class="col-sm-2 control-label">是否需要垫资</label>
+					    <div class="col-sm-10">
+						    <select name="loaning" class="form-control">
+						      <option value="0">否</option>
+						      <option value="1">是</option>
+						    </select>
+					    </div>
+					  </div>
+				  
+				  <div class="form-group">
+					    <label for="loaningOrgId" class="col-sm-2 control-label">垫资机构名称</label>
+					    <div class="col-sm-10">
+						    <input class="form-control" name="loaningOrgId" value="" id="loaningOrgId">
+					    </div>
+					  </div>
+				  
+				  <div class="form-group">
+				    <label for="loaningAmount" class="col-sm-2 control-label">垫资限额</label>
+				    <div class="col-sm-10">
+				      <input type="number" class="form-control" name="loaningAmount" value="" id="loaningAmount" placeholder="垫资限额">
+				    </div>
+				  </div>
+				  
+				 </form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+				<button type="submit" class="btn btn-success"  id="imgSubmit" >确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
+<script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/ztree/js/jquery.ztree.core.js}"></script>
+<script th:src="@{/ztree/js/jquery.ztree.excheck.min.js}"></script>
+<script th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js}"></script> 
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+<script th:src="@{/js/path.js}"></script>
+<script>
+$(function(){
+	
+	//查询按钮事件
+	$("#searchBtn").off().on("click",function(){
+		var search_status = $("[name='search_status']").val();
+		var createDateBegin = $("#createDateBegin").val();
+		var createDateEnd = $("#createDateEnd").val();
+		window.location.href = _ctx+'/batchTrade/list'
+			+'?type='+search_type
+			+'&status='+search_status
+			+'&merchantName='+search_merchantName
+			+'&createDateBegin='+createDateBegin
+			+'&createDateEnd='+createDateEnd;
+	});
+
+	//重置按钮事件
+	$("#resetBtn").off().on("click",function(){
+		$("[name='search_status']").val('');
+		$("#createDateBegin").val('');
+		$("#createDateEnd").val('');
+	});
+	
+	initDateTimepicker();
+	//初始化日期插件
+	function initDateTimepicker(){
+		$("#createDateBegin").datetimepicker({
+			format:'yyyy-mm-dd hh:ii:ss',
+			language:'zh-CN',
+//			locale:moment.locale('zh-cn'),
+			todayBtn:true,
+			autoclose:true,
+//			todayHignlight:true,
+//			maxView:"year",
+//			minView:"hour",
+			showMeridian:1,
+			pickerPosition:"bottom-left"
+//			startDate:new Date()
+		}).on('click',function(e){
+			$("#createDateBegin").datetimepicker('setEndDate',$("#createDateEnd").val());
+		});
+		$("#createDateEnd").datetimepicker({
+			format:'yyyy-mm-dd hh:ii:ss',
+			language:'zh-CN',
+//			locale:moment.locale('zh-cn'),
+			todayBtn:true,
+			autoclose:true,
+//			todayHignlight:true,
+//			maxView:"year",
+//			minView:"hour",
+			showMeridian:1,
+			pickerPosition:"bottom-left"
+//			startDate:new Date()
+		}).on('click',function(e){
+			$("#createDateEnd").datetimepicker('setStartDate',$("#createDateBegin").val());
+		});
+	}
+	
+	
+	 //提示框
+    $("[data-toggle='tooltip']").tooltip();
+	//表格分页
+    $('#roleList').DataTable({
+    	"scrollX"	  : true,
+  		'paging'      : true,
+  	    'lengthChange': true,
+  	    'searching'   : true,
+  	    'ordering'    : true,
+  	    'info'        : true,
+  	    'autoWidth'   : false,
+  	  	"pagingType"  : "full_numbers",
+  	  	"pageLength"  : 10
+    });
+	
+	$("#addTrade").click(function(){
+		reloadModelData(_ctx+"/batchTrade/add","添加手工代付","添加","","","","","","","");
+		$("#tradeModal").modal("show");
+	});
+	
+	//确认按钮
+	$("#imgSubmit").click(function(){
+		var tradeId = $("input[name='id']").val();
+		var url = $("input[name='url']").val();
+		var type = $("[name='type']").val();
+		var merchantId = $("input[name='merchantId']").val();
+		var merchantId = $("input[name='merchantId']").val();
+		var channelId= $("input[name='channelId']").val();
+		var loaning= $("[name='loaning']").val();
+		var loaningOrgId= $("input[name='loaningOrgId']").val();
+		var loaningAmount= $("input[name='loaningAmount']").val();
+		if(url == _ctx+'/batchTrade/add'){
+			if(!checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount)){
+				return false;
+			}
+		}
+		$.ajax({
+			type:"post",
+			url:url,
+			cache:false,
+			dataType:"json",
+			data:{id:tradeId,merchantId:merchantId,channelId:channelId,loaning:loaning,loaningAmount:loaningAmount,loaningOrgId:loaningOrgId,type:type},
+			success:function(data){
+				if(data.status == 'success'){
+					$("#tradeModal").modal("hide");
+					window.location.href=window.location.href;
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	});
+	
+})
+
+//删除手工代付
+function delTrade(tradeId){
+	if(confirm("你确定要删除此手工代付吗？")){
+		$.ajax({
+			type:"POST",
+			url:_ctx+"/batchTrade/del",
+			dataType:"json",
+			data:{id:tradeId},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					window.location.href=window.location.href;
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
+}
+
+//删除手工代付
+function updateStatus(tradeId, status){
+    var msg='';
+    if(status == 0) {
+    	msg = '你确定要冻结此手工代付吗？';
+    } else {
+    	msg = '你确定要解冻此手工代付吗？';
+    }
+	if(confirm(msg)){
+		$.ajax({
+			type:"POST",
+			url:_ctx+"/batchTrade/updateStatus",
+			dataType:"json",
+			data:{id:tradeId, status : status},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					window.location.href=window.location.href;
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
+}
+
+//编辑手工代付
+function editTrade(id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+	console.log(id+","+type+","+merchantId+","+channelId+","+loaning+","+loaningOrgId+","+loaningAmount);
+	reloadModelData(_ctx+"/batchTrade/edit","编辑手工代付","更新",id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount);
+	$("#tradeModal").modal("show");
+}
+
+//验证数据
+function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+	if(type == ''){
+		$("input[name='type']").focus();
+		alert("手工代付名不能为空");
+		return false;
+	}
+	if(type == ''){
+		$("input[name='type']").focus();
+		alert("昵称不能为空");
+		return false;
+	}
+	if(type == ''){
+		$("input[name='type']").focus();
+		alert("密码不能为空");
+		return false;
+	}
+	return true;
+}
+
+//加载模态框的数据
+function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
+	$("#tradeModal #usermodelHead").text(title);
+	$("#tradeModal #imgSubmit").text(btntext);
+	$("input[name='url']").val(url);
+	
+	$("input[name='id']").val(id);
+	$("[name='type']").val(type);
+	$("input[name='merchantId']").val(merchantId);
+	$("input[name='channelId']").val(channelId);
+	$("[name='loaning']").val(loaning);
+	$("input[name='loaningOrgId']").val(loaningOrgId);
+	$("input[name='loaningAmount']").val(loaningAmount);
+}
+
+</script>
+</body>
+</html>

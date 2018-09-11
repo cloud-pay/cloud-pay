@@ -98,7 +98,6 @@ div.cbp label.font{
             <div class="box-header">
               <h3 class="box-title">手工代付列表</h3>
               <br><br>
-              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addTrade"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加手工代付</button>
               <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
 					<button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
@@ -175,8 +174,7 @@ div.cbp label.font{
                   <td th:text="${trade.auditor}"></td>
                   <td>
                   	<div th:if="${trade.id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${trade.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
-	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${trade.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${trade.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${trade.id == 1 && meid != '1'}">
@@ -355,11 +353,6 @@ $(function(){
   	  	"pageLength"  : 10
     });
 	
-	$("#addTrade").click(function(){
-		reloadModelData(_ctx+"/batchTrade/add","添加手工代付","添加","","","","","","","");
-		$("#tradeModal").modal("show");
-	});
-	
 	//确认按钮
 	$("#imgSubmit").click(function(){
 		var tradeId = $("input[name='id']").val();
@@ -395,28 +388,9 @@ $(function(){
 	
 })
 
-//删除手工代付
-function delTrade(tradeId){
-	if(confirm("你确定要删除此手工代付吗？")){
-		$.ajax({
-			type:"POST",
-			url:_ctx+"/batchTrade/del",
-			dataType:"json",
-			data:{id:tradeId},
-			cache:false,
-			success:function(data){
-				if(data.status == 'success'){
-					window.location.href=window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-	}
-}
 
 //删除手工代付
-function updateStatus(tradeId, status){
+function audit(tradeId){
     var msg='';
     if(status == 0) {
     	msg = '你确定要冻结此手工代付吗？';
@@ -426,9 +400,9 @@ function updateStatus(tradeId, status){
 	if(confirm(msg)){
 		$.ajax({
 			type:"POST",
-			url:_ctx+"/batchTrade/updateStatus",
+			url:_ctx+"/batchTrade/audit",
 			dataType:"json",
-			data:{id:tradeId, status : status},
+			data:{id:tradeId},
 			cache:false,
 			success:function(data){
 				if(data.status == 'success'){

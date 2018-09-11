@@ -38,6 +38,17 @@ public class BatchTradeController extends BaseController{
 	private String menuUrl = "batchTrade/list";
 	
 	/**
+	 * 手工代付
+	 * @return
+	 */
+	@RequestMapping(value="/handPay",method=RequestMethod.GET)
+	public Object handPay(Model model){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		return "page/batchTrade/handPay";
+	}
+	
+	/**
 	 * 批量交易列表
 	 * @return
 	 */

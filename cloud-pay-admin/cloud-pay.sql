@@ -327,3 +327,16 @@ CREATE TABLE `t_batch_trade` (
   `audit_time` datetime DEFAULT NULL COMMENT '审核时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='批量代付信息表';
+
+CREATE TABLE `t_batch_trade_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `batch_no` varchar(32) DEFAULT NULL COMMENT '批次号',
+  `payee_bank_acct_name` varchar(32) DEFAULT NULL COMMENT '收款人账户名',
+  `payee_bank_acct_type` int(1) DEFAULT NULL COMMENT '收款人账户类型(1企业，2个人)',
+  `payee_bank_acct_no` varchar(255) DEFAULT NULL,
+  `payee_bank_id` int(11) DEFAULT NULL COMMENT '收款人联行号id',
+  `payee_bank_name` varchar(255) DEFAULT NULL COMMENT '收款人银行名称',
+  `amount` decimal(15,2) DEFAULT NULL,
+  `remark` varchar(255) DEFAULT NULL COMMENT '附言',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='批量明细';

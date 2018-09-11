@@ -31,7 +31,7 @@ public class LoginFilter implements Filter{
 	//静态资源文件地址
 	private static final String PTAH_REG=".*\\.((js)|(css)|(png)|(jpg)|(woff)|(woff2)|(map)|(svg)|(ttf)|(ico))";
 	//不过滤的地址
-	private static final String NOT_FILTER="/((login)|(logout)|(toLogin)|(error)|(upload)|(index)|(include)).*";
+	private static final String NOT_FILTER="/((login)|(logout)|(toLogin)|(error)|(upload)|(index)|(include)|(api)).*";
 
 	@Autowired
 	private IUserService userService;

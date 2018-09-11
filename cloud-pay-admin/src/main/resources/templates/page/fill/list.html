@@ -341,6 +341,25 @@ $(function(){
 	  $("#fillRecordModal input[name='actionurl']").val(actionUrl);
 	  $("#submitBtn").text(btnText);
   }
+  
+  function reversal(id){
+	  if(confirm("确定要冲正该笔补登记录吗？")){
+		   $.ajax({
+				type:"POST",
+				url:_ctx+"/fillRecord/reversal",
+				dataType:"json",
+				data:{id:id},
+				cache:false,
+				success:function(data){
+					if(data.status == 'success'){
+						window.location.href=window.location.href;
+					}else{
+						alert(data.msg);
+					}
+				}
+			});
+	  }
+  }
 </script>
 </body>
 </html>

@@ -15,7 +15,7 @@ public class InterceptorAdapter extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		log.info("拦截");
 		registry.addInterceptor(new UrlInterceptor()).addPathPatterns("/**")
-				.excludePathPatterns("/","/login","/logout","/toLogin","/error/**","/upload/show/**");
+				.excludePathPatterns("/","/login","/logout","/toLogin","/error/**","/api","/upload/show/**");
 		super.addInterceptors(registry);
 	}
 }

@@ -21,6 +21,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.recon.entity.FillRecord;
 import com.cloud.pay.recon.service.FillRecordService;
@@ -87,6 +88,27 @@ public class FillRecordController extends BaseController {
 		}catch(Exception e) {
 			log.error("error:{}", e);
 			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
+	}
+	
+	/**
+	 * 冲正
+	 * @return
+	 */
+	@RequestMapping(value="/reversal",method=RequestMethod.POST)
+	@ResponseBody
+	public Object reversal() {
+		Integer id = Integer.parseInt(this.getParameterMap().getString("id"));
+		try {
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId();
+			fillRecordService.reversal(id, Integer.parseInt(userId));
+		}catch(Exception e) {
+			log.error("error:{}",e);
+			if(e instanceof CloudPayException) {
+				return ResponseModel.getModel(e.getMessage(), "failed", null); 
+			}
+			return ResponseModel.getModel("冲正失败", "failed", null); 
 		}
 		return ResponseModel.getModel("ok", "success", null);
 	}

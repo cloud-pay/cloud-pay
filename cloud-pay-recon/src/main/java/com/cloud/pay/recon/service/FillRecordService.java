@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.recon.dto.FillRecordDTO;
 import com.cloud.pay.recon.entity.FillRecord;
 import com.cloud.pay.recon.mapper.FillRecordMapper;
@@ -30,5 +31,20 @@ public class FillRecordService {
 	
 	public int insert(FillRecord fillRecord) {
 		return fillRecordMapper.insert(fillRecord);
+	}
+	
+	public void reversal(Integer id,Integer userId) throws CloudPayException{
+		try {
+			FillRecord fillRecord = fillRecordMapper.selectByPrimaryKey(id);
+			//TODO ....冲正
+			
+			//修改补登记录的状态
+			fillRecord.setStatus(2);
+			fillRecord.setUpdateTime(new Date());
+			fillRecord.setUpdatorId(userId);
+			fillRecordMapper.updateByPrimaryKeySelective(fillRecord);
+		}catch(Exception e) {
+		    throw new CloudPayException("系统异常"); 
+		}
 	}
 }

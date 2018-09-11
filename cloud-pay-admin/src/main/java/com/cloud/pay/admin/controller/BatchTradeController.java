@@ -1,6 +1,5 @@
 package com.cloud.pay.admin.controller;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,10 +20,9 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
-import com.cloud.pay.trade.constant.MerchantRouteConstant;
-import com.cloud.pay.trade.entity.MerchantRouteConf;
+import com.cloud.pay.merchant.service.MerchantService;
+import com.cloud.pay.trade.entity.BatchTrade;
 import com.cloud.pay.trade.service.BatchTradeService;
-import com.cloud.pay.trade.service.MerchantRouteConfService;
 
 @Controller
 @RequestMapping("/batchTrade")
@@ -35,6 +33,9 @@ public class BatchTradeController extends BaseController{
 	@Autowired
 	private BatchTradeService batchTradeService;
 	
+	@Autowired
+	private MerchantService merchantService;
+	
 	private String menuUrl = "batchTrade/list";
 	
 	/**
@@ -43,9 +44,36 @@ public class BatchTradeController extends BaseController{
 	 */
 	@RequestMapping(value="/handPay",method=RequestMethod.GET)
 	public Object handPay(Model model){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		if(!Jurisdiction.buttonJurisdiction("batchTrade/handPay","query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/batchTrade/handPay";
+	}
+	
+	/**
+	 * 上传
+	 * @return
+	 */
+	@RequestMapping(value="/upload",method=RequestMethod.POST)
+	@ResponseBody
+	public Object upload(){
+		if(!Jurisdiction.buttonJurisdiction("batchTrade/handPay","add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			BatchTrade batchTrade = new BatchTrade();
+			ParameterMap map = this.getParameterMap();
+			Integer payerMerchantId = Integer.parseInt(map.getString("payerMerchantId"));
+			batchTrade.setPayerMerchantId(payerMerchantId);
+			String payFilePath = map.getString("payFilePath");
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			batchTrade.setCreator(userId);
+			batchTrade.setCreateTime(new Date());
+			batchTradeService.upload(batchTrade, payFilePath.replace("data:application/vnd.ms-excel;base64,", ""));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	/**

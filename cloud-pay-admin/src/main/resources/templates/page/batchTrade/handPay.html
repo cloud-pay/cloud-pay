@@ -143,26 +143,29 @@ div.cbp label.font{
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="usermodelHead">添加用户</h4>
+				<h4 class="modal-title text-center" id="usermodelHead">付款商户</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal"  role="form">
 				  <input type="hidden" name="url" value=""/>
 				  <input type="hidden" name="bankId" value=""/>			  
 				  <div class="form-group">
-				    <label for="bankCode" class="col-sm-2 control-label">联行号</label>
-				    <div class="col-sm-10">
-				      <input type="text" class="form-control" name="bankCode" value="" id="bankCode" placeholder="联行号">
-				    </div>
+				    <label for="payerMerchantId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>付款方</label>
+					    <div class="col-sm-10">
+						    <select name="payerMerchantId" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						    </select>
+					    </div>
 				  </div>
 				  
-				  <div class="form-group">
-				    <label for="bankName" class="col-sm-2 control-label">开户支行</label>
+				  <div class="form-group" data-toggle="tooltip" title="上传代付文件">
+				  	<input type="hidden" name="payFilePath" value=""/>
+				    <label for="payfile" class="col-sm-2 control-label">上传文件</label>
 				    <div class="col-sm-10">
-				      <input type="text" class="form-control" name="bankName" value="" id="bankName" placeholder="开户支行">
+				      <a href="javascript:void(0)"><input type="file" class="form-control file" name="payfile" value="" id="payfile" placeholder="请选择文件"></a>
 				    </div>
 				  </div>
-				  
 				 </form>
 			</div>
 			<div class="modal-footer">
@@ -201,18 +204,16 @@ $(function(){
     });
 	
 	$("#add").click(function(){
-		reloadModelData(_ctx+"/bank/add","联行号新增","新增","","","");
 		$("#bankModal").modal("show");
 	});
 	
 	//确认按钮
 	$("#imgSubmit").click(function(){
-		var bankId = $("input[name='bankId']").val();
-		var url = $("input[name='url']").val();
-		var bankName= $("input[name='bankName']").val();
-		var bankCode= $("input[name='bankCode']").val();
+		var payerMerchantId = $("[name='payerMerchantId']").val();
+		var url = _ctx+"/batchTrade/upload";
+		var payFilePath= $("input[name='payFilePath']").val();
 		if(url == _ctx+'/bank/add'){
-			if(!checkAccount(bankName,bankCode)){
+			if(!checkAccount(payerMerchantId,payFilePath)){
 				return false;
 			}
 		}
@@ -221,7 +222,7 @@ $(function(){
 			url:url,
 			cache:false,
 			dataType:"json",
-			data:{id:bankId,bankName:bankName,bankCode:bankCode},
+			data:{payerMerchantId:payerMerchantId,payFilePath:payFilePath},
 			success:function(data){
 				if(data.status == 'success'){
 					$("#bankModal").modal("hide");
@@ -235,57 +236,37 @@ $(function(){
 	
 })
 
-//删除用户
-function delBank(bankId){
-	if(confirm("你确定要删除此联行号吗？")){
-		$.ajax({
-			type:"POST",
-			url:_ctx+"/bank/del",
-			dataType:"json",
-			data:{id:bankId},
-			cache:false,
-			success:function(data){
-				if(data.status == 'success'){
-					window.location.href=window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-	}
-}
-
-//编辑用户
-function editBank(bankId,bankCode,bankName){
-	console.log(bankId+","+bankCode+","+bankName);
-	reloadModelData(_ctx+"/bank/edit","编辑联行号","更新",bankId,bankCode,bankName);
-	$("#bankModal").modal("show");
-}
-
 //验证数据
-function checkAccount(bankName,bankCode){
-	if(bankName == ''){
-		$("input[name='bankName']").focus();
-		alert("开户支行不能为空");
+function checkAccount(payerMerchantId,payFilePath){
+	if(payerMerchantId == ''){
+		$("input[name='payerMerchantId']").focus();
+		alert("请选择付款方");
 		return false;
 	}
-	if(bankCode == ''){
-		$("input[name='bankCode']").focus();
-		alert("联行号不能为空");
+	if(payFilePath == ''){
+		$("input[name='payFilePath']").focus();
+		alert("请选择代付文件");
 		return false;
 	}
 	return true;
 }
 
-//加载模态框的数据
-function reloadModelData(url,title,btntext,bankId,bankCode,bankName){
-	$("#bankModal #usermodelHead").text(title);
-	$("#bankModal #imgSubmit").text(btntext);
-	$("input[name='url']").val(url);
-	$("input[name='bankId']").val(bankId);
-	$("input[name='bankCode']").val(bankCode);
-	$("input[name='bankName']").val(bankName);
-}
+var input = document.getElementById("payfile");
+ if (typeof (FileReader) === 'undefined') {
+     result.innerHTML = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
+     input.setAttribute('disabled', 'disabled');
+ } else {
+     input.addEventListener('change', readFile, false);
+ }
+function readFile() {
+	var file = this.files[0];
+     var reader = new FileReader();
+     reader.readAsDataURL(file);
+     reader.onload = function (e) {
+     	base64Code=this.result;
+     	$("#bankModal input[name='payFilePath']").val(this.result);
+     }
+  }
 
 </script>
 </body>

@@ -207,6 +207,10 @@ $(function(){
 		$("#bankModal").modal("show");
 	});
 	
+	$("#download").click(function(){
+		window.location.href = _ctx+'/batchTrade/download';
+	});
+	
 	//确认按钮
 	$("#imgSubmit").click(function(){
 		var payerMerchantId = $("[name='payerMerchantId']").val();

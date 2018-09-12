@@ -21,6 +21,8 @@
     <result column="recon_date" property="reconDate" jdbcType="TIMESTAMP" />
     <result column="recon_status" property="reconStatus" jdbcType="INTEGER" />
     <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="payee_bank_name" property="payeeBankName" jdbcType="VARCHAR" />
+    <result column="payee_bank_acct_type" property="payeeBankAcctType" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.TradeDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
@@ -48,7 +50,7 @@
   <sql id="Base_Column_List" >
     id, order_no, merchant_id, trade_time, trade_amount, status, channel_id, return_code, 
     return_info, payer_id, payee_name, payee_bank_card, payee_bank_code, trade_confirm_time, 
-    remark, settle_status, recon_date, recon_status, batch_no
+    remark, settle_status, recon_date, recon_status, batch_no, payee_bank_name, payee_bank_acct_type
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -66,7 +68,7 @@
       channel_id, return_code, return_info, 
       payer_id, payee_name, payee_bank_card, 
       payee_bank_code, trade_confirm_time, remark, 
-      settle_status, recon_date, recon_status, batch_no
+      settle_status, recon_date, recon_status, batch_no, payee_bank_name, payee_bank_acct_type
       )
     values (#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, #{merchantId,jdbcType=INTEGER}, 
       #{tradeTime,jdbcType=TIMESTAMP}, #{tradeAmount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, 
@@ -74,7 +76,7 @@
       #{payerId,jdbcType=INTEGER}, #{payeeName,jdbcType=VARCHAR}, #{payeeBankCard,jdbcType=VARCHAR}, 
       #{payeeBankCode,jdbcType=VARCHAR}, #{tradeConfirmTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
       #{settleStatus,jdbcType=INTEGER}, #{reconDate,jdbcType=TIMESTAMP}, #{reconStatus,jdbcType=INTEGER}, #{batchNo,jdbcType=VARCHAR}
-      )
+      , #{payeeBankName,jdbcType=VARCHAR}, #{payeeBankAcctType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.cloud.pay.trade.entity.Trade" >
     insert into t_trade
@@ -317,5 +319,63 @@
 	where t.order_no = b.TRADE_ORDER_NO
 	and b.RECON_STATUS = 0
 	AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByBatchNo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_trade
+    where batch_no = #{batchNo,jdbcType=VARCHAR}
+  </select>
+  <update id="updateByBatchNo" >
+    update t_trade
+    set trade_time = #{tradeTime,jdbcType=TIMESTAMP},
+    	status = #{status,jdbcType=INTEGER}
+    where batch_no = #{batchNo,jdbcType=VARCHAR}
+  </update>
+  <select id="selectExist" resultMap="BaseResultMap">
+    select orderNo
+    from t_trade
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+    	and merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
+  
+  <resultMap id="BaseStatDTO" type="com.cloud.pay.trade.dto.TradeStatDTO" >
+    <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <select id="tradeStat" resultMap="BaseStatDTO">
+    select count(1) total_amount, sum(trade_amount) total_amount
+    from t_trade
+    where 1 = 1
+      <if test="merchantId != null" >
+        and merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and trade_time &lt; #{endTime}
+      </if>
+  </select>
+  <select id="loanTradeStat" resultMap="BaseStatDTO">
+    select count(1) total_amount, sum(trade_amount) total_amount
+    from t_trade t,t_merchant_route_conf c
+    where t.merchant_id = c.merchant_id
+        and t.channel_id = c.channel_id
+        and c.loaning = 1
+      <if test="merchantId != null" >
+        and t.merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="orgId != null" >
+        and t.merchant_id = #{orgId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and t.trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and t.trade_time &lt; #{endTime}
+      </if>
   </select>
 </mapper>

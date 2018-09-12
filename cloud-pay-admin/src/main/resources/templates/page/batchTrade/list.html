@@ -162,7 +162,8 @@ div.cbp label.font{
                   <td th:if="${trade.type == 2}"></td>
                   <td th:if="${trade.type == 1}"></td>
                   <td th:if="${trade.type == 2}" th:text="${trade.name}"></td>
-                  <td th:th:text="${#dates.format(trade.tradeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:if="${trade.tradeTime == null}"></td>
+                  <td th:if="${trade.tradeTime != null}" th:text="${#dates.format(trade.tradeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
 				  <td th:text="${trade.totalAmount}"></td>
 				  <td th:text="${trade.totalCount}"></td>
 				  <td th:if="${trade.status == 1}" th:text="待审核"></td>
@@ -170,11 +171,12 @@ div.cbp label.font{
 				  <td th:if="${trade.status == 3}" th:text="审核不通过"></td>
 				  <td th:text="${#dates.format(trade.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${trade.creator}"></td>
-                  <td th:text="${#dates.format(trade.auditTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:if="${trade.auditTime == null}"></td>
+                  <td th:if="${trade.auditTime != null}" th:text="${#dates.format(trade.auditTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${trade.auditor}"></td>
                   <td>
                   	<div th:if="${trade.id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${trade.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'audit(\''+${trade.id}+'\',\''+${trade.batchNo}+'\');'"><i class="fa fa-edit"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${trade.id == 1 && meid != '1'}">
@@ -288,9 +290,7 @@ $(function(){
 		var createDateBegin = $("#createDateBegin").val();
 		var createDateEnd = $("#createDateEnd").val();
 		window.location.href = _ctx+'/batchTrade/list'
-			+'?type='+search_type
-			+'&status='+search_status
-			+'&merchantName='+search_merchantName
+			+'?status='+search_status
 			+'&createDateBegin='+createDateBegin
 			+'&createDateEnd='+createDateEnd;
 	});
@@ -389,31 +389,11 @@ $(function(){
 })
 
 
-//删除手工代付
-function audit(tradeId){
-    var msg='';
-    if(status == 0) {
-    	msg = '你确定要冻结此手工代付吗？';
-    } else {
-    	msg = '你确定要解冻此手工代付吗？';
-    }
-	if(confirm(msg)){
-		$.ajax({
-			type:"POST",
-			url:_ctx+"/batchTrade/audit",
-			dataType:"json",
-			data:{id:tradeId},
-			cache:false,
-			success:function(data){
-				if(data.status == 'success'){
-					window.location.href=window.location.href;
-				}else{
-					alert(data.msg);
-				}
-			}
-		});
-	}
+//跳转审核页面
+function audit(tradeId, batchNo){
+	window.location.href=_ctx+"/batchTrade/toAudit?tradeId="+tradeId+"&batchNo="+batchNo;
 }
+
 
 //编辑手工代付
 function editTrade(id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){

@@ -590,5 +590,25 @@ public class Trade {
 		this.batchNo = batchNo;
 	}
     
+    private Integer payeeBankAcctType;
+    
+    private String payeeBankName;
+
+	public Integer getPayeeBankAcctType() {
+		return payeeBankAcctType;
+	}
+
+	public void setPayeeBankAcctType(Integer payeeBankAcctType) {
+		this.payeeBankAcctType = payeeBankAcctType;
+	}
+
+	public String getPayeeBankName() {
+		return payeeBankName;
+	}
+
+	public void setPayeeBankName(String payeeBankName) {
+		this.payeeBankName = payeeBankName;
+	}
+    
     
 }

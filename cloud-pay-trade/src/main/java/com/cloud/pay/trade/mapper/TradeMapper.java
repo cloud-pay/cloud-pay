@@ -62,4 +62,14 @@ public interface TradeMapper {
      * @return
      */
     int updateByBatchNo(@Param("tradeTime")Date tradeTime, @Param("status")Integer status, @Param("batchNo")String batchNo);
+    
+    int updateStatus(Trade record);
+    
+    /**
+     * 根据商户ID和订单号查询交易是否存在，如存在则返回orderNo
+     * @param merchantId
+     * @param orderNo
+     * @return
+     */
+    String selectExist(@Param("merchantId")Integer merchantId, @Param("orderNo")String orderNo);
 }

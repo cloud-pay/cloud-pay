@@ -333,4 +333,10 @@
     	status = #{status,jdbcType=INTEGER}
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>
+  <select id="selectByBatchNo" resultMap="BaseResultMap">
+    select orderNo
+    from t_trade
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+    	and merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
 </mapper>

@@ -296,7 +296,9 @@ CREATE TABLE `t_trade` (
   `settle_status` int(1) DEFAULT NULL COMMENT '结算状态（0：未导出，1已导出）',
   `recon_date` datetime DEFAULT NULL COMMENT '对账日期（格式yyyymmdd）',
   `recon_status` int(1) DEFAULT NULL COMMENT '对账状态(1成功，2失败)',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UQ_MERCHANT_ORDERNO` (`merchant_id`,`order_no`),
+  KEY `INX_BATCH_NO` (`batch_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易信息表'
 
 -- ----------------------------
@@ -316,6 +318,7 @@ CREATE TABLE `t_merchant_secret` (
   PRIMARY KEY (`merchant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户密钥';
 
+DROP TABLE IF EXISTS `t_batch_trade`;
 CREATE TABLE `t_batch_trade` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `batch_no` varchar(32) DEFAULT NULL COMMENT '批次号',
@@ -332,15 +335,3 @@ CREATE TABLE `t_batch_trade` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='批量代付信息表';
 
-CREATE TABLE `t_batch_trade_detail` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `batch_no` varchar(32) DEFAULT NULL COMMENT '批次号',
-  `payee_bank_acct_name` varchar(32) DEFAULT NULL COMMENT '收款人账户名',
-  `payee_bank_acct_type` int(1) DEFAULT NULL COMMENT '收款人账户类型(1企业，2个人)',
-  `payee_bank_acct_no` varchar(255) DEFAULT NULL,
-  `payee_bank_id` int(11) DEFAULT NULL COMMENT '收款人联行号id',
-  `payee_bank_name` varchar(255) DEFAULT NULL COMMENT '收款人银行名称',
-  `amount` decimal(15,2) DEFAULT NULL,
-  `remark` varchar(255) DEFAULT NULL COMMENT '附言',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='批量明细';

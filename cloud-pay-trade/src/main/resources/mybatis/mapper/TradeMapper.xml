@@ -21,6 +21,8 @@
     <result column="recon_date" property="reconDate" jdbcType="TIMESTAMP" />
     <result column="recon_status" property="reconStatus" jdbcType="INTEGER" />
     <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="payee_bank_name" property="payeeBankName" jdbcType="VARCHAR" />
+    <result column="payee_bank_acct_type" property="payeeBankAcctType" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.TradeDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
@@ -48,7 +50,7 @@
   <sql id="Base_Column_List" >
     id, order_no, merchant_id, trade_time, trade_amount, status, channel_id, return_code, 
     return_info, payer_id, payee_name, payee_bank_card, payee_bank_code, trade_confirm_time, 
-    remark, settle_status, recon_date, recon_status, batch_no
+    remark, settle_status, recon_date, recon_status, batch_no, payee_bank_name, payee_bank_acct_type
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -66,7 +68,7 @@
       channel_id, return_code, return_info, 
       payer_id, payee_name, payee_bank_card, 
       payee_bank_code, trade_confirm_time, remark, 
-      settle_status, recon_date, recon_status, batch_no
+      settle_status, recon_date, recon_status, batch_no, payee_bank_name, payee_bank_acct_type
       )
     values (#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, #{merchantId,jdbcType=INTEGER}, 
       #{tradeTime,jdbcType=TIMESTAMP}, #{tradeAmount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, 
@@ -74,7 +76,7 @@
       #{payerId,jdbcType=INTEGER}, #{payeeName,jdbcType=VARCHAR}, #{payeeBankCard,jdbcType=VARCHAR}, 
       #{payeeBankCode,jdbcType=VARCHAR}, #{tradeConfirmTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
       #{settleStatus,jdbcType=INTEGER}, #{reconDate,jdbcType=TIMESTAMP}, #{reconStatus,jdbcType=INTEGER}, #{batchNo,jdbcType=VARCHAR}
-      )
+      , #{payeeBankName,jdbcType=VARCHAR}, #{payeeBankAcctType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.cloud.pay.trade.entity.Trade" >
     insert into t_trade

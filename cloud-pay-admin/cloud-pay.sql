@@ -328,8 +328,9 @@ CREATE TABLE `t_batch_trade` (
   `create_time` datetime DEFAULT NULL COMMENT '经办时间',
   `auditor` varchar(255) DEFAULT NULL COMMENT '审核人',
   `audit_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `audit_optinion` varchar(255) DEFAULT NULL COMMENT '审核意见',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='批量代付信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='批量代付信息表';
 
 CREATE TABLE `t_batch_trade_detail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

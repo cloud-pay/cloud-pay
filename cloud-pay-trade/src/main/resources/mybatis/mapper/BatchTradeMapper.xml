@@ -13,10 +13,11 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="auditor" property="auditor" jdbcType="VARCHAR" />
     <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="audit_optinion" property="auditOptinion" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, batch_no, trade_time, total_amount, total_count, payer_merchant_id, status, creator, 
-    create_time, auditor, audit_time
+    create_time, auditor, audit_time, audit_optinion
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -211,6 +212,7 @@
   <update id="audit" parameterType="com.cloud.pay.trade.entity.BatchTrade" >
     update t_batch_trade
     set status = #{status,jdbcType=INTEGER},
+      audit_optinion = #{auditOptinion,jdbcType=VARCHAR},
       auditor = #{auditor,jdbcType=VARCHAR},
       audit_time = #{auditTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

@@ -24,6 +24,8 @@ public class TradePayTypeHandlerFactory {
 	private final Map<String,String> tradePayQueryMapper = new HashMap<>(); //代付结果查询通道执行类
 	private final Map<String,String> tradeUnionPayMapper = new HashMap<>(); //银行银联代付通道
 	private final Map<String,String> tradeDownReconFileMapper = new HashMap<>();//下载对账文件 
+	private final Map<String,String> batchTradePayMapper = new HashMap<>();//批量代付
+	private final Map<String,String> batchTradePayQueryMapper = new HashMap<>(); //批量代付结果查询
     
 	/**
 	 * 启动的时候将渠道接口信息直接加载到内存
@@ -38,6 +40,8 @@ public class TradePayTypeHandlerFactory {
 		tradePayQueryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiTradeQueryExecutor");
 		tradeUnionPayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiUnionTradePayExecutor");
 		tradeDownReconFileMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiDownReconFileExecutor");
+		batchTradePayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiBatchTradePayExecutor");
+		batchTradePayQueryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiBatchTradePayQueryExecutor");
 	}
 	
 	/**
@@ -74,6 +78,24 @@ public class TradePayTypeHandlerFactory {
 	 */
 	public ITradePayExecutor getTradeDownReconFileHandler(String tradeType) {
 		  return getHandler(tradeDownReconFileMapper,tradeType);
+	}
+	
+	/**
+	 * 批量代付
+	 * @param tradeType
+	 * @return
+	 */
+	public ITradePayExecutor getBatchTraeHandler(String tradeType) {
+		 return getHandler(batchTradePayMapper,tradeType);
+	}
+	
+	/**
+	 * 批量代付结果查询
+	 * @param tradeType
+	 * @return
+	 */
+	public ITradePayExecutor getBatchTradeQueryHandler(String tradeType) {
+		 return getHandler(batchTradePayQueryMapper,tradeType);
 	}
 	
 	private <T> T getHandler(Map<String, String> mapper, String tradeType) {

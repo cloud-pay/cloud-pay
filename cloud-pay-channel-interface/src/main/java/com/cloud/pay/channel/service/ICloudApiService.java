@@ -1,5 +1,9 @@
 package com.cloud.pay.channel.service;
 
+import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
+import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
@@ -41,4 +45,18 @@ public interface ICloudApiService {
 	 * @return
 	 */
 	ReconDownFileResVO downReconFile(ReconDownFileReqVO reqVO);
+	
+	/**
+	 * 批量代付触发
+	 * @param reqVO
+	 * @return
+	 */
+	BatchPayTradeResVO batchPay(BatchPayTradeReqVO reqVO);
+	
+	/**
+	 * 批量代付结果查询
+	 * @param reqVO
+	 * @return
+	 */
+	BatchPayTradeQueryResVO batchPayQuery(BatchPayTradeQueryReqVO reqVO);
 }

@@ -19,6 +19,10 @@ import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.utils.ValidationUtils;
 import com.cloud.pay.channel.vo.BaseTradeReqVO;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
+import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
@@ -111,6 +115,28 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.getChannelByChannelCode(reqVO.getChannelCode()));
 		resVO = (ReconDownFileResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口：下载对账文件，响应结果：{}",resVO);
+		return resVO;
+	}
+
+
+
+	@Override
+	public BatchPayTradeResVO batchPay(BatchPayTradeReqVO reqVO) {
+		log.info("渠道接口，批量代付，请求参数：{}",reqVO);
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.BOHAI.getChannelENName());
+		BatchPayTradeResVO resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
+		log.info("渠道接口，批量代付，响应结果：{}",resVO);
+		return resVO;
+	}
+
+
+
+	@Override
+	public BatchPayTradeQueryResVO batchPayQuery(BatchPayTradeQueryReqVO reqVO) {
+		log.info("渠道接口，批量代付结果查询，请求参数：{}",reqVO);
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.BOHAI.getChannelENName());
+		BatchPayTradeQueryResVO resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
+		log.info("渠道接口，批量代付结果查询，响应解雇:{}",resVO);
 		return resVO;
 	}
 

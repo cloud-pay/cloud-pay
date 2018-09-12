@@ -28,4 +28,16 @@ public interface ChannelContants {
 	
 	// 渤海单笔大额代付
 	public static final String CHANNEL_BOHAI_REQ_HEADER_SCHP = "SCHPReq";
+	
+	//批量代付响应
+	public static final String CHANNEL_BOHAI_RES_HEADER_SCBP = "SCBPRes";
+	
+	//批量代付请求
+	public static final String CHANNEL_BOHAI_REQ_HEADER_SCBP = "SCBPReq";
+	
+	//批量代付查询请求
+	public static final String CHANNEL_BOHAI_REQ_HEADER_SCBR = "SCBRReq";
+	
+	//批量代付查询响应
+	public static final String CHANNEL_BOHAI_RES_HEADER_SCBR = "SCBRRes";
 }

@@ -45,7 +45,7 @@ CREATE TABLE `t_bank` (
   `bank_code` varchar(255) DEFAULT NULL COMMENT '联行号',
   `bank_name` varchar(255) DEFAULT NULL COMMENT '银行名称',
   `modifer` varchar(255) DEFAULT NULL COMMENT '修改人',
-  `modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `modify_time` datetime DEFAULT NULL  COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='联行号信息';
 
@@ -153,9 +153,9 @@ CREATE TABLE `t_merchant_apply_base_info` (
   `mobile` varchar(12) DEFAULT NULL COMMENT '手机号码',
   `status` int(1) DEFAULT NULL COMMENT '申请状态(1待审核，2审核通过，3审核不通过)',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL  COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '修改人',
-  `modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `modify_time` datetime DEFAULT NULL  COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户申请基本信息';
 
@@ -218,9 +218,9 @@ CREATE TABLE `t_merchant_base_info` (
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `mobile` varchar(12) DEFAULT NULL COMMENT '手机号码',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL  COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '修改人',
-  `modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `modify_time` datetime DEFAULT NULL  COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户基本信息';
 
@@ -260,9 +260,9 @@ CREATE TABLE `t_merchant_route_conf` (
   `loaning_amount` decimal(10,2) DEFAULT NULL COMMENT '垫资金额',
   `status` int(1) DEFAULT NULL COMMENT '状态（0冻结，1正常）',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL  COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '最后修改人',
-  `modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+  `modify_time` datetime DEFAULT NULL  COMMENT '最后修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='路由配置表';
 
@@ -276,25 +276,28 @@ CREATE TABLE `t_merchant_route_conf` (
 DROP TABLE IF EXISTS `t_trade`;
 CREATE TABLE `t_trade` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `order_no` varchar(32) DEFAULT NULL COMMENT '订单号',
   `merchant_id` int(11) DEFAULT NULL COMMENT '商户id',
-  `trade_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '交易时间',
+  `order_no` varchar(32) DEFAULT NULL COMMENT '订单号',
+  `batch_no` varchar(255) DEFAULT NULL COMMENT '批次号',
+  `trade_time` datetime DEFAULT NULL COMMENT '交易时间',
   `trade_amount` decimal(10,2) DEFAULT NULL COMMENT '交易金额',
   `status` int(1) DEFAULT NULL COMMENT '状态（1处理中，2成功，3失败）',
   `channel_id` int(11) DEFAULT NULL COMMENT '渠道ID',
   `return_code` varchar(255) DEFAULT NULL COMMENT '返回码',
   `return_info` varchar(255) DEFAULT NULL COMMENT '返回信息',
   `payer_id` int(11) DEFAULT NULL COMMENT '付款方ID',
+  `payee_bank_name` varchar(255) DEFAULT NULL COMMENT '银行名称',
+  `payee_bank_acct_type` int(1) DEFAULT NULL COMMENT '账户类型(1企业；2个人)',
   `payee_name` varchar(255) DEFAULT NULL COMMENT '收款人姓名',
   `payee_bank_card` varchar(255) DEFAULT NULL COMMENT '收款人银行账号',
   `payee_bank_code` varchar(255) DEFAULT NULL COMMENT '收款人联行号',
-  `trade_confirm_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '交易确认时间',
+  `trade_confirm_time` datetime DEFAULT NULL COMMENT '交易确认时间',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `settle_status` int(1) DEFAULT NULL COMMENT '结算状态（0：未导出，1已导出）',
-  `recon_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '对账日期（格式yyyymmdd）',
+  `recon_date` datetime DEFAULT NULL COMMENT '对账日期（格式yyyymmdd）',
   `recon_status` int(1) DEFAULT NULL COMMENT '对账状态(1成功，2失败)',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易信息表'
 
 -- ----------------------------
 -- Records of t_trade

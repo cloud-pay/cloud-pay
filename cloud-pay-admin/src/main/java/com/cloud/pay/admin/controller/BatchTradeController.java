@@ -1,7 +1,16 @@
 package com.cloud.pay.admin.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +32,7 @@ import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.entity.BatchTrade;
 import com.cloud.pay.trade.service.BatchTradeService;
+import com.cloud.pay.trade.service.TradeService;
 
 @Controller
 @RequestMapping("/batchTrade")
@@ -34,9 +44,15 @@ public class BatchTradeController extends BaseController{
 	private BatchTradeService batchTradeService;
 	
 	@Autowired
+	private TradeService tradeService;
+	
+	@Autowired
 	private MerchantService merchantService;
 	
 	private String menuUrl = "batchTrade/list";
+	
+	private static final String SEQ_OFFSET = "00000000";
+	private AtomicInteger seq = new AtomicInteger(0);
 	
 	/**
 	 * 手工代付
@@ -49,6 +65,37 @@ public class BatchTradeController extends BaseController{
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/batchTrade/handPay";
 	}
+	
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+    public void download(HttpServletRequest req, HttpServletResponse res) {
+		req.getContextPath();
+      res.setHeader("content-type", "application/octet-stream");
+      res.setContentType("application/octet-stream");
+      res.setHeader("Content-Disposition", "attachment;filename=" + "pay.xls");
+      byte[] buff = new byte[1024];
+      BufferedInputStream bis = null;
+      OutputStream os = null;
+      try {
+        os = res.getOutputStream();
+        bis = new BufferedInputStream(new FileInputStream(new File("G:\\git\\cloud-pay\\cloud-pay-admin\\src\\main\\resources\\templates\\page\\batchTrade\\代付模板.xls")));
+        int i = bis.read(buff);
+        while (i != -1) {
+          os.write(buff, 0, buff.length);
+          os.flush();
+          i = bis.read(buff);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        if (bis != null) {
+          try {
+            bis.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
 	
 	/**
 	 * 上传
@@ -63,17 +110,32 @@ public class BatchTradeController extends BaseController{
 			ParameterMap map = this.getParameterMap();
 			Integer payerMerchantId = Integer.parseInt(map.getString("payerMerchantId"));
 			batchTrade.setPayerMerchantId(payerMerchantId);
+			batchTrade.setBatchNo(getBatchNo());
+			batchTrade.setStatus(1);
+			batchTrade.setTradeTime(new Date());
 			String payFilePath = map.getString("payFilePath");
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			batchTrade.setCreator(userId);
 			batchTrade.setCreateTime(new Date());
-			batchTradeService.upload(batchTrade, payFilePath.replace("data:application/vnd.ms-excel;base64,", ""));
+			String returnInfo = batchTradeService.upload(batchTrade, payFilePath.replace("data:application/vnd.ms-excel;base64,", ""));
+			if(StringUtils.isNotBlank(returnInfo)) {
+				return ResponseModel.getModel("提交失败:" + returnInfo, "failed", null);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
 			return ResponseModel.getModel("提交失败", "failed", null);
 		}
 		return ResponseModel.getModel("ok", "success", null);
+	}
+	
+	private String getBatchNo() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		final String date = sdf.format(new Date());
+		final int value = seq.incrementAndGet();
+		String temp = (SEQ_OFFSET + String.valueOf(value));
+		temp = temp.substring(temp.length() - SEQ_OFFSET.length());
+		return date + temp;
 	}
 	
 	/**
@@ -101,61 +163,48 @@ public class BatchTradeController extends BaseController{
 		return "page/batchTrade/list";
 	}
 	
-//	/**
-//	 * 添加批量交易
-//	 * @return
-//	 */
-//	@RequestMapping(value="/add",method=RequestMethod.POST)
-//	@ResponseBody
-//	public Object add(){
-//		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-//		try {
-//			MerchantRouteConf conf = new MerchantRouteConf();
-//			ParameterMap map = this.getParameterMap();
-//			conf.setType(Integer.parseInt(map.getString("type")));
-//			conf.setMerchantId(Integer.parseInt(map.getString("merchantId")));
-//			conf.setChannelId(Integer.parseInt(map.getString("channelId")));
-//			conf.setLoaning(Integer.parseInt(map.getString("loaning")));
-//			conf.setLoaningOrgId(Integer.parseInt(map.getString("loaningOrgId")));
-//			conf.setLoaningAmount(new BigDecimal(map.getString("loaningAmount")));
-//			conf.setStatus(MerchantRouteConstant.NORMAL);
-//			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-//			conf.setCreator(userId);
-//			conf.setCreateTime(new Date());
-//			conf.setModifer(userId);
-//			conf.setModifyTime(new Date());
-//			batchTradeService.save(conf);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			log.error("error:{}", e);
-//			return ResponseModel.getModel("提交失败", "failed", null);
-//		}
-//		return ResponseModel.getModel("ok", "success", null);
-//	}
-//	
-//	/**
-//	 * 冻结/解冻批量交易
-//	 * @return
-//	 */
-//	@RequestMapping(value="/updateStatus",method=RequestMethod.POST)
-//	@ResponseBody
-//	public Object updateStatus(){
-//		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-//		try {
-//			MerchantRouteConf conf = new MerchantRouteConf();
-//			ParameterMap map = this.getParameterMap();
-//			conf.setStatus(Integer.parseInt(map.getString("status")));
-//			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-//			conf.setModifer(userId);
-//			conf.setModifyTime(new Date());
-//			conf.setId(Integer.parseInt(map.getString("id")));
-//			batchTradeService.update(conf);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			log.error("error:{}", e);
-//			return ResponseModel.getModel("提交失败", "failed", null);
-//		}
-//		return ResponseModel.getModel("ok", "success", null);
-//	}
-//	
+	/**
+	 * 审核列表
+	 * @return
+	 */
+	@RequestMapping(value="/toAudit",method=RequestMethod.GET)
+	public Object toAudit(Model model, Integer tradeId, String batchNo){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		model.addAttribute("trades", tradeService.selectByBatchNo(batchNo));
+		model.addAttribute("tradeId", tradeId);
+		model.addAttribute("batchNo", batchNo);
+		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		return "page/batchTrade/audit";
+	}
+	
+	
+	/**
+	 * 冻结/解冻批量交易
+	 * @return
+	 */
+	@RequestMapping(value="/audit",method=RequestMethod.POST)
+	@ResponseBody
+	public Object audit(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			BatchTrade batchTrade = new BatchTrade();
+			ParameterMap map = this.getParameterMap();
+			batchTrade.setStatus(Integer.parseInt(map.getString("status")));
+			batchTrade.setBatchNo(map.getString("batchNo"));
+			String smsCode = map.getString("smsCode");
+			//TODO 验证短信验证码
+			log.info("验证短信验证码:{}", smsCode);
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			batchTrade.setAuditor(userId);
+			batchTrade.setAuditTime(new Date());
+			batchTrade.setId(Integer.parseInt(map.getString("id")));
+			batchTradeService.audit(batchTrade);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
+	}
+	
 }

@@ -207,4 +207,12 @@
        and t.trade_time &lt; #{endTime}
       </if>
   </select>
+  
+  <update id="audit" parameterType="com.cloud.pay.trade.entity.BatchTrade" >
+    update t_batch_trade
+    set status = #{status,jdbcType=INTEGER},
+      auditor = #{auditor,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 </mapper>

@@ -1,6 +1,9 @@
 package com.cloud.pay.trade.mapper;
 
+import java.util.Date;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.entity.Trade;
@@ -43,4 +46,20 @@ public interface TradeMapper {
      * @return
      */
     List<TradeDTO> selectExceptionRecord(String reconDate);
+    
+    /**
+     * 通过批次号查询
+     * @param reconDate
+     * @return
+     */
+    List<Trade> selectByBatchNo(@Param("batchNo")String batchNo);
+    
+    /**
+     * 通过批次号修改交易时间
+     * @author 夏志强
+     * @date 2018年9月12日 下午4:16:54
+     * @param record
+     * @return
+     */
+    int updateByBatchNo(@Param("tradeTime")Date tradeTime, @Param("status")Integer status, @Param("batchNo")String batchNo);
 }

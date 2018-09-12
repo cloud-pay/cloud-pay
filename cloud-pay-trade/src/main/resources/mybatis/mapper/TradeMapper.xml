@@ -318,4 +318,17 @@
 	and b.RECON_STATUS = 0
 	AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
   </select>
+  
+  <select id="selectByBatchNo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_trade
+    where batch_no = #{batchNo,jdbcType=VARCHAR}
+  </select>
+  <update id="updateByBatchNo" >
+    update t_trade
+    set trade_time = #{tradeTime,jdbcType=TIMESTAMP},
+    	status = #{status,jdbcType=INTEGER}
+    where batch_no = #{batchNo,jdbcType=VARCHAR}
+  </update>
 </mapper>

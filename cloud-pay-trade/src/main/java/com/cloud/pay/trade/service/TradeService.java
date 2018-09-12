@@ -1,5 +1,6 @@
 package com.cloud.pay.trade.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.PayResponseDTO;
+import com.cloud.pay.trade.dto.TradeStatDTO;
 import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.exception.TradeException;
 import com.cloud.pay.trade.mapper.TradeMapper;
@@ -56,5 +58,13 @@ public class TradeService {
 			resDTO.setReturnCode(TradeConstant.SYS_EXCEPTION);
 		}
 		return resDTO;
+	}
+	
+	public TradeStatDTO tradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime) {
+		return tradeMapper.tradeStat(merchantId, orgId, startTime, endTime);
+	}
+	
+	public TradeStatDTO loanTradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime) {
+		return tradeMapper.loanTradeStat(merchantId, orgId, startTime, endTime);
 	}
 }

@@ -333,10 +333,49 @@
     	status = #{status,jdbcType=INTEGER}
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>
-  <select id="selectByBatchNo" resultMap="BaseResultMap">
+  <select id="selectExist" resultMap="BaseResultMap">
     select orderNo
     from t_trade
     where order_no = #{orderNo,jdbcType=VARCHAR}
     	and merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
+  
+  <resultMap id="BaseStatDTO" type="com.cloud.pay.trade.dto.TradeStatDTO" >
+    <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <select id="tradeStat" resultMap="BaseStatDTO">
+    select count(1) total_amount, sum(trade_amount) total_amount
+    from t_trade
+    where 1 = 1
+      <if test="merchantId != null" >
+        and merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and trade_time &lt; #{endTime}
+      </if>
+  </select>
+  <select id="loanTradeStat" resultMap="BaseStatDTO">
+    select count(1) total_amount, sum(trade_amount) total_amount
+    from t_trade t,t_merchant_route_conf c
+    where t.merchant_id = c.merchant_id
+        and t.channel_id = c.channel_id
+        and c.loaning = 1
+      <if test="merchantId != null" >
+        and t.merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="orgId != null" >
+        and t.merchant_id = #{orgId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and t.trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and t.trade_time &lt; #{endTime}
+      </if>
   </select>
 </mapper>

@@ -14,6 +14,11 @@
 		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   	<dependency>
+  		<groupId>com.cloud.pay</groupId>
+		<artifactId>cloud-pay-channel-interface</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.15</version>

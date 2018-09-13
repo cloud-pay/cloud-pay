@@ -77,5 +77,142 @@ public class TradeController extends BaseController {
 		}
 		return "page/trade/stat";
 	}
+	
+	/**
+	 * 交易记录查询
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public Object list(Model model) {
+		if (!Jurisdiction.buttonJurisdiction(menuUrl, "query", this.getSession())) {
+			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
+		}
+		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
+		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		// 统计查询
+		ParameterMap map = this.getParameterMap();
+		String merchant = map.getString("merchantId");
+		String org = map.getString("orgId");
+		String createDateBegin = map.getString("createDateBegin");
+		String createDateEnd = map.getString("createDateEnd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date startTime = null;
+		Date endTime = null;
+		Integer merchantId = null;
+		Integer orgId = null;
+		try {
+			if (StringUtils.isNotBlank(merchant)) {
+				merchantId = Integer.parseInt(merchant);
+			}
+			if (StringUtils.isNotBlank(org)) {
+				orgId = Integer.parseInt(org);
+			}
+			if (StringUtils.isNotBlank(createDateBegin)) {
+				startTime = sdf.parse(createDateBegin);
+			}
+			if (StringUtils.isNotBlank(createDateEnd)) {
+				endTime = sdf.parse(createDateEnd);
+			}
+		} catch (Exception e) {
+		}
+		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
+			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
+			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+		}
+		return "page/trade/list";
+	}
+	
+	/**
+	 * 商户手续费统计
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/merchantFeeStat", method = RequestMethod.GET)
+	public Object merchantFeeStat(Model model) {
+		if (!Jurisdiction.buttonJurisdiction(menuUrl, "query", this.getSession())) {
+			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
+		}
+		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
+		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		// 统计查询
+		ParameterMap map = this.getParameterMap();
+		String merchant = map.getString("merchantId");
+		String org = map.getString("orgId");
+		String createDateBegin = map.getString("createDateBegin");
+		String createDateEnd = map.getString("createDateEnd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date startTime = null;
+		Date endTime = null;
+		Integer merchantId = null;
+		Integer orgId = null;
+		try {
+			if (StringUtils.isNotBlank(merchant)) {
+				merchantId = Integer.parseInt(merchant);
+			}
+			if (StringUtils.isNotBlank(org)) {
+				orgId = Integer.parseInt(org);
+			}
+			if (StringUtils.isNotBlank(createDateBegin)) {
+				startTime = sdf.parse(createDateBegin);
+			}
+			if (StringUtils.isNotBlank(createDateEnd)) {
+				endTime = sdf.parse(createDateEnd);
+			}
+		} catch (Exception e) {
+		}
+		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
+			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
+			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+		}
+		return "page/trade/merchantFeeStat";
+	}
 
+	/**
+	 * 机构手续费统计
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/orgFeeStat", method = RequestMethod.GET)
+	public Object orgFeeStat(Model model) {
+		if (!Jurisdiction.buttonJurisdiction(menuUrl, "query", this.getSession())) {
+			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
+		}
+		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
+		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		// 统计查询
+		ParameterMap map = this.getParameterMap();
+		String merchant = map.getString("merchantId");
+		String org = map.getString("orgId");
+		String createDateBegin = map.getString("createDateBegin");
+		String createDateEnd = map.getString("createDateEnd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date startTime = null;
+		Date endTime = null;
+		Integer merchantId = null;
+		Integer orgId = null;
+		try {
+			if (StringUtils.isNotBlank(merchant)) {
+				merchantId = Integer.parseInt(merchant);
+			}
+			if (StringUtils.isNotBlank(org)) {
+				orgId = Integer.parseInt(org);
+			}
+			if (StringUtils.isNotBlank(createDateBegin)) {
+				startTime = sdf.parse(createDateBegin);
+			}
+			if (StringUtils.isNotBlank(createDateEnd)) {
+				endTime = sdf.parse(createDateEnd);
+			}
+		} catch (Exception e) {
+		}
+		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
+			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
+			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+		}
+		return "page/trade/orgFeeStat";
+	}
 }

@@ -10,7 +10,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.http.HttpStatus;
 
-@MapperScan("com.cloud.pay.trade.mapper")
+@MapperScan({"com.cloud.pay.trade.mapper", "com.cloud.pay.merchant.mapper"})
 @ServletComponentScan
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{

@@ -346,7 +346,7 @@
   </resultMap>
   
   <select id="tradeStat" resultMap="BaseStatDTO">
-    select count(1) total_amount, sum(trade_amount) total_amount
+    select count(1) total_count, ifnull(sum(trade_amount),0) total_amount
     from t_trade
     where 1 = 1
       <if test="merchantId != null" >
@@ -360,11 +360,12 @@
       </if>
   </select>
   <select id="loanTradeStat" resultMap="BaseStatDTO">
-    select count(1) total_amount, sum(trade_amount) total_amount
+    select count(1) total_count, ifnull(sum(trade_amount),0) total_amount
     from t_trade t,t_merchant_route_conf c
     where t.merchant_id = c.merchant_id
         and t.channel_id = c.channel_id
         and c.loaning = 1
+        and t.status = 2
       <if test="merchantId != null" >
         and t.merchant_id = #{merchantId,jdbcType=INTEGER}
       </if>

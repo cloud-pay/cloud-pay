@@ -24,7 +24,7 @@ public class PayHandler {
 	
 	private Logger log = LoggerFactory.getLogger(PayHandler.class);
 	
-	@Autowired
+//	@Autowired
 	private ICloudApiService payService;
 	
 	@Autowired

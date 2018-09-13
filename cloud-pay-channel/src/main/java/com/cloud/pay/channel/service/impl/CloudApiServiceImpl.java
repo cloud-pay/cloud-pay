@@ -123,8 +123,16 @@ public class CloudApiServiceImpl implements ICloudApiService {
 	@Override
 	public BatchPayTradeResVO batchPay(BatchPayTradeReqVO reqVO) {
 		log.info("渠道接口，批量代付，请求参数：{}",reqVO);
+		BatchPayTradeResVO resVO = null;
+		try {
+			ValidationUtils.validate(reqVO);
+		}catch(CloudApiExcetion e) {
+			log.error("参数校验失败:{}",e.getMessage());
+			resVO = new BatchPayTradeResVO(e.getErrorCode(),e.getMessage());
+			return resVO;
+		}
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.BOHAI.getChannelENName());
-		BatchPayTradeResVO resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
+		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付，响应结果：{}",resVO);
 		return resVO;
 	}
@@ -134,8 +142,16 @@ public class CloudApiServiceImpl implements ICloudApiService {
 	@Override
 	public BatchPayTradeQueryResVO batchPayQuery(BatchPayTradeQueryReqVO reqVO) {
 		log.info("渠道接口，批量代付结果查询，请求参数：{}",reqVO);
+		BatchPayTradeQueryResVO resVO = null;
+		try {
+			ValidationUtils.validate(reqVO);
+		}catch(CloudApiExcetion e) {
+			log.error("参数校验失败:{}",e.getMessage());
+			resVO = new BatchPayTradeQueryResVO(e.getErrorCode(),e.getMessage());
+			return resVO;
+		}
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.BOHAI.getChannelENName());
-		BatchPayTradeQueryResVO resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
+		resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付结果查询，响应解雇:{}",resVO);
 		return resVO;
 	}

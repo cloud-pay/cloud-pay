@@ -13,6 +13,10 @@ public class BohaiCloudBatchTradePayQueryResult extends BohaiCloudTradeErrorResu
 
 	private static final long serialVersionUID = -6518157768712019236L;
 
+	public BohaiCloudBatchTradePayQueryResult(String rspCode) {
+		this.rspCode = rspCode;
+	}
+	
 	@XmlElement
 	private String FilNam;
 

@@ -55,7 +55,7 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
 			log.error("渤海代付失败：{}",e);
-			resVO = new PayTradeResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,ChannelErrorCode.ERROR_9000,"系统异常");
+			resVO = new PayTradeResVO(param.getMerchantNo(),param.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;
 	}

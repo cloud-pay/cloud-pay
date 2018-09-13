@@ -41,6 +41,13 @@ public class BaseTradeResVO implements Serializable{
 	      this.respMsg = respMsg;
 	}
 	
+	public BaseTradeResVO(String merchantNo,String orderNo,String respCode,String respMsg) {
+		  this.merchantNo = merchantNo;
+		  this.orderNo = orderNo;
+		  this.respCode = respCode;
+		  this.respMsg = respMsg;
+	}
+	
 	public BaseTradeResVO(String merchantNo,String orderNo,String respCode,String errorCode,String errorMessage) {
 		  this.merchantNo = merchantNo;
 		  this.orderNo = orderNo;

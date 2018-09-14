@@ -170,8 +170,7 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
-			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+			model.addAttribute("merchantStats", tradeService.selectMerchantFeeStats(merchantId, orgId, startTime, endTime));
 		}
 		return "page/trade/merchantFeeStat";
 	}
@@ -191,19 +190,14 @@ public class TradeController extends BaseController {
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
-		String merchant = map.getString("merchantId");
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
 		String createDateEnd = map.getString("createDateEnd");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date startTime = null;
 		Date endTime = null;
-		Integer merchantId = null;
 		Integer orgId = null;
 		try {
-			if (StringUtils.isNotBlank(merchant)) {
-				merchantId = Integer.parseInt(merchant);
-			}
 			if (StringUtils.isNotBlank(org)) {
 				orgId = Integer.parseInt(org);
 			}
@@ -215,9 +209,8 @@ public class TradeController extends BaseController {
 			}
 		} catch (Exception e) {
 		}
-		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
-			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+		if (orgId != null || startTime != null || endTime != null) {
+			model.addAttribute("orgStats", tradeService.selectOrgFeeStats(orgId, startTime, endTime));
 		}
 		return "page/trade/orgFeeStat";
 	}

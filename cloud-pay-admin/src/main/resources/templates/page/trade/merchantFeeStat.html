@@ -160,7 +160,7 @@ div.cbp label.font{
                 <tbody>
                 <tr th:if="${QX.query == '1'}" th:each="merchant,stat :${merchantStats}">
                   <td th:text="${merchant.statDate}"></td>
-                  <td th:text="${merchant.merchantId}"></td>
+                  <td th:text="${merchant.merchantCode}"></td>
                   <td th:text="${merchant.merchantName}"></td>
 				  <td th:text="${merchant.orgName}"></td>
 				  <td th:text="${merchant.totalCount}"></td>
@@ -197,7 +197,7 @@ $(function(){
 		var search_merchantId = $("[name='search_merchantId']").val();
 		var createDateBegin = $("#createDateBegin").val();
 		var createDateEnd = $("#createDateEnd").val();
-		window.location.href = _ctx+'/merchantRouteConf/list'
+		window.location.href = _ctx+'/trade/merchantFeeStat'
 			+'?orgId='+search_orgId
 			+'&merchantId='+search_merchantId
 			+'&createDateBegin='+createDateBegin

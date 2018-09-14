@@ -148,8 +148,8 @@ div.cbp label.font{
                 <tbody>
                 <tr th:if="${QX.query == '1'}" th:each="org,stat :${orgStats}">
                   <td th:text="${org.statDate}"></td>
-                  <td th:text="${org.orgId}"></td>
-				  <td th:text="${org.orgName}"></td>
+                  <td th:text="${org.merchantCode}"></td>
+				  <td th:text="${org.merchantName}"></td>
 				  <td th:text="${org.totalCount}"></td>
 				  <td th:text="${org.totalAmount}"></td>
 				  <td th:text="${org.loaningTotalAmount}"></td>

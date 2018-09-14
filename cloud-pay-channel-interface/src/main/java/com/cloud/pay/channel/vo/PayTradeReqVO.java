@@ -19,6 +19,10 @@ import org.hibernate.validator.constraints.NotBlank;
 public class PayTradeReqVO extends BaseTradeReqVO {
 
 	private static final long serialVersionUID = -8713903284380287558L;
+	
+	@NotBlank(message = "交易时间不能为空")
+	@Length(max = 17,message = "交易时间最长17位")
+	private String tradeDate;
 
 	@NotBlank(message = "付款人账号不能为空")
 	@Length(max = 32,message = "付款人账号最长32位")
@@ -51,6 +55,15 @@ public class PayTradeReqVO extends BaseTradeReqVO {
 	private BigDecimal amt; //交易金额
 	
 	private String postscript; //附言
+	
+
+	public String getTradeDate() {
+		return tradeDate;
+	}
+
+	public void setTradeDate(String tradeDate) {
+		this.tradeDate = tradeDate;
+	}
 
 	public String getPayerAccount() {
 		return payerAccount;

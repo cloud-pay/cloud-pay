@@ -53,7 +53,7 @@ public class ChannelTest {
 	public void tradePayQuery() {
 		PayTradeQueryReqVO tradeReq = new PayTradeQueryReqVO();
 		tradeReq.setMerchantNo("2018082800000001");
-		tradeReq.setDate("20180829 23:21:00");
+		tradeReq.setTradeDate("20180829 23:21:00");
 		tradeReq.setOrderNo("2018082800000001");
 		tradeReq.setChannelCode("1");
 		PayTradeQueryResVO response = cloudApiService.queryPay(tradeReq);

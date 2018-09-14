@@ -430,4 +430,164 @@
        and t.trade_time &lt; #{endTime}
       </if>
   </select>
+  
+  <resultMap id="BaseFeeDTO" type="com.cloud.pay.trade.dto.FeeStatDTO" >
+  	<result column="stat_date" property="statDate" jdbcType="VARCHAR" />
+  	<result column="merchant_code" property="merchantCode" jdbcType="VARCHAR" />
+  	<result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="loaning_total_amount" property="loaningTotalAmount" jdbcType="DECIMAL" />
+    <result column="feeAmount" property="feeAmount" jdbcType="DECIMAL" />
+  </resultMap>
+  <!-- 商户手续费统计 -->
+  <select id="selectMerchantFeeStats" resultMap="BaseFeeDTO">
+      SELECT
+			stat_date,
+			merchant_code,
+		  merchant_name,
+		  org_name,
+			count(1)total_count,
+			sum(trade_amount)total_amount,
+		  SUM(CASE WHEN loaning=1 THEN trade_amount
+							ELSE 0
+				  END) loaning_total_amount,
+			sum(fee) feeAmount
+		from
+		(SELECT
+		  DATE_FORMAT(t.trade_time,'%Y-%m-%d') stat_date,
+			t.trade_amount,
+			t.loaning,
+		  m.code merchant_code,
+		  m.name merchant_name,
+		  b.`name` org_name,
+		  f.pay_fee,
+		  f.loan_fee,
+		  CASE WHEN t.loaning = 1 and f.loan_fee_type = 1 THEN t.trade_amount * f.loan_fee
+		       WHEN t.loaning = 1 and f.loan_fee_type = 2 THEN f.loan_fee
+		       WHEN t.loaning = 0 and f.pay_fee_type = 1 THEN t.trade_amount * f.pay_fee
+		       else f.pay_fee
+			END fee
+		FROM
+			t_trade t,
+			t_merchant_fee_conf f,
+		  t_merchant_base_info m,
+		  t_merchant_base_info b
+		WHERE t.merchant_id = f.merchant_id
+		      and f.merchant_id = m.id
+		      and m.type in (4,5)
+		      and m.org_id = b.id
+			  AND t.`status` = 2
+			  <if test="merchantId != null" >
+		        and t.merchant_id = #{merchantId,jdbcType=INTEGER}
+		      </if>
+		      <if test="orgId != null" >
+		        and b.id = #{orgId,jdbcType=INTEGER}
+		      </if>
+		      <if test="startTime != null" >
+		       and t.trade_time &gt; #{startTime}
+		      </if>
+		      <if test="endTime != null" >
+		       and t.trade_time &lt; #{endTime}
+		      </if>
+		)temp
+		group by stat_date,merchant_code,merchant_name,org_name
+  </select>
+  
+  <!-- 机构交易手续费统计 -->
+  <select id="selectOrgTradeFeeStats" resultMap="BaseFeeDTO">
+      SELECT
+			stat_date,
+			merchant_code,
+		  merchant_name,
+			count(1)total_count,
+			sum(trade_amount)total_amount,
+		  SUM(CASE WHEN loaning=1 THEN trade_amount
+							ELSE 0
+				  END) loaning_total_amount,
+			-sum(fee) feeAmount
+		from
+		(SELECT
+		  DATE_FORMAT(t.trade_time,'%Y-%m-%d') stat_date,
+			t.trade_amount,
+			t.loaning,
+		  m.code merchant_code,
+		  m.name merchant_name,
+		  f.pay_fee,
+		  f.loan_fee,
+		  CASE WHEN t.loaning = 1 and f.loan_fee_type = 1 THEN t.trade_amount * f.loan_fee
+		       WHEN t.loaning = 1 and f.loan_fee_type = 2 THEN f.loan_fee
+		       WHEN t.loaning = 0 and f.pay_fee_type = 1 THEN t.trade_amount * f.pay_fee
+		       else f.pay_fee
+			END fee
+		FROM
+			t_trade t,
+			t_merchant_fee_conf f,
+		  t_merchant_base_info m
+		WHERE t.merchant_id = f.merchant_id
+		      and f.merchant_id = m.id
+					AND t.`status` = 2
+		      and m.type in (1,2,3)
+			  <if test="orgId != null" >
+		        and t.merchant_id = #{orgId,jdbcType=INTEGER}
+		      </if>
+		      <if test="startTime != null" >
+		       and t.trade_time &gt; #{startTime}
+		      </if>
+		      <if test="endTime != null" >
+		       and t.trade_time &lt; #{endTime}
+		      </if>
+		)temp
+		group by stat_date,merchant_code,merchant_name
+  </select>
+  <!-- 机构下商户手续费统计 -->
+  <select id="selectMerchantFeeByOrg" resultMap="BaseFeeDTO">
+      SELECT
+			stat_date,
+			merchant_code,
+		  merchant_name,
+			count(1)total_count,
+			sum(trade_amount)total_amount,
+		  SUM(CASE WHEN loaning=1 THEN trade_amount
+							ELSE 0
+				  END) loaning_total_amount,
+			sum(fee) feeAmount
+		from
+		(SELECT
+		  DATE_FORMAT(t.trade_time,'%Y-%m-%d') stat_date,
+			t.trade_amount,
+			t.loaning,
+		  b.name merchant_name,
+		  b.`code` merchant_code,
+		  f.pay_fee,
+		  f.loan_fee,
+		  CASE WHEN t.loaning = 1 and f.loan_fee_type = 1 THEN t.trade_amount * (f.loan_fee - of.loan_fee)
+		       WHEN t.loaning = 1 and f.loan_fee_type = 2 THEN f.loan_fee - of.loan_fee
+		       WHEN t.loaning = 0 and f.pay_fee_type = 1 THEN t.trade_amount * (f.pay_fee - of.loan_fee)
+		       else f.pay_fee - of.pay_fee
+			END fee
+		FROM
+			t_trade t,
+			t_merchant_fee_conf f,
+		  t_merchant_fee_conf of,
+		  t_merchant_base_info m,
+		  t_merchant_base_info b
+		WHERE t.merchant_id = f.merchant_id
+		      and f.merchant_id = m.id
+		      and m.org_id = b.id
+			  and m.org_id = of.merchant_id
+			  AND t.`status` = 2
+			  <if test="orgId != null" >
+		        and b.id = #{orgId,jdbcType=INTEGER}
+		      </if>
+		      <if test="startTime != null" >
+		       and t.trade_time &gt; #{startTime}
+		      </if>
+		      <if test="endTime != null" >
+		       and t.trade_time &lt; #{endTime}
+		      </if>  
+		)temp
+		group by stat_date,merchant_code,merchant_name
+  </select>
 </mapper>

@@ -68,8 +68,7 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
      */
 	private BohaiCloudTradePayParam createParam(PayTradeReqVO reqVO) {
 		BohaiCloudTradePayParam payParam = new BohaiCloudTradePayParam();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
-		payParam.setDate(sdf.format(new Date()));
+		payParam.setDate(reqVO.getTradeDate());
 		payParam.setSerialNo(reqVO.getOrderNo());
 		payParam.setInstId("12345678");
 		payParam.setPyrAct(reqVO.getPayerAccount());

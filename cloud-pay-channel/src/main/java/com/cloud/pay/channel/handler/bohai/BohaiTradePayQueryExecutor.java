@@ -62,7 +62,7 @@ public class BohaiTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudTra
 		BohaiCloudTradeQueryParam queryParam = new BohaiCloudTradeQueryParam();
 		queryParam.setSerialNo(reqVO.getOrderNo());
 		queryParam.setInstId("12345678");
-		queryParam.setDate(reqVO.getDate());
+		queryParam.setDate(reqVO.getTradeDate());
 		return queryParam;
 	}
 	

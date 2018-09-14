@@ -19,6 +19,8 @@ import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.utils.ValidationUtils;
 import com.cloud.pay.channel.vo.BaseTradeReqVO;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
+import com.cloud.pay.channel.vo.BatchPayRetryReqVO;
+import com.cloud.pay.channel.vo.BatchPaySingleQueryReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
@@ -131,7 +133,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = new BatchPayTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
 		}
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.BOHAI.getChannelENName());
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTraeHandler(ChannelType.BOHAI.getChannelENName());
 		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付，响应结果：{}",resVO);
 		return resVO;
@@ -150,9 +152,47 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = new BatchPayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
 		}
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.BOHAI.getChannelENName());
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.BOHAI.getChannelENName());
 		resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
-		log.info("渠道接口，批量代付结果查询，响应解雇:{}",resVO);
+		log.info("渠道接口，批量代付结果查询，响应结果:{}",resVO);
+		return resVO;
+	}
+
+
+
+	@Override
+	public BaseTradeResVO batchPaySingleQuery(BatchPaySingleQueryReqVO reqVO) {
+		log.info("渠道接口，批量代付单笔结果查询，请求参数：{}",reqVO);
+		BaseTradeResVO resVO = null;
+		try {
+			ValidationUtils.validate(reqVO);
+		}catch(CloudApiExcetion e) {
+			log.error("参数校验失败:{}",e.getMessage());
+			resVO = new BaseTradeResVO(e.getErrorCode(),e.getMessage());
+			return resVO;
+		}
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchSingleQueryHandler(ChannelType.BOHAI.getChannelENName());
+		resVO = tradePayExecutor.execute(reqVO);
+		log.info("渠道接口，批量代付单笔结果查询，响应结果：{}",resVO);
+		return resVO;
+	}
+
+
+
+	@Override
+	public BaseTradeResVO batchPayRetry(BatchPayRetryReqVO reqVO) {
+		log.info("渠道接口，批量代付触发查询，请求参数：{}",reqVO);
+		BaseTradeResVO resVO = null;
+		try {
+			ValidationUtils.validate(reqVO);
+		}catch(CloudApiExcetion e) {
+			log.error("参数校验失败:{}",e.getMessage());
+			resVO = new BaseTradeResVO(e.getErrorCode(),e.getMessage());
+			return resVO;
+		}
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchPayRetryHandler(ChannelType.BOHAI.getChannelENName());
+		resVO = tradePayExecutor.execute(reqVO);
+		log.info("渠道接口，批量代付触发查询，响应结果：{}",resVO);
 		return resVO;
 	}
 

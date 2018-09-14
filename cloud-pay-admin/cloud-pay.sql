@@ -283,6 +283,7 @@ CREATE TABLE `t_trade` (
   `trade_amount` decimal(10,2) DEFAULT NULL COMMENT '交易金额',
   `status` int(1) DEFAULT NULL COMMENT '状态（1处理中，2成功，3失败）',
   `channel_id` int(11) DEFAULT NULL COMMENT '渠道ID',
+  `loaning` int(1) DEFAULT NULL COMMENT '是否垫资（0不垫资，1垫资）',
   `return_code` varchar(255) DEFAULT NULL COMMENT '返回码',
   `return_info` varchar(255) DEFAULT NULL COMMENT '返回信息',
   `payer_id` int(11) DEFAULT NULL COMMENT '付款方ID',
@@ -297,9 +298,8 @@ CREATE TABLE `t_trade` (
   `recon_date` datetime DEFAULT NULL COMMENT '对账日期（格式yyyymmdd）',
   `recon_status` int(1) DEFAULT NULL COMMENT '对账状态(1成功，2失败)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UQ_MERCHANT_ORDERNO` (`merchant_id`,`order_no`),
   KEY `INX_BATCH_NO` (`batch_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易信息表'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='交易信息表';
 
 -- ----------------------------
 -- Records of t_trade

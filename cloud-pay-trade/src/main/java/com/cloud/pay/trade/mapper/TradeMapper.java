@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.cloud.pay.trade.dto.FeeStatDTO;
 import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.dto.TradeRecordDTO;
 import com.cloud.pay.trade.dto.TradeStatDTO;
@@ -115,6 +116,43 @@ public interface TradeMapper {
 	 */
 	List<TradeRecordDTO> selectTradeList(@Param("merchantId") Integer merchantId, @Param("orgId") Integer orgId,
 		 @Param("orderNo") String orderNo, @Param("batchNo") String batchNo, @Param("loaning") Integer loaning,
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+	
+	/**
+	 * 商户手续费统计
+	 * @author 夏志强
+	 * @date 2018年9月14日 下午3:11:48
+	 * @param merchantId
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<FeeStatDTO> selectMerchantFeeStats(@Param("merchantId") Integer merchantId, @Param("orgId") Integer orgId,
+				@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+	
+	/**
+	 * 机构交易手续费统计
+	 * @author 夏志强
+	 * @date 2018年9月14日 下午4:50:41
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<FeeStatDTO> selectOrgTradeFeeStats(@Param("orgId") Integer orgId,
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+	
+	/**
+	 * 机构下商户交易分润统计
+	 * @author 夏志强
+	 * @date 2018年9月14日 下午4:51:03
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<FeeStatDTO> selectMerchantFeeByOrg(@Param("orgId") Integer orgId,
 			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 	
 }

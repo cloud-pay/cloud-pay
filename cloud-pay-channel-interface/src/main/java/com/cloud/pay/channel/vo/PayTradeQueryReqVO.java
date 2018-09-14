@@ -14,9 +14,9 @@ public class PayTradeQueryReqVO extends BaseTradeReqVO {
 	@NotBlank(message = "交易渠道不能为空")
 	private String channelCode; //交易渠道
 	
-	@NotBlank(message = "交易日期不能为空")
-	@Length(max=17)
-	private String date;//交易日期（格式：YYYYMMDD HH:MM:SS）
+	@NotBlank(message = "交易时间不能为空")
+	@Length(max = 17,message = "交易时间最长17位")
+	private String tradeDate;;//交易日期（格式：YYYYMMDD HH:MM:SS）
 	
 
 	public String getChannelCode() {
@@ -27,13 +27,11 @@ public class PayTradeQueryReqVO extends BaseTradeReqVO {
 		this.channelCode = channelCode;
 	}
 
-	public String getDate() {
-		return date;
+	public String getTradeDate() {
+		return tradeDate;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setTradeDate(String tradeDate) {
+		this.tradeDate = tradeDate;
 	}
-	
-	
 }

@@ -26,6 +26,8 @@ public class TradePayTypeHandlerFactory {
 	private final Map<String,String> tradeDownReconFileMapper = new HashMap<>();//下载对账文件 
 	private final Map<String,String> batchTradePayMapper = new HashMap<>();//批量代付
 	private final Map<String,String> batchTradePayQueryMapper = new HashMap<>(); //批量代付结果查询
+	private final Map<String,String> batchSingleQueryMapper = new HashMap<>();
+	private final Map<String,String> batchPayRetryMapper = new HashMap<>();
     
 	/**
 	 * 启动的时候将渠道接口信息直接加载到内存
@@ -42,6 +44,8 @@ public class TradePayTypeHandlerFactory {
 		tradeDownReconFileMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiDownReconFileExecutor");
 		batchTradePayMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiBatchTradePayExecutor");
 		batchTradePayQueryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiBatchTradePayQueryExecutor");
+		batchSingleQueryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiBatchSingleQueryExecutor");
+		batchPayRetryMapper.put(ChannelType.BOHAI.getChannelENName(), "bohaiBatchPayRetryExecutor");
 	}
 	
 	/**
@@ -97,6 +101,24 @@ public class TradePayTypeHandlerFactory {
 	public ITradePayExecutor getBatchTradeQueryHandler(String tradeType) {
 		 return getHandler(batchTradePayQueryMapper,tradeType);
 	}
+	
+	/**
+	 * 批量代付单笔查询
+	 * @param tradeType
+	 * @return
+	 */
+    public ITradePayExecutor getBatchSingleQueryHandler(String tradeType) {
+    	 return getHandler(batchSingleQueryMapper,tradeType);
+    }
+    
+    /**
+       *  批量代付重发
+     * @param tradeType
+     * @return
+     */
+    public ITradePayExecutor getBatchPayRetryHandler(String tradeType) {
+    	 return getHandler(batchPayRetryMapper,tradeType);
+    }
 	
 	private <T> T getHandler(Map<String, String> mapper, String tradeType) {
 		String handlerBeanName = mapper.get(tradeType);

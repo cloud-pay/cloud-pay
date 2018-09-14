@@ -98,16 +98,23 @@ public class TradeController extends BaseController {
 		String createDateBegin = map.getString("createDateBegin");
 		String createDateEnd = map.getString("createDateEnd");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String orderNo = map.getString("orderNo");
+		String batchNo = map.getString("batchNo");
+		String loaning = map.getString("loaning");
 		Date startTime = null;
 		Date endTime = null;
 		Integer merchantId = null;
 		Integer orgId = null;
+		Integer loan = null;
 		try {
 			if (StringUtils.isNotBlank(merchant)) {
 				merchantId = Integer.parseInt(merchant);
 			}
 			if (StringUtils.isNotBlank(org)) {
 				orgId = Integer.parseInt(org);
+			}
+			if (StringUtils.isNotBlank(loaning)) {
+				loan = Integer.parseInt(loaning);
 			}
 			if (StringUtils.isNotBlank(createDateBegin)) {
 				startTime = sdf.parse(createDateBegin);
@@ -118,8 +125,7 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
-			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+			model.addAttribute("trades", tradeService.selectTradeList(merchantId, orgId, orderNo, batchNo, loan, startTime, endTime));
 		}
 		return "page/trade/list";
 	}

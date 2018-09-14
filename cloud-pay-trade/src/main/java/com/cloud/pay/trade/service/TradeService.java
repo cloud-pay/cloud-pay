@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.PayResponseDTO;
+import com.cloud.pay.trade.dto.TradeRecordDTO;
 import com.cloud.pay.trade.dto.TradeStatDTO;
 import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.exception.TradeException;
@@ -66,5 +67,24 @@ public class TradeService {
 	
 	public TradeStatDTO loanTradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime) {
 		return tradeMapper.loanTradeStat(merchantId, orgId, startTime, endTime);
+	}
+	
+	/**
+	 * 交易列表查询
+	 * @author 夏志强
+	 * @date 2018年9月14日 上午11:07:14
+	 * @param merchantId
+	 * @param orgId
+	 * @param orderNo
+	 * @param batchNo
+	 * @param loaning
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public List<TradeRecordDTO> selectTradeList(Integer merchantId, Integer orgId,
+		 String orderNo, String batchNo, Integer loaning,
+			Date startTime, Date endTime) {
+		return tradeMapper.selectTradeList(merchantId, orgId, orderNo, batchNo, loaning, startTime, endTime);
 	}
 }

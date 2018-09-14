@@ -379,4 +379,55 @@
        and t.trade_time &lt; #{endTime}
       </if>
   </select>
+  
+  <resultMap id="BaseTradeDTO" type="com.cloud.pay.trade.dto.TradeRecordDTO" >
+  	<result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+  	<result column="org_name" property="orgName" jdbcType="VARCHAR" />
+  	<result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="merchant_code" property="merchantCode" jdbcType="VARCHAR" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL" />
+    <result column="loaning" property="loaning" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="selectTradeList" resultMap="BaseTradeDTO">
+      SELECT
+			t.trade_time,
+			o.`name` org_name,
+			t.batch_no,
+			t.order_no,
+			m.`code` merchant_code,
+			m.`name` merchant_name,
+			t.`status`,
+			t.trade_amount,
+			c.loaning
+		FROM t_trade t
+		LEFT JOIN t_merchant_base_info m ON t.merchant_id = m.id
+		LEFT JOIN t_merchant_base_info o ON m.org_id = o.id
+		LEFT JOIN t_merchant_route_conf c ON t.merchant_id = c.merchant_id
+		AND t.channel_id = c.channel_id
+		where 1 = 1
+      <if test="merchantId != null" >
+        and t.merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="orgId != null" >
+        and (o.id = #{orgId,jdbcType=INTEGER} or t.merchant_id = #{orgId,jdbcType=INTEGER})
+      </if>
+      <if test="loaning != null" >
+        and c.loaning = #{loaning,jdbcType=INTEGER}
+      </if>
+      <if test="orderNo != null and batchNo != ''" >
+        and t.order_no = #{orderNo,jdbcType=VARCHAR}
+      </if>
+      <if test="batchNo != null and batchNo != ''" >
+        and t.batch_no = #{batchNo,jdbcType=VARCHAR}
+      </if>
+      <if test="startTime != null" >
+       and t.trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and t.trade_time &lt; #{endTime}
+      </if>
+  </select>
 </mapper>

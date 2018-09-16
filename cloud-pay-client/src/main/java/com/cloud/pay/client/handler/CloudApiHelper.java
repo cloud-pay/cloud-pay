@@ -92,13 +92,14 @@ public class CloudApiHelper {
 	  * @param reqParam
 	  */
 	 public <T extends CloudApiBaseParam> void validPropertyWithCommon(T reqParam) {
-		 Set<ConstraintViolation<T>> violations = null;
-		 if(StringUtils.isBlank(reqParam.getOrgCode())) {
-			 violations = validator.validate(reqParam, GroupV2.class);
-		 }else {
-			 violations = validator.validate(reqParam, GroupV1.class);
-		 }
+		 Set<ConstraintViolation<T>> violations = validator.validate(reqParam);
 		 StringBuilder sb = new StringBuilder();
+		 if(StringUtils.isBlank(reqParam.getOrgCode())) {
+			 if(StringUtils.isBlank(reqParam.getMerchantCode())) {
+				 sb.append("商户编码不能为空");
+				 sb.append("；");
+			 }
+		 }
 	      for (ConstraintViolation<T> violation : violations) {
 	            String message = violation.getMessage();
 	            sb.append(message);
@@ -158,7 +159,7 @@ public class CloudApiHelper {
 		 if(null == secret) {
 			 throw new CloudApiException(ApiErrorCode.MCH_INVALID,"非法商户");
 		 }
-		 String key = secret.getSecret().toString();
+		 String key = "12342432423432423432";//secret.getSecret().toString(); //TODO....key值取值方式待修改
 		 return key;
 	 }
 }

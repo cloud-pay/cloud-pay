@@ -17,6 +17,7 @@ import com.cloud.pay.client.handler.CloudApiHelper;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.handler.TradeApiHandlerFactory;
 import com.cloud.pay.client.vo.base.CloudApiBaseResult;
+import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.common.exception.CloudApiException;
 
 @RestController
@@ -68,15 +69,20 @@ public class CloudPayApiController {
 	    	 if(StringUtils.isBlank(mchNo)) {
 	    		 mchNo =  jsonObject.getString("merchantCode");
 	    	 }
+	    	 result.setSign(cloudApiHelper.createSign(mchNo, result));
+	     }catch(CloudApiException e) {
+	    	 log.error("云支付平台，业务交易异常：{}",e);
+	    	 if(e instanceof CloudApiBusinessException) {
+	    		 //业务类错误，需要对结果加签
+	    		 result = new CloudApiBaseResult(Constants.RESULT_CODE_FAIL,e.getErrorCode(),e.getMessage());
+	    		 result.setSign(cloudApiHelper.createSign(mchNo, result));
+	    		 return result;
+	    	 }
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,Constants.RESULT_CODE_FAIL,e.getErrorCode(),e.getMessage());
 	     }catch(Exception e) {
 	    	 log.error("云支付平台，业务交易异常：{}",e);
-	    	 String errorCode = ApiErrorCode.SYSTEM_ERROR;
-	    	 if(e instanceof CloudApiException) {
-	    		 errorCode = ((CloudApiException) e).getErrorCode();
-	    	 }
-	    	 result = new CloudApiBaseResult(Constants.RESULT_CODE_FAIL,errorCode,e.getMessage());
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,Constants.RESULT_CODE_FAIL,ApiErrorCode.SYSTEM_ERROR,"系统错误");
 	     }
-	     result.setSign(cloudApiHelper.createSign(mchNo, result));
 		 log.info("云支付平台，API接口响应参数:{}",result);
 		 return result;
 	}

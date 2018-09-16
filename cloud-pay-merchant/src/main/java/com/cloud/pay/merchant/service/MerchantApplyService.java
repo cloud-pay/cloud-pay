@@ -63,9 +63,10 @@ public class MerchantApplyService {
 	}
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
-	public void save(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
+	public String save(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
 			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson) throws IOException {
-		baseInfo.setCode(getMerchantCode());
+		String code = getMerchantCode();
+		baseInfo.setCode(code);
 		baseInfo.setStatus(MerchantConstant.AUDITING);
 		baseInfoMapper.insert(baseInfo);
 		bankInfo.setMerchantId(baseInfo.getId());
@@ -78,6 +79,7 @@ public class MerchantApplyService {
 			uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true);
 			uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true);
 		}
+		return code;
 	}
 	
 	private String getMerchantCode() {

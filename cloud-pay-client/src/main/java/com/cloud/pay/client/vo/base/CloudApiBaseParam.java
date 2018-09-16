@@ -26,10 +26,10 @@ public class CloudApiBaseParam implements Serializable{
     @NotEmpty(message = "交易类型不能为空")
 	private String tradeType;
     
-    @NotEmpty(message = "机构编码不能为空",groups = GroupV1.class)
+    @NotEmpty(message = "机构编码不能为空")
     private String orgCode;
     
-    @NotEmpty(message = "商户编码不能为空",groups = GroupV2.class)
+    @NotEmpty(message = "商户编码不能为空")
     private String merchantCode;
     
     @NotEmpty(message = "交易流水号不能为空")

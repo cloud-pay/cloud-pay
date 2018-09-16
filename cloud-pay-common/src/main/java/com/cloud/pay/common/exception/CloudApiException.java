@@ -1,7 +1,7 @@
 package com.cloud.pay.common.exception;
 
 /**
- * 交易错误
+ * 响应错误
  * @author wangy
  */
 public class CloudApiException extends RuntimeException {

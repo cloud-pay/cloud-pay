@@ -40,4 +40,16 @@ public interface ChannelContants {
 	
 	//批量代付查询响应
 	public static final String CHANNEL_BOHAI_RES_HEADER_SCBR = "SCBRRes";
+	
+	//批量代付单笔查询请求
+	public static final String CHANNEL_BOHAI_REQ_HEADER_SCBS = "SCBSReq";
+	
+	//批量代付单笔查询响应
+	public static final String CHANNEL_BOHAI_RES_HEADER_SCBS = "SCBSRes";
+	
+	//批量代付重新重发
+	public static final String CHANNEL_BOHAI_REQ_HEADER_SCBT = "SCBTReq";
+	
+	//批量代付重新重发
+	public static final String CHANNEL_BOHAI_RES_HEADER_SCBT = "SCBTRes";
 }

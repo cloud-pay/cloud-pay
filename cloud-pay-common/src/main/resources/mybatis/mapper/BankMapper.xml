@@ -136,11 +136,11 @@
 		FROM 
 			t_bank
 		where 1 = 1
-			<if test="bankCode != null" >
-        and bank_code = #{bankCode,jdbcType=VARCHAR}
+			<if test="bankCode != null and bankCode != ''" >
+        and bank_code like concat('%',#{bankCode,jdbcType=VARCHAR},'%')
       </if>
-      <if test="bankName != null" >
-       and bank_name = #{bankName,jdbcType=VARCHAR}
+      <if test="bankName != null and bankName != ''" >
+       and bank_name like concat('%',#{bankName,jdbcType=VARCHAR},'%')
       </if>
 	 </select>
 </mapper>

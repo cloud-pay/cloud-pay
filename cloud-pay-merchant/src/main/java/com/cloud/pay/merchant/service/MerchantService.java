@@ -105,4 +105,13 @@ public class MerchantService {
 	public List<MerchantDTO> selectMerchantByType(Integer type){
 		  return baseInfoMapper.getAdvanceMerchantList(type);
 	}
+	
+	/**
+	 * 查询商户的签名key
+	 * @param code
+	 * @return
+	 */
+	public MerchantSecret selectByCode(String code) {
+		return merchantSecretMapper.selectByCode(code);
+	}
 }

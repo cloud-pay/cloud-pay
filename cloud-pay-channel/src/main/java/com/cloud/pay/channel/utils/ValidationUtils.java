@@ -14,7 +14,7 @@ import org.hibernate.validator.HibernateValidator;
 
 import com.cloud.pay.channel.vo.ValidationResult;
 import com.cloud.pay.common.contants.ChannelErrorCode;
-import com.cloud.pay.common.exception.CloudApiExcetion;
+import com.cloud.pay.common.exception.CloudApiException;
 
 /**
  * 使用hibernate注解来校验接口基本参数
@@ -25,11 +25,11 @@ public class ValidationUtils {
 	 private static Validator validator = Validation
 	            .byProvider(HibernateValidator.class).configure().failFast(true).buildValidatorFactory().getValidator();
      
-	 public static <T> void validate(T obj) throws CloudApiExcetion{
+	 public static <T> void validate(T obj) throws CloudApiException{
 	        Set<ConstraintViolation<T>> constraintViolations = validator.validate(obj);
 	        // 抛出检验异常
 	        if (constraintViolations.size() > 0) {
-	            throw new CloudApiExcetion(ChannelErrorCode.ERROR_0001, String.format("参数校验失败:%s", constraintViolations.iterator().next().getMessage()));
+	            throw new CloudApiException(ChannelErrorCode.ERROR_0001, String.format("参数校验失败:%s", constraintViolations.iterator().next().getMessage()));
 	        }
 	 }
 	 

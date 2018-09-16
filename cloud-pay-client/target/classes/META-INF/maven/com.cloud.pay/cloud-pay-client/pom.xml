@@ -7,20 +7,20 @@
     <artifactId>cloud-pay</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.cloud.pay</groupId>
   <artifactId>cloud-pay-client</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>cloud-pay-client</name>
-  <url>http://maven.apache.org</url>
+  
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<cloud.pay.version>0.0.1-SNAPSHOT</cloud.pay.version>
   </properties>
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+	  <dependency>
+			<groupId>com.cloud.pay</groupId>
+			<artifactId>cloud-pay-merchant</artifactId>
+			<version>${cloud.pay.version}</version>
+	  </dependency>
   </dependencies>
 </project>

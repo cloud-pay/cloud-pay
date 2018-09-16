@@ -37,7 +37,7 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeQueryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeQueryResult;
 import com.cloud.pay.common.contants.ChannelType;
-import com.cloud.pay.common.exception.CloudApiExcetion;
+import com.cloud.pay.common.exception.CloudApiException;
 
 /**
  * 渠道接口实现类
@@ -57,7 +57,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		PayTradeResVO resVO = null;
 		try {
 			ValidationUtils.validate(tradeReq);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			resVO = new PayTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
@@ -77,7 +77,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		PayTradeQueryResVO result  = null;
 		try {
 			ValidationUtils.validate(tradeReq);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			result = new PayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return result;
@@ -97,7 +97,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		PayTradeResVO resVO = null;
 		try {
 			ValidationUtils.validate(reqVO);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			resVO = new PayTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
@@ -128,7 +128,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		BatchPayTradeResVO resVO = null;
 		try {
 			ValidationUtils.validate(reqVO);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			resVO = new BatchPayTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
@@ -147,7 +147,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		BatchPayTradeQueryResVO resVO = null;
 		try {
 			ValidationUtils.validate(reqVO);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			resVO = new BatchPayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
@@ -166,7 +166,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		BaseTradeResVO resVO = null;
 		try {
 			ValidationUtils.validate(reqVO);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			resVO = new BaseTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
@@ -185,7 +185,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		BaseTradeResVO resVO = null;
 		try {
 			ValidationUtils.validate(reqVO);
-		}catch(CloudApiExcetion e) {
+		}catch(CloudApiException e) {
 			log.error("参数校验失败:{}",e.getMessage());
 			resVO = new BaseTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;

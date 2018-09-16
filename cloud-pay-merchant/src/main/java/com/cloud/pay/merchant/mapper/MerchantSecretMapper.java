@@ -11,4 +11,11 @@ public interface MerchantSecretMapper {
     MerchantSecret selectByPrimaryKey(Integer merchantId);
 
     int updateByPrimaryKeyWithBLOBs(MerchantSecret record);
+    
+    /**
+     * 根据编码获取机构或者商户信息
+     * @param code
+     * @return
+     */
+    MerchantSecret selectByCode(String code);
 }

@@ -45,6 +45,11 @@
 			<version>${cloud.pay.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.cloud.pay</groupId>
+			<artifactId>cloud-pay-client</artifactId>
+			<version>${cloud.pay.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>

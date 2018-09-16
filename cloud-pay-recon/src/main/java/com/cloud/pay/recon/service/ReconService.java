@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.common.contants.ChannelType;
 import com.cloud.pay.common.entity.Channel;
-import com.cloud.pay.common.exception.CloudApiExcetion;
+import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;

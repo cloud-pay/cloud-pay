@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.common.contants.ChannelType;
-import com.cloud.pay.common.exception.CloudApiExcetion;
+import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.common.utils.ApplicationContextHolder;
 
 /**
@@ -123,7 +123,7 @@ public class TradePayTypeHandlerFactory {
 	private <T> T getHandler(Map<String, String> mapper, String tradeType) {
 		String handlerBeanName = mapper.get(tradeType);
 		if (StringUtils.isBlank(handlerBeanName)) {
-			throw new CloudApiExcetion("paramError", "参数无效(tradeType)");
+			throw new CloudApiException("paramError", "参数无效(tradeType)");
 		}
 		// 获取api请求处理器
 		return ApplicationContextHolder.getBean(handlerBeanName);

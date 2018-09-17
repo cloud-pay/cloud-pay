@@ -30,17 +30,14 @@ public class CloudApiBaseResult implements Serializable {
     //错误消息
     protected String errorMsg;
     
-    //交易流水
-    protected String orderNo;
-    
     //机构编码
-    protected String orgCode;
+    private String mchCode;
     
     //商户编码
-    protected String merchantCode;
+    private String subMchCode;
     
     //签名信息
-    protected String sign;
+    private String sign;
     
     public CloudApiBaseResult() {}
     
@@ -105,29 +102,21 @@ public class CloudApiBaseResult implements Serializable {
 	public void setErrorMsg(String errorMsg) {
 		this.errorMsg = errorMsg;
 	}
-
-	public String getOrderNo() {
-		return orderNo;
+	
+	public String getMchCode() {
+		return mchCode;
 	}
 
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
+	public void setMchCode(String mchCode) {
+		this.mchCode = mchCode;
 	}
 
-	public String getOrgCode() {
-		return orgCode;
+	public String getSubMchCode() {
+		return subMchCode;
 	}
 
-	public void setOrgCode(String orgCode) {
-		this.orgCode = orgCode;
-	}
-
-	public String getMerchantCode() {
-		return merchantCode;
-	}
-
-	public void setMerchantCode(String merchantCode) {
-		this.merchantCode = merchantCode;
+	public void setSubMchCode(String subMchCode) {
+		this.subMchCode = subMchCode;
 	}
 
 	public String getSign() {

@@ -20,4 +20,7 @@ public interface ApiErrorCode {
     
     // 签名错误
     String SIGN_ERROR = "signError";
+    
+    //商户信息不存在
+    String SUB_MCH_INVALID = "subMchInavlid";
 }

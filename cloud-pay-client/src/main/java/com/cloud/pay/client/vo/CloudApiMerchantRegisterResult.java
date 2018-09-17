@@ -9,16 +9,5 @@ import com.cloud.pay.client.vo.base.CloudApiBaseResult;
 public class CloudApiMerchantRegisterResult extends CloudApiBaseResult {
 
 	private static final long serialVersionUID = 8645952611901638950L;
-	
-	//商户编码
-	private String code;
-
-	public String getCode() {
-		return code;
-	}
-	
-	public void setCode(String code) {
-		this.code = code;
-	}
 
 }

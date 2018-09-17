@@ -4,11 +4,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import com.cloud.pay.client.utils.GroupV1;
-import com.cloud.pay.client.utils.GroupV2;
 
 /**
  * 对外接口请求参数基类
@@ -26,15 +22,10 @@ public class CloudApiBaseParam implements Serializable{
     @NotEmpty(message = "交易类型不能为空")
 	private String tradeType;
     
-    @NotEmpty(message = "机构编码不能为空")
-    private String orgCode;
+    @NotEmpty(message = "mchCode不能为空")
+    private String mchCode;
     
-    @NotEmpty(message = "商户编码不能为空")
-    private String merchantCode;
-    
-    @NotEmpty(message = "交易流水号不能为空")
-    @Length(max = 32,message = "交易流水号最长32位")
-    private String orderNo;
+    private String subMchCode;
     
     @NotEmpty(message = "签名信息不能为空")
     private String sign;
@@ -58,28 +49,22 @@ public class CloudApiBaseParam implements Serializable{
 		this.tradeType = tradeType;
 	}
 
-	public String getOrgCode() {
-		return orgCode;
+	
+
+	public String getMchCode() {
+		return mchCode;
 	}
 
-	public void setOrgCode(String orgCode) {
-		this.orgCode = orgCode;
+	public void setMchCode(String mchCode) {
+		this.mchCode = mchCode;
 	}
 
-	public String getMerchantCode() {
-		return merchantCode;
+	public String getSubMchCode() {
+		return subMchCode;
 	}
 
-	public void setMerchantCode(String merchantCode) {
-		this.merchantCode = merchantCode;
-	}
-
-	public String getOrderNo() {
-		return orderNo;
-	}
-
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
+	public void setSubMchCode(String subMchCode) {
+		this.subMchCode = subMchCode;
 	}
 
 	public String getSign() {

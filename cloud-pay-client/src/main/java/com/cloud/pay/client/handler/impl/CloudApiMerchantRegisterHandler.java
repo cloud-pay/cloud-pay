@@ -12,6 +12,7 @@ import com.cloud.pay.client.constants.ApiErrorCode;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterParam;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterResult;
+import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
@@ -48,10 +49,11 @@ public class CloudApiMerchantRegisterHandler
 		BeanUtils.copyProperties(reqParam, feeInfo);
 		try {
 		   String code = merchantApplyService.save(baseInfo, bankInfo, feeInfo, null);
-		   result.setCode(code);
+		   result.setSubMchCode(code);
+		   result.setMchCode(reqParam.getMchCode());
 		}catch(IOException e) {
 			log.error("商户报备接口，请求错误：{}",e);
-			throw new CloudApiException(ApiErrorCode.SYSTEM_ERROR,"系统错误");
+			throw new CloudApiBusinessException(ApiErrorCode.SYSTEM_ERROR,"系统错误");
 		}
 		return result;
 	}

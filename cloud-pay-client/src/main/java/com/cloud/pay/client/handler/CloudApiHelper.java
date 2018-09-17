@@ -94,13 +94,7 @@ public class CloudApiHelper {
 	 public <T extends CloudApiBaseParam> void validPropertyWithCommon(T reqParam) {
 		 Set<ConstraintViolation<T>> violations = validator.validate(reqParam);
 		 StringBuilder sb = new StringBuilder();
-		 if(StringUtils.isBlank(reqParam.getOrgCode())) {
-			 if(StringUtils.isBlank(reqParam.getMerchantCode())) {
-				 sb.append("商户编码不能为空");
-				 sb.append("；");
-			 }
-		 }
-	      for (ConstraintViolation<T> violation : violations) {
+	     for (ConstraintViolation<T> violation : violations) {
 	            String message = violation.getMessage();
 	            sb.append(message);
 	            sb.append("；");
@@ -117,12 +111,7 @@ public class CloudApiHelper {
 	  */
 	 private <T extends CloudApiBaseParam> void validSign(T reqParam) {
 		   //获取商户号或者机构号
-		   String mchNo = "";
-		   if(StringUtils.isNotBlank(reqParam.getOrgCode())) {
-		    	mchNo = reqParam.getOrgCode();
-		   }else {
-			    mchNo = reqParam.getMerchantCode();
-		   }
+		   String mchNo = reqParam.getMchCode();
 		   String md5 = createSign(mchNo, reqParam);
 		   if (!md5.equals(reqParam.getSign())) {
 			   throw new CloudApiException(ApiErrorCode.SIGN_ERROR,"签名错误");

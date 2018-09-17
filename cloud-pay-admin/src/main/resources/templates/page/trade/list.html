@@ -254,6 +254,24 @@ $(function(){
 		$("#createDateEnd").val('');
 	});
 	
+	$("#export").click(function(){
+		var search_orgId = $("[name='search_orgId']").val();
+		var search_merchantId = $("[name='search_merchantId']").val();
+		var search_loaning = $("[name='search_loaning']").val();
+		var search_batchNo = $("#search_batchNo").val();
+		var search_orderNo = $("#search_orderNo").val();
+		var createDateBegin = $("#createDateBegin").val();
+		var createDateEnd = $("#createDateEnd").val();
+		window.location.href = _ctx+'/trade/exportList'
+			+'?orgId='+search_orgId
+			+'&merchantId='+search_merchantId
+			+'&loaning='+search_loaning
+			+'&batchNo='+search_batchNo
+			+'&orderNo='+search_orderNo
+			+'&createDateBegin='+createDateBegin
+			+'&createDateEnd='+createDateEnd;
+	});
+	
 	initDateTimepicker();
 	//初始化日期插件
 	function initDateTimepicker(){

@@ -249,8 +249,13 @@ $(function(){
     });
 	
 	$("#export").click(function(){
-		reloadModelData(_ctx+"/merchantRouteConf/add","添加路由","添加","","","","","","","");
-		$("#routeModal").modal("show");
+		var search_orgId = $("[name='search_orgId']").val();
+		var createDateBegin = $("#createDateBegin").val();
+		var createDateEnd = $("#createDateEnd").val();
+		window.location.href = _ctx+'/trade/exportOrgFeeStat'
+			+'?orgId='+search_orgId
+			+'&createDateBegin='+createDateBegin
+			+'&createDateEnd='+createDateEnd;
 	});
 	
 })

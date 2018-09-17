@@ -1,10 +1,7 @@
 package com.cloud.pay.admin.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,6 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,33 +70,33 @@ public class BatchTradeController extends BaseController{
 	
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
     public void download(HttpServletRequest req, HttpServletResponse res) {
-		req.getContextPath();
       res.setHeader("content-type", "application/octet-stream");
       res.setContentType("application/octet-stream");
-      res.setHeader("Content-Disposition", "attachment;filename=" + "pay.xls");
-      byte[] buff = new byte[1024];
-      BufferedInputStream bis = null;
-      OutputStream os = null;
-      try {
-        os = res.getOutputStream();
-        bis = new BufferedInputStream(new FileInputStream(new File("G:\\git\\cloud-pay\\cloud-pay-admin\\src\\main\\resources\\templates\\page\\batchTrade\\代付模板.xls")));
-        int i = bis.read(buff);
-        while (i != -1) {
-          os.write(buff, 0, buff.length);
-          os.flush();
-          i = bis.read(buff);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      } finally {
-        if (bis != null) {
-          try {
-            bis.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
+      HSSFWorkbook workbook = new HSSFWorkbook();
+      HSSFSheet sheet = workbook.createSheet("手工代付");
+      String fileName = "手工代付.xls";
+      String[] headers = { "收款人账户名","收款人账户类型(选填)","收款人账户","收款人账户联行号","收款银行名称(选填)","交易金额","附言"};
+      HSSFRow row = sheet.createRow(0);
+      for(int i=0;i<headers.length;i++){
+          HSSFCell cell = row.createCell(i);
+          HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+          cell.setCellValue(text);
       }
+      try {
+      	res.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "utf-8"));
+			res.flushBuffer();
+			workbook.write(res.getOutputStream());
+		} catch (IOException e) {
+			log.error("导出手工代付异常，{}", e);
+		} finally {
+			if(workbook != null) {
+				try {
+					workbook.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
     }
 	
 	/**

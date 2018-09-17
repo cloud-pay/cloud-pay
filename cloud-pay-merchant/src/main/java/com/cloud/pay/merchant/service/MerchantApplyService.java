@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantBankInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 import com.cloud.pay.merchant.mapper.MerchantApplyAttachementInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantApplyBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantApplyBaseInfoMapper;
@@ -140,6 +144,18 @@ public class MerchantApplyService {
 		baseInfo.setModifer(modifer);
 		baseInfo.setModifyTime(new Date());
 		baseInfoMapper.updateByPrimaryKeySelective(baseInfo);
+		//审核通过后，新增商户
+		MerchantApplyBaseInfo merchantApplyBaseInfo = baseInfoMapper.selectByPrimaryKey(id);
+		MerchantBaseInfo merchantBaseInfo = new MerchantBaseInfo();
+		BeanUtils.copyProperties(merchantApplyBaseInfo, merchantBaseInfo);
+//		merchantBaseInfo.setStatus(status);
+		MerchantApplyBankInfo merchantApplyBankInfo = bankInfoMapper.selectByMerchantId(id);
+		MerchantBankInfo merchantBankInfo = new MerchantBankInfo();
+		BeanUtils.copyProperties(merchantApplyBankInfo, merchantBankInfo);
+		MerchantApplyFeeInfo merchantApplyFeeInfo = feeInfoMapper.selectByMerchantId(id);
+		MerchantFeeInfo merchantFeeInfo = new MerchantFeeInfo();
+		BeanUtils.copyProperties(merchantApplyFeeInfo, merchantFeeInfo);
+		List<MerchantApplyAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(id);
 	}
 	
 	/**

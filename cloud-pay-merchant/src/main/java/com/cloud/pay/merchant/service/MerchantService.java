@@ -7,13 +7,17 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantDTO;
 import com.cloud.pay.merchant.entity.MerchantAttachementInfo;
+import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantChannel;
+import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 import com.cloud.pay.merchant.entity.MerchantSecret;
 import com.cloud.pay.merchant.mapper.MerchantAttachementInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
@@ -113,5 +117,22 @@ public class MerchantService {
 	 */
 	public MerchantSecret selectByCode(String code) {
 		return merchantSecretMapper.selectByCode(code);
+	}
+	
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
+	public void save(MerchantBaseInfo baseInfo, MerchantBankInfo bankInfo,
+			MerchantFeeInfo feeInfo, List<MerchantAttachementInfo> infos) {
+		baseInfo.setId(null);
+		baseInfoMapper.insert(baseInfo);
+		bankInfo.setMerchantId(baseInfo.getId());
+		bankInfoMapper.insert(bankInfo);
+		feeInfo.setMerchantId(baseInfo.getId());
+		feeInfoMapper.insert(feeInfo);
+		if(infos != null) {
+			for(MerchantAttachementInfo info : infos) {
+				info.setMerchantId(baseInfo.getId());
+				attachementInfoMapper.insert(info);
+			}
+		}
 	}
 }

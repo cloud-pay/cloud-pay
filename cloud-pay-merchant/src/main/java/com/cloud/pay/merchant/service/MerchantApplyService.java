@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantAttachementInfo;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
@@ -50,6 +52,9 @@ public class MerchantApplyService {
 	
 	@Autowired
 	private MerchantApplyAttachementInfoMapper attachementInfoMapper;
+	
+	@Autowired
+	private MerchantService merchantService;
 	
 	@Value("${upload.root.folder}")
 	public String root_fold;
@@ -87,7 +92,7 @@ public class MerchantApplyService {
 	}
 	
 	private String getMerchantCode() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		final String date = sdf.format(new Date());
 		final int value = seq.incrementAndGet();
 		String temp = (SEQ_OFFSET + String.valueOf(value));
@@ -145,17 +150,29 @@ public class MerchantApplyService {
 		baseInfo.setModifyTime(new Date());
 		baseInfoMapper.updateByPrimaryKeySelective(baseInfo);
 		//审核通过后，新增商户
-		MerchantApplyBaseInfo merchantApplyBaseInfo = baseInfoMapper.selectByPrimaryKey(id);
-		MerchantBaseInfo merchantBaseInfo = new MerchantBaseInfo();
-		BeanUtils.copyProperties(merchantApplyBaseInfo, merchantBaseInfo);
-//		merchantBaseInfo.setStatus(status);
-		MerchantApplyBankInfo merchantApplyBankInfo = bankInfoMapper.selectByMerchantId(id);
-		MerchantBankInfo merchantBankInfo = new MerchantBankInfo();
-		BeanUtils.copyProperties(merchantApplyBankInfo, merchantBankInfo);
-		MerchantApplyFeeInfo merchantApplyFeeInfo = feeInfoMapper.selectByMerchantId(id);
-		MerchantFeeInfo merchantFeeInfo = new MerchantFeeInfo();
-		BeanUtils.copyProperties(merchantApplyFeeInfo, merchantFeeInfo);
-		List<MerchantApplyAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(id);
+		if(status == MerchantConstant.AUDIT_YES) {
+			MerchantApplyBaseInfo merchantApplyBaseInfo = baseInfoMapper.selectByPrimaryKey(id);
+			MerchantBaseInfo merchantBaseInfo = new MerchantBaseInfo();
+			BeanUtils.copyProperties(merchantApplyBaseInfo, merchantBaseInfo);
+			merchantBaseInfo.setStatus(MerchantConstant.NORMAL);
+			MerchantApplyBankInfo merchantApplyBankInfo = bankInfoMapper.selectByMerchantId(id);
+			MerchantBankInfo merchantBankInfo = new MerchantBankInfo();
+			BeanUtils.copyProperties(merchantApplyBankInfo, merchantBankInfo);
+			MerchantApplyFeeInfo merchantApplyFeeInfo = feeInfoMapper.selectByMerchantId(id);
+			MerchantFeeInfo merchantFeeInfo = new MerchantFeeInfo();
+			BeanUtils.copyProperties(merchantApplyFeeInfo, merchantFeeInfo);
+			List<MerchantApplyAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(id);
+			List<MerchantAttachementInfo> attachements = null;
+			if(infos != null && infos.size() > 0) {
+				attachements = new ArrayList<>();
+				for(MerchantApplyAttachementInfo info : infos) {
+					MerchantAttachementInfo attachement = new MerchantAttachementInfo();
+					BeanUtils.copyProperties(info, attachement);
+					attachements.add(attachement);
+				}
+			}
+			merchantService.save(merchantBaseInfo, merchantBankInfo, merchantFeeInfo, attachements);
+		}
 	}
 	
 	/**

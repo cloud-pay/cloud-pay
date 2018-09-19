@@ -208,21 +208,23 @@ DROP TABLE IF EXISTS `t_merchant_base_info`;
 CREATE TABLE `t_merchant_base_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `org_id` int(11) DEFAULT NULL COMMENT '所属机构ID',
+  `code` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL COMMENT '名称',
   `short_name` varchar(255) DEFAULT NULL COMMENT '简称',
   `type` int(1) DEFAULT NULL COMMENT '类型(1代理商，2第三方支付，3垫资商，4企业商户，5个人商户)',
+  `status` int(1) DEFAULT NULL COMMENT '状态(1正常;0冻结)',
   `industry_category` varchar(255) DEFAULT NULL COMMENT '行业类别',
   `legal` varchar(100) DEFAULT NULL COMMENT '法人',
-  `city` varchar(100) NULL COMMENT '所属城市',
-  `address` varchar(255) NULL COMMENT '详细地址',
+  `city` varchar(100) DEFAULT NULL COMMENT '所属城市',
+  `address` varchar(255) DEFAULT NULL COMMENT '详细地址',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `mobile` varchar(12) DEFAULT NULL COMMENT '手机号码',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL  COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '修改人',
-  `modify_time` datetime DEFAULT NULL  COMMENT '修改时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户基本信息';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='商户基本信息';
 
 -- ----------------------------
 -- Records of t_merchant_base_info

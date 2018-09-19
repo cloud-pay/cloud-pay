@@ -132,7 +132,7 @@ public class BatchTradeController extends BaseController{
 	}
 	
 	private String getBatchNo() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
 		final String date = sdf.format(new Date());
 		final int value = seq.incrementAndGet();
 		String temp = (SEQ_OFFSET + String.valueOf(value));

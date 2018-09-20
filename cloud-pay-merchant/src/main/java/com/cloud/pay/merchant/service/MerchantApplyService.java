@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.Base64;
 import com.alibaba.fastjson.JSONObject;
+import com.cloud.pay.common.contants.ApiErrorCode;
+import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantApplyDTO;
 import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
@@ -255,5 +257,37 @@ public class MerchantApplyService {
 			}
 		}
 		return new String(chs);
+	}
+	
+	/**
+	 * 根据商户编号获取商户信息
+	 * @param code
+	 * @return
+	 */
+	public Map<String, Object> selectByCode(String code) {
+		Map<String, Object> merchantMap = new HashMap<>();
+		MerchantApplyBaseInfo baseInfo = baseInfoMapper.selectByCode(code);
+		if(null == baseInfo) {
+			throw new CloudApiBusinessException(ApiErrorCode.MCH_INVALID, "商户信息不存在");
+		}
+		merchantMap.put("baseInfo", baseInfo);
+		merchantMap.put("bankInfo", bankInfoMapper.selectByMerchantId(baseInfo.getId()));
+		merchantMap.put("feeInfo", feeInfoMapper.selectByMerchantId(baseInfo.getId()));
+		List<MerchantApplyAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(baseInfo.getId());
+		if(infos != null) {
+			for(MerchantApplyAttachementInfo info : infos) {
+				if(MerchantConstant.BUSINESS == info.getAttachementType()) {
+					merchantMap.put("businessPath", info.getAttachementPath());
+				} else if(MerchantConstant.BANK_CARD == info.getAttachementType()) {
+					merchantMap.put("bankCardPath", info.getAttachementPath());
+				} else if(MerchantConstant.CERT == info.getAttachementType()) {
+					merchantMap.put("certPath", info.getAttachementPath());
+				} else if(MerchantConstant.PROTOCOL == info.getAttachementType()) {
+					merchantMap.put("protocolPath", info.getAttachementPath());
+				}
+				
+			}
+		}
+		return merchantMap;
 	}
 }

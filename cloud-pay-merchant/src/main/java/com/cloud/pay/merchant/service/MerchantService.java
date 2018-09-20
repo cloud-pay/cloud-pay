@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cloud.pay.common.contants.ApiErrorCode;
+import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantDTO;
 import com.cloud.pay.merchant.entity.MerchantAttachementInfo;
@@ -115,7 +117,7 @@ public class MerchantService {
 	 * @param code
 	 * @return
 	 */
-	public MerchantSecret selectByCode(String code) {
+	public MerchantSecret selectSecretByCode(String code) {
 		return merchantSecretMapper.selectByCode(code);
 	}
 	
@@ -134,5 +136,37 @@ public class MerchantService {
 				attachementInfoMapper.insert(info);
 			}
 		}
+	}
+	
+	/**
+	 * 根据商户编码查询商户信息
+	 * @param code
+	 * @return
+	 */
+	public Map<String, Object> selectByCode(String code) {
+		Map<String, Object> merchantMap = new HashMap<>();
+		MerchantBaseInfo baseInfo = baseInfoMapper.selectByCode(code);
+		if(null == baseInfo) {
+			throw new CloudApiBusinessException(ApiErrorCode.MCH_INVALID, "商户信息不存在");
+		}
+		merchantMap.put("baseInfo", baseInfo);
+		merchantMap.put("bankInfo", bankInfoMapper.selectByMerchantId(baseInfo.getId()));
+		merchantMap.put("feeInfo", feeInfoMapper.selectByMerchantId(baseInfo.getId()));
+		List<MerchantAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(baseInfo.getId());
+		if(infos != null) {
+			for(MerchantAttachementInfo info : infos) {
+				if(MerchantConstant.BUSINESS == info.getAttachementType()) {
+					merchantMap.put("businessPath", info.getAttachementPath());
+				} else if(MerchantConstant.BANK_CARD == info.getAttachementType()) {
+					merchantMap.put("bankCardPath", info.getAttachementPath());
+				} else if(MerchantConstant.CERT == info.getAttachementType()) {
+					merchantMap.put("certPath", info.getAttachementPath());
+				} else if(MerchantConstant.PROTOCOL == info.getAttachementType()) {
+					merchantMap.put("protocolPath", info.getAttachementPath());
+				}
+				
+			}
+		}
+		return merchantMap;
 	}
 }

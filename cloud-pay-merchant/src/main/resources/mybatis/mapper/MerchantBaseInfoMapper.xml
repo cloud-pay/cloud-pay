@@ -282,4 +282,11 @@
 	      and type = #{type,jdbcType=INTEGER}
 	   </if>
 	</select>
+	
+	<select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from t_merchant_base_info
+	    where code = #{code,jdbcType=VARCHAR}
+	</select>
 </mapper>

@@ -278,4 +278,11 @@
         and m.modify_time &lt; #{endTime}
       </if>
 	 </select>
+	 
+	 <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+	     select 
+	    <include refid="Base_Column_List" />
+	    from t_merchant_apply_base_info
+	    where m.code = #{code,jdbcType=VARCHAR}
+	 </select>
 </mapper>

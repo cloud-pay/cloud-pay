@@ -8,10 +8,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cloud.pay.client.constants.ApiErrorCode;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterParam;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterResult;
+import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
@@ -35,6 +35,7 @@ public class CloudApiMerchantRegisterHandler
 	
 	@Override
 	public CloudApiMerchantRegisterResult handle(CloudApiMerchantRegisterParam reqParam) {
+		log.info("商户信息报备，请求参数：{}",reqParam);
 		CloudApiMerchantRegisterResult result = new CloudApiMerchantRegisterResult();
 		//商户基础资料
 		MerchantApplyBaseInfo baseInfo = new MerchantApplyBaseInfo();
@@ -55,6 +56,7 @@ public class CloudApiMerchantRegisterHandler
 			log.error("商户报备接口，请求错误：{}",e);
 			throw new CloudApiBusinessException(ApiErrorCode.SYSTEM_ERROR,"系统错误");
 		}
+		log.info("商户信息报备，响应结果：{}",result);
 		return result;
 	}
 

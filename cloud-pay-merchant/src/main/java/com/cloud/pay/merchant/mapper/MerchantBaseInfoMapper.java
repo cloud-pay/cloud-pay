@@ -69,4 +69,12 @@ public interface MerchantBaseInfoMapper {
 	 * @return
 	 */
 	List<MerchantDTO> getAdvanceMerchantList(@Param("type") Integer type);
+	
+	/**
+	 * 根据商户编码获取商户
+	 * @param code
+	 * @return
+	 */
+	MerchantBaseInfo selectByCode(String code);
+	
 }

@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import com.cloud.pay.client.constants.ApiErrorCode;
+import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.common.utils.ApplicationContextHolder;
 import com.google.common.collect.Maps;
@@ -30,7 +30,7 @@ public class TradeApiHandlerFactory {
 			tradeApiHandlerMapper.put("cloud.pay.query", "cloudPayQueryHandler");//单笔代付结果查询
 			tradeApiHandlerMapper.put("cloud.batch.pay", "cloudBatchPayHandler"); //批量代付
 			tradeApiHandlerMapper.put("cloud.batch.pay.query", "cloudBatchPayQueryHandler"); //批量代付结果查询
-			tradeApiHandlerMapper.put("cloud.batch.pay.retry", "cloudBatchPayRetryHandler"); //批量代付重新触发
+			//tradeApiHandlerMapper.put("cloud.batch.pay.retry", "cloudBatchPayRetryHandler"); //批量代付重新触发
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package com.cloud.pay.client.constants;
+package com.cloud.pay.common.contants;
 
 /**
  * 下游接口错误码

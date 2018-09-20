@@ -43,4 +43,10 @@ public interface MerchantApplyBaseInfoMapper {
 			@Param("name") String name, @Param("status") Integer status, @Param("startTime") Date startTime,
 			@Param("endTime") Date endTime);
 
+	/**
+	 * 根据商户编码获取商户基本信息
+	 * @param code
+	 * @return
+	 */
+	MerchantApplyBaseInfo selectByCode(String code);
 }

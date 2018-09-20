@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cloud.pay.client.constants.ApiErrorCode;
 import com.cloud.pay.client.utils.GroupV1;
 import com.cloud.pay.client.utils.GroupV2;
 import com.cloud.pay.client.utils.Md5SignUtils;
 import com.cloud.pay.client.vo.base.CloudApiBaseParam;
+import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.merchant.entity.MerchantSecret;
 import com.cloud.pay.merchant.service.MerchantService;
@@ -144,7 +144,7 @@ public class CloudApiHelper {
 	  * @return
 	  */
 	 private String getSinKey(String mchNo) {
-		 MerchantSecret secret = merchantService.selectByCode(mchNo);
+		 MerchantSecret secret = merchantService.selectSecretByCode(mchNo);
 		 if(null == secret) {
 			 throw new CloudApiException(ApiErrorCode.MCH_INVALID,"非法商户");
 		 }

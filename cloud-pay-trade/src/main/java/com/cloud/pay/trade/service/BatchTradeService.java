@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.Base64;
+import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
@@ -213,8 +214,10 @@ public class BatchTradeService {
 	 * @return
 	 */
 	@Transactional
-	public String batchPay(BatchTrade batchTrade, String payFilePath) {
+	public String batchPay(BatchTrade batchTrade, String fileFullPath,String mchCode) {
 		StringBuilder errorDetails = new StringBuilder();
+		//step 1 从OSS服务器读取文件流
+		InputStream is = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(), mchCode, fileFullPath);
 		//TODO ...
 		return errorDetails.toString();
 	}

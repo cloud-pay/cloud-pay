@@ -167,6 +167,18 @@ public class OSSUnit {
         return ossObj.getObjectContent();     
      }   
      
+     /**
+      * 根据文件全路径获取OSS服务器的文件流
+      * @param client
+      * @param bucketName
+      * @param fileFullName
+      * @return
+      */
+     public static final InputStream getOSS2InputStream(OSSClient client, String bucketName, String fileFullName){   
+         OSSObject ossObj = client.getObject(bucketName, fileFullName);  
+         return ossObj.getObjectContent();     
+      }   
+     
      /**  
       * 根据key删除OSS服务器上的文件  
       * @param client OSS客户端 

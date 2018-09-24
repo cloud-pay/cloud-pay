@@ -8,25 +8,25 @@ public class BatchPayTradeResVO extends BaseTradeResVO {
 		super(errorCode, errorMessage);
 	}
 	
-	public BatchPayTradeResVO(String merchantNo, String orderNo, String respMsg) {
-		super(merchantNo, orderNo, respMsg);
+	public BatchPayTradeResVO(Integer merchantId, String orderNo, String respMsg) {
+		super(merchantId, orderNo, respMsg);
 	}
 	
-	public BatchPayTradeResVO(String merchantNo,String orderNo,String respCode,String respMsg) {
-		super(merchantNo, orderNo, respCode, respMsg);
+	public BatchPayTradeResVO(Integer merchantId,String orderNo,String respCode,String respMsg) {
+		super(merchantId, orderNo, respCode, respMsg);
 	}
 	
-	public BatchPayTradeResVO(String merchantNo,String orderNo,String respCode,String errorCode,String errorMessage){
-		super(merchantNo, orderNo, respCode, errorCode, errorMessage);
+	public BatchPayTradeResVO(Integer merchantId,String orderNo,String respCode,String errorCode,String errorMessage){
+		super(merchantId, orderNo, respCode, errorCode, errorMessage);
 	}
 
-	private String channelCode; //渠道编码
+	private Integer channelId; //渠道编码
 
-	public String getChannelCode() {
-		return channelCode;
+	public Integer getChannelId() {
+		return channelId;
 	}
 
-	public void setChannelCode(String channelCode) {
-		this.channelCode = channelCode;
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
 	}
 }

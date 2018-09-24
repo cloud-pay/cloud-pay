@@ -104,7 +104,7 @@ public class ReconService {
 			return;
 		}
 		try {
-			IReconServiceHandler reconServiceHandler = reconChannelHandlerFactory.getHandler(ChannelType.getChannelByChannelCode(channel.getChannelCode()));
+			IReconServiceHandler reconServiceHandler = reconChannelHandlerFactory.getHandler(ChannelType.getChannelByChannelId(channel.getId()));
 			reconServiceHandler.handle(recon);
 		}catch(CloudPayException e) {
 			recon.setReconStatus(2);

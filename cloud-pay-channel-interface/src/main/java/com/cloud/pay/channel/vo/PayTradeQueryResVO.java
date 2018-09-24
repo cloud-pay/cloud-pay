@@ -30,12 +30,17 @@ public class PayTradeQueryResVO extends BaseTradeResVO {
 		super(errorCode, errorMessage);
 	}
 
-	public PayTradeQueryResVO(String merchantNo, String orderNo, String respMsg) {
-		super(merchantNo, orderNo, respMsg);
+	public PayTradeQueryResVO(String respCode,String errorCode,String errorMessage) {
+		super(errorCode,errorMessage);
+		this.respCode = respCode;
+	}
+	
+	public PayTradeQueryResVO(Integer merchantId, String orderNo, String respMsg) {
+		super(merchantId, orderNo, respMsg);
 	}
 
-	public PayTradeQueryResVO(String merchantNo,String orderNo,String respCode,String errorCode,String errorMessage) {
-		super(merchantNo, orderNo, respCode, errorCode, errorMessage);
+	public PayTradeQueryResVO(Integer merchantId,String orderNo,String respCode,String errorCode,String errorMessage) {
+		super(merchantId, orderNo, respCode, errorCode, errorMessage);
 	}
 
 	public String getAccountDate() {

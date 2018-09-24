@@ -26,14 +26,14 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 		try {
 			BohaiCloudBatchTradePayQueryParam batchQueryParam = createParam(reqVO);
 			BohaiCloudBatchTradePayQueryResult result = request(batchQueryParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBR);
-			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
+			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
 		}catch(Exception e) {
 			log.error("渤海批量代付结果查询失败：{}",e);
 			String msg  = "系统异常";
 			if(e instanceof CloudPayException) {
 				msg = e.getMessage();
 			}
-			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
+			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;
 	}

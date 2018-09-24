@@ -59,7 +59,7 @@ public class BohaiTradeDownReconFileExecutor
 			FtpUtil.downloadSftpFile(sftpHost, sftUserName, sftpPassword, sftpPort, sftpPath, localFilePath, fileName);
 			resVO = new ReconDownFileResVO();
 			resVO.setFilePath(localFilePath + File.separator  +fileName);
-			resVO.setChannelCode(reqVO.getChannelCode());
+			resVO.setChannelId(reqVO.getChannelId());
 		} catch (Exception e) {
 			log.error("获取对账文件失败");
 			resVO = new ReconDownFileResVO(ChannelErrorCode.ERROR_2001,e.getMessage());

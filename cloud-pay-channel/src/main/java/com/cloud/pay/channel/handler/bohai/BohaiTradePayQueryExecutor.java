@@ -37,11 +37,11 @@ public class BohaiTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudTra
 			BohaiCloudTradeQueryParam queryParam = createParam(reqParam);
 			BohaiCloudTradeQueryResult result = request(queryParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCTQ);
 			if(!"0".equals(result.getRspCode())) {
-				resVO = new PayTradeQueryResVO(reqParam.getMerchantNo(), reqParam.getOrderNo(), result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				resVO = new PayTradeQueryResVO(reqParam.getMerchantId(), reqParam.getOrderNo(), result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
 				log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				return resVO;
 			}
-			resVO = new PayTradeQueryResVO(reqParam.getMerchantNo(), reqParam.getOrderNo(), result.getRspMsg());
+			resVO = new PayTradeQueryResVO(reqParam.getMerchantId(), reqParam.getOrderNo(), result.getRspMsg());
 			
 			return buildQueryResult(resVO,result);
 		}catch(Exception e) {

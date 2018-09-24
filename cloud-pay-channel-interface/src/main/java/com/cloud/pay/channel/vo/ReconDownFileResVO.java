@@ -11,8 +11,6 @@ public class ReconDownFileResVO  extends BaseTradeResVO {
 	private static final long serialVersionUID = 7759307919883368079L;
 	
 	private Integer channelId;
-	
-	private String ChannelCode;
 
 	private String filePath;
 	
@@ -28,14 +26,6 @@ public class ReconDownFileResVO  extends BaseTradeResVO {
 
 	public void setChannelId(Integer channelId) {
 		this.channelId = channelId;
-	}
-
-	public String getChannelCode() {
-		return ChannelCode;
-	}
-
-	public void setChannelCode(String channelCode) {
-		ChannelCode = channelCode;
 	}
 
 	public String getFilePath() {

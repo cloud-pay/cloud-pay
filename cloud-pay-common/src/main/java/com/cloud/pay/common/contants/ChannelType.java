@@ -21,9 +21,9 @@ public enum ChannelType {
 		   this.channeCode = channeCode;
 	 }
 	 
-	 public static String getChannelByChannelCode(String channeCode) {
+	 public static String getChannelByChannelId(Integer channelId) {
 		  for(ChannelType channelType :ChannelType.values()) {
-			  if(channeCode.equals(channelType.getChanneCode())) {
+			  if(channelId == channelType.getChannelId()) {
 				  return channelType.getChannelENName();
 			  }
 		  }

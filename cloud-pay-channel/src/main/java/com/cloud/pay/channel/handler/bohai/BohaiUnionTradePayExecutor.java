@@ -29,11 +29,11 @@ public class BohaiUnionTradePayExecutor extends BohaiTradeExecutor<BohaiCloudUni
 			BohaiCloudUnionTradeParam payParam = createParam(reqVO);
 			BohaiCloudUnionTradeResult result = request(payParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCUR);
 			 if(!"0".equals(result.getRspCode())) {
-				  resVO = new PayTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				  resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
 				  log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				  return resVO;
 			 }
-			 resVO = new PayTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),"代付成功",result.getActDat());
+			 resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),"代付成功",result.getActDat());
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
 			log.error("渠道接口：单笔银联代付失败，错误消息:{}",e);

@@ -33,7 +33,7 @@ public class ChannelTest {
 	@Test
 	public void tradePay() {
 		PayTradeReqVO reqVO = new PayTradeReqVO();
-		reqVO.setMerchantNo("2018082800000001");
+		reqVO.setMerchantId(1);
 		reqVO.setOrderNo("2018082800000001");  //2018开头返回成功，其他失败
 		reqVO.setPayerAccount("4333234234242342342");
 		reqVO.setPayerName("老黑");
@@ -52,10 +52,10 @@ public class ChannelTest {
 	@Test
 	public void tradePayQuery() {
 		PayTradeQueryReqVO tradeReq = new PayTradeQueryReqVO();
-		tradeReq.setMerchantNo("2018082800000001");
+		tradeReq.setMerchantId(1);
 		tradeReq.setTradeDate("20180829 23:21:00");
 		tradeReq.setOrderNo("2018082800000001");
-		tradeReq.setChannelCode("1");
+		tradeReq.setChannelId(1);
 		PayTradeQueryResVO response = cloudApiService.queryPay(tradeReq);
 		System.out.println("===============================================");
 		System.out.println(response);
@@ -67,7 +67,7 @@ public class ChannelTest {
 	@Test
 	public void tradeUnionPay() {
 		PayUnionTradeReqVO reqVO = new PayUnionTradeReqVO();
-		reqVO.setMerchantNo("2018082800000001");
+		reqVO.setMerchantId(1);
 		reqVO.setOrderNo("2018082800000001");  //2018开头返回成功，其他失败
 		reqVO.setPayerAccount("4333234234242342342");
 		reqVO.setPayerName("老黑");
@@ -85,8 +85,8 @@ public class ChannelTest {
 	@Test
 	public void downReconFile() {
 		ReconDownFileReqVO reqVO = new ReconDownFileReqVO();
-		reqVO.setMerchantNo("");
-		reqVO.setChannelCode("1");
+		reqVO.setMerchantId(1);
+		reqVO.setChannelId(1);
 		reqVO.setReconDate("20180904");
 		ReconDownFileResVO response = cloudApiService.downReconFile(reqVO);
 		System.out.println(response);

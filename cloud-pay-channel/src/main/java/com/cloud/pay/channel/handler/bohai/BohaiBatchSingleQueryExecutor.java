@@ -26,18 +26,18 @@ public class BohaiBatchSingleQueryExecutor extends BohaiTradeExecutor<BohaiBatch
 			BohaiBatchSingleQueryParam queryParam = createParam(reqVO);
 			BohaiBatchSingleQueryResult result = request(queryParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBS);
 			if(!"0".equals(result.getRspCode())) {
-				resVO = new BaseTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				resVO = new BaseTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
 				log.info("渤海批量代付-单笔查询-响应参数:{}",resVO);
 				return resVO; 
 			}
-			resVO = new BaseTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
+			resVO = new BaseTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
 		}catch(Exception e) {
 			log.info("渤海批量代付单笔查询失败:",e.getMessage());
 			String msg = "";
 			if(e instanceof CloudPayException) {
 				msg = e.getMessage();
 			}
-			resVO = new BaseTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,msg);
+			resVO = new BaseTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,msg);
 		}
 		log.info("渤海批量代付-单笔查询-响应参数:{}",resVO);
 		return resVO;

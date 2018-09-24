@@ -44,18 +44,18 @@ public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPay
 			BohaiBatchPayRetryParam retryParam = createParam(reqVO, fileSHA1);
 			BohaiBatchPayRetryResult result = request(retryParam,  ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBT);
 			if("1".equals(result.getRspCode())) {
-				resVO = new BaseTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				resVO = new BaseTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
 				log.info("渤海批量代付-重新触发-响应参数:{}",resVO);
 				return resVO;
 			}
-			resVO = new BaseTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
+			resVO = new BaseTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
 		}catch(Exception e) {
 			log.error("渤海批量代付重新触发失败：{}",e);
 			String msg = "系统异常";
 			if(e instanceof CloudPayException) {
 				msg  = e.getMessage();
 			}
-			resVO = new BaseTradeResVO(reqVO.getMerchantNo(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,msg);
+			resVO = new BaseTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,msg);
 		}
 		log.info("渤海批量代付-重新触发-响应参数:{}",resVO);
 		return resVO;

@@ -15,11 +15,11 @@ public class BaseTradeResVO implements Serializable{
 
 	private static final long serialVersionUID = -7869992528965033473L;
 	
-	private String merchantNo;//平台商户号
+	private Integer merchantId;//平台商户号
 	
 	private String orderNo; //平台订单号
 	
-	private String respCode = ChannelContants.CHANNEL_RESP_CODE_SUCCESS; //响应码
+	protected String respCode = ChannelContants.CHANNEL_RESP_CODE_SUCCESS; //响应码
 	
 	private String respMsg; //响应信息
 	
@@ -35,38 +35,35 @@ public class BaseTradeResVO implements Serializable{
 		respCode = ChannelContants.CHANNEL_RESP_CODE_FAIL;
 	}
 	
-	public BaseTradeResVO(String merchantNo,String orderNo,String respMsg) {
-	      this.merchantNo = merchantNo;
+	public BaseTradeResVO(Integer merchantId,String orderNo,String respMsg) {
+	      this.merchantId = merchantId;
 	      this.orderNo = orderNo;
 	      this.respMsg = respMsg;
 	}
 	
-	public BaseTradeResVO(String merchantNo,String orderNo,String respCode,String respMsg) {
-		  this.merchantNo = merchantNo;
+	public BaseTradeResVO(Integer merchantId,String orderNo,String respCode,String respMsg) {
+		  this.merchantId = merchantId;
 		  this.orderNo = orderNo;
 		  this.respCode = respCode;
 		  this.respMsg = respMsg;
 	}
 	
-	public BaseTradeResVO(String merchantNo,String orderNo,String respCode,String errorCode,String errorMessage) {
-		  this.merchantNo = merchantNo;
+	public BaseTradeResVO(Integer merchantId,String orderNo,String respCode,String errorCode,String errorMessage) {
+		  this.merchantId = merchantId;
 		  this.orderNo = orderNo;
 		  this.respCode = respCode;
 		  this.errorCode = errorCode;
 		  this.errorMessage = errorMessage;
 	}
+   
 
-	public String getMerchantNo() {
-		return merchantNo;
+	public Integer getMerchantId() {
+		return merchantId;
 	}
 
-
-
-	public void setMerchantNo(String merchantNo) {
-		this.merchantNo = merchantNo;
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
 	}
-
-
 
 	public String getOrderNo() {
 		return orderNo;

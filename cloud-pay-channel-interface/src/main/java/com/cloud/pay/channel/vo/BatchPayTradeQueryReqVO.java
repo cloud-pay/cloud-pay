@@ -1,5 +1,7 @@
 package com.cloud.pay.channel.vo;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -22,6 +24,9 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 	@NotBlank(message = "批量交易流水不能为空")
 	@Length(max = 32,message = "批量交易流水最长32位")
 	private String batchOrderNo;
+	
+	@NotNull(message = "渠道ID不能为空")
+	private Integer channelId;
 
 	public String getTradeDate() {
 		return tradeDate;
@@ -46,6 +51,15 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 	public void setBatchOrderNo(String batchOrderNo) {
 		this.batchOrderNo = batchOrderNo;
 	}
+
+	public Integer getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
+	}
+	
 	
 }
 

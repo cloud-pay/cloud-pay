@@ -8,12 +8,12 @@ public class BatchPayTradeQueryResVO extends BaseTradeResVO{
 		super(errorCode, errorMessage);
 	}
    
-	public BatchPayTradeQueryResVO(String merchantNo,String orderNo,String respCode,String respMsg){
-		super(merchantNo, orderNo, respCode, respMsg);
+	public BatchPayTradeQueryResVO(Integer merchantId,String orderNo,String respCode,String respMsg){
+		super(merchantId, orderNo, respCode, respMsg);
 	}
 	
-	public BatchPayTradeQueryResVO(String merchantNo,String orderNo,String respCode,String errorCode,String errorMessage){
-		super(merchantNo, orderNo, respCode, errorCode, errorMessage);
+	public BatchPayTradeQueryResVO(Integer merchantId,String orderNo,String respCode,String errorCode,String errorMessage){
+		super(merchantId, orderNo, respCode, errorCode, errorMessage);
 	}
 	private String fileName;//结果文件名
 

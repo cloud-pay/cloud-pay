@@ -1,5 +1,7 @@
 package com.cloud.pay.channel.vo;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -26,6 +28,9 @@ public class BatchPaySingleQueryReqVO extends BaseTradeReqVO {
 	@NotBlank(message = "单笔交易序号不能为空")
 	@Length(max = 32,message = "单笔交易序号最长32位")
 	private String seqNo;//单笔交易在批量代付文件里得序号
+	
+	@NotNull(message = "渠道ID不能为空")
+	private Integer channelId;
 
 	public String getTradeDate() {
 		return tradeDate;
@@ -58,5 +63,14 @@ public class BatchPaySingleQueryReqVO extends BaseTradeReqVO {
 	public void setSeqNo(String seqNo) {
 		this.seqNo = seqNo;
 	}
+
+	public Integer getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
+	}
+	
 	
 }

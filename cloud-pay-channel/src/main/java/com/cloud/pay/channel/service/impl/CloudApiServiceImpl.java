@@ -65,6 +65,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		//TODO .....根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradePayHandler(ChannelType.BOHAI.getChannelENName());
 		resVO = (PayTradeResVO) tradePayExecutor.execute(tradeReq);
+		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		log.info("渠道接口：代付，响应参数：{}",resVO);
 		return resVO;
 	}
@@ -83,7 +84,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			return result;
 		}
 		//TODO ...根据传入的订单交易渠道获取渠道信息
-		ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelCode(tradeReq.getChannelCode()));
+		ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelId(tradeReq.getChannelId()));
 		 result = (PayTradeQueryResVO) tradePayExecutor.execute(tradeReq);
 		log.info("渠道接口：代付结果查询结束，响应参数：{}",result);
 		return result;
@@ -104,6 +105,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		}
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeUnionPayHandler(ChannelType.BOHAI.getChannelENName());
 		resVO = (PayTradeResVO) tradePayExecutor.execute(reqVO);
+		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		log.info("渠道接口：单笔银联代付，响应参数：{}",resVO);
 		return resVO;
 	}
@@ -114,7 +116,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 	public ReconDownFileResVO downReconFile(ReconDownFileReqVO reqVO) {
 		log.info("渠道接口：下载对账文件，请求参数：{}",reqVO);
 		ReconDownFileResVO resVO = null;
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.getChannelByChannelCode(reqVO.getChannelCode()));
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeDownReconFileHandler(ChannelType.getChannelByChannelId(reqVO.getChannelId()));
 		resVO = (ReconDownFileResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口：下载对账文件，响应结果：{}",resVO);
 		return resVO;
@@ -135,6 +137,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		}
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTraeHandler(ChannelType.BOHAI.getChannelENName());
 		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
+		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		log.info("渠道接口，批量代付，响应结果：{}",resVO);
 		return resVO;
 	}
@@ -152,7 +155,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = new BatchPayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
 		}
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.BOHAI.getChannelENName());
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.getChannelByChannelId(reqVO.getChannelId()));
 		resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付结果查询，响应结果:{}",resVO);
 		return resVO;
@@ -171,7 +174,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = new BaseTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
 		}
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchSingleQueryHandler(ChannelType.BOHAI.getChannelENName());
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchSingleQueryHandler(ChannelType.getChannelByChannelId(reqVO.getChannelId()));
 		resVO = tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付单笔结果查询，响应结果：{}",resVO);
 		return resVO;
@@ -190,7 +193,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = new BaseTradeResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
 		}
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchPayRetryHandler(ChannelType.BOHAI.getChannelENName());
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchPayRetryHandler(ChannelType.getChannelByChannelId(reqVO.getChannelId()));
 		resVO = tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付触发查询，响应结果：{}",resVO);
 		return resVO;

@@ -61,7 +61,7 @@ public class BohaiReconService implements IReconServiceHandler {
 		Channel channel = channelService.selectById(recon.getChannelId());
 		  //获取对账文件
 		ReconDownFileReqVO downFileReqVO = new ReconDownFileReqVO();
-		downFileReqVO.setChannelCode(channel.getId()+"");
+		downFileReqVO.setChannelId(channel.getId());
 		downFileReqVO.setReconDate(DateUtil.formatDate(recon.getAccountDate(), "yyyyMMdd"));
 		log.info("对账-渤海银行-下载对账文件,请求渠道参数:{}",downFileReqVO);
 		ReconDownFileResVO downFileResVo = cloudApiService.downReconFile(downFileReqVO);

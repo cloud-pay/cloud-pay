@@ -15,18 +15,18 @@ public class BaseTradeReqVO implements Serializable{
 	private static final long serialVersionUID = 5148292360420264520L;
 	
 	@NotBlank(message = "平台商户号不能为空")
-	private String merchantNo;//平台商户号
+	private Integer merchantId;//平台商户号
 	
 	@NotBlank(message = "平台订单号不能为空")
 	private String orderNo; //平台订单号
-	
-     
-	public String getMerchantNo() {
-		return merchantNo;
+    
+
+	public Integer getMerchantId() {
+		return merchantId;
 	}
 
-	public void setMerchantNo(String merchantNo) {
-		this.merchantNo = merchantNo;
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
 	}
 
 	public String getOrderNo() {

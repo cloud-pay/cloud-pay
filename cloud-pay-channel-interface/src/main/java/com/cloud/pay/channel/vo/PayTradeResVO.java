@@ -11,23 +11,28 @@ public class PayTradeResVO extends BaseTradeResVO{
 	
 	private String accountDate; //银行会计日期
 	
-	private String channelCode; //渠道编码
+	private Integer channelId; //渠道编码
 	
 	public PayTradeResVO(String errorCode,String errorMessage) {
 	   	super(errorCode, errorMessage);
 	}
 	
-	public PayTradeResVO(String merchantNo, String orderNo, String respMsg) {
-		super(merchantNo, orderNo, respMsg);
+	public PayTradeResVO(String respCode,String errorCode,String errorMessage) {
+		super(errorCode, errorMessage);
+		this.respCode = respCode;
 	}
 	
-	public PayTradeResVO(String merchantNo, String orderNo, String respMsg,String accountDate) {
-		super(merchantNo, orderNo, respMsg);
+	public PayTradeResVO(Integer merchantId, String orderNo, String respMsg) {
+		super(merchantId, orderNo, respMsg);
+	}
+	
+	public PayTradeResVO(Integer merchantId, String orderNo, String respMsg,String accountDate) {
+		super(merchantId, orderNo, respMsg);
 		this.accountDate = accountDate;
 	}
    
-	public PayTradeResVO(String merchantNo,String orderNo,String respCode,String errorCode,String errorMessage) {
-		super(merchantNo, orderNo, respCode, errorCode, errorMessage);
+	public PayTradeResVO(Integer merchantId,String orderNo,String respCode,String errorCode,String errorMessage) {
+		super(merchantId, orderNo, respCode, errorCode, errorMessage);
 	}
 
 	public String getAccountDate() {
@@ -38,12 +43,12 @@ public class PayTradeResVO extends BaseTradeResVO{
 		this.accountDate = accountDate;
 	}
 
-	public String getChannelCode() {
-		return channelCode;
+	public Integer getChannelId() {
+		return channelId;
 	}
 
-	public void setChannelCode(String channelCode) {
-		this.channelCode = channelCode;
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
 	}
 	
 }

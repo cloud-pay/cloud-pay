@@ -47,15 +47,15 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 			 BohaiCloudTradePayResult result = request(payParam, param.getAmt().compareTo(largeSubValue) <= 0 ? 
 					 ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCS:ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCHP);
 			 if(!"0".equals(result.getRspCode())) {
-				  resVO = new PayTradeResVO(param.getMerchantNo(),param.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				  resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
 				  log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				  return resVO;
 			 }
-			 resVO = new PayTradeResVO(param.getMerchantNo(),param.getOrderNo(),"代付成功",result.getActDat());
+			 resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),"代付成功",result.getActDat());
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
 			log.error("渤海代付失败：{}",e);
-			resVO = new PayTradeResVO(param.getMerchantNo(),param.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
+			resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;
 	}

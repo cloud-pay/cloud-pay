@@ -37,6 +37,9 @@ public class BatchPayRetryReqVO extends BaseTradeReqVO {
 	private BigDecimal totalAmt;
 	
 	private String fileName;
+	
+	@NotNull(message = "渠道ID不能为空")
+	private Integer channelId;
 
 	public String getTradeDate() {
 		return tradeDate;
@@ -85,4 +88,14 @@ public class BatchPayRetryReqVO extends BaseTradeReqVO {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
+	public Integer getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
+	}
+	
+	
 }

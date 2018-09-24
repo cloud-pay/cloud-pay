@@ -23,4 +23,7 @@ public interface ApiErrorCode {
     
     //商户信息不存在
     String SUB_MCH_INVALID = "subMchInavlid";
+    
+    //订单不存在
+    String ORDER_INVALID= "orderInvalid";
 }

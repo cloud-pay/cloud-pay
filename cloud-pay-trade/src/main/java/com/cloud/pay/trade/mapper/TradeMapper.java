@@ -155,4 +155,12 @@ public interface TradeMapper {
 	List<FeeStatDTO> selectMerchantFeeByOrg(@Param("orgId") Integer orgId,
 			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 	
+	/**
+	 * 根据商户号和订单号查询交易信息
+	 * @param merchantId
+	 * @param orderNo
+	 * @return
+	 */
+	TradeDTO selectTradeByMerIdAndOrderNo(@Param("merchantId")Integer merchantId,@Param("orderNo")String orderNo);
+	
 }

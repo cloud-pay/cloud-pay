@@ -22,5 +22,10 @@
 			<artifactId>cloud-pay-merchant</artifactId>
 			<version>${cloud.pay.version}</version>
 	  </dependency>
+	  <dependency>
+			<groupId>com.cloud.pay</groupId>
+			<artifactId>cloud-pay-trade</artifactId>
+			<version>${cloud.pay.version}</version>
+	  </dependency>
   </dependencies>
 </project>

@@ -205,6 +205,13 @@ public class BatchTradeService {
 		}
 		return errorDetails.toString();
 	}
+	
+	@Transactional
+	public String batchPay(BatchTrade batchTrade, String payFilePath) {
+		StringBuilder errorDetails = new StringBuilder();
+		
+		return errorDetails.toString();
+	}
 
 	public List<BatchTradeDTO> getBatchTradeList(Integer status, Date startTime, Date endTime) {
 		return batchTradeMapper.getBatchTradeList(status, startTime, endTime);

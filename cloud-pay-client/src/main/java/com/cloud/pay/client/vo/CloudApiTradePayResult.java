@@ -8,7 +8,7 @@ import com.cloud.pay.client.vo.base.CloudApiTradeBaseResult;
  *
  */
 public class CloudApiTradePayResult extends CloudApiTradeBaseResult {
-
+	
 	private static final long serialVersionUID = 6122098494486986L;
-
+	
 }

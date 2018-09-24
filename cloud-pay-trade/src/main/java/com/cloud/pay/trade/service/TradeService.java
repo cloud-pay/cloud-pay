@@ -14,6 +14,7 @@ import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.FeeStatDTO;
 import com.cloud.pay.trade.dto.PayResponseDTO;
+import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.dto.TradeRecordDTO;
 import com.cloud.pay.trade.dto.TradeStatDTO;
 import com.cloud.pay.trade.entity.Trade;
@@ -128,5 +129,15 @@ public class TradeService {
 			}
 		}
 		return merchantStats;
+	}
+	
+	/**
+	 * 根据商户和订单号查询代付信息
+	 * @param merchantId
+	 * @param orderNo
+	 * @return
+	 */
+	public TradeDTO selectTradeByMerIdAndOrderNo(Integer merchantId,String orderNo) {
+		 return tradeMapper.selectTradeByMerIdAndOrderNo(merchantId, orderNo);
 	}
 }

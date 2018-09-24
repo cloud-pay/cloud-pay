@@ -10,5 +10,5 @@ import com.cloud.pay.client.vo.base.CloudApiTradeBaseResult;
 public class CloudApiTradeBatchPayQueryResult extends CloudApiTradeBaseResult {
 
 	private static final long serialVersionUID = 200216523662619489L;
-
+	
 }

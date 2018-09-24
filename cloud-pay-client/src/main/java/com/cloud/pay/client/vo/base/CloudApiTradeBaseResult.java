@@ -11,7 +11,7 @@ public class CloudApiTradeBaseResult extends CloudApiBaseResult {
 
     //交易流水
     private String orderNo;
-
+    
 	public String getOrderNo() {
 		return orderNo;
 	}

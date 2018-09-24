@@ -206,10 +206,16 @@ public class BatchTradeService {
 		return errorDetails.toString();
 	}
 	
+	/**
+	 *  如果插入数据库底层的数据有问题，直接不处理了，简单点处理先
+	 * @param batchTrade
+	 * @param payFilePath
+	 * @return
+	 */
 	@Transactional
 	public String batchPay(BatchTrade batchTrade, String payFilePath) {
 		StringBuilder errorDetails = new StringBuilder();
-		
+		//TODO ...
 		return errorDetails.toString();
 	}
 
@@ -230,4 +236,13 @@ public class BatchTradeService {
 		
 	}
 	
+	/**
+	 *  根据批次号查询批量处理状态
+	 * @param batchNo
+	 * @param merchantId
+	 * @return
+	 */
+	public BatchTradeDTO getBatchByBatchNo(String batchNo,Integer merchantId) {
+		 return batchTradeMapper.queryBatchByBatchNo(batchNo, merchantId);
+	}
 }

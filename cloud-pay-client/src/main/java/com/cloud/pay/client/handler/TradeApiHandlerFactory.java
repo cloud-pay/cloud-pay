@@ -31,6 +31,7 @@ public class TradeApiHandlerFactory {
 			tradeApiHandlerMapper.put("cloud.batch.pay", "cloudBatchPayHandler"); //批量代付
 			tradeApiHandlerMapper.put("cloud.batch.pay.query", "cloudBatchPayQueryHandler"); //批量代付结果查询
 			//tradeApiHandlerMapper.put("cloud.batch.pay.retry", "cloudBatchPayRetryHandler"); //批量代付重新触发
+			tradeApiHandlerMapper.put("cloud.query.recon.file", "cloudReconFileHandler");
 		}
 	}
 	

@@ -1,18 +1,16 @@
 package com.cloud.pay.client.handler.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cloud.pay.channel.utils.DateUtil;
 import com.cloud.pay.client.constants.Constants;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
+import com.cloud.pay.client.utils.DateUtil;
 import com.cloud.pay.client.vo.CloudApiTradePayQueryParam;
 import com.cloud.pay.client.vo.CloudApiTradePayQueryResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
@@ -54,18 +52,18 @@ public class CloudApiTradePayQueryHandler implements ICloudPayApiHandler<CloudAp
 		TradeDTO trade = tradeService.selectTradeByMerIdAndOrderNo(baseInfo.getId(), reqParam.getOrderNo());
 		if(null == trade) {
 		    result.setResultCode(Constants.RESULT_CODE_FAIL);
-		    result.setErrorCode(ApiErrorCode.ORDER_INVALID);
+		    result.setErrorCode(ApiErrorCode.ORDER_NOT_EXIST);
 		    result.setErrorMsg("相关订单不存在");
 		    log.info("单笔代付结果查询，响应结果:{}",result);
 		    return result;
 		}
-		result.setTradeTime(DateUtil.formatDate(trade.getTradeTime(), "yyyy-MM-dd HH:mm:ss"));
+		result.setTradeTime(DateUtil.getDateTimeFormat(trade.getTradeTime()));
 		result.setTradeAmount(trade.getTradeAmount());
 		result.setPayeeName(trade.getPayeeName());
 		result.setPayeeBankCard(trade.getPayeeBankCard());
 		result.setPayeeBankCode(trade.getPayeeBankCode());
 		result.setStatus(trade.getStatus());
-		result.setReconDate(DateUtil.formatDate(trade.getReconDate(),"yyyy-MM-dd HH:mm:ss"));
+		result.setReconDate(DateUtil.getDateTimeFormat(trade.getReconDate()));
 		result.setReconStatus(trade.getReconStatus());
 		log.info("单笔代付结果查询，响应结果：{}",result);
 		return result;

@@ -21,4 +21,9 @@ public interface Constants {
      * 业务结果-失败
      */
     String RESULT_CODE_FAIL = "1";    
+    
+    /**
+     * 业务结果-未知状态
+     */
+    String RESULT_CODE_UNKNOWN = "99";
 }

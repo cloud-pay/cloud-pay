@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cloud.pay.client.constants.Constants;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.utils.BeanUtil;
 import com.cloud.pay.client.vo.CloudApiMerchantUpdateParam;
@@ -43,15 +44,26 @@ public class CloudApiMerchantUpdateHandler
 		if(StringUtils.isBlank(reqParam.getSubMchCode())) {
 			 throw new CloudApiBusinessException(ApiErrorCode.PARAM_ERROR, "商户编码不可为空");
 		}
+		result.setMchCode(reqParam.getMchCode());
+		result.setSubMchCode(reqParam.getSubMchCode());
+		
 		Map<String, Object> map = merchantApplyService.selectByCode(reqParam.getSubMchCode());
 		if(null == map) {
-			throw new CloudApiBusinessException(ApiErrorCode.SUB_MCH_INVALID, "商户信息不存在");
+			result.setResultCode(Constants.RESULT_CODE_FAIL);
+			result.setErrorCode(ApiErrorCode.SUB_MCH_INVALID);
+			result.setErrorMsg("商户信息不存在");
+			log.info("商户信息修改，响应结果：{}",result);
+			return result;
 		}
 		
 		try {
 			//获取商户基本信息
 			if(null == map.get("baseInfo")) {
-				throw new CloudApiBusinessException(ApiErrorCode.SUB_MCH_INVALID, "商户信息不存在");
+				result.setResultCode(Constants.RESULT_CODE_FAIL);
+				result.setErrorCode(ApiErrorCode.SUB_MCH_INVALID);
+				result.setErrorMsg("商户信息不存在");
+				log.info("商户信息修改，响应结果：{}",result);
+				return result;
 			}
 			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) map.get("baseInfo");
 			BeanUtils.copyProperties(reqParam, baseInfo,BeanUtil.getNullPropertyNames(reqParam));

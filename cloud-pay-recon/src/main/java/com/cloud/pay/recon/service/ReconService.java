@@ -133,4 +133,16 @@ public class ReconService {
 		return reconMapper.queryReconList(reconStatus, channelName, tradeDate);
 	} 
 	
+	/**
+	 * 获取对账文件(如果返回空，则表示对账文件未生成)
+	 * @param merchantId
+	 * @param recondDate
+	 * @param mchType  1-商户，2-机构
+	 * @param isUploadOss   是否上传到oss服务器
+	 * @return filePath 对账文件路径
+	 */
+    public String queryReconFile(Integer merchantId,String recondDate,Integer mchType,boolean isUploadOss) {
+        //TODO ...
+    	return null;
+    }
 }

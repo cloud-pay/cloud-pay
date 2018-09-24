@@ -28,8 +28,8 @@ public class CloudApiTradeBatchPayParam extends CloudApiTradeBatchBaseParam {
 	@NotNull(message = "总交易条数不能为空")
 	private Integer totalCount;
 	
-	@NotEmpty(message = "文件名不能为空")
-	private String  fileName;
+	@NotEmpty(message = "文件路径不能为空")
+	private String  filePath;
 
 	public String getTradeTime() {
 		return tradeTime;
@@ -55,12 +55,12 @@ public class CloudApiTradeBatchPayParam extends CloudApiTradeBatchBaseParam {
 		this.totalCount = totalCount;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getFilePath() {
+		return filePath;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 	
 }

@@ -217,4 +217,23 @@
       audit_time = #{auditTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="queryBatchByBatchNo" resultMap="BaseResultDTO">
+      SELECT
+		t.id,
+		t.batch_no,
+		t.trade_time,
+		t.total_amount,
+		t.total_count,
+		t.payer_merchant_id,
+		t. STATUS,
+		t.creator,
+		t.create_time,
+		t.auditor,
+		t.audit_time
+	FROM
+		t_batch_trade t
+	where t.payer_merchant_id = #{merchantId,jdbcType=INTEGER}
+	and t.batch_no = #{batchNo,jdbcType=VARCHAR}
+  </select>
 </mapper>

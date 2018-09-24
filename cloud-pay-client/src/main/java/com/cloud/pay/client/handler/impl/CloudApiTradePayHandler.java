@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.client.constants.Constants;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
+import com.cloud.pay.client.utils.DateUtil;
 import com.cloud.pay.client.vo.CloudApiTradePayParam;
 import com.cloud.pay.client.vo.CloudApiTradePayResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
@@ -20,6 +21,7 @@ import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.PayResponseDTO;
+import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.service.TradeService;
 
@@ -50,19 +52,27 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 		//根据商户号查询商户信息
 		Map<String, Object> merchantMap = merchantService.selectByCode(mchCode);
 		if(null == merchantMap || merchantMap.size() <= 0) {
-			 throw new CloudApiBusinessException(ApiErrorCode.MCH_INVALID, "商户不可用");
+			result.setResultCode(Constants.RESULT_CODE_FAIL);
+			result.setErrorCode(ApiErrorCode.MCH_INVALID);
+			result.setErrorMsg("商户不可用");
+			log.info("单笔代付响应结果：{}",result);
+			return result;
 		}
 		MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) merchantMap.get("baseInfo");
+		//订单号和商户号确保唯一
+		TradeDTO tradeHis = tradeService.selectTradeByMerIdAndOrderNo(baseInfo.getId(), reqParam.getOrderNo());
+		if(null != tradeHis) {
+			result.setResultCode(Constants.RESULT_CODE_FAIL);
+			result.setErrorCode(ApiErrorCode.ORDER_EXIST);
+			result.setErrorMsg("订单号"+reqParam.getOrderNo()+"已存在");
+			log.info("单笔代付响应结果：{}",result);
+			return result;
+		}
 		Trade trade = new Trade();
 		trade.setMerchantId(baseInfo.getId());
 		trade.setOrderNo(reqParam.getOrderNo());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try {
-			trade.setTradeTime(sdf.parse(reqParam.getTradeTime()));
-		} catch (ParseException e) {
-			log.error("单笔代付请求，时间格式错误");
-			throw new CloudApiBusinessException(ApiErrorCode.PARAM_ERROR,"时间格式错误");
-		}
+		trade.setTradeTime(DateUtil.getDateTimeFormat(reqParam.getTradeTime()));
+		
 		trade.setTradeAmount(reqParam.getTradeAmount());
 		trade.setPayeeName(reqParam.getPayeeName());
 		trade.setPayeeBankCard(reqParam.getPayeeBankCard());
@@ -71,8 +81,13 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 			log.info("单笔代付，请求代付平台参数：{}",trade);
 		    PayResponseDTO payResponse = tradeService.pay(trade);
 		    log.info("单笔代付，请求代付平台响应结果：{}",payResponse);
+		    
 		    if(TradeConstant.STATUS_FAIL == payResponse.getStatus()) {
 		    	result.setResultCode(Constants.RESULT_CODE_FAIL);
+		    }else if(TradeConstant.STATUS_SUCCESS == payResponse.getStatus()){
+		    	result.setResultCode(Constants.RESULT_CODE_SUCCESS);
+		    }else {
+		    	result.setResultCode(Constants.RESULT_CODE_UNKNOWN);
 		    }
 		    result.setErrorCode(payResponse.getReturnCode());
 	    	result.setErrorMsg(payResponse.getReturnInfo());

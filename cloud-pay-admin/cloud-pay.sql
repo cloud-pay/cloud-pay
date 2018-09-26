@@ -316,7 +316,7 @@ CREATE TABLE `t_merchant_channel` (
 
 CREATE TABLE `t_merchant_secret` (
   `merchant_id` int(11) NOT NULL DEFAULT '0' COMMENT '商户ID',
-  `secret` blob COMMENT '密钥',
+  `secret` varchar(255) DEFAULT NULL COMMENT '密钥',
   PRIMARY KEY (`merchant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户密钥';
 

@@ -143,7 +143,7 @@ public class MerchantApplyService {
 	}
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
-	public void audit(Integer id, Integer status, String auditOptinion, String modifer) {
+	public void audit(Integer id, Integer status, String auditOptinion, String modifer) throws Exception {
 		MerchantApplyBaseInfo baseInfo = new MerchantApplyBaseInfo();
 		baseInfo.setId(id);
 		baseInfo.setStatus(status);

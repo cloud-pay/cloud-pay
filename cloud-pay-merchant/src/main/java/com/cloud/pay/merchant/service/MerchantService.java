@@ -1,5 +1,6 @@
 package com.cloud.pay.merchant.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
 import com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantSecretMapper;
+import com.cloud.pay.merchant.util.MD5;
 
 @Service
 public class MerchantService {
@@ -123,9 +125,14 @@ public class MerchantService {
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public void save(MerchantBaseInfo baseInfo, MerchantBankInfo bankInfo,
-			MerchantFeeInfo feeInfo, List<MerchantAttachementInfo> infos) {
+			MerchantFeeInfo feeInfo, List<MerchantAttachementInfo> infos) throws Exception {
 		baseInfo.setId(null);
 		baseInfoMapper.insert(baseInfo);
+		MerchantSecret record = new MerchantSecret();
+		record.setMerchantId(baseInfo.getId());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		record.setSecret(MD5.md5(baseInfo.getCode(), sdf.format(baseInfo.getCreateTime())));
+		merchantSecretMapper.insert(record);
 		bankInfo.setMerchantId(baseInfo.getId());
 		bankInfoMapper.insert(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());

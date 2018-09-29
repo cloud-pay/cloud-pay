@@ -21,6 +21,8 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.service.ChannelService;
+import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.constant.MerchantRouteConstant;
 import com.cloud.pay.trade.entity.MerchantRouteConf;
 import com.cloud.pay.trade.service.MerchantRouteConfService;
@@ -35,6 +37,12 @@ public class MerchantRouteConfController extends BaseController{
 	private MerchantRouteConfService merchantRouteConfService;
 	
 	private String menuUrl = "merchantRouteConf/list";
+	
+	@Autowired
+	private MerchantService merchantService;
+	
+	@Autowired
+	private ChannelService channelService;
 	
 	/**
 	 * 商戶路由配置列表
@@ -58,6 +66,10 @@ public class MerchantRouteConfController extends BaseController{
 		}
 		model.addAttribute("merchantRoutes", merchantRouteConfService.getmerchantRouteConfList(type, status, merchantName, startTime, endTime));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
+		model.addAttribute("loans", merchantService.selectByMerchantType(3));
+		model.addAttribute("channels", channelService.getchannelList(null, null));
 		return "page/merchantRouteConf/list";
 	}
 	

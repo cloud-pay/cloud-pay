@@ -249,6 +249,12 @@
         and type in (4,5)
       </if>
 	 </select>
+  <select id="selectByMerchantType" resultMap="BaseResultDTO">
+	 	SELECT id, name
+		FROM 
+			t_merchant_base_info
+		where type = #{type,jdbcType=INTEGER}
+	 </select>
    <select id="getMerchantList" resultMap="BaseResultDTO">
 	 	SELECT m.id, m.org_id, m1.name org_name, m.code, m.name, m.type, 
     m.status, m.modifer, m.modify_time

@@ -54,6 +54,10 @@ public class MerchantService {
 	public List<MerchantDTO> getMerchantDTOs(String type) {
 		return baseInfoMapper.getMerchantDTOs(type);
 	}
+	
+	public List<MerchantDTO> selectByMerchantType(Integer type) {
+		return baseInfoMapper.selectByMerchantType(type);
+	}
 
 	/**
 	 * 列表查询list

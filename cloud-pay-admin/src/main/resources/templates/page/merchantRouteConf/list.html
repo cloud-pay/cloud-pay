@@ -234,7 +234,7 @@ div.cbp label.font{
 				  <div class="form-group">
 					    <label for="type" class="col-sm-2 control-label">主体类型</label>
 					    <div class="col-sm-10">
-						    <select name="type" class="form-control">
+						    <select name="type" id="type" class="form-control">
 						      <option value="">请选择</option>
 							  <option value="1">合作机构</option>
 							  <option value="2">商户</option>
@@ -243,15 +243,20 @@ div.cbp label.font{
 					  </div>
 				
 				  <div class="form-group">
-					    <label for="merchantId" class="col-sm-2 control-label">所属机构</label>
+					    <label for="merchantId" class="col-sm-2 control-label" id="mLabel">所属机构</label>
 					    <div class="col-sm-10">
-						    <input class="form-control" name="merchantId" value="" id="merchantId">
+						    <select name="merchantId" id="merchantId" class="form-control">
+						      <option value="">请选择</option>
+						    </select>
 					    </div>
 					  </div>
 				  <div class="form-group">
 					    <label for="channelId" class="col-sm-2 control-label">通道名称</label>
 					    <div class="col-sm-10">
-						    <input class="form-control" name="channelId" value="" id="channelId">
+						    <select name="channelId" class="form-control" id="channelId">
+						      <option value="">请选择</option>
+						      <option th:each="channel : ${channels}" th:value="${channel.id}" th:text="${channel.channelName}">/option>
+						    </select>
 					    </div>
 					  </div>
 				  
@@ -268,7 +273,10 @@ div.cbp label.font{
 				  <div class="form-group">
 					    <label for="loaningOrgId" class="col-sm-2 control-label">垫资机构名称</label>
 					    <div class="col-sm-10">
-						    <input class="form-control" name="loaningOrgId" value="" id="loaningOrgId">
+					    	<select name="loaningOrgId" class="form-control" id="loaningOrgId">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${loans}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						    </select>
 					    </div>
 					  </div>
 				  
@@ -300,7 +308,7 @@ div.cbp label.font{
 <!-- AdminLTE App -->
 <script th:src="@{/dist/js/adminlte.min.js}"></script>
 <script th:src="@{/js/path.js}"></script>
-<script>
+<script th:inline="javascript">
 $(function(){
 	
 	//查询按钮事件
@@ -505,13 +513,32 @@ function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,
 	$("input[name='loaningOrgId']").val(loaningOrgId);
 	$("input[name='loaningAmount']").val(loaningAmount);
 }
-<!-- 
-$("#search_name").append("<option value=\"1\">Select" + 'wahaha' + "</option>");
-$("#search_name option").each(function(i){
-if(i != 0){
-$(this).remove();
-}
-})-->
+
+var merchants = [[${merchants}]];
+var orgs = [[${orgs}]];
+
+$('#type').change(function(){ 
+	$("#merchantId option").each(function(i){
+		if(i != 0){
+			$(this).remove();
+		}
+	});
+	if($(this).children('option:selected').val() == 1) {
+		$("#mLabel").html("所属机构");
+		if(orgs != '') {
+			$.each(orgs, function(i, obj) {
+				$("#merchantId").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+			});
+		}
+	} else if($(this).children('option:selected').val() == 2){
+		$("#mLabel").html("所属商户");
+		if(merchants != '') {
+			$.each(merchants, function(i, obj) {
+				$("#merchantId").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+			});
+		}
+	}
+}) ;
 
 </script>
 </body>

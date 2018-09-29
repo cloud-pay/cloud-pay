@@ -59,6 +59,8 @@ public interface MerchantBaseInfoMapper {
 	int updateByPrimaryKey(MerchantBaseInfo record);
 
 	List<MerchantDTO> getMerchantDTOs(@Param("type") String type);
+	
+	List<MerchantDTO> selectByMerchantType(@Param("type") Integer type);
 
 	List<MerchantDTO> getMerchantList(@Param("orgId") Integer orgId, @Param("code") String code,
 			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime);

@@ -106,7 +106,7 @@
   <select id="selectByMerchantId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from t_merchant_fee_info
+    from t_merchant_fee_conf
     where merchant_id = #{merchantId,jdbcType=INTEGER}
   </select>
 </mapper>

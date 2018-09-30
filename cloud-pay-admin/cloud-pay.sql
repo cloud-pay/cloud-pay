@@ -299,6 +299,8 @@ CREATE TABLE `t_trade` (
   `settle_status` int(1) DEFAULT NULL COMMENT '结算状态（0：未导出，1已导出）',
   `recon_date` datetime DEFAULT NULL COMMENT '对账日期（格式yyyymmdd）',
   `recon_status` int(1) DEFAULT NULL COMMENT '对账状态(1成功，2失败)',
+  `merchant_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '商户手续费',
+  `loan_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '垫资手续费',
   PRIMARY KEY (`id`),
   KEY `INX_BATCH_NO` (`batch_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='交易信息表';
@@ -344,6 +346,7 @@ CREATE TABLE `t_merchant_prepay_info` (
   `balance` decimal(15,2) DEFAULT NULL COMMENT '余额',
   `freeze_amount` decimal(15,2) DEFAULT NULL COMMENT '冻结金额',
   `overdraw` int(1) DEFAULT NULL COMMENT '是否透资(1可透资;2不可透资)',
+  `digest` varchar(255) DEFAULT NULL COMMENT '摘要',
   `create_time` date DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户预缴户信息';
@@ -351,10 +354,11 @@ CREATE TABLE `t_merchant_prepay_info` (
 DROP TABLE IF EXISTS `t_merchant_prepay_journal`;
 CREATE TABLE `t_merchant_prepay_journal` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `debit` int(1) DEFAULT NULL COMMENT '出入账标识(1入账；2出账)',
   `trade_id` int(11) DEFAULT NULL COMMENT '交易ID',
   `prepay_id` int(11) DEFAULT NULL COMMENT '预缴户id',
   `amount` decimal(15,2) DEFAULT NULL COMMENT '发生额',
   `balance` decimal(15,2) DEFAULT NULL COMMENT '变动后余额',
   `create_time` date DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户预缴户变动';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='商户预缴户变动';

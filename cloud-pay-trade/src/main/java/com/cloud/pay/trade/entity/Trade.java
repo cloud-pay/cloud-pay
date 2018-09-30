@@ -593,6 +593,10 @@ public class Trade {
     private Integer payeeBankAcctType;
     
     private String payeeBankName;
+    
+    private BigDecimal merchantFeeAmount;
+    
+    private BigDecimal loanFeeAmount;
 
 	public Integer getPayeeBankAcctType() {
 		return payeeBankAcctType;
@@ -609,6 +613,21 @@ public class Trade {
 	public void setPayeeBankName(String payeeBankName) {
 		this.payeeBankName = payeeBankName;
 	}
-    
+
+	public BigDecimal getMerchantFeeAmount() {
+		return merchantFeeAmount;
+	}
+
+	public void setMerchantFeeAmount(BigDecimal merchantFeeAmount) {
+		this.merchantFeeAmount = merchantFeeAmount;
+	}
+
+	public BigDecimal getLoanFeeAmount() {
+		return loanFeeAmount;
+	}
+
+	public void setLoanFeeAmount(BigDecimal loanFeeAmount) {
+		this.loanFeeAmount = loanFeeAmount;
+	}
     
 }

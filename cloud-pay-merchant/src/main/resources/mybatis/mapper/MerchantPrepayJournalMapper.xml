@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.merchant.mapper.MerchantPrepayJournalMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantPrepayJournal" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="debit" property="debit" jdbcType="INTEGER" />
+    <result column="trade_id" property="tradeId" jdbcType="INTEGER" />
+    <result column="prepay_id" property="prepayId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, debit, trade_id, prepay_id, amount, balance, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_prepay_journal
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantPrepayJournal" >
+    insert into t_merchant_prepay_journal (id, trade_id, prepay_id, 
+      amount, balance, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{tradeId,jdbcType=INTEGER}, #{prepayId,jdbcType=INTEGER}, 
+      #{amount,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{createTime,jdbcType=DATE}
+      )
+  </insert>
+</mapper>

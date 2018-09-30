@@ -337,3 +337,24 @@ CREATE TABLE `t_batch_trade` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='批量代付信息表';
 
+DROP TABLE IF EXISTS `t_merchant_prepay_info`;
+CREATE TABLE `t_merchant_prepay_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(11) DEFAULT NULL COMMENT '商户id',
+  `balance` decimal(15,2) DEFAULT NULL COMMENT '余额',
+  `freeze_amount` decimal(15,2) DEFAULT NULL COMMENT '冻结金额',
+  `overdraw` int(1) DEFAULT NULL COMMENT '是否透资(1可透资;2不可透资)',
+  `create_time` date DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户预缴户信息';
+
+DROP TABLE IF EXISTS `t_merchant_prepay_journal`;
+CREATE TABLE `t_merchant_prepay_journal` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `trade_id` int(11) DEFAULT NULL COMMENT '交易ID',
+  `prepay_id` int(11) DEFAULT NULL COMMENT '预缴户id',
+  `amount` decimal(15,2) DEFAULT NULL COMMENT '发生额',
+  `balance` decimal(15,2) DEFAULT NULL COMMENT '变动后余额',
+  `create_time` date DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户预缴户变动';

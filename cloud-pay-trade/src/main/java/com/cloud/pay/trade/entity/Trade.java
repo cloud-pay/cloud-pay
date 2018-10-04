@@ -596,7 +596,9 @@ public class Trade {
     
     private BigDecimal merchantFeeAmount;
     
-    private BigDecimal loanFeeAmount;
+    private BigDecimal loanBenefit;
+    
+    private BigDecimal orgBenefit;
 
 	public Integer getPayeeBankAcctType() {
 		return payeeBankAcctType;
@@ -622,12 +624,22 @@ public class Trade {
 		this.merchantFeeAmount = merchantFeeAmount;
 	}
 
-	public BigDecimal getLoanFeeAmount() {
-		return loanFeeAmount;
+	public BigDecimal getLoanBenefit() {
+		return loanBenefit;
 	}
 
-	public void setLoanFeeAmount(BigDecimal loanFeeAmount) {
-		this.loanFeeAmount = loanFeeAmount;
+	public void setLoanBenefit(BigDecimal loanBenefit) {
+		this.loanBenefit = loanBenefit;
 	}
+
+	public BigDecimal getOrgBenefit() {
+		return orgBenefit;
+	}
+
+	public void setOrgBenefit(BigDecimal orgBenefit) {
+		this.orgBenefit = orgBenefit;
+	}
+
+	
     
 }

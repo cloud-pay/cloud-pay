@@ -20,8 +20,8 @@ public class MerchantBaseInfoMapperTest {
 		System.out.println(merchantBaseInfoMapper.selectByPrimaryKey(1));
 	}
 	
-	@Test
-	public void getBankListTest() {
-		System.out.println(merchantBaseInfoMapper.getMerchantDTOs("1"));
-	}
+//	@Test
+//	public void getBankListTest() {
+//		System.out.println(merchantBaseInfoMapper.getMerchantDTOs("1"));
+//	}
 }

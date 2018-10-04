@@ -446,11 +446,11 @@
       SELECT
 			stat_date,
 			merchant_code,
-		  merchant_name,
-		  org_name,
-			count(1)total_count,
-			sum(trade_amount)total_amount,
-		  SUM(CASE WHEN loaning=1 THEN trade_amount
+		    merchant_name,
+		    org_name,
+			count(1) total_count,
+			sum(trade_amount) total_amount,
+		    SUM(CASE WHEN loaning=1 THEN trade_amount
 							ELSE 0
 				  END) loaning_total_amount,
 			sum(fee) feeAmount
@@ -464,11 +464,7 @@
 		  b.`name` org_name,
 		  f.pay_fee,
 		  f.loan_fee,
-		  CASE WHEN t.loaning = 1 and f.loan_fee_type = 1 THEN t.trade_amount * f.loan_fee
-		       WHEN t.loaning = 1 and f.loan_fee_type = 2 THEN f.loan_fee
-		       WHEN t.loaning = 0 and f.pay_fee_type = 1 THEN t.trade_amount * f.pay_fee
-		       else f.pay_fee
-			END fee
+		  t.merchant_fee_amount fee
 		FROM
 			t_trade t,
 			t_merchant_fee_conf f,
@@ -516,11 +512,7 @@
 		  m.name merchant_name,
 		  f.pay_fee,
 		  f.loan_fee,
-		  CASE WHEN t.loaning = 1 and f.loan_fee_type = 1 THEN t.trade_amount * f.loan_fee
-		       WHEN t.loaning = 1 and f.loan_fee_type = 2 THEN f.loan_fee
-		       WHEN t.loaning = 0 and f.pay_fee_type = 1 THEN t.trade_amount * f.pay_fee
-		       else f.pay_fee
-			END fee
+		  t.merchant_fee_amount fee
 		FROM
 			t_trade t,
 			t_merchant_fee_conf f,
@@ -562,11 +554,7 @@
 		  b.`code` merchant_code,
 		  f.pay_fee,
 		  f.loan_fee,
-		  CASE WHEN t.loaning = 1 and f.loan_fee_type = 1 THEN t.trade_amount * (f.loan_fee - of.loan_fee)
-		       WHEN t.loaning = 1 and f.loan_fee_type = 2 THEN f.loan_fee - of.loan_fee
-		       WHEN t.loaning = 0 and f.pay_fee_type = 1 THEN t.trade_amount * (f.pay_fee - of.loan_fee)
-		       else f.pay_fee - of.pay_fee
-			END fee
+		  t.org_benefit fee
 		FROM
 			t_trade t,
 			t_merchant_fee_conf f,

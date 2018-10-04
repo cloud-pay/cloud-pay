@@ -59,6 +59,7 @@ CREATE TABLE `t_bank` (
 DROP TABLE IF EXISTS `t_channel`;
 CREATE TABLE `t_channel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `channel_code` varchar(100) DEFAULT NULL COMMENT '渠道编码',
   `channel_name` varchar(100) DEFAULT NULL COMMENT '渠道名称',
   `channel_merchant_id` varchar(50) DEFAULT NULL COMMENT '渠道商户号',
   `channel_type` int(1) DEFAULT NULL COMMENT '渠道类型',
@@ -300,7 +301,8 @@ CREATE TABLE `t_trade` (
   `recon_date` datetime DEFAULT NULL COMMENT '对账日期（格式yyyymmdd）',
   `recon_status` int(1) DEFAULT NULL COMMENT '对账状态(1成功，2失败)',
   `merchant_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '商户手续费',
-  `loan_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '垫资手续费',
+  `org_benefit` decimal(15,2) DEFAULT NULL COMMENT '机构分润费',
+  `loan_benefit` decimal(15,2) DEFAULT NULL COMMENT '垫资分润费',
   PRIMARY KEY (`id`),
   KEY `INX_BATCH_NO` (`batch_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='交易信息表';

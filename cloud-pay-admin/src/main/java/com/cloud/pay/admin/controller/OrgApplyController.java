@@ -27,7 +27,6 @@ import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
 import com.cloud.pay.merchant.service.MerchantApplyService;
-import com.cloud.pay.merchant.service.MerchantService;
 
 @Controller
 @RequestMapping("/orgApply")
@@ -39,19 +38,16 @@ public class OrgApplyController extends BaseController{
 	private MerchantApplyService merchantApplyService;
 	
 	@Autowired
-	private MerchantService merchantService;
-	
-	@Autowired
 	private BankService bankService;
 	
 	private String menuUrl = "orgApply/list";
 	
 	/**
-	 * 商戶列表
+	 * 机构申请列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model, Integer orgId, String code, String name, Integer status, String createDateBegin,
+	public Object list(Model model, Integer type, String code, String name, Integer status, String createDateBegin,
 			String createDateEnd){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -66,14 +62,13 @@ public class OrgApplyController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, startTime, endTime));
-		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("merchantApplys", merchantApplyService.getOrgDTOs(type, code, name, status, startTime, endTime));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		return "page/org/orgApplyList";
 	}
 	
 	/**
-	 * 添加商戶
+	 * 添加机构申请
 	 * @return
 	 */
 	@RequestMapping(value="/add",method=RequestMethod.POST)
@@ -106,7 +101,7 @@ public class OrgApplyController extends BaseController{
 	
 	
 	/**
-	 * 编辑商戶
+	 * 编辑机构申请
 	 * @return
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
@@ -135,7 +130,7 @@ public class OrgApplyController extends BaseController{
 	
 	
 	/**
-	 * 审核商戶
+	 * 审核机构申请
 	 * @return
 	 */
 	@RequestMapping(value="/audit",method=RequestMethod.POST)
@@ -157,7 +152,7 @@ public class OrgApplyController extends BaseController{
 	}
 	
 	/**
-	 * 获取商戶
+	 * 获取机构申请
 	 * @return
 	 */
 	@RequestMapping(value="/get",method=RequestMethod.GET)

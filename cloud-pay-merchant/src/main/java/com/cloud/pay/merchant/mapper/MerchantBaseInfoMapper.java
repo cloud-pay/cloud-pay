@@ -61,7 +61,28 @@ public interface MerchantBaseInfoMapper {
 	List<MerchantDTO> getMerchantDTOs(@Param("type") String type);
 	
 	List<MerchantDTO> selectByMerchantType(@Param("type") Integer type);
+	
+	/**
+	 * 查询机构列表
+	 * @param type
+	 * @param code
+	 * @param name
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<MerchantDTO> getOrgList(@Param("type") Integer type, @Param("code") String code,
+			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
+	/**
+	 * 查询机构/商户列表
+	 * @param orgId
+	 * @param code
+	 * @param name
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	List<MerchantDTO> getMerchantList(@Param("orgId") Integer orgId, @Param("code") String code,
 			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 	

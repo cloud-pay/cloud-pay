@@ -34,7 +34,7 @@
     delete from t_merchant_base_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantBaseInfo" >
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantBaseInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into t_merchant_base_info (id, org_id, code, name, 
       short_name, type, industry_category, 
       legal, city, address, 
@@ -261,9 +261,32 @@
 		FROM 
 			t_merchant_base_info m
 			left join t_merchant_base_info m1 on m.org_id = m1.id
-		where 1=1
+		where m.type in (4,5)
 	  <if test="orgId != null" >
         and m.org_id = #{orgId,jdbcType=INTEGER}
+      </if>
+      <if test="code != null and code != ''" >
+        and m.code = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null and name != ''" >
+        and m.name like concat('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="startTime != null" >
+        and m.modify_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+        and m.modify_time &lt; #{endTime}
+      </if>
+	 </select>
+	 <select id="getOrgList" resultMap="BaseResultDTO">
+	 	SELECT m.id, m.org_id, m1.name org_name, m.code, m.name, m.type, 
+    m.status, m.modifer, m.modify_time
+		FROM 
+			t_merchant_base_info m
+			left join t_merchant_base_info m1 on m.org_id = m1.id
+		where m.type in (1,2,3)
+	  <if test="type != null" >
+        and m.type = #{type,jdbcType=INTEGER}
       </if>
       <if test="code != null and code != ''" >
         and m.code = #{code,jdbcType=VARCHAR}

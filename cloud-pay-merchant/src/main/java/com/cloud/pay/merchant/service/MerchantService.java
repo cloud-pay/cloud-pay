@@ -58,9 +58,23 @@ public class MerchantService {
 	public List<MerchantDTO> selectByMerchantType(Integer type) {
 		return baseInfoMapper.selectByMerchantType(type);
 	}
+	
+	/**
+	 * 机构列表查询list
+	 * 
+	 * @param orgId
+	 * @param code
+	 * @param name
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public List<MerchantDTO> getOrgList(Integer type, String code, String name, Date startTime, Date endTime) {
+		return baseInfoMapper.getOrgList(type, code, name, startTime, endTime);
+	}
 
 	/**
-	 * 列表查询list
+	 * 商户列表查询list
 	 * 
 	 * @param orgId
 	 * @param code

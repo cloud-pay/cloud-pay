@@ -38,7 +38,32 @@ public interface MerchantApplyBaseInfoMapper {
 	 * @mbggenerated Sun Sep 02 09:06:42 CST 2018
 	 */
 	int updateByPrimaryKey(MerchantApplyBaseInfo record);
+	
+	/**
+	 * 查询机构申请信息
+	 * @param orgId
+	 * @param code
+	 * @param name
+	 * @param status
+	 * @param startTime
+	 * @param endTime
+	 * @param type 类型
+	 * @return
+	 */
+	List<MerchantApplyDTO> getOrgApplyDTOs(@Param("type") Integer type, @Param("code") String code,
+			@Param("name") String name, @Param("status") Integer status, @Param("startTime") Date startTime,
+			@Param("endTime") Date endTime);
 
+	/**
+	 * 查询商户申请信息
+	 * @param orgId
+	 * @param code
+	 * @param name
+	 * @param status
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	List<MerchantApplyDTO> getMerchantApplyDTOs(@Param("orgId") Integer orgId, @Param("code") String code,
 			@Param("name") String name, @Param("status") Integer status, @Param("startTime") Date startTime,
 			@Param("endTime") Date endTime);

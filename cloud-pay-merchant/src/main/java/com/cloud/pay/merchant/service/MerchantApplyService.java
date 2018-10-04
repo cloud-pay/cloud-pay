@@ -67,6 +67,12 @@ public class MerchantApplyService {
 	private static final String SEQ_OFFSET = "00000000";
 	private AtomicInteger seq = new AtomicInteger(0);
 	
+	public List<MerchantApplyDTO> getOrgDTOs(Integer type, String code,
+			String name, Integer status,  Date startTime,
+			Date endTime) {
+		return baseInfoMapper.getOrgApplyDTOs(type, code, name, status, startTime, endTime);
+	}
+	
 	public List<MerchantApplyDTO> getMerchantDTOs(Integer orgId, String code,
 			String name, Integer status,  Date startTime,
 			Date endTime) {

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
 import com.cloud.pay.admin.entity.Const;
 import com.cloud.pay.admin.entity.ResponseModel;
@@ -40,21 +39,11 @@ public class OrgController extends BaseController{
 	private String menuUrl = "org/list";
 	
 	/**
-	 * 商戶列表
-	 * @return
-	 */
-	@RequestMapping(value="/dtos",method=RequestMethod.GET)
-	@ResponseBody
-	public String dtos(Model model, String type){
-		return JSON.toJSONString(merchantService.getMerchantDTOs(type));
-	}
-	
-	/**
-	 * 商戶列表
+	 * 机构列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Object list(Model model, Integer orgId, String code, String name, String createDateBegin,
+	public Object list(Model model, Integer type, String code, String name, String createDateBegin,
 			String createDateEnd){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -69,15 +58,14 @@ public class OrgController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchants", merchantService.getMerchantList(orgId, code, name, startTime, endTime));
-		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("merchants", merchantService.getMerchantList(type, code, name, startTime, endTime));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/org/orgList";
 	}
 	
 	/**
-	 * 冻结/解冻商戶路由配置
+	 * 冻结/解冻机构路由配置
 	 * @return
 	 */
 	@RequestMapping(value="/updateStatus",method=RequestMethod.POST)
@@ -102,7 +90,7 @@ public class OrgController extends BaseController{
 	}
 	
 	/**
-	 * 获取商戶
+	 * 获取机构
 	 * @return
 	 */
 	@RequestMapping(value="/get",method=RequestMethod.GET)

@@ -84,11 +84,11 @@ div.cbp label.font{
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    	 当前位置：商户操作信息
+    	 当前位置：机构操作信息
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
-    <li class="active">商户操作信息</li>
+    <li class="active">机构操作信息</li>
   </ol>
 </section>
 
@@ -96,7 +96,7 @@ div.cbp label.font{
 <section class="content">
 	 <div class="box">
             <div class="box-header">
-              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addMerchant"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加商户</button>
+              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addMerchant"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加机构</button>
               <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
 					<button class="btn btn-sm" id="resetBtn">重置</button>
             </div>
@@ -105,10 +105,12 @@ div.cbp label.font{
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="search_orgId">所属机构</label>
-										    <select name="search_orgId" class="form-control">
+											<label for="search_type">所属机构</label>
+										    <select name="search_type" class="form-control">
 										      <option value="">请选择</option>
-										      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+										      <option value="1">代理商</option>
+										      <option value="2">第三方支付</option>
+										      <option value="3">垫资商</option>
 										    </select>
 										</div>
 									</div>
@@ -116,7 +118,7 @@ div.cbp label.font{
 								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="search_code">商户编号</label>
+											<label for="search_code">机构编号</label>
 											<input type="text" class="form-control" id="search_code" name="search_code" maxlength="20"></input>		
 										</div>
 									</div>
@@ -124,7 +126,7 @@ div.cbp label.font{
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 									<div class="form-group">
 										<div class="form-line">
-											<label for="search_name">商户名称</label>
+											<label for="search_name">机构名称</label>
 											<input type="text" class="form-control" id="search_name" name="search_name" maxlength="20"></input>		
 										</div>
 									</div>
@@ -165,15 +167,14 @@ div.cbp label.font{
               <table id="roleList" class="table table-bordered table-striped">
                 <thead>
 	                <tr>
-	                  <th>商户编号</th>
-	                  <th>商户名称</th>
-	                  <th>商户类型</th>
-	                  <th>所属机构</th>
+	                  <th>机构编号</th>
+	                  <th>机构名称</th>
+	                  <th>机构类型</th>
 					  <th>审核状态</th>
 					  <th>经办时间</th>
 					  <th>经办人</th>
-	                  <th>更新时间</th>
-					  <th>更新人</th>
+	                  <th>审核时间</th>
+					  <th>审核人</th>
 	                  <th>操作</th>
 	                </tr>
                 </thead>
@@ -186,7 +187,6 @@ div.cbp label.font{
                   <td th:if="${merchant.type == 3}" th:text="垫资商"></td>
                   <td th:if="${merchant.type == 4}" th:text="企业商户"></td>
                   <td th:if="${merchant.type == 5}" th:text="个人商户"></td>
-                  <td th:text="${merchant.orgName}"></td>
                   <td th:if="${merchant.status == 1}" th:text="待审核"></td>
 				  <td th:if="${merchant.status == 2}" th:text="审核通过"></td>
 				  <td th:if="${merchant.status == 3}" th:text="审核不通过"></td>
@@ -211,7 +211,7 @@ div.cbp label.font{
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >
                 	<td colspan="7" align="center">
-						<h2>此商户无权限查看该页面</h2>
+						<h2>此机构无权限查看该页面</h2>
                 	</td>
                 </tr>
                 </tbody>
@@ -229,7 +229,7 @@ div.cbp label.font{
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="usermodelHead">添加商户</h4>
+				<h4 class="modal-title text-center" id="usermodelHead">添加机构</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
@@ -237,64 +237,48 @@ div.cbp label.font{
 				  <input type="hidden" name="id" value=""/>
 				  <input type="hidden" name="code" value=""/>
 				  <h2>基础资料： </h2>
-				  <div class="form-group">
-					    <label for="orgId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所属机构</label>
-					    <div class="col-sm-4">
-						    <select name="orgId" class="form-control">
-						      <option value="">请选择</option>
-						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
-						    </select>
-					    </div>
-					    <label for="type" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户类型</label>
-					    <div class="col-sm-4">
-						    <select name="type" class="form-control">
-						      <option value="">请选择</option>
-							  <option value="4">企业商户</option>
-							  <option value="5">个人商户</option>
-						    </select>
-					    </div>
-					  </div>
 				
 				  <div class="form-group">
-					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户名称</label>
+					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构名称</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="name" value="" id="name">
 					    </div>
-					    <label for="shortName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>商户简称</label>
+					    <label for="type" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构类型</label>
 					    <div class="col-sm-4">
-						    <input class="form-control" name="shortName" value="" id="shortName">
+						    <select name="type" class="form-control">
+						      <option value="">请选择</option>
+							  <option value="1">代理商</option>
+							  <option value="2">第三方支付</option>
+							  <option value="3">垫资商</option>
+						    </select>
 					    </div>
 					  </div>
 					  
 					<div class="form-group">
-					    <label for="industryCategory" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>行业类别</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="industryCategory" value="" id="industryCategory">
-					    </div>
 					    <label for="city" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所在城市</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="city" value="" id="city">
 					    </div>
-					  </div>
-					  
-					<div class="form-group">
 					    <label for="address" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>详细地址</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="address" value="" id="address">
 					    </div>
-					    <label for="legal" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人</label>
+					  </div>
+					  
+					<div class="form-group">
+					    <label for="legal" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构负责人</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="legal" value="" id="legal">
-					    </div>
-					  </div>
-					 <div class="form-group">
-					    <label for="email" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>邮箱</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="email" value="" id="email">
 					    </div>
 					    <label for="mobile" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人手机</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="mobile" value="" id="mobile">
+					    </div>
+					  </div>
+					 <div class="form-group">
+					    <label for="email" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人邮箱</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="email" value="" id="email">
 					    </div>
 					  </div>
 					  <h2>结算资料： </h2>
@@ -509,14 +493,14 @@ $(function(){
 	
 	//查询按钮事件
 	$("#searchBtn").off().on("click",function(){
-		var search_orgId = $("[name='search_orgId']").val();
+		var search_type = $("[name='search_type']").val();
 		var search_status = $("[name='search_status']").val();
 		var search_code = $("#search_code").val();
 		var search_name = $("#search_name").val();
 		var createDateBegin = $("#createDateBegin").val();
 		var createDateEnd = $("#createDateEnd").val();
-		window.location.href = _ctx+'/merchantApply/list?merchantType=merchant'
-			+'&orgId='+search_orgId
+		window.location.href = _ctx+'/orgApply/list?merchantType=org'
+			+'&orgId='+search_type
 			+'&status='+search_status
 			+'&merchantName='+search_name
 			+'&status='+search_status
@@ -526,7 +510,7 @@ $(function(){
 
 	//重置按钮事件
 	$("#resetBtn").off().on("click",function(){
-		$("[name='search_orgId']").val('');
+		$("[name='search_type']").val('');
 		$("[name='search_status']").val('');
 		$("#search_code").val('');
 		$("#search_name").val('');
@@ -586,14 +570,13 @@ $(function(){
     });
 	
 	$("#addMerchant").click(function(){
-		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","");
+		reloadModelData(_ctx+"/merchantApply/add","添加机构","添加","");
 		$("#merchantModal").modal("show");
 	});
 	
-	var BaseInfo = function(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
+	var BaseInfo = function(id, code, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
 		 this.id = id;
 		 this.code = code;
-		 this.orgId = orgId;
 		 this.name = name;
 		 this.shortName = shortName;
 		 this.type = type;
@@ -634,7 +617,6 @@ $(function(){
 		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
 		var code = $("input[name='code']").val();
-		var orgId = $("[name='orgId']").val();
 		var type = $("[name='type']").val();
 		var name = $("input[name='name']").val();
 		var shortName = $("input[name='shortName']").val();
@@ -644,7 +626,7 @@ $(function(){
 		var legal= $("input[name='legal']").val();
 		var email= $("input[name='email']").val();
 		var mobile= $("input[name='mobile']").val();
-		var baseInfo = new BaseInfo(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
+		var baseInfo = new BaseInfo(id, code, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
 		//alert(JSON.stringify(baseInfo));
 		var bankInfoId = $("input[name='bankInfoId']").val();
 		var bankId = $("[name='bankId']").val();
@@ -693,17 +675,17 @@ $(function(){
 	
 })
 
-//删除商户
+//删除机构
 function detail(id){
 	console.log(id);
-	reloadModelData("detail","商户详情","详情",id);
+	reloadModelData("detail","机构详情","详情",id);
 	$("#merchantModal").modal("show");
 }
 
-//审核商户
+//审核机构
 function audit(id){
 	console.log(id);
-	reloadModel(_ctx+"/merchantApply/audit","审核商户","审核",id);
+	reloadModel(_ctx+"/merchantApply/audit","审核机构","审核",id);
 	$("#auditModal").modal("show");
 }
 
@@ -719,9 +701,9 @@ $("#auditSubmit").click(function(){
 	var auditOptinion = $("[name='auditOptinion']").val();
 	var msg='';
     if(auditStatus == 2) {
-    	msg = '你确定此商户审核通过吗？';
+    	msg = '你确定此机构审核通过吗？';
     } else if(auditStatus == 3){
-    	msg = '你确定此商户审核不通过吗？';
+    	msg = '你确定此机构审核不通过吗？';
     }
 	if(confirm(msg)){
 		$.ajax({
@@ -742,10 +724,10 @@ $("#auditSubmit").click(function(){
 	}
 });
 
-//编辑商户
+//编辑机构
 function editMerchant(id){
 	console.log(id);
-	reloadModelData(_ctx+"/merchantApply/edit","编辑商户","更新",id);
+	reloadModelData(_ctx+"/merchantApply/edit","编辑机构","更新",id);
 	$("#merchantModal").modal("show");
 }
 
@@ -760,13 +742,13 @@ function checkAccount(){
 	var type = $("[name='type']").val();
 	if(type == ''){
 		$("[name='type']").focus();
-		alert("商户类型不能为空");
+		alert("机构类型不能为空");
 		return false;
 	}
 	var name = $("input[name='name']").val();
 	if(name == ''){
 		$("input[name='name']").focus();
-		alert("商户名称不能为空");
+		alert("机构名称不能为空");
 		return false;
 	}
 	var shortName = $("input[name='shortName']").val();

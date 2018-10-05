@@ -119,4 +119,42 @@ public class MerchantController extends BaseController{
 			return ResponseModel.getModel("提交失败", "failed", null);
 		}
 	}
+	
+	/**
+	 * 获取商戶秘钥
+	 * @return
+	 */
+	@RequestMapping(value="/getMerchantSecret",method=RequestMethod.GET)
+	@ResponseBody
+	public Object getMerchantSecret(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			ParameterMap map = this.getParameterMap();
+			Integer id = Integer.parseInt(map.getString("id"));
+			return ResponseModel.getModel("ok", "success", merchantService.selectByMerchantId(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+	}
+	
+	/**
+	 * 获取商戶通道号
+	 * @return
+	 */
+	@RequestMapping(value="/getMerchantChannel",method=RequestMethod.GET)
+	@ResponseBody
+	public Object getMerchantChannel(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			ParameterMap map = this.getParameterMap();
+			Integer id = Integer.parseInt(map.getString("id"));
+			return ResponseModel.getModel("ok", "success", merchantService.selectChennels(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+	}
 }

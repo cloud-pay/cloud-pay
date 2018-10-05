@@ -33,7 +33,7 @@
     where merchant_id = #{merchantId,jdbcType=INTEGER}
       and channel_id = #{channelId,jdbcType=INTEGER}
   </update>
-  <select id="selectByMerchantid" resultMap="BaseResultMap">
+  <select id="selectByMerchantId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from t_merchant_channel

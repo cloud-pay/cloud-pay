@@ -58,14 +58,14 @@ public class OrgController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchants", merchantService.getMerchantList(type, code, name, startTime, endTime));
+		model.addAttribute("merchants", merchantService.getOrgList(type, code, name, startTime, endTime));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/org/orgList";
 	}
 	
 	/**
-	 * 冻结/解冻机构路由配置
+	 * 冻结/解冻
 	 * @return
 	 */
 	@RequestMapping(value="/updateStatus",method=RequestMethod.POST)

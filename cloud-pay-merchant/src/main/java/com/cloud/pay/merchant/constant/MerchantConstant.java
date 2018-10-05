@@ -24,4 +24,9 @@ public class MerchantConstant {
 	public final static int CERT = 3;
 	/** 协议 */
 	public final static int PROTOCOL = 4;
+	
+	/** 可透资 */
+	public final static int OVERDRAW_YES = 1;
+	/** 不可透资 */
+	public final static int OVERDRAW_NO = 2;
 }

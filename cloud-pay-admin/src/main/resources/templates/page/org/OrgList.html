@@ -181,7 +181,7 @@ div.cbp label.font{
 	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 通道机构号</span>
-	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 查看密钥</span>
+	                  	<span data-toggle="tooltip" title="查看密钥" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'secret(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 查看密钥</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>
@@ -217,60 +217,44 @@ div.cbp label.font{
 				  <input type="hidden" name="code" value=""/>
 				  <h2>基础资料： </h2>
 				  <div class="form-group">
-					    <label for="orgId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所属机构</label>
+				  		<label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构名称</label>
 					    <div class="col-sm-4">
-						    <select name="orgId" class="form-control">
-						      <option value="">请选择</option>
-						      <option th:each="merchant : ${orgs}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
-						    </select>
+						    <input class="form-control" name="name" value="" id="name">
 					    </div>
 					    <label for="type" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构类型</label>
 					    <div class="col-sm-4">
 						    <select name="type" class="form-control">
 						      <option value="">请选择</option>
-							  <option value="4">企业机构</option>
-							  <option value="5">个人机构</option>
+							  <option value="1">代理商</option>
+							  <option value="2">第三方支付</option>
+							  <option value="3">垫资商</option>
 						    </select>
 					    </div>
 					  </div>
 				
-				  <div class="form-group">
-					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构名称</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="name" value="" id="name">
-					    </div>
-					    <label for="shortName" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>机构简称</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="shortName" value="" id="shortName">
-					    </div>
-					  </div>
 					  
 					<div class="form-group">
-					    <label for="industryCategory" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>行业类别</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="industryCategory" value="" id="industryCategory">
-					    </div>
 					    <label for="city" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所在城市</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="city" value="" id="city">
 					    </div>
-					  </div>
-					  
-					<div class="form-group">
 					    <label for="address" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>详细地址</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="address" value="" id="address">
 					    </div>
+					  </div>
+					  
+					<div class="form-group">
 					    <label for="legal" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="legal" value="" id="legal">
 					    </div>
-					  </div>
-					 <div class="form-group">
 					    <label for="email" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>邮箱</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="email" value="" id="email">
 					    </div>
+					  </div>
+					 <div class="form-group">
 					    <label for="mobile" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>负责人手机</label>
 					    <div class="col-sm-4">
 						    <input class="form-control" name="mobile" value="" id="mobile">
@@ -429,35 +413,22 @@ div.cbp label.font{
 	</div>
 </div>
 
-<!-- 审批模态框 -->
-<div class="modal fade" id="auditModal" tabindex="-1" role="dialog"
+<!-- 密钥模态框 -->
+<div class="modal fade" id="merchantSecret" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="usermodelHead">审核</h4>
+				<h4 class="modal-title text-center" id="usermodelHead">秘钥</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
-				  <input type="hidden" name="auditUrl" value=""/>
-				  <input type="hidden" name="auditId" value=""/>
 				  <div class="form-group">
-					    <label for="auditStatus" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>审核状态</label>
+					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>秘钥</label>
 					    <div class="col-sm-10">
-						    <select name="auditStatus" class="form-control">
-						      <option value="">请选择</option>
-							  <option value="2">审核通过</option>
-							  <option value="3">审核不通过</option>
-						    </select>
-					    </div>
-					  </div>
-				
-				  <div class="form-group">
-					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>审核意见</label>
-					    <div class="col-sm-10">
-					        <textarea class="form-control" rows="3" name="auditOptinion" id="name"></textarea>
+					        <textarea class="form-control" rows="3" name="secret" id="secret" readOnly="true"></textarea>
 					    </div>
 					  </div>
 				  
@@ -465,7 +436,6 @@ div.cbp label.font{
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-				<button type="submit" class="btn btn-success"  id="auditSubmit" >确定</button>
 			</div>
 		</div>
 	</div>
@@ -713,32 +683,7 @@ function reloadModelData(url,title,btntext,id){
 		$("input[name='payFee']").attr("readOnly","true");
 		$("[name='loanFeeType']").attr("readOnly","true");
 		$("input[name='loanFee']").attr("readOnly","true");
-	} else {
-		$("#imgSubmit").show();
-		$("[name='orgId']").attr("readOnly",false);
-		$("[name='type']").attr("readOnly",false);
-		$("input[name='name']").attr("readOnly",false);
-		$("input[name='shortName']").attr("readOnly",false);
-		$("input[name='industryCategory']").attr("readOnly",false);
-		$("[name='city']").attr("readOnly",false);
-		$("input[name='address']").attr("readOnly",false);
-		$("input[name='legal']").attr("readOnly",false);
-		$("input[name='email']").attr("readOnly",false);
-		$("input[name='mobile']").attr("readOnly",false);
-		$("input[name='bankInfoId']").attr("readOnly",false);
-		$("[name='bankId']").attr("readOnly",false);
-		$("input[name='bankName']").attr("readOnly",false);
-		$("[name='bankAccountType']").attr("readOnly",false);
-		$("input[name='bankCardNo']").attr("readOnly",false);
-		$("[name='certType']").attr("readOnly",false);
-		$("input[name='bankAccountName']").attr("readOnly",false);
-		$("input[name='certNo']").attr("readOnly",false);
-		$("input[name='mobileNo']").attr("readOnly",false);
-		$("[name='payFeeType']").attr("readOnly",false);
-		$("input[name='payFee']").attr("readOnly",false);
-		$("[name='loanFeeType']").attr("readOnly",false);
-		$("input[name='loanFee']").attr("readOnly",false);
-	}
+	} 
 }
 
 var businessImg = document.getElementById("businessImg");
@@ -817,6 +762,32 @@ function readFile4() {
     	$("#showProtocol").attr("src",this.result);
     }
  }
+ 
+ //秘钥
+function secret(id){
+	console.log(id);
+	reloadSecretData(id);
+	$("#merchantSecret").modal("show");
+}
+//加载模态框的数据
+function reloadSecretData(id){
+	if(id != '') {
+		$.ajax({
+			type:"GET",
+			url:_ctx+"/merchant/getMerchantSecret",
+			dataType:"json",
+			data:{id:id},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					$("#secret").val(data.data.secret); 
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
+}
 </script>
 </body>
 </html>

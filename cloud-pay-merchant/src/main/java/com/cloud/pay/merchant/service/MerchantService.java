@@ -1,5 +1,6 @@
 package com.cloud.pay.merchant.service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantChannel;
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
 import com.cloud.pay.merchant.entity.MerchantSecret;
 import com.cloud.pay.merchant.mapper.MerchantAttachementInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
@@ -141,6 +143,14 @@ public class MerchantService {
 		return merchantSecretMapper.selectByCode(code);
 	}
 	
+	/**
+	 * 保存商户
+	 * @param baseInfo
+	 * @param bankInfo
+	 * @param feeInfo
+	 * @param infos
+	 * @throws Exception
+	 */
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public void save(MerchantBaseInfo baseInfo, MerchantBankInfo bankInfo,
 			MerchantFeeInfo feeInfo, List<MerchantAttachementInfo> infos) throws Exception {
@@ -161,6 +171,13 @@ public class MerchantService {
 				attachementInfoMapper.insert(info);
 			}
 		}
+		//开通预缴户
+		MerchantPrepayInfo perpay = new MerchantPrepayInfo();
+		perpay.setMerchantId(baseInfo.getId());
+		perpay.setBalance(BigDecimal.ZERO);
+		perpay.setFreezeAmount(BigDecimal.ZERO);
+		perpay.setOverdraw(MerchantConstant.OVERDRAW_NO);
+		perpay.setCreateTime(new Date());
 	}
 	
 	/**
@@ -193,5 +210,14 @@ public class MerchantService {
 			}
 		}
 		return merchantMap;
+	}
+	
+	/**
+	 * 查询商户秘钥
+	 * @param merchantId
+	 * @return
+	 */
+	public MerchantSecret selectByMerchantId(Integer merchantId) {
+		return merchantSecretMapper.selectByPrimaryKey(merchantId);
 	}
 }

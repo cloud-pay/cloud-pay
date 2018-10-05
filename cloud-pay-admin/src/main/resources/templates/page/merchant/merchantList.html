@@ -193,8 +193,8 @@ div.cbp label.font{
                   		<span data-toggle="tooltip" title="冻结" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 0);'"><i class="fa fa-trash-o"></i> 冻结</span>
 	                  	<span data-toggle="tooltip" title="解冻" th:if="${merchant.status == 0}" class="btn btn-xs btn-danger" th:onclick="'updateStatus(\''+${merchant.id}+'\', 1);'"><i class="fa fa-trash-o"></i> 解冻</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
-	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 通道商户号</span>
-	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 查看密钥</span>
+	                  	<span data-toggle="tooltip" title="通道商户号" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'merchantChannel(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 通道商户号</span>
+	                  	<span data-toggle="tooltip" title="密钥" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'secret(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 查看密钥</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>
@@ -484,6 +484,89 @@ div.cbp label.font{
 	</div>
 </div>
 
+<!-- 密钥模态框 -->
+<div class="modal fade" id="merchantSecret" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="usermodelHead">秘钥</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+				  <div class="form-group">
+					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>秘钥</label>
+					    <div class="col-sm-10">
+					        <textarea class="form-control" rows="3" name="secret" id="secret" readOnly="true"></textarea>
+					    </div>
+					  </div>
+				  
+				 </form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 商户通道号模态框 -->
+<div class="modal fade" id="merchantChannelModal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="usermodelHead">商户通道号</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+				  <input type="hidden" name="url" value=""/>
+				  <input type="hidden" name="id" value=""/>
+				  <input type="hidden" name="code" value=""/>
+					<div class="form-group">
+					    <label for="channel1" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>通道1</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="channel1" value="" id="channel1">
+					    </div>
+					    <label for="merchantChannel1" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>通道商户号</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="merchantChannel1" value="" id="merchantChannel1">
+					    </div>
+					  </div>
+					 <div class="form-group" id="merchantChannelDiv2">
+					    <label for="channel2" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>通道2</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="channel2" value="" id="channel2">
+					    </div>
+					    <label for="merchantChannel2" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>通道商户号</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="merchantChannel2" value="" id="merchantChannel2">
+					    </div>
+					  </div>
+					 <div class="form-group" id="merchantChannelDiv3">
+					    <label for="channel3" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>通道3</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="channel3" value="" id="channel3">
+					    </div>
+					    <label for="merchantChannel3" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>通道商户号</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="merchantChannel3" value="" id="merchantChannel3">
+					    </div>
+					  </div>
+					  
+				 </form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
 <script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
 <script th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
@@ -729,32 +812,7 @@ function reloadModelData(url,title,btntext,id){
 		$("input[name='payFee']").attr("readOnly","true");
 		$("[name='loanFeeType']").attr("readOnly","true");
 		$("input[name='loanFee']").attr("readOnly","true");
-	} else {
-		$("#imgSubmit").show();
-		$("[name='orgId']").attr("readOnly",false);
-		$("[name='type']").attr("readOnly",false);
-		$("input[name='name']").attr("readOnly",false);
-		$("input[name='shortName']").attr("readOnly",false);
-		$("input[name='industryCategory']").attr("readOnly",false);
-		$("[name='city']").attr("readOnly",false);
-		$("input[name='address']").attr("readOnly",false);
-		$("input[name='legal']").attr("readOnly",false);
-		$("input[name='email']").attr("readOnly",false);
-		$("input[name='mobile']").attr("readOnly",false);
-		$("input[name='bankInfoId']").attr("readOnly",false);
-		$("[name='bankId']").attr("readOnly",false);
-		$("input[name='bankName']").attr("readOnly",false);
-		$("[name='bankAccountType']").attr("readOnly",false);
-		$("input[name='bankCardNo']").attr("readOnly",false);
-		$("[name='certType']").attr("readOnly",false);
-		$("input[name='bankAccountName']").attr("readOnly",false);
-		$("input[name='certNo']").attr("readOnly",false);
-		$("input[name='mobileNo']").attr("readOnly",false);
-		$("[name='payFeeType']").attr("readOnly",false);
-		$("input[name='payFee']").attr("readOnly",false);
-		$("[name='loanFeeType']").attr("readOnly",false);
-		$("input[name='loanFee']").attr("readOnly",false);
-	}
+	} 
 }
 
 var businessImg = document.getElementById("businessImg");
@@ -833,6 +891,61 @@ function readFile4() {
     	$("#showProtocol").attr("src",this.result);
     }
  }
+ 
+  //秘钥
+function secret(id){
+	console.log(id);
+	reloadSecretData(id);
+	$("#merchantSecret").modal("show");
+}
+//加载模态框的数据
+function reloadSecretData(id){
+	if(id != '') {
+		$.ajax({
+			type:"GET",
+			url:_ctx+"/merchant/getMerchantSecret",
+			dataType:"json",
+			data:{id:id},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					$("#secret").val(data.data.secret); 
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
+}
+
+  //商户通道号
+function merchantChannel(id){
+	console.log(id);
+	reloadMerchantChannelData(id);
+	$("#merchantChannelModal").modal("show");
+}
+//加载模态框的数据
+function reloadMerchantChannelData(id){
+	if(id != '') {
+		$.ajax({
+			type:"GET",
+			url:_ctx+"/merchant/getMerchantChannel",
+			dataType:"json",
+			data:{id:id},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					for(var i=0,l=data.data.length;i<l;i++){
+					    $("#channel" + (i+1)).val(data.data[i].channelId); 
+					     $("#merchantChannel" + (i+1)).val(data.data[i].merchantChannelCode); 
+					 }
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	}
+}
 </script>
 </body>
 </html>

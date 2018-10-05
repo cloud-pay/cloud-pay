@@ -9,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
 import com.cloud.pay.admin.controller.base.BaseController;
 import com.cloud.pay.admin.entity.Const;
 import com.cloud.pay.admin.entity.ResponseModel;
@@ -19,9 +17,8 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.merchant.service.MerchantPrepayJournalService;
 import com.cloud.pay.merchant.service.MerchantService;
-import com.cloud.pay.trade.entity.PrepayTrade;
-import com.cloud.pay.trade.service.PrepayTradeService;
 
 /**
  * 预缴户交易
@@ -29,20 +26,20 @@ import com.cloud.pay.trade.service.PrepayTradeService;
  *
  */
 @Controller
-@RequestMapping("/prepayTrade")
-public class PrepayTradeController extends BaseController {
+@RequestMapping("/journal")
+public class MerchantPrepayJournalController extends BaseController {
 
 	@Autowired
-	private PrepayTradeService tradeService;
+	private MerchantPrepayJournalService merchantPrepayJournalService;
 
 	@Autowired
 	private MerchantService merchantService;
 
-	private String menuUrl = "prepayTrade/list";
+	private String menuUrl = "journal/list";
 
 	
 	/**
-	 * 交易记录查询
+	 * 流水记录查询
 	 * @param model
 	 * @return
 	 */
@@ -74,31 +71,8 @@ public class PrepayTradeController extends BaseController {
 			}
 		} catch (Exception e) {
 		}
-		model.addAttribute("trades", tradeService.selectTradeList(merchantId, startTime, endTime));
-		return "page/prepayTrade/list";
+		model.addAttribute("journals", merchantPrepayJournalService.selectList(merchantId, startTime, endTime));
+		return "page/journal/list";
 	}
 	
-	/**
-	 * 保存预缴户交易
-	 * @return
-	 */
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	@ResponseBody
-	public Object add(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
-		try {
-			ParameterMap map = this.getParameterMap();
-			String trade = map.getString("trade");
-			PrepayTrade prepayTrade = JSON.parseObject(trade, PrepayTrade.class);
-			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
-			prepayTrade.setCreator(userId);
-			prepayTrade.setCreateTime(new Date());
-			tradeService.saveTrade(prepayTrade);
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
-		}
-		return ResponseModel.getModel("ok", "success", null);
-	}
 }

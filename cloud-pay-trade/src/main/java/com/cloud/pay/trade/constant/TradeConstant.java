@@ -2,7 +2,7 @@ package com.cloud.pay.trade.constant;
 
 /**
  * 交易常量
- * @author kftpay-core
+ * @author dbnaxlc
  *
  */
 public class TradeConstant {

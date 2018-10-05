@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 交易响应DTO
  * 
- * @author kftpay-core
+ * @author dbnaxlc
  *
  */
 public class PayResponseDTO implements Serializable {

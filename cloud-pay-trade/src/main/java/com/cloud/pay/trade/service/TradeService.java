@@ -75,7 +75,7 @@ public class TradeService {
 	
 	/**
 	 * 交易列表查询
-	 * @author 夏志强
+	 * @author dbnaxlc
 	 * @date 2018年9月14日 上午11:07:14
 	 * @param merchantId
 	 * @param orgId
@@ -94,7 +94,7 @@ public class TradeService {
 	
 	/**
 	 * 商户手续费统计
-	 * @author 夏志强
+	 * @author dbnaxlc
 	 * @date 2018年9月14日 下午3:12:42
 	 * @param merchantId
 	 * @param orgId

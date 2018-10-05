@@ -28,4 +28,40 @@
       #{amount,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
+  
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantPrepayJournalDTO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="debit" property="debit" jdbcType="INTEGER" />
+    <result column="name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectList" resultMap="BaseResultDTO">
+      SELECT
+			j.id,
+			j.debit,
+			m. NAME,
+			j.amount,
+			j.balance,
+			j.create_time
+		FROM
+			t_merchant_prepay_journal j,
+			t_merchant_prepay_info i,
+			t_merchant_base_info m
+		WHERE
+			j.prepay_id = i.id
+		AND i.merchant_id = m.id
+      <if test="merchantId != null" >
+        and m.id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and j.create_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and j.create_time &lt; #{endTime}
+      </if>
+      order by j.create_time desc
+  </select>
+  
 </mapper>

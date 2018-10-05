@@ -2,7 +2,7 @@ package com.cloud.pay.trade.exception;
 
 /**
  * 交易异常
- * @author kftpay-core
+ * @author dbnaxlc
  *
  */
 public class TradeException extends RuntimeException {

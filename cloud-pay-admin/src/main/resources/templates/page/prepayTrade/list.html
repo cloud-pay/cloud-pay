@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/css-head :: css-head">
+</head>
+<style>
+	textarea{
+		width:100%;
+		height:100px;
+	}
+	
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+
+.chk_1{
+    display: none;
+}
+.chk_1 + label {
+	background-color: #FFF;
+	border: 1px solid #C1CACA;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+	padding: 9px;
+	border-radius: 5px;
+	display: inline-block;
+	position: relative;
+	margin-right: 30px;
+}
+.chk_1 + label:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+.chk_1:checked + label {
+	background-color: #ECF2F7;
+	border: 1px solid #92A1AC;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+	color: #243441;
+}
+
+.chk_1:checked + label:after {
+	content: '\2714';
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	color: #758794;
+	width: 100%;
+	text-align: center;
+	font-size: 1.4em;
+	padding: 1px 0 0 0;
+	vertical-align: text-top;
+}
+div.cbp label.font{
+	text-align: center;
+	font-size: 1.4em;
+	vertical-align: text-top;
+	margin-top: -15px;
+	margin-left: -10px;
+}
+
+</style>
+<body>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    	 当前位置：預繳戶交易查詢
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
+    <li class="active">預繳戶交易查詢</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	 <div class="box">
+            <div class="box-header">
+              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="recharge"><i class="fa fa-plus"></i> &nbsp;&nbsp;充值</button>
+              <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="withdraw"><i class="fa fa-plus"></i> &nbsp;&nbsp;提現</button>
+              <button class="btn btn-primary btn-sm" id="searchBtn">查询</button>
+			  <button class="btn btn-sm" id="resetBtn">重置</button>
+            </div>
+				  
+				  <div class="row clearfix">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
+									<div class="form-group">
+										<div class="form-line">
+											<label for="search_merchantId">所属商户</label>
+										    <select name="search_merchantId" class="form-control">
+										      <option value="">请选择</option>
+										      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+										    </select>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
+									<div class="form-group">
+										<div class="form-line">
+											<label for="createDateBegin">交易开始日期</label>
+											<input type="text" class="form-control" id="createDateBegin" name="createDateBegin" readonly></input>		
+										</div>
+									</div>
+								</div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
+									<div class="form-group">
+										<div class="form-line">
+											<label for="createDateEnd">交易结束日期</label>
+											<input type="text" class="form-control" id="createDateEnd" name="createDateEnd" readonly></input>		
+										</div>
+									</div>
+								</div>		
+							</div>
+			
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="roleList" class="table table-bordered table-striped">
+                <thead>
+	                <tr>
+	                  <th>交易时间</th>
+	                  <th>商户编号</th>
+	                  <th>商户名称</th>
+					  <th>交易状态</th>
+					  <th>交易金额（元）</th>
+					  <th>交易类型</th>
+					  <th>創建时间</th>
+					  <th>创建人</th>
+	                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${QX.query == '1'}" th:each="trade,stat :${trades}">
+                  <td th:text="${#dates.format(trade.tradeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${trade.merchantCode}"></td>
+                  <td th:text="${trade.merchantName}"></td>
+				  <td th:if="${trade.status == 2}" th:text="成功"></td>
+				  <td th:if="${trade.status == 3}" th:text="失败"></td>
+				  <td th:text="${trade.amount}"></td>
+                  <td th:if="${trade.tradeType == 1}" th:text="充值"></td>
+				  <td th:if="${trade.tradeType == 2}" th:text="提现"></td>
+				  <td th:text="${#dates.format(trade.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td th:text="${trade.creator}"></td>
+                </tr>
+                <tr th:unless="${QX.query == '1'}" >
+                	<td colspan="7" align="center">
+						<h2>无权限查看该页面</h2>
+                	</td>
+                </tr>
+                </tbody>
+               </table>
+               
+       </div>
+</section>
+
+<!-- 新增或修改的模态框 -->
+<div class="modal fade" id="tradeModal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="usermodelHead">充值</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal"  role="form">
+				  <input type="hidden" name="url" value=""/>
+				  <input type="hidden" name="id" value=""/>
+				  <input type="hidden" name="pics" value=""/>
+				  <input type="hidden" name="oldpath" value=""/>
+				  <div class="form-group">
+					    <label for="tradeType" class="col-sm-2 control-label">交易类型</label>
+					    <div class="col-sm-10">
+						    <select name="tradeType" id="type" class="form-control" readOnly="true">
+						      <option value="">请选择</option>
+							  <option value="1">充值</option>
+							  <option value="2">提现</option>
+						    </select>
+					    </div>
+					  </div>
+				
+				  <div class="form-group">
+					    <label for="merchantId" class="col-sm-2 control-label" id="mLabel">所属商户</label>
+					    <div class="col-sm-10">
+						    <select name="merchantId" id="merchantId" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+						    </select>
+					    </div>
+					  </div>
+				  <div class="form-group">
+				    <label for="amount" class="col-sm-2 control-label">金额</label>
+				    <div class="col-sm-10">
+				      <input type="number" class="form-control" name="amount" value="" id="amount" placeholder="金额">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="remark" class="col-sm-2 control-label">备注</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" name="remark" value="" id="remark" placeholder="备注">
+				    </div>
+				  </div>
+				  
+				 </form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+				<button type="submit" class="btn btn-success"  id="imgSubmit" >确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
+<script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js}"></script> 
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+<script th:src="@{/js/path.js}"></script>
+<script>
+$(function(){
+	
+	//查询按钮事件
+	$("#searchBtn").off().on("click",function(){
+		var search_merchantId = $("[name='search_merchantId']").val();
+		var createDateBegin = $("#createDateBegin").val();
+		var createDateEnd = $("#createDateEnd").val();
+		window.location.href = _ctx+'/prepayTrade/list?'
+			+'merchantId='+search_merchantId
+			+'&createDateBegin='+createDateBegin
+			+'&createDateEnd='+createDateEnd;
+	});
+
+	//重置按钮事件
+	$("#resetBtn").off().on("click",function(){
+		$("[name='search_merchantId']").val('');
+		$("#createDateBegin").val('');
+		$("#createDateEnd").val('');
+	});
+	
+	initDateTimepicker();
+	//初始化日期插件
+	function initDateTimepicker(){
+		$("#createDateBegin").datetimepicker({
+			format:'yyyy-mm-dd hh:ii:ss',
+			language:'zh-CN',
+//			locale:moment.locale('zh-cn'),
+			todayBtn:true,
+			autoclose:true,
+//			todayHignlight:true,
+//			maxView:"year",
+//			minView:"hour",
+			showMeridian:1,
+			pickerPosition:"bottom-left"
+//			startDate:new Date()
+		}).on('click',function(e){
+			$("#createDateBegin").datetimepicker('setEndDate',$("#createDateEnd").val());
+		});
+		$("#createDateEnd").datetimepicker({
+			format:'yyyy-mm-dd hh:ii:ss',
+			language:'zh-CN',
+//			locale:moment.locale('zh-cn'),
+			todayBtn:true,
+			autoclose:true,
+//			todayHignlight:true,
+//			maxView:"year",
+//			minView:"hour",
+			showMeridian:1,
+			pickerPosition:"bottom-left"
+//			startDate:new Date()
+		}).on('click',function(e){
+			$("#createDateEnd").datetimepicker('setStartDate',$("#createDateBegin").val());
+		});
+	}
+	
+	
+	 //提示框
+    $("[data-toggle='tooltip']").tooltip();
+	//表格分页
+    $('#roleList').DataTable({
+    	"scrollX"	  : true,
+  		'paging'      : true,
+  	    'lengthChange': true,
+  	    'searching'   : true,
+  	    'ordering'    : true,
+  	    'info'        : true,
+  	    'autoWidth'   : false,
+  	  	"pagingType"  : "full_numbers",
+  	  	"pageLength"  : 10
+    });
+	
+})
+
+	$("#recharge").click(function(){
+		reloadModelData(_ctx+"/prepayTrade/add","充值", "1");
+		$("#tradeModal").modal("show");
+	});
+	
+	$("#withdraw").click(function(){
+		reloadModelData(_ctx+"/prepayTrade/add","提现", "2");
+		$("#tradeModal").modal("show");
+	});
+	
+	//加载模态框的数据
+	function reloadModelData(url,title, tradeType){
+		$("#tradeModal #usermodelHead").text(title);
+		$("#tradeModal #imgSubmit").text(title);
+		$("input[name='url']").val(url);
+		$("[name='tradeType']").val(tradeType);
+		$("[name='merchantId']").val('');
+		$("input[name='amount']").val('');
+		$("input[name='remark']").val('');
+	}
+	
+	var PrepayTrade = function(tradeType, merchantId, amount, remark) {
+		 this.tradeType = tradeType;
+		 this.merchantId = merchantId;
+		 this.amount = amount;
+		 this.remark = remark;
+	 }
+	
+	//确认按钮
+	$("#imgSubmit").click(function(){
+		var url = $("input[name='url']").val();
+		var tradeType = $("[name='tradeType']").val();
+		var merchantId = $("[name='merchantId']").val();
+		if(merchantId == ''){
+			$("input[name='merchantId']").focus();
+			alert("商户不能为空");
+			return false;
+		}
+		var amount = $("input[name='amount']").val();
+		if(amount == ''){
+			$("input[name='amount']").focus();
+			alert("金额不能为空");
+			return false;
+		}
+		var remark= $("input[name='remark']").val();
+		var trade = new PrepayTrade(tradeType, merchantId, amount, remark);
+		$.ajax({
+			type:"post",
+			url:url,
+			cache:false,
+			dataType:"json",
+			data:{trade:JSON.stringify(trade)},
+			success:function(data){
+				if(data.status == 'success'){
+					$("#tradeModal").modal("hide");
+					window.location.href=window.location.href;
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	});
+
+</script>
+</body>
+</html>

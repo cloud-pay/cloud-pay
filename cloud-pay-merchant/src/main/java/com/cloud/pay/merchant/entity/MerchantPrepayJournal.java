@@ -211,5 +211,15 @@ public class MerchantPrepayJournal {
 	public void setDebit(Integer debit) {
 		this.debit = debit;
 	}
+	
+	private Integer prepayTradeId;
 
+	public Integer getPrepayTradeId() {
+		return prepayTradeId;
+	}
+
+	public void setPrepayTradeId(Integer prepayTradeId) {
+		this.prepayTradeId = prepayTradeId;
+	}
+	
 }

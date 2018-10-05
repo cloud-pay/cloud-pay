@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.trade.mapper.PrepayTradeMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.trade.entity.PrepayTrade" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+    <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, merchant_id, trade_type, trade_time, amount, status, remark, creator, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_prepay_trade
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_prepay_trade
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.trade.entity.PrepayTrade" useGeneratedKeys="true" keyProperty="id">
+    insert into t_prepay_trade (id, merchant_id, trade_type, 
+      trade_time, amount, status, remark, creator, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, #{tradeType,jdbcType=INTEGER}, 
+      #{tradeTime,jdbcType=TIMESTAMP}, #{amount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.trade.entity.PrepayTrade" >
+    update t_prepay_trade
+    set merchant_id = #{merchantId,jdbcType=INTEGER},
+      trade_type = #{tradeType,jdbcType=INTEGER},
+      trade_time = #{tradeTime,jdbcType=TIMESTAMP},
+      amount = #{amount,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.PrepayTradeDTO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+    <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="code" property="merchantCode" jdbcType="VARCHAR" />
+    <result column="name" property="merchantName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectTradeList" resultMap="BaseResultDTO" >
+    select t.id, t.merchant_id, t.trade_type, t.trade_time, t.amount, t.status, t.remark, m.code, m.name, t.creator, t.create_time
+    from t_prepay_trade t, t_merchant_base_info m
+    where t.merchant_id = m.id
+      <if test="merchantId != null" >
+        and t.merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and t.trade_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and t.trade_time &lt; #{endTime}
+      </if> 
+  </select>
+</mapper>

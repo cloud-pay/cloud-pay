@@ -5,7 +5,7 @@ package com.cloud.pay.trade.exception;
  * @author kftpay-core
  *
  */
-public class TradeException extends Exception {
+public class TradeException extends RuntimeException {
 
 	private static final long serialVersionUID = -2538437452138756315L;
 	

@@ -29,6 +29,7 @@ import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
 import com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper;
+import com.cloud.pay.merchant.mapper.MerchantPrepayInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantSecretMapper;
 import com.cloud.pay.merchant.util.MD5;
 
@@ -52,6 +53,9 @@ public class MerchantService {
 	
 	@Autowired
 	private MerchantChannelMapper merchantChannelMapper;
+	
+	@Autowired
+	private MerchantPrepayInfoMapper merchantPrepayInfoMapper;
 
 	public List<MerchantDTO> getMerchantDTOs(String type) {
 		return baseInfoMapper.getMerchantDTOs(type);
@@ -178,6 +182,10 @@ public class MerchantService {
 		perpay.setFreezeAmount(BigDecimal.ZERO);
 		perpay.setOverdraw(MerchantConstant.OVERDRAW_NO);
 		perpay.setCreateTime(new Date());
+		merchantPrepayInfoMapper.insert(perpay);
+		perpay.setDigest(MD5.md5(String.valueOf(perpay.getBalance()) + "|" + perpay.getFreezeAmount() , 
+				String.valueOf(perpay.getMerchantId())));
+		merchantPrepayInfoMapper.updateByPrimaryKey(perpay);
 	}
 	
 	/**

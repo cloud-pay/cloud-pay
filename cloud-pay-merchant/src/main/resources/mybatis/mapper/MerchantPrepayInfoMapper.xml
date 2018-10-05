@@ -8,7 +8,7 @@
     <result column="freeze_amount" property="freezeAmount" jdbcType="DECIMAL" />
     <result column="overdraw" property="overdraw" jdbcType="INTEGER" />
     <result column="digest" property="digest" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="DATE" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, merchant_id, balance, freeze_amount, overdraw, digest, create_time
@@ -23,12 +23,12 @@
     delete from t_merchant_prepay_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantPrepayInfo" >
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantPrepayInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into t_merchant_prepay_info (id, merchant_id, balance, 
       freeze_amount, overdraw, digest, create_time
       )
     values (#{id,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, 
-      #{freezeAmount,jdbcType=DECIMAL}, #{overdraw,jdbcType=INTEGER}, #{digest,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}
+      #{freezeAmount,jdbcType=DECIMAL}, #{overdraw,jdbcType=INTEGER}, #{digest,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantPrepayInfo" >
@@ -47,7 +47,7 @@
         overdraw = #{overdraw,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=DATE},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -59,4 +59,11 @@
       digest = #{digest,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="lockByMerchantId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_prepay_info
+    where merchant_id = #{merchantId,jdbcType=INTEGER} for update
+  </select>
 </mapper>

@@ -163,4 +163,12 @@ public interface TradeMapper {
 	 */
 	TradeDTO selectTradeByMerIdAndOrderNo(@Param("merchantId")Integer merchantId,@Param("orderNo")String orderNo);
 	
+	
+	/**
+	 * 根据商户ID和对账日期获取交易信息
+	 * @param merchantId
+	 * @param reconDate
+	 * @return
+	 */
+	List<TradeDTO> selectListByMerIdAndReconDate(@Param("merchantId")Integer merchantId,@Param("reconDate")Date reconDate);
 }

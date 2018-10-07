@@ -594,4 +594,20 @@
 	 where t.merchant_id = #{merchantId,jdbcType=INTEGER}
 	 and t.order_no = #{orderNo,jdbcType=VARCHAR}
   </select>
+  
+  <select id = "selectListByMerIdAndReconDate" resultMap="BaseResultDTO">
+     select  t.id,
+       t.order_no,
+       t.merchant_id,
+       t.trade_time,
+       t.trade_amount,
+       t.`status`,
+       t.channel_id,
+       t.payee_bank_card,
+       t.payee_bank_code,
+       t.payee_name
+	 from t_trade t
+	 where t.merchant_id = #{merchantId,jdbcType=INTEGER}
+	 AND DATE_FORMAT(t.recon_date,'%Y-%m-%d 00:00:00') =  #{reconDate,jdbcType=TIMESTAMP}
+  </select>
 </mapper>

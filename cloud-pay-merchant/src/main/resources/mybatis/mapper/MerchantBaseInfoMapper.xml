@@ -318,4 +318,11 @@
 	    from t_merchant_base_info
 	    where code = #{code,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="getAllNormalMerchant" resultMap="BaseResultDTO" >
+	    SELECT id, name,code
+		FROM 
+			t_merchant_base_info
+		where status = 1
+	</select>
 </mapper>

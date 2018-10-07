@@ -100,4 +100,10 @@ public interface MerchantBaseInfoMapper {
 	 */
 	MerchantBaseInfo selectByCode(String code);
 	
+	/**
+	 * 获取所有正常状态的商户
+	 * @return
+	 */
+	List<MerchantDTO> getAllNormalMerchant();
+	
 }

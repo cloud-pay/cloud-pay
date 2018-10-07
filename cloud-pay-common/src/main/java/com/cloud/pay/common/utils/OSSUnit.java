@@ -76,21 +76,20 @@ public class OSSUnit {
     }  
     
     
-    /** 
-     * 向阿里云的OSS存储中存储文件  --file也可以用InputStream替代 
-     * @param client OSS客户端 
-     * @param file 上传文件 
-     * @param bucketName bucket名称 
-     * @param diskName 上传文件的目录  --bucket下文件的路径 
+    
+    /**
+     * 存储文件到OSS服务器
+     * @param is 输入文件流
+     * @param fileName 文件名称
+     * @param bucketName bucket名称
+     * @param fileFullPath bucket下的文件全路径
      * @return String 唯一MD5数字签名 
-     * */  
-    public static final String uploadObject2OSS(OSSClient client, File file, String bucketName, String diskName,String appId) {  
-        String resultStr = null;  
-        try {  
-            InputStream is = new FileInputStream(file);  
-            String fileName = file.getName();  
-            Long fileSize = file.length();  
-            //创建上传Object的Metadata  
+     */
+    public static final String uploadObject2OSS(InputStream is,String fileName,Long fileSize,String bucketName,String fileFullPath) {
+    	String resultStr = null;  
+    	try {
+    		OSSClient client = getOSSClient();
+    		 //创建上传Object的Metadata  
             ObjectMetadata metadata = new ObjectMetadata();  
             metadata.setContentLength(is.available());  
             metadata.setCacheControl("no-cache");  
@@ -98,14 +97,14 @@ public class OSSUnit {
             metadata.setContentEncoding("utf-8");  
             metadata.setContentType(getContentType(fileName));  
             metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte."); 
-            PutObjectResult putResult = client.putObject(new PutObjectRequest(bucketName, diskName + fileName, is, metadata));  
+            PutObjectResult putResult = client.putObject(new PutObjectRequest(bucketName, fileFullPath, is, metadata));  
             //解析结果  
             resultStr = putResult.getETag();  
-        } catch (Exception e) {  
+    	}catch (Exception e) {  
         	logger.error("上传阿里云OSS服务器异常." + e.getMessage(), e);  
         }  
-        return resultStr;  
-    }  
+    	return resultStr;
+    }
     
     /** 
      * 向阿里云的OSS存储中存储文件  --file也可以用InputStream替代 (不会异步通知服务器)
@@ -214,17 +213,17 @@ public class OSSUnit {
       }    
          
       public static void main(String[] args) throws FileNotFoundException, IOException, ParserConfigurationException, JDOMException {
-    	  XMLOutputter XMLOut = new XMLOutputter(FormatXML());  //生成xml文件 
-    	  String filePath = "D:\\file\\upload\\c3\\zxywUserApiSzTest\\180103_193300_201801030000000094\\cmd.xml";
-    	  //XMLOut.output(creatXml(), new FileOutputStream(filePath));  
-    	  String message = uploadObject2OSS(getOSSClient(), new File(filePath), "rcmd", "c3/zxywUserApiSzTest/180103_193300_201801030000000094/","zxywUserApiSzTest");
-    	  if(!"".equals(message)){
-    		  InputStream inputStream = getOSS2InputStream(getOSSClient(), "rcmd", "c3/zxywUserApiSzTest/180103_193300_201801030000000094/", "cmd.result.xml");
-    		  SAXBuilder builder = new SAXBuilder();
-    		  Document doc = builder.build(inputStream);
-    		  XMLOut.output(doc, new FileOutputStream("D:\\file\\upload\\c3\\zxywUserApiSzTest\\180103_193300_201801030000000094\\cmd.result.xml"));  
-    	  }
-    	  logger.info(message);
+//    	  XMLOutputter XMLOut = new XMLOutputter(FormatXML());  //生成xml文件 
+//    	  String filePath = "D:\\file\\upload\\c3\\zxywUserApiSzTest\\180103_193300_201801030000000094\\cmd.xml";
+//    	  //XMLOut.output(creatXml(), new FileOutputStream(filePath));  
+//    	  String message = uploadObject2OSS(getOSSClient(), new File(filePath), "rcmd", "c3/zxywUserApiSzTest/180103_193300_201801030000000094/","zxywUserApiSzTest");
+//    	  if(!"".equals(message)){
+//    		  InputStream inputStream = getOSS2InputStream(getOSSClient(), "rcmd", "c3/zxywUserApiSzTest/180103_193300_201801030000000094/", "cmd.result.xml");
+//    		  SAXBuilder builder = new SAXBuilder();
+//    		  Document doc = builder.build(inputStream);
+//    		  XMLOut.output(doc, new FileOutputStream("D:\\file\\upload\\c3\\zxywUserApiSzTest\\180103_193300_201801030000000094\\cmd.result.xml"));  
+//    	  }
+//    	  logger.info(message);
 	  }
       
       private static Format FormatXML(){    

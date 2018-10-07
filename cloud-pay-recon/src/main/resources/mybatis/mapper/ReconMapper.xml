@@ -405,4 +405,11 @@
       </if>
       ORDER by r.ACCOUNT_DATE desc
   </select>
+  
+  <select id="selectListByReconDate" resultMap="BaseResultMap">
+      select 
+       <include refid="Base_Column_List" />
+      from t_recon
+      where ACCOUNT_DATE = #{reconDate,jdbcType=DATE}
+  </select>
 </mapper>

@@ -112,5 +112,12 @@ public interface ReconMapper {
      * @return
      */
     List<ReconDTO> queryReconList(@Param("reconStatus")Integer reconStatus,@Param("channelName")String channelName,@Param("tradeDate")Date tradeDate);
+    
+    /**
+     * 根据对账日期获取所有渠道的对账信息
+     * @param reconDate
+     * @return
+     */
+    List<Recon> selectListByReconDate(Date reconDate);
 
 }

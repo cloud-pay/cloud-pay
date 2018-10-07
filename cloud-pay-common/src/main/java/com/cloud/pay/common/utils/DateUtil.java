@@ -10,13 +10,23 @@ import java.util.Date;
  * 这是一个日期 格式转换 的类
  */
 public class DateUtil {
-	private final static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+	
+	 //日期格式
+    public static final String DATE_DAY_FORMAT = "yyyy-MM-dd";
+    
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    
+    public static final String DATE_YEAR_FORMAT = "yyyy";
+    
+    public static final String DATE_DAYS_FORMART = "yyyyMMdd";
+	
+	private final static SimpleDateFormat sdfYear = new SimpleDateFormat(DATE_YEAR_FORMAT);
 
-	private final static SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
+	private final static SimpleDateFormat sdfDay = new SimpleDateFormat(DATE_DAY_FORMAT);
 
-	private final static SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
+	private final static SimpleDateFormat sdfDays = new SimpleDateFormat(DATE_DAYS_FORMART);
 
-	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final static SimpleDateFormat sdfTime = new SimpleDateFormat(DATE_TIME_FORMAT);
 
 	/**
 	 * 获取YYYY格式

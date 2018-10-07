@@ -65,7 +65,6 @@ public class CloudApiTradeBatchPayHandler implements ICloudPayApiHandler<CloudAp
 			log.info("批量代付，响应结果：{}",result);
 			return result;
 		}
-		//TODO .....
 		BatchTrade batchTrade = new BatchTrade();
 		batchTrade.setPayerMerchantId(baseInfo.getId());
 		batchTrade.setBatchNo(reqParam.getBatchNo());

@@ -99,13 +99,13 @@ public class BohaiReconService implements IReconServiceHandler {
 				reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(postPoneTrade, recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode(),"延期对账"));
 			}
 			
-			//step4 TODO.... 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
+			//step4 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
 	        List<TradeDTO> exceptionTrade = tradeMapper.selectExceptionRecord(reconDate);
 	        if(null != exceptionTrade && exceptionTrade.size() > 0 ) {
 	        	log.info("更新不平帐的记录");
 	        	reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(exceptionTrade, recon.getId(), ReconExceptionTypeEnum.EXCEPTION_TYPE_MISMATH.getTypeCode(),"数据不匹配"));
 	        }
-			//step7 TODO.... 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
+			//step7 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
 		    int tradeCount = 100;
 		    List<ReconExceptionBohaiDTO> exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId(),recon.getId());
 		    int exceptionC = 0;

@@ -10,9 +10,9 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.http.HttpStatus;
 
-@MapperScan({"com.cloud.pay.trade.mapper", "com.cloud.pay.merchant.mapper"})
+@MapperScan({"com.cloud.pay.trade.mapper", "com.cloud.pay.merchant.mapper","com.cloud.pay.common.mapper"})
 @ServletComponentScan
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages= {"com.cloud.pay.trade","com.cloud.pay.merchant","com.cloud.pay.common"})
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
 
 	public static void main(String[] args) {

@@ -19,11 +19,12 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.Bucket;
-import com.aliyun.oss.model.Callback;
-import com.aliyun.oss.model.Callback.CalbackBodyType;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectRequest;
@@ -33,23 +34,25 @@ import com.aliyun.oss.model.PutObjectResult;
  * 阿里云OSS
  * @author wangy
  */
+@Service
 public class OSSUnit {
   
 	private static final Logger logger = LoggerFactory.getLogger(OSSUnit.class);
-	
-	private static final String endpoint = "oss-cn-shenzhen.aliyuncs.com";
-	
-	private static final String accessKeyId = "LTAIe4Tc6yPIobRR";
-	
-	private static final String secretAccessKey = "qfwqlvhGnPBwFnyvlH193J8CLueHfw";
 
 	
+	public static String endpoint;
+	
+	
+	public static String accessKeyId;
+	
+	
+	public static String secretAccessKey;
 	
     /** 
      * 获取阿里云OSS客户端对象 
      * */  
-    public static final OSSClient getOSSClient(){  
-        return new OSSClient(endpoint,accessKeyId, secretAccessKey);  
+    public static OSSClient getOSSClient(){  
+        return new OSSClient(endpoint,accessKeyId, secretAccessKey); 
     }  
     
     /** 
@@ -258,5 +261,33 @@ public class OSSUnit {
     	  Document document=new Document(root);
     	  return document;
       }
-   
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	@Value("${cloud.alipay.oss.endpoint}")
+	public void setEndpoint(String endpoint) {
+		OSSUnit.endpoint = endpoint;
+	}
+
+	public String getAccessKeyId() {
+		return accessKeyId;
+	}
+
+	@Value("${cloud.alipay.oss.accessKeyId}")
+	public void setAccessKeyId(String accessKeyId) {
+		OSSUnit.accessKeyId = accessKeyId;
+	}
+
+	public String getSecretAccessKey() {
+		return secretAccessKey;
+	}
+
+	@Value("${cloud.alipay.oss.secretAccessKey}")
+	public void setSecretAccessKey(String secretAccessKey) {
+		OSSUnit.secretAccessKey = secretAccessKey;
+	}
+      
+      
 }

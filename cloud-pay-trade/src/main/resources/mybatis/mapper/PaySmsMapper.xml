@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.trade.mapper.PaySmsMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.trade.entity.PaySms" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="sms_code" property="smsCode" jdbcType="VARCHAR" />
+    <result column="sms_biz_id" property="smsBizId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="verfiy_result" property="verfiyResult" jdbcType="INTEGER" />
+    <result column="verify_times" property="verifyTimes" jdbcType="INTEGER" />
+    <result column="verify_time" property="verifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, batch_no, sms_code, sms_biz_id, create_time, verfiy_result, verify_times, verify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_pay_sms
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_pay_sms
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cloud.pay.trade.entity.PaySms" >
+    insert into t_pay_sms (id, batch_no, sms_code, 
+      sms_biz_id, create_time, verfiy_result, 
+      verify_times, verify_time)
+    values (#{id,jdbcType=INTEGER}, #{batchNo,jdbcType=VARCHAR}, #{smsCode,jdbcType=VARCHAR}, 
+      #{smsBizId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{verfiyResult,jdbcType=INTEGER}, 
+      #{verifyTimes,jdbcType=INTEGER}, #{verifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cloud.pay.trade.entity.PaySms" >
+    insert into t_pay_sms
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="batchNo != null" >
+        batch_no,
+      </if>
+      <if test="smsCode != null" >
+        sms_code,
+      </if>
+      <if test="smsBizId != null" >
+        sms_biz_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="verfiyResult != null" >
+        verfiy_result,
+      </if>
+      <if test="verifyTimes != null" >
+        verify_times,
+      </if>
+      <if test="verifyTime != null" >
+        verify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="smsCode != null" >
+        #{smsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="smsBizId != null" >
+        #{smsBizId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verfiyResult != null" >
+        #{verfiyResult,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTimes != null" >
+        #{verifyTimes,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTime != null" >
+        #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.trade.entity.PaySms" >
+    update t_pay_sms
+    <set >
+      <if test="batchNo != null" >
+        batch_no = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="smsCode != null" >
+        sms_code = #{smsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="smsBizId != null" >
+        sms_biz_id = #{smsBizId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verfiyResult != null" >
+        verfiy_result = #{verfiyResult,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTimes != null" >
+        verify_times = #{verifyTimes,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTime != null" >
+        verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.trade.entity.PaySms" >
+    update t_pay_sms
+    set batch_no = #{batchNo,jdbcType=VARCHAR},
+      sms_code = #{smsCode,jdbcType=VARCHAR},
+      sms_biz_id = #{smsBizId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      verfiy_result = #{verfiyResult,jdbcType=INTEGER},
+      verify_times = #{verifyTimes,jdbcType=INTEGER},
+      verify_time = #{verifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByBatchNo" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_pay_sms
+    where id = (
+		select max(id) from t_pay_sms where batch_no=#{batchNo,jdbcType=VARCHAR})
+  </select>
+  <update id="updateVerifyResult" parameterType="com.cloud.pay.trade.entity.PaySms" >
+    update t_pay_sms
+    set verfiy_result = #{verfiyResult,jdbcType=INTEGER},
+      verify_times = #{verifyTimes,jdbcType=INTEGER},
+      verify_time = #{verifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

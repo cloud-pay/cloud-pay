@@ -364,3 +364,16 @@ CREATE TABLE `t_merchant_prepay_journal` (
   `create_time` date DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='商户预缴户变动';
+
+CREATE TABLE `t_pay_sms` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `batch_no` varchar(32) DEFAULT NULL COMMENT '批次号',
+  `sms_code` varchar(6) DEFAULT NULL COMMENT '短信验证码',
+  `sms_biz_id` varchar(255) DEFAULT NULL COMMENT '短信流水号',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `verfiy_result` int(1) DEFAULT NULL COMMENT '验证结果(0未验证；1成功；2失败；3超过有效期；4超过最大验证次数)',
+  `verify_times` int(1) DEFAULT NULL COMMENT '验证次数',
+  `verify_time` datetime DEFAULT NULL COMMENT '验证时间',
+  PRIMARY KEY (`id`),
+  KEY `INX_BATCH_NO` (`batch_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='手工代付短信记录';

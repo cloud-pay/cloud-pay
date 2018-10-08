@@ -200,7 +200,7 @@ public class BatchTradeController extends BaseController{
 			batchTrade.setAuditor(userId);
 			batchTrade.setAuditTime(new Date());
 			batchTrade.setId(Integer.parseInt(map.getString("id")));
-			batchTradeService.audit(batchTrade);
+			batchTradeService.audit(batchTrade, smsCode);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

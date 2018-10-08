@@ -12,6 +12,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,15 +31,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.Base64;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
+import com.cloud.pay.trade.conf.SmsConfig;
+import com.cloud.pay.trade.constant.SmsConstant;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.entity.BatchTrade;
+import com.cloud.pay.trade.entity.PaySms;
 import com.cloud.pay.trade.entity.Trade;
+import com.cloud.pay.trade.exception.TradeException;
 import com.cloud.pay.trade.mapper.BatchTradeMapper;
+import com.cloud.pay.trade.mapper.PaySmsMapper;
 import com.cloud.pay.trade.mapper.TradeMapper;
 
 
@@ -65,6 +72,11 @@ public class BatchTradeService {
 	private final static String TRADE_SQL = "insert into t_trade (order_no, merchant_id, trade_amount, "
 			+ "status, payer_id, payee_name, payee_bank_card, payee_bank_code, remark, batch_no, payee_bank_name, payee_bank_acct_type) "
 			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)";
+	
+	private String sources = "0123456789";
+	
+	@Autowired
+	private PaySmsMapper paySmsMapper;
 
 	@SuppressWarnings({ "null", "deprecation" })
 	@Transactional
@@ -341,9 +353,29 @@ public class BatchTradeService {
 	}
 	
 	@Transactional
-	public void audit(BatchTrade batchTrade) {
+	public void audit(BatchTrade batchTrade, String smsCode) {
 		batchTradeMapper.audit(batchTrade);
 		if(batchTrade.getStatus() == 2) {
+			//验证短信验证码
+			PaySms sms = paySmsMapper.selectByBatchNo(batchTrade.getBatchNo());
+			log.info("手工代付短信验证码信息：{}", sms);
+			SmsConfig config = new SmsConfig();
+			if(sms.getVerfiyResult() != SmsConstant.VERIFY_SUCCESS 
+					&& sms.getVerifyTimes() < config.getVerifyMaxTimes()
+					&& getDatePoor(new Date(), sms.getVerifyTime(), config.getExpiryTime())) {
+				sms.setVerifyTimes(1 + sms.getVerifyTimes());
+				sms.setVerifyTime(new Date());
+				if(!smsCode.equals(sms.getSmsCode())) {
+					log.info("手工代付短信验证码校验未通过");
+					sms.setVerfiyResult(SmsConstant.VERIFY_FAIL);
+					throw new TradeException("验证码不通过", SmsConstant.VERIFY_FAIL_CODE);
+				} else {
+					sms.setVerfiyResult(SmsConstant.VERIFY_SUCCESS);
+				}
+				paySmsMapper.updateVerifyResult(sms);
+			} else {
+				throw new TradeException("验证码不通过", SmsConstant.VERIFY_FAIL_CODE);
+			}
 			tradeMapper.updateByBatchNo(new Date(), 1, batchTrade.getBatchNo());
 			//TODO 异步发起批量交易
 		} else {
@@ -351,6 +383,11 @@ public class BatchTradeService {
 			tradeMapper.updateByBatchNo(new Date(), 3, batchTrade.getBatchNo());
 		}
 		
+	}
+	
+	private boolean getDatePoor(Date endDate, Date nowDate, int expiryDate) {
+	    long diff = endDate.getTime() - nowDate.getTime();
+	    return diff < 1000l * 60 * expiryDate;
 	}
 	
 	/**
@@ -362,4 +399,25 @@ public class BatchTradeService {
 	public BatchTradeDTO getBatchByBatchNo(String batchNo,Integer merchantId) {
 		 return batchTradeMapper.queryBatchByBatchNo(batchNo, merchantId);
 	}
+	
+	public String getSmsCode(String batchNo, String phoneNumber) {
+		String smsCode = null;
+		Random rand = new Random();
+		StringBuffer sbCode = new StringBuffer();
+		for (int j = 0; j < 6; j++) {
+			sbCode.append(sources.charAt(rand.nextInt(9)) + "");
+		}
+		smsCode = sbCode.toString();
+		SendSmsResponse response = SmsService.sendPaySms(phoneNumber, smsCode);
+		PaySms paySms = new PaySms();
+		paySms.setBatchNo(batchNo);
+		paySms.setCreateTime(new Date());
+		paySms.setSmsCode(smsCode);
+		paySms.setSmsBizId(response.getBizId());
+		paySms.setVerfiyResult(SmsConstant.VERIFY_NO);
+		paySms.setVerifyTimes(0);
+		paySmsMapper.insert(paySms);
+		return smsCode;
+	}
+	
 }

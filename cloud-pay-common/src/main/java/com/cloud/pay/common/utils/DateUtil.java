@@ -240,6 +240,8 @@ public class DateUtil {
 			return "" + format;
 		}
 	}
+	
+	
 
 	/**
 	 * 时间戳转时间
@@ -256,11 +258,12 @@ public class DateUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getDays());
-		System.out.println(getAfterDayWeek("3"));
-		// System.out.println("==UTC时间:"+getUTCTime());
-		// System.out.println("=东八区时间:"+getLocalTimeFromUTC(getUTCTime()));
-		System.out.println(getTime());
+//		System.out.println(getDays());
+//		System.out.println(getAfterDayWeek("3"));
+//		// System.out.println("==UTC时间:"+getUTCTime());
+//		// System.out.println("=东八区时间:"+getLocalTimeFromUTC(getUTCTime()));
+//		System.out.println(getTime());
+//		System.out.println(formatDate(, format));
 	}
 
 }

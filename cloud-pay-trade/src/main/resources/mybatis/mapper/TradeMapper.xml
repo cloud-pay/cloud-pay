@@ -605,7 +605,8 @@
        t.channel_id,
        t.payee_bank_card,
        t.payee_bank_code,
-       t.payee_name
+       t.payee_name,
+       t.recon_status
 	 from t_trade t
 	 where t.merchant_id = #{merchantId,jdbcType=INTEGER}
 	 AND DATE_FORMAT(t.recon_date,'%Y-%m-%d 00:00:00') =  #{reconDate,jdbcType=TIMESTAMP}

@@ -1,5 +1,8 @@
 package com.cloud.pay.recon.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +22,7 @@ import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;
+import com.cloud.pay.common.utils.FileUtils;
 import com.cloud.pay.merchant.dto.MerchantDTO;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.recon.dto.ReconDTO;
@@ -33,10 +37,10 @@ public class ReconService {
 	
 	
 	
-	@Value("${cloud.recon.merchant}")
+	@Value("${cloud.merchant.recon.path}")
 	private String merchantReconFilePath;
 	
-	@Value("${cloud.recon.agent}")
+	@Value("${cloud.agent.recon.path}")
 	private String agentReconFilePath;
 	
 	@Autowired
@@ -189,8 +193,30 @@ public class ReconService {
 			log.info("商户{}对账日期{}不存在交易记录",merchant.getName(),reconDate);
 			return;
 		}
-		//生成对账文件，并上传到OSS服务器
-		
+		try {
+			//生成对账文件，并上传到OSS服务器
+			String filePath = "";
+			String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+			if(merchantReconFilePath.endsWith(File.separator)) {
+				filePath = merchantReconFilePath +  reconDays;
+			}else {
+				filePath =  merchantReconFilePath + File.separator + reconDays;
+			}
+			String fileName =  merchant.getCode() + reconDays;
+			if(FileUtils.createTxtFile(fileName, filePath)) {
+				StringBuffer buf = new StringBuffer();
+				for(TradeDTO trade:trades) {
+					//对账文件内容：商户号~代付交易流水~交易时间~交易金额~收款人姓名~收款人银行账号~收款人联行号~交易状态~交易状态描述
+					buf.append(merchant.getCode()).append("~").append(trade.getOrderNo()).append("~").append(DateUtil.formatDate(trade.getTradeTime(), DateUtil.DATE_TIME_FORMAT)).append("~");
+					buf.append(trade.getTradeAmount()).append("~").append(trade.getPayeeName()).append("~").append(trade.getPayeeBankCard()).append("~");
+					buf.append(trade.getPayeeBankCode()).append("~").append(trade.getReconStatus());
+					buf.append(System.getProperty("line.separator"));
+				}
+				FileUtils.writeTxtFile(buf.toString(), fileName, filePath);
+			}
+		}catch(IOException e) {
+			log.error("生成商户{}，对账日期：{}对账文件失败:{}",merchant.getName(),reconDate,e);
+		}
 	}
 	
 	/**

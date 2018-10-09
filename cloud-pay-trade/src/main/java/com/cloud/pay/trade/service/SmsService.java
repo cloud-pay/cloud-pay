@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyuncs.DefaultAcsClient;
@@ -18,7 +19,8 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.cloud.pay.trade.conf.SmsConfig;
+import com.cloud.pay.common.entity.SysConfig;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.trade.exception.TradeException;
 
 public class SmsService {
@@ -26,19 +28,24 @@ public class SmsService {
 	private final static Logger log = LoggerFactory.getLogger(SmsService.class);
 	
 	private final static IAcsClient acsClient;
-	private final static SmsConfig config = new SmsConfig();
 	// 产品名称:云通信短信API产品,开发者无需替换
 	static final String product = "Dysmsapi";
 	// 产品域名,开发者无需替换
 	static final String domain = "dysmsapi.aliyuncs.com";
 
+	@Autowired
+	private static SysConfigMapper sysConfigMapper;
+	
 	static {
 		// 可自助调整超时时间
 		System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
 		System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+		
+		SysConfig idConfig = sysConfigMapper.selectByPrimaryKey("accessKeyId");
+		SysConfig secretConfig = sysConfigMapper.selectByPrimaryKey("accessKeySecret");
 
 		// 初始化acsClient,暂不支持region化
-		IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", config.getAccessKeyId(), config.getAccessKeySecret());
+		IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", idConfig.getSysValue(), secretConfig.getSysValue());
 		try {
 			DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
 		} catch (ClientException e) {
@@ -54,7 +61,8 @@ public class SmsService {
 		// 必填:待发送手机号
 		request.setPhoneNumbers(phoneNumber);
 		// 必填:短信签名-可在短信控制台中找到
-		request.setSignName(config.getSignName());
+		SysConfig config = sysConfigMapper.selectByPrimaryKey("accessKeyId");
+		request.setSignName(config.getSysValue());
 		// 必填:短信模板-可在短信控制台中找到
 		request.setTemplateCode("SMS_147200645");
 		// 可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为

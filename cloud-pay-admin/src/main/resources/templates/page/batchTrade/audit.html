@@ -103,11 +103,13 @@ div.cbp label.font{
 				  <div class="row clearfix">
 				  		<input type="hidden" name="tradeId" id="tradeId" th:value="${tradeId}" />
 				  		<input type="hidden" name="batchNo" id="batchNo" th:value="${batchNo}"/>
+				  		<input type="hidden" name="merchantId" id="merchantId" th:value="${merchantId}"/>
 								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
 									<div class="form-group">
 										<div class="form-line">
 											<label for="smsCode">短信验证码</label>
-											<input type="text" class="form-control" id="smsCode" name="smsCode" ></input>			
+											<input type="text" class="form-control" id="smsCode" name="smsCode" ></input>	
+											<button class="btn btn-primary btn-sm" id="smsBtn">获取短信验证码</button>		
 										</div>
 									</div>
 								</div>
@@ -156,6 +158,7 @@ div.cbp label.font{
                </table>
                
        </div>
+    </div>
 </section>
 
 <script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
@@ -171,10 +174,31 @@ div.cbp label.font{
 $(function(){
 	
 	//查询按钮事件
+	$("#smsBtn").off().on("click",function(){
+		var batchNo = $("#batchNo").val();
+		var merchantId = $("#merchantId").val();
+		$.ajax({
+			type:"post",
+			url:_ctx+'/batchTrade/getSmsCode',
+			cache:false,
+			dataType:"json",
+			data:{batchNo:batchNo,merchantId:merchantId},
+			success:function(data){
+				if(data.status == 'success'){
+					alert('短信验证码发送成功');
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
+	});
+	
+	//查询按钮事件
 	$("#searchBtn").off().on("click",function(){
 		var tradeId = $("#tradeId").val();
 		var batchNo = $("#batchNo").val();
 		var smsCode = $("#smsCode").val();
+		var merchantId = $("#merchantId").val();
 		var auditOptinion = $("#auditOptinion").val();
 		if(smsCode == ''){
 			$("input[name='type']").focus();
@@ -192,7 +216,7 @@ $(function(){
 				url:_ctx+'/batchTrade/audit',
 				cache:false,
 				dataType:"json",
-				data:{id:tradeId,batchNo:batchNo,smsCode:smsCode,auditOptinion:auditOptinion,status:2},
+				data:{id:tradeId,batchNo:batchNo,smsCode:smsCode,auditOptinion:auditOptinion,status:2,merchantId:merchantId},
 				success:function(data){
 					if(data.status == 'success'){
 						window.location.href=_ctx+'/batchTrade/list';

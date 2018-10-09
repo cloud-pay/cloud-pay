@@ -170,18 +170,19 @@ public class BatchTradeController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/toAudit",method=RequestMethod.GET)
-	public Object toAudit(Model model, Integer tradeId, String batchNo){
+	public Object toAudit(Model model, Integer tradeId, String batchNo, Integer merchantId){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		model.addAttribute("trades", tradeService.selectByBatchNo(batchNo));
 		model.addAttribute("tradeId", tradeId);
 		model.addAttribute("batchNo", batchNo);
+		model.addAttribute("merchantId", merchantId);
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/batchTrade/audit";
 	}
 	
 	
 	/**
-	 * 冻结/解冻批量交易
+	 * 审核批量交易
 	 * @return
 	 */
 	@RequestMapping(value="/audit",method=RequestMethod.POST)
@@ -201,6 +202,27 @@ public class BatchTradeController extends BaseController{
 			batchTrade.setAuditTime(new Date());
 			batchTrade.setId(Integer.parseInt(map.getString("id")));
 			batchTradeService.audit(batchTrade, smsCode);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
+	}
+	
+	/**
+	 * 获取短信验证码
+	 * @return
+	 */
+	@RequestMapping(value="/getSmsCode",method=RequestMethod.POST)
+	@ResponseBody
+	public Object getSmsCode(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			ParameterMap map = this.getParameterMap();
+			String batchNo = map.getString("batchNo");
+			Integer payerMerchantId = Integer.parseInt(map.getString("merchantId"));
+			batchTradeService.getSmsCode(batchNo, payerMerchantId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

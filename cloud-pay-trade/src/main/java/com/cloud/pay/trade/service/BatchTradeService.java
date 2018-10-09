@@ -32,12 +32,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.Base64;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.cloud.pay.common.entity.SysConfig;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
-import com.cloud.pay.trade.conf.SmsConfig;
 import com.cloud.pay.trade.constant.SmsConstant;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.entity.BatchTrade;
@@ -77,6 +78,9 @@ public class BatchTradeService {
 	
 	@Autowired
 	private PaySmsMapper paySmsMapper;
+	
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 
 	@SuppressWarnings({ "null", "deprecation" })
 	@Transactional
@@ -359,10 +363,13 @@ public class BatchTradeService {
 			//验证短信验证码
 			PaySms sms = paySmsMapper.selectByBatchNo(batchTrade.getBatchNo());
 			log.info("手工代付短信验证码信息：{}", sms);
-			SmsConfig config = new SmsConfig();
+			SysConfig config = sysConfigMapper.selectByPrimaryKey("verifyMaxTimes");
+			int verifyMaxTimes = Integer.parseInt(config.getSysValue());
+			config = sysConfigMapper.selectByPrimaryKey("expiryTime");
+			int expiryTime = Integer.parseInt(config.getSysValue());
 			if(sms.getVerfiyResult() != SmsConstant.VERIFY_SUCCESS 
-					&& sms.getVerifyTimes() < config.getVerifyMaxTimes()
-					&& getDatePoor(new Date(), sms.getVerifyTime(), config.getExpiryTime())) {
+					&& sms.getVerifyTimes() < verifyMaxTimes
+					&& getDatePoor(new Date(), sms.getVerifyTime(), expiryTime)) {
 				sms.setVerifyTimes(1 + sms.getVerifyTimes());
 				sms.setVerifyTime(new Date());
 				if(!smsCode.equals(sms.getSmsCode())) {
@@ -386,6 +393,9 @@ public class BatchTradeService {
 	}
 	
 	private boolean getDatePoor(Date endDate, Date nowDate, int expiryDate) {
+		if(nowDate == null) {
+			return true;
+		}
 	    long diff = endDate.getTime() - nowDate.getTime();
 	    return diff < 1000l * 60 * expiryDate;
 	}
@@ -400,7 +410,8 @@ public class BatchTradeService {
 		 return batchTradeMapper.queryBatchByBatchNo(batchNo, merchantId);
 	}
 	
-	public String getSmsCode(String batchNo, String phoneNumber) {
+	public String getSmsCode(String batchNo, Integer payerMerchantId) {
+		
 		String smsCode = null;
 		Random rand = new Random();
 		StringBuffer sbCode = new StringBuffer();
@@ -408,7 +419,8 @@ public class BatchTradeService {
 			sbCode.append(sources.charAt(rand.nextInt(9)) + "");
 		}
 		smsCode = sbCode.toString();
-		SendSmsResponse response = SmsService.sendPaySms(phoneNumber, smsCode);
+		MerchantBaseInfo info = merchantBaseInfoMapper.selectByPrimaryKey(payerMerchantId);
+		SendSmsResponse response = SmsService.sendPaySms(info.getMobile(), smsCode);
 		PaySms paySms = new PaySms();
 		paySms.setBatchNo(batchNo);
 		paySms.setCreateTime(new Date());

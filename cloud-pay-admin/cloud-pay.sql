@@ -363,7 +363,7 @@ CREATE TABLE `t_merchant_prepay_journal` (
   `balance` decimal(15,2) DEFAULT NULL COMMENT '变动后余额',
   `create_time` date DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='商户预缴户变动';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户预缴户变动';
 
 CREATE TABLE `t_pay_sms` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -376,4 +376,16 @@ CREATE TABLE `t_pay_sms` (
   `verify_time` datetime DEFAULT NULL COMMENT '验证时间',
   PRIMARY KEY (`id`),
   KEY `INX_BATCH_NO` (`batch_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='手工代付短信记录';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='手工代付短信记录';
+
+CREATE TABLE `t_sys_config` (
+  `sys_key` varchar(30) NOT NULL DEFAULT '' COMMENT '系统key',
+  `sys_value` varchar(100) DEFAULT NULL COMMENT '系统值',
+  `sys_desc` varchar(100) DEFAULT NULL COMMENT '参数说明',
+  PRIMARY KEY (`sys_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统参数配置信息';
+insert into t_sys_config values('accessKeyId','accessKeyId','短信accessKeyId');
+insert into t_sys_config values('accessKeySecret','accessKeySecret','短信accessKeySecret');
+insert into t_sys_config values('signName','交子元','短信签名');
+insert into t_sys_config values('verifyMaxTimes','5','短信最大验证次数');
+insert into t_sys_config values('expiryTime','15','短信有效期(分钟)');

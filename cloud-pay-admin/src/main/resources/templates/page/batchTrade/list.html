@@ -174,7 +174,7 @@ div.cbp label.font{
                   <td th:text="${trade.auditor}"></td>
                   <td>
                   	<div th:if="${trade.id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'audit(\''+${trade.id}+'\',\''+${trade.batchNo}+'\');'"><i class="fa fa-edit"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'audit(\''+${trade.id}+'\',\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${trade.id == 1 && meid != '1'}">
@@ -388,8 +388,8 @@ $(function(){
 
 
 //跳转审核页面
-function audit(tradeId, batchNo){
-	window.location.href=_ctx+"/batchTrade/toAudit?tradeId="+tradeId+"&batchNo="+batchNo;
+function audit(tradeId, batchNo, merchantId){
+	window.location.href=_ctx+"/batchTrade/toAudit?tradeId="+tradeId+"&batchNo="+batchNo+"&merchantId="+merchantId;
 }
 
 

@@ -20,6 +20,8 @@ public class TradeConstant {
 	public final static String ORDER_NO_EXIST = "PAY_000001";
 	/**预缴户交易异常*/
 	public final static String PREPAY_TRADE_EXCEPTION = "PAY_000002";
+	/**预缴户被篡改*/
+	public final static String PREPAY_CHANGE = "PAY_000003";
 	
 	/**充值 */
 	public final static int RECHAEGE = 1;
@@ -30,4 +32,9 @@ public class TradeConstant {
 	public final static int DEBIT = 1;
 	/**出账 */
 	public final static int CREDIT = 2;
+	
+	/**不垫资 */
+	public final static int LOANING_NO = 0;
+	/**垫资 */
+	public final static int LOANING_YES = 1;
 }

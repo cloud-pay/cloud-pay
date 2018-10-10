@@ -212,4 +212,25 @@ public class MerchantPrepayInfo {
 		this.digest = digest;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MerchantPrepayInfo [id=");
+		builder.append(id);
+		builder.append(", merchantId=");
+		builder.append(merchantId);
+		builder.append(", balance=");
+		builder.append(balance);
+		builder.append(", freezeAmount=");
+		builder.append(freezeAmount);
+		builder.append(", overdraw=");
+		builder.append(overdraw);
+		builder.append(", digest=");
+		builder.append(digest);
+		builder.append(", createTime=");
+		builder.append(createTime);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

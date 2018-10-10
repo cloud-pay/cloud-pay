@@ -29,4 +29,9 @@ public class MerchantConstant {
 	public final static int OVERDRAW_YES = 1;
 	/** 不可透资 */
 	public final static int OVERDRAW_NO = 2;
+	
+	/** 按比例 */
+	public final static int PER_RATE = 1;
+	/** 按笔数 */
+	public final static int PER = 2;
 }

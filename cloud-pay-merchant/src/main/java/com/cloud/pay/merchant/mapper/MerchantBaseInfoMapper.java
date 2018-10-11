@@ -104,6 +104,6 @@ public interface MerchantBaseInfoMapper {
 	 * 获取所有正常状态的商户
 	 * @return
 	 */
-	List<MerchantDTO> getAllNormalMerchant();
+	List<MerchantDTO> getAllNormalMerchant(Integer[] types);
 	
 }

@@ -324,5 +324,9 @@
 		FROM 
 			t_merchant_base_info
 		where status = 1
+		and type in 
+		<foreach collection="array" open="(" separator="," close=")" item="type">
+		    #{type}
+		</foreach>
 	</select>
 </mapper>

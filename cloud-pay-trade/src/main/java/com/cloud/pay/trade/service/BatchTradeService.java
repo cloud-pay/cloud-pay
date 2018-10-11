@@ -245,7 +245,15 @@ public class BatchTradeService {
 	public String batchPay(BatchTrade batchTrade, String fileFullPath,String mchCode) {
 		StringBuilder errorDetails = new StringBuilder();
 		//step 1 从OSS服务器读取文件流
-		InputStream is = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(), mchCode, fileFullPath);
+		SysConfig accessKeyIdConfig = null;
+		SysConfig secretAccessKeyConfig = null;
+		try {
+			accessKeyIdConfig = sysConfigMapper.selectByPrimaryKey("ossAccessKeyId");
+			secretAccessKeyConfig = sysConfigMapper.selectByPrimaryKey("ossSecretAccessKey");
+	    }catch(Exception e) {
+	    	log.error("读取OSS服务器配置错误：{}",e);
+	    }
+		InputStream is = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), mchCode, fileFullPath);
 		InputStreamReader read = null;
 		BufferedReader bufferedReader = null;
 		try {

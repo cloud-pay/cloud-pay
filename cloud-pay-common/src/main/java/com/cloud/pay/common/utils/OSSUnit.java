@@ -19,6 +19,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
+import com.cloud.pay.common.entity.SysConfig;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 
 /**
  * 阿里云OSS
@@ -38,20 +41,13 @@ import com.aliyun.oss.model.PutObjectResult;
 public class OSSUnit {
   
 	private static final Logger logger = LoggerFactory.getLogger(OSSUnit.class);
-
 	
 	public static String endpoint;
-	
-	
-	public static String accessKeyId;
-	
-	
-	public static String secretAccessKey;
 	
     /** 
      * 获取阿里云OSS客户端对象 
      * */  
-    public static OSSClient getOSSClient(){  
+	public static OSSClient getOSSClient(String accessKeyId,String secretAccessKey){  
         return new OSSClient(endpoint,accessKeyId, secretAccessKey); 
     }  
     
@@ -85,10 +81,9 @@ public class OSSUnit {
      * @param fileFullPath bucket下的文件全路径
      * @return String 唯一MD5数字签名 
      */
-    public static final String uploadObject2OSS(InputStream is,String fileName,Long fileSize,String bucketName,String fileFullPath) {
+    public static final String uploadObject2OSS(OSSClient client,InputStream is,String fileName,Long fileSize,String bucketName,String fileFullPath) {
     	String resultStr = null;  
     	try {
-    		OSSClient client = getOSSClient();
     		 //创建上传Object的Metadata  
             ObjectMetadata metadata = new ObjectMetadata();  
             metadata.setContentLength(is.available());  
@@ -213,17 +208,7 @@ public class OSSUnit {
       }    
          
       public static void main(String[] args) throws FileNotFoundException, IOException, ParserConfigurationException, JDOMException {
-//    	  XMLOutputter XMLOut = new XMLOutputter(FormatXML());  //生成xml文件 
-//    	  String filePath = "D:\\file\\upload\\c3\\zxywUserApiSzTest\\180103_193300_201801030000000094\\cmd.xml";
-//    	  //XMLOut.output(creatXml(), new FileOutputStream(filePath));  
-//    	  String message = uploadObject2OSS(getOSSClient(), new File(filePath), "rcmd", "c3/zxywUserApiSzTest/180103_193300_201801030000000094/","zxywUserApiSzTest");
-//    	  if(!"".equals(message)){
-//    		  InputStream inputStream = getOSS2InputStream(getOSSClient(), "rcmd", "c3/zxywUserApiSzTest/180103_193300_201801030000000094/", "cmd.result.xml");
-//    		  SAXBuilder builder = new SAXBuilder();
-//    		  Document doc = builder.build(inputStream);
-//    		  XMLOut.output(doc, new FileOutputStream("D:\\file\\upload\\c3\\zxywUserApiSzTest\\180103_193300_201801030000000094\\cmd.result.xml"));  
-//    	  }
-//    	  logger.info(message);
+
 	  }
       
       private static Format FormatXML(){    
@@ -234,32 +219,6 @@ public class OSSUnit {
           return format;    
       }   
       
-      private static  Document creatXml(){
-       	  Element cmdData=new Element("cmdData");
-    	  Element appIdElement = new Element("AppID");  
-    	  appIdElement.setText("zxywUserApiSzTest");
-    	  cmdData.addContent(appIdElement);
-    	  Element appSecretElement = new Element("AppSecret");
-    	  appSecretElement.setText("113355678");
-    	  cmdData.addContent(appSecretElement);
-    	  Element cmd = new Element("cmd");
-    	  cmd.setText("test");
-    	  cmdData.addContent(cmd);
-    	  Element opretor = new Element("操作员");
-    	  opretor.setText("王超");
-    	  cmdData.addContent(opretor);
-    	  Element cmdguid = new Element("cmdguid");
-    	  cmdguid.setText("2a59f9e6-5705-461a-af83-5548636651846834");
-    	  cmdData.addContent(cmdguid);
-    	  Element cmdtime = new Element("cmdtime");
-    	  cmdtime.setText("2017-12-13 17:59:26");
-    	  cmdData.addContent(cmdtime);
-    	  
-    	  Element root = new Element("root");
-    	  root.addContent(cmdData);
-    	  Document document=new Document(root);
-    	  return document;
-      }
 
 	public String getEndpoint() {
 		return endpoint;
@@ -269,24 +228,5 @@ public class OSSUnit {
 	public void setEndpoint(String endpoint) {
 		OSSUnit.endpoint = endpoint;
 	}
-
-	public String getAccessKeyId() {
-		return accessKeyId;
-	}
-
-	@Value("${cloud.alipay.oss.accessKeyId}")
-	public void setAccessKeyId(String accessKeyId) {
-		OSSUnit.accessKeyId = accessKeyId;
-	}
-
-	public String getSecretAccessKey() {
-		return secretAccessKey;
-	}
-
-	@Value("${cloud.alipay.oss.secretAccessKey}")
-	public void setSecretAccessKey(String secretAccessKey) {
-		OSSUnit.secretAccessKey = secretAccessKey;
-	}
-      
       
 }

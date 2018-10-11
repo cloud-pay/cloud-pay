@@ -6,7 +6,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -166,7 +168,8 @@ public class ReconService {
 	    	}
 	    }
 		//step 2 获取所有的有效商户
-	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant();
+	    Integer[] types = {4,5};
+	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types);
 	    if(null == merchants) {
 	    	log.info("暂无需要生成对账文件的有效商户");
 	    	return 0;
@@ -194,7 +197,7 @@ public class ReconService {
 			return;
 		}
 		try {
-			//生成对账文件，并上传到OSS服务器
+			//生成对账文件(生成的时候不上传OSS服务器，下游商户发起请求后再上传)
 			String filePath = "";
 			String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
 			if(merchantReconFilePath.endsWith(File.separator)) {
@@ -220,6 +223,72 @@ public class ReconService {
 	}
 	
 	/**
+	 * 生成代理商的对账文件
+	 * @param trades
+	 * @param merchant
+	 * @param reconDate
+	 */
+	private void createAgentReconFile(List<TradeDTO> trades,MerchantDTO merchant,String reconDate) {
+		if(null == trades || trades.size() == 0) {
+			log.info("代理商{}对账日期{}不存在交易记录",merchant.getName(),reconDate);
+			//生成代理商下级商户的对账文件
+			return;
+		}
+		Map<String,String> fileMap = createAgentReconFile(merchant.getCode(), reconDate);
+		try {
+			if(null == fileMap || fileMap.size() > 0) {
+				String filePath = fileMap.get("filePath");
+				String fileName = fileMap.get("fileName");
+				StringBuffer buf = new StringBuffer();
+				for(TradeDTO trade:trades) {
+					//对账文件内容：商户号~代付交易流水~交易时间~交易金额~收款人姓名~收款人银行账号~收款人联行号~交易状态~交易状态描述
+					buf.append(merchant.getCode()).append("~").append(trade.getOrderNo()).append("~").append(DateUtil.formatDate(trade.getTradeTime(), DateUtil.DATE_TIME_FORMAT)).append("~");
+					buf.append(trade.getTradeAmount()).append("~").append(trade.getPayeeName()).append("~").append(trade.getPayeeBankCard()).append("~");
+					buf.append(trade.getPayeeBankCode()).append("~").append(trade.getReconStatus());
+					buf.append(System.getProperty("line.separator"));
+				}
+				FileUtils.writeTxtFile(buf.toString(), fileName, filePath);
+			}else {
+				log.info("生成代理商：{}，对账文件失败",merchant.getCode());
+			}
+		}catch(IOException e){
+			log.error("生成代理商:{}，对账日期：{}对账文件失败:{}",merchant.getName(),reconDate,e);
+		}
+		//生成代理商下级商户的对账文件
+	}
+	
+	/**
+	 *  将代理商下级商户的对账文件信息同步到代理商的对账文件中
+	 * @param fileMap
+	 * @param agentId
+	 * @param reconDate
+	 */
+	private void createChildMchRecondFile(Map<String,String> fileMap,Integer agentId,String reconDate) {
+		  //获取代理商下级商户
+	}
+	
+	private Map<String,String> createAgentReconFile(String code,String reconDate) {
+		Map<String,String> map = null;
+		try {
+			String filePath = "";
+			String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+			if(agentReconFilePath.endsWith(File.separator)) {
+				filePath = agentReconFilePath +  reconDays;
+			}else {
+				filePath =  agentReconFilePath + File.separator + reconDays;
+			}
+			map =  new HashMap<>();
+			map.put("filePath", filePath);
+			String fileName =  code + reconDays;
+			map.put("fileName", fileName);
+			FileUtils.createTxtFile(fileName, filePath);
+		}catch(IOException e) {
+			log.error("生成代理商{},对账日期：{},对账文件失败：{}",code,reconDate,e);
+		}
+		return map;
+	}
+	
+	/**
 	 * 生成代理商对账文件
 	 * 生成商户对账文件之前，需检查当前所有通道是不是都已对账完成，
 	 * 如果对账尚有对账中或者对账失败的通道，等待其他通道完成对账后，再开始生成对账文件
@@ -227,13 +296,34 @@ public class ReconService {
 	 * 对账文件内容：商户号~代付交易流水~交易时间~交易金额~收款人姓名~收款人银行账号~收款人联行号~交易状态~交易状态描述
 	 * 对账文件存储路径：/reconFile/agent/{reconDate}/{文件名}
 	 * @param reconDate 格式：yyyy-MM-dd
+	 * @return 1-生成对账文件成功 ; 0-生成对账文件失败
 	 */
-	public void createAgentReconFile(String reconDate) {
+	public int createAgentReconFile(String reconDate) {
 		log.info("生成代理商对账文件开始,生成日期：{}",reconDate);
-		//step 1 获取所有的机构代理商
-		//step 2 根据机构获取下属商户
+		//step 1 判断是否所有的渠道都已完成对账
+	    List<Recon> recons =  reconMapper.selectListByReconDate(DateUtil.fomatDate(reconDate));
+	    for(Recon recon:recons) {
+	    	if(1 != recon.getReconStatus()) {
+	    		log.info("渠道：{}未完成对账，无法生成对账文件",recon.getChannelId());
+	    		return 0;
+	    	}
+	    }
+		//step 2 获取所有的有效机构代理商
+	    Integer[] types = {1};
+	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types);
+	    if(null == merchants) {
+	    	log.info("暂无需要生成对账文件的有效代理商");
+	    	return 0;
+	    }
 		//step 3 获取机构和下属商户的所有交易并根据交易表中的对账结果生成对账文件
+	    for(MerchantDTO merchant:merchants) {
+	    	log.info("为商户{}生成对账文件",merchant.getName());
+	    	List<TradeDTO> trades = tradeMapper.selectListByMerIdAndReconDate(merchant.getId(), DateUtil.fomatDate(reconDate));	    
+	    	//step 4 根据交易表中的对账生成对账文件		
+	    	createAgentReconFile(trades,merchant,reconDate);
+	    }
 		log.info("生成代理商对账文件结束,生成日期：{}",reconDate);
+		return 1;
 	}
 	
 	/**

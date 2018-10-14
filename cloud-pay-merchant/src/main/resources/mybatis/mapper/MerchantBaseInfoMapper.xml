@@ -328,5 +328,8 @@
 		<foreach collection="array" open="(" separator="," close=")" item="type">
 		    #{type}
 		</foreach>
+		<if test="orgId != null">
+		    and org_id = #{orgId,jdbcType=INTEGER}
+		</if>
 	</select>
 </mapper>

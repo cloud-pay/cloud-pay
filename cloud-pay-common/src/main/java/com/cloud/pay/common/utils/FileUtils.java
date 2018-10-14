@@ -47,7 +47,28 @@ public class FileUtils {
 			 flag = true;
 		}
 		return flag;
-	} 
+	}
+	
+	/**
+	 * 判断文件按是否存在
+	 * @param fileName
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean isExist(String fileName,String filePath) throws IOException{
+		boolean flag = false;
+		String fileFullPath = "";
+		if(filePath.endsWith(File.separator)) {
+			fileFullPath = filePath + fileName + ".txt";
+		}else {
+			fileFullPath = filePath + File.separator + fileName + ".txt";
+		}
+		File file = new File(fileFullPath);
+		if(file.exists()) {
+			flag = true;
+		}
+		return flag;
+	}
 	
 	private static void isExist(String path) {
 		File file = new File(path);
@@ -62,13 +83,14 @@ public class FileUtils {
 	
 	/**
 	 * 追加写文件
-	 * @param newRow
+	 * @param content 追加内容
+	 * @param fileName  文件名
+	 * @param filePath  文件路径
 	 * @return
 	 * @throws IOException
 	 */
-	public static boolean appendWriteTxtFile(String newRow,String fileName,String filePath) throws IOException{
+	public static boolean appendWriteTxtFile(String content,String fileName,String filePath) throws IOException{
 		boolean flag = false;
-		String filein = newRow + "\r\n";
         String temp = "";
         FileInputStream fis = null;
         InputStreamReader isr = null;
@@ -96,7 +118,7 @@ public class FileUtils {
         		//行与行之间得分隔符
         		buf = buf.append(System.getProperty("line.separator"));
         	}
-        	buf.append(filein);
+        	buf.append(content);
         	fos = new FileOutputStream(file);
         	pw = new PrintWriter(fos);
         	pw.write(buf.toString().toCharArray());
@@ -122,6 +144,68 @@ public class FileUtils {
 		return flag;
 	}
 	
+	/**
+	 * 读取文件写入另一个文件
+	 * @param fromFileFullPath
+	 * @param toFileFullPath
+	 * @param isAppend 是否追加
+	 * @return
+	 * @throws IOException
+	 */
+	public static boolean writeTxtFromOtherTxtFile(String fromFileFullPath,String toFileFullPath,boolean isAppend)throws IOException{
+	 	 boolean flag = false;
+		 FileInputStream fis = null;
+	     InputStreamReader isr = null;
+	     BufferedReader br = null;
+	     
+	     FileOutputStream fos = null;
+	     PrintWriter pw = null;
+	     try {
+	    	 File fromFile = new File(fromFileFullPath);
+	    	 File toFile = new File(toFileFullPath);
+	    	 fis = new FileInputStream(fromFile);
+	    	 fos = new FileOutputStream(toFile,isAppend);
+	    	 isr = new InputStreamReader(fis);
+	    	 String temp = "";
+	    	 br = new BufferedReader(isr);
+	    	 pw = new PrintWriter(fos);
+	         StringBuffer buf = new StringBuffer();
+	         while((temp=br.readLine())!=null){
+	        	 buf.append(temp);//"\n"读取换行
+	        	 //行与行之间得分隔符
+	        	 buf = buf.append(System.getProperty("line.separator"));
+	         }
+	         pw.write(buf.toString().toCharArray());
+	         pw.flush();
+	         flag = true;
+	     }finally {
+	        	if(null != pw) {
+	        		pw.close();
+	        	}
+	        	if(null != fos) {
+	        		fos.close();
+	        	}
+	        	if(null != br) {
+	        		br.close();
+	        	}
+	        	if(null != isr) {
+	        		isr.close();
+	        	}
+	        	if(null != fis) {
+	        		fis.close();
+	        	}
+	      }
+		  return flag;
+	}
+	
+	/**
+	 * 写文件
+	 * @param content 文件内容
+	 * @param fileName 文件名
+	 * @param filePath 文件路径
+	 * @return
+	 * @throws IOException
+	 */
 	public static boolean writeTxtFile(String content,String fileName,String filePath) throws IOException{
 		boolean flag = false;
 		FileOutputStream fos = null;

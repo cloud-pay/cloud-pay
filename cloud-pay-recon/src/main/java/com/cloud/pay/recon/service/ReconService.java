@@ -1,7 +1,9 @@
 package com.cloud.pay.recon.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,13 +21,17 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.common.contants.ChannelType;
 import com.cloud.pay.common.entity.Channel;
+import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.common.exception.CloudPayException;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.service.ChannelService;
 import com.cloud.pay.common.utils.DateUtil;
 import com.cloud.pay.common.utils.FileUtils;
+import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.dto.MerchantDTO;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.recon.dto.ReconDTO;
 import com.cloud.pay.recon.entity.Recon;
@@ -45,6 +51,9 @@ public class ReconService {
 	@Value("${cloud.agent.recon.path}")
 	private String agentReconFilePath;
 	
+	@Value("${cloud.oss.recon.file.path}")
+	private String ossReconFilePath;
+	
 	@Autowired
 	private ReconMapper reconMapper;
 	
@@ -59,6 +68,9 @@ public class ReconService {
 	
 	@Autowired
 	private MerchantBaseInfoMapper merchantBaseInfoMapper;
+	
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 
 	
 	/**
@@ -169,7 +181,7 @@ public class ReconService {
 	    }
 		//step 2 获取所有的有效商户
 	    Integer[] types = {4,5};
-	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types);
+	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types,null);
 	    if(null == merchants) {
 	    	log.info("暂无需要生成对账文件的有效商户");
 	    	return 0;
@@ -223,70 +235,24 @@ public class ReconService {
 	}
 	
 	/**
-	 * 生成代理商的对账文件
-	 * @param trades
-	 * @param merchant
+	 * 判断商户文件是否存在
+	 * @param mchCode
 	 * @param reconDate
+	 * @return
+	 * @throws IOException
 	 */
-	private void createAgentReconFile(List<TradeDTO> trades,MerchantDTO merchant,String reconDate) {
-		if(null == trades || trades.size() == 0) {
-			log.info("代理商{}对账日期{}不存在交易记录",merchant.getName(),reconDate);
-			//生成代理商下级商户的对账文件
-			return;
+	private boolean isExistMchReconFile(String mchCode,String reconDate) throws IOException{
+		String filePath = "";
+		String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+		if(merchantReconFilePath.endsWith(File.separator)) {
+			filePath = merchantReconFilePath +  reconDays;
+		}else {
+			filePath =  merchantReconFilePath + File.separator + reconDays;
 		}
-		Map<String,String> fileMap = createAgentReconFile(merchant.getCode(), reconDate);
-		try {
-			if(null == fileMap || fileMap.size() > 0) {
-				String filePath = fileMap.get("filePath");
-				String fileName = fileMap.get("fileName");
-				StringBuffer buf = new StringBuffer();
-				for(TradeDTO trade:trades) {
-					//对账文件内容：商户号~代付交易流水~交易时间~交易金额~收款人姓名~收款人银行账号~收款人联行号~交易状态~交易状态描述
-					buf.append(merchant.getCode()).append("~").append(trade.getOrderNo()).append("~").append(DateUtil.formatDate(trade.getTradeTime(), DateUtil.DATE_TIME_FORMAT)).append("~");
-					buf.append(trade.getTradeAmount()).append("~").append(trade.getPayeeName()).append("~").append(trade.getPayeeBankCard()).append("~");
-					buf.append(trade.getPayeeBankCode()).append("~").append(trade.getReconStatus());
-					buf.append(System.getProperty("line.separator"));
-				}
-				FileUtils.writeTxtFile(buf.toString(), fileName, filePath);
-			}else {
-				log.info("生成代理商：{}，对账文件失败",merchant.getCode());
-			}
-		}catch(IOException e){
-			log.error("生成代理商:{}，对账日期：{}对账文件失败:{}",merchant.getName(),reconDate,e);
-		}
-		//生成代理商下级商户的对账文件
+		String fileName =  mchCode + reconDays;
+		return FileUtils.isExist(fileName, filePath);
 	}
 	
-	/**
-	 *  将代理商下级商户的对账文件信息同步到代理商的对账文件中
-	 * @param fileMap
-	 * @param agentId
-	 * @param reconDate
-	 */
-	private void createChildMchRecondFile(Map<String,String> fileMap,Integer agentId,String reconDate) {
-		  //获取代理商下级商户
-	}
-	
-	private Map<String,String> createAgentReconFile(String code,String reconDate) {
-		Map<String,String> map = null;
-		try {
-			String filePath = "";
-			String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
-			if(agentReconFilePath.endsWith(File.separator)) {
-				filePath = agentReconFilePath +  reconDays;
-			}else {
-				filePath =  agentReconFilePath + File.separator + reconDays;
-			}
-			map =  new HashMap<>();
-			map.put("filePath", filePath);
-			String fileName =  code + reconDays;
-			map.put("fileName", fileName);
-			FileUtils.createTxtFile(fileName, filePath);
-		}catch(IOException e) {
-			log.error("生成代理商{},对账日期：{},对账文件失败：{}",code,reconDate,e);
-		}
-		return map;
-	}
 	
 	/**
 	 * 生成代理商对账文件
@@ -310,7 +276,7 @@ public class ReconService {
 	    }
 		//step 2 获取所有的有效机构代理商
 	    Integer[] types = {1};
-	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types);
+	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types,null);
 	    if(null == merchants) {
 	    	log.info("暂无需要生成对账文件的有效代理商");
 	    	return 0;
@@ -325,6 +291,123 @@ public class ReconService {
 		log.info("生成代理商对账文件结束,生成日期：{}",reconDate);
 		return 1;
 	}
+	
+	
+	/**
+	 * 生成代理商的对账文件
+	 * @param trades
+	 * @param merchant
+	 * @param reconDate
+	 */
+	private void createAgentReconFile(List<TradeDTO> trades,MerchantDTO merchant,String reconDate) {
+		if(null == trades || trades.size() == 0) {
+			log.info("代理商{}对账日期{}不存在交易记录",merchant.getName(),reconDate);
+			//生成代理商下级商户的对账文件
+			createChildMchRecondFile(null, merchant.getId(), reconDate,merchant.getCode());
+			return;
+		}
+		Map<String,String> fileMap = createAgentReconFile(merchant.getCode(), reconDate);
+		try {
+			if(null != fileMap && fileMap.size() > 0) {
+				String filePath = fileMap.get("filePath");
+				String fileName = fileMap.get("fileName");
+				StringBuffer buf = new StringBuffer();
+				for(TradeDTO trade:trades) {
+					//对账文件内容：商户号~代付交易流水~交易时间~交易金额~收款人姓名~收款人银行账号~收款人联行号~交易状态~交易状态描述
+					buf.append(merchant.getCode()).append("~").append(trade.getOrderNo()).append("~").append(DateUtil.formatDate(trade.getTradeTime(), DateUtil.DATE_TIME_FORMAT)).append("~");
+					buf.append(trade.getTradeAmount()).append("~").append(trade.getPayeeName()).append("~").append(trade.getPayeeBankCard()).append("~");
+					buf.append(trade.getPayeeBankCode()).append("~").append(trade.getReconStatus());
+					buf.append(System.getProperty("line.separator"));
+				}
+				FileUtils.writeTxtFile(buf.toString(), fileName, filePath);
+			}else {
+				log.info("生成代理商：{}，对账文件失败",merchant.getCode());
+			}
+		}catch(IOException e){
+			log.error("生成代理商:{}，对账日期：{}对账文件失败:{}",merchant.getName(),reconDate,e);
+		}
+		//生成代理商下级商户的对账文件
+		createChildMchRecondFile(fileMap, merchant.getId(), reconDate,merchant.getCode());
+	}
+	
+	
+	private Map<String,String> createAgentReconFile(String code,String reconDate) {
+		Map<String,String> map = null;
+		try {
+			String filePath = "";
+			String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+			if(agentReconFilePath.endsWith(File.separator)) {
+				filePath = agentReconFilePath +  reconDays;
+			}else {
+				filePath =  agentReconFilePath + File.separator + reconDays;
+			}
+			map =  new HashMap<>();
+			map.put("filePath", filePath);
+			String fileName =  code + reconDays;
+			map.put("fileName", fileName);
+			FileUtils.createTxtFile(fileName, filePath);
+		}catch(IOException e) {
+			log.error("生成代理商{},对账日期：{},对账文件失败：{}",code,reconDate,e);
+		}
+		return map;
+	}
+	
+	
+	/**
+	 *  将代理商下级商户的对账文件信息同步到代理商的对账文件中
+	 * @param fileMap
+	 * @param agentId
+	 * @param reconDate
+	 */
+	private void createChildMchRecondFile(Map<String,String> fileMap,Integer agentId,String reconDate,String agentCode) {
+		log.info("追加代理商：{}下游商户文件开始",agentCode);
+		try {
+			String filePath = "";
+			String fileName = "";
+			String toFileFullPath = "";
+			if(null != fileMap && fileMap.size() > 0) {
+				filePath = fileMap.get("filePath");
+				fileName = fileMap.get("fileName");
+				
+			}
+			//获取代理商下级商户
+			Integer[] types = {4,5};
+			List<MerchantDTO> merchants = merchantBaseInfoMapper.getAllNormalMerchant(types, agentId);
+			for(MerchantDTO merchant:merchants) {
+				//判断商户是否已经生成对账文件
+				if(!isExistMchReconFile(merchant.getCode(), reconDate)) {
+					log.info("代理商{}下级商户{}暂生成对账文件",agentId,merchant.getCode());
+					continue;
+				}
+				//判断代理商是否已经生成对账文件
+				if(StringUtils.isBlank(filePath)) {
+					fileMap = createAgentReconFile(agentCode, reconDate);
+					if(null != fileMap && fileMap.size() > 0) {
+						filePath = fileMap.get("filePath");
+						fileName = fileMap.get("fileName");
+					}
+				}
+				//代理商文件路径
+				toFileFullPath = filePath + File.separator + fileName + ".txt";
+	        	log.info("写入文件路径：{}",toFileFullPath);
+				//商户文件路径
+	        	String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+	        	String mchFilePath = "";
+				if(merchantReconFilePath.endsWith(File.separator)) {
+					mchFilePath = merchantReconFilePath +  reconDays;
+				}else {
+					mchFilePath =  merchantReconFilePath + File.separator + reconDays;
+				}
+				String mchFileName =  merchant.getCode() + reconDays;
+	        	String fromFileFullPath = mchFilePath + File.separator +  mchFileName + ".txt";
+				FileUtils.writeTxtFromOtherTxtFile(fromFileFullPath, toFileFullPath, true);	
+			}
+		}catch(IOException e) {
+			log.error("生成代理商{}，对账日期：{}，商户数据对账文件失败：{}",agentId,reconDate,e);
+		}
+		log.info("追加代理商：{}下游商户文件结束",agentCode);
+	}
+	
 	
 	/**
 	 *  查询对账列表
@@ -342,12 +425,71 @@ public class ReconService {
 	 * @param merchantId
 	 * @param recondDate
 	 * @param mchType  1-商户，2-机构
-	 * @param isUploadOss   是否上传到oss服务器
+	 * @param isUploadOss   是否上传到oss服务器(通过页面下载时，不需要上传)
 	 * @return filePath 对账文件路径
 	 */
-    public String queryReconFile(Integer merchantId,String recondDate,Integer mchType,boolean isUploadOss) {
-        //TODO ...
-        //对账文件生成规则
-    	return null;
+    public String queryReconFile(Integer merchantId,String reconDate,Integer mchType,boolean isUploadOss) {
+    	//查询商户信息
+    	MerchantBaseInfo baseInfo = merchantBaseInfoMapper.selectByPrimaryKey(merchantId);
+    	String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+    	String reconFilePath = "";
+    	String reconFileName =  baseInfo.getCode() + reconDays + ".txt";;
+        //构建对账文件路径
+    	if(1 == mchType) {
+    		 //商户文件路径
+    		if(merchantReconFilePath.endsWith(File.separator)) {
+    			reconFilePath = merchantReconFilePath +  reconDays;
+			}else {
+				reconFilePath =  merchantReconFilePath + File.separator + reconDays;
+			}
+    	}else {
+    		//代理商文件路径
+    		if(agentReconFilePath.endsWith(File.separator)) {
+    			reconFilePath = agentReconFilePath +  reconDays;
+			}else {
+				reconFilePath =  agentReconFilePath + File.separator + reconDays;
+			}
+    	}
+    	String reconFileFullPath = reconFilePath + File.separator +  reconFileName ;
+    	File file = new File(reconFileFullPath);
+    	if(!file.exists()) {
+    		return null;
+    	}
+    	//判断是否需要上传到OSS
+    	if(!isUploadOss) {
+    		return reconFileFullPath;
+    	}
+    	
+    	SysConfig accessKeyIdConfig = null;
+    	SysConfig secretAccessKeyConfig = null;
+    	try {
+    		accessKeyIdConfig = sysConfigMapper.selectByPrimaryKey("ossAccessKeyId");
+    		secretAccessKeyConfig = sysConfigMapper.selectByPrimaryKey("ossSecretAccessKey");
+    	}catch(Exception e) {
+    		log.error("读取OSS服务器配置错误：{}",e);
+    		return null;
+    	}
+    	InputStream is = null;
+    	String ossReconFileFullPath = "";
+    	if(ossReconFilePath.endsWith(File.separator)) {
+    		ossReconFileFullPath = ossReconFilePath + reconDays + File.separator + reconFileName;
+    	}else {
+    		ossReconFileFullPath = ossReconFilePath + File.separator + reconDays + File.separator + reconFileName;
+    	}
+    	ossReconFileFullPath = ossReconFileFullPath.replaceAll("\\\\", "/");
+    	try {
+	    	is = new FileInputStream(file);  
+	    	OSSUnit.uploadObject2OSS(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), 
+	    			is, reconFileName, file.length(), baseInfo.getCode(), ossReconFileFullPath);
+//	    	OSSUnit.uploadObject2OSS(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), 
+//	    			is, reconFileName, file.length(), "zhengyan01", ossReconFileFullPath);
+    	}catch(IOException e) {
+    		log.error("获取对账文件失败，{}",e);
+    		return null;
+    	}catch(Exception e) {
+    		log.error("获取对账文件失败，{}",e);
+    		return null;
+    	}
+    	return ossReconFileFullPath;
     }
 }

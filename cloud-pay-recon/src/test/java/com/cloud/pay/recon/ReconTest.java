@@ -25,4 +25,22 @@ public class ReconTest {
 		int result = reconService.createMerchantReconFile("2018-10-06");
 		System.out.println(result);
 	}
+	
+	/**
+	 * 生成代理商的对账文件
+	 */
+	@Test
+	public void createReconReconFile() {
+		int result = reconService.createAgentReconFile("2018-10-06");
+		System.out.println(result);
+	}
+	
+	/**
+	 * 获取对账文件
+	 */
+	@Test
+	public void getReconFile() {
+		String result = reconService.queryReconFile(5, "2018-10-06", 2, false);
+		System.out.println(result);
+	}
 }

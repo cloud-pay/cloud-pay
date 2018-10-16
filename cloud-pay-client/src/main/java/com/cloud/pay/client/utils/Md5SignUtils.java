@@ -2,16 +2,12 @@ package com.cloud.pay.client.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.PropertyFilter;
-import com.alibaba.fastjson.serializer.SerializeFilter;
-import com.google.common.collect.Sets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * 接口验签
@@ -86,7 +82,7 @@ public class Md5SignUtils {
 
     private static String createMapSignPlainText(Map<String, Object> dataMap, final boolean isWithEmpty, final String... filters) {
         final StringBuilder sb = new StringBuilder();
-        final Set<String> filterSet = Sets.newHashSet(filters);
+        final Set<String> filterSet = new HashSet<String>();//Sets.newHashSet(filters);
         List<String> list = new ArrayList<String>();
         for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
             Object value = entry.getValue();

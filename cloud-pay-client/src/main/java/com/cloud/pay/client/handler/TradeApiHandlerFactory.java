@@ -1,5 +1,6 @@
 package com.cloud.pay.client.handler;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.common.utils.ApplicationContextHolder;
-import com.google.common.collect.Maps;
 
 /**
  * 下游接口业务处理工厂
@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 @Component
 public class TradeApiHandlerFactory {
    
-	private Map<String, String> tradeApiHandlerMapper = Maps.newHashMap();
+	private Map<String, String> tradeApiHandlerMapper = new HashMap<String, String>();
 	
 	@PostConstruct
 	public void init() {

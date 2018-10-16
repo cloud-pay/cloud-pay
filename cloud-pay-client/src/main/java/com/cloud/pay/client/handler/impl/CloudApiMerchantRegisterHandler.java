@@ -2,12 +2,14 @@ package com.cloud.pay.client.handler.impl;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterParam;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterResult;
@@ -49,7 +51,9 @@ public class CloudApiMerchantRegisterHandler
 		MerchantApplyFeeInfo feeInfo = new MerchantApplyFeeInfo();
 		BeanUtils.copyProperties(reqParam, feeInfo);
 		try {
-		   String code = merchantApplyService.save(baseInfo, bankInfo, feeInfo, null);
+			//获取商户文件信息
+		   JSONObject attachementJson = createAttachementJson(reqParam);
+		   String code = merchantApplyService.save(baseInfo, bankInfo, feeInfo, attachementJson,reqParam.getMchCode(),true);
 		   result.setSubMchCode(code);
 		   result.setMchCode(reqParam.getMchCode());
 		}catch(IOException e) {
@@ -59,6 +63,34 @@ public class CloudApiMerchantRegisterHandler
 		log.info("商户信息报备，响应结果：{}",result);
 		return result;
 	}
+	
+	/**
+	 * 构建文件json数据
+	 * @param reqParam
+	 * @return
+	 */
+	private JSONObject createAttachementJson(CloudApiMerchantRegisterParam reqParam) {
+		if(StringUtils.isNotBlank(reqParam.getBusinessFilePath()) || StringUtils.isNotBlank(reqParam.getCertFilePath())
+				||StringUtils.isNotBlank(reqParam.getBankCardFilePath()) || StringUtils.isNotBlank(reqParam.getProtocolFilePath())) {
+			JSONObject object = new JSONObject();
+			if(StringUtils.isNotBlank(reqParam.getBusinessFilePath())) {
+				object.put("businessPath", reqParam.getBusinessFilePath());
+			}
+			if(StringUtils.isNotBlank(reqParam.getCertFilePath())) {
+				object.put("certPath", reqParam.getCertFilePath());
+			}
+			if(StringUtils.isNotBlank(reqParam.getBankCardFilePath())) {
+				object.put("bankCardPath", reqParam.getBankCardFilePath());
+			}
+			if(StringUtils.isNotBlank(reqParam.getProtocolFilePath())) {
+				object.put("protocolPath", reqParam.getProtocolFilePath());
+			}
+			return object;
+		}
+		return null;
+	}
+
+	
 
 	@Override
 	public Class<CloudApiMerchantRegisterParam> getReqParamType() {

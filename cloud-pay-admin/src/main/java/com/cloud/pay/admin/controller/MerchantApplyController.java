@@ -95,7 +95,7 @@ public class MerchantApplyController extends BaseController{
 			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
 			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
 			JSONObject json = JSON.parseObject(attachementInfo);
-			merchantApplyService.save(baseInfo, bankInfo, feeInfo, json);
+			merchantApplyService.save(baseInfo, bankInfo, feeInfo, json, null, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
@@ -124,7 +124,7 @@ public class MerchantApplyController extends BaseController{
 			baseInfo.setModifyTime(new Date());
 			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
 			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
-			merchantApplyService.update(baseInfo, bankInfo, feeInfo, null);
+			merchantApplyService.update(baseInfo, bankInfo, feeInfo, null,null,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

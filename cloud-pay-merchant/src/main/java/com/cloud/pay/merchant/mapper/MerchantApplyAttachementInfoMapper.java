@@ -22,5 +22,5 @@ public interface MerchantApplyAttachementInfoMapper {
     List<MerchantApplyAttachementInfo> selectByMerchantId(@Param("merchantId")Integer merchantId);
     
     int updateByMerchantIdAndType(@Param("merchantId")Integer merchantId, @Param("type")Integer type,
-    		@Param("path")Integer path);
+    		@Param("path")String path);
 }

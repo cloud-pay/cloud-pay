@@ -65,11 +65,11 @@ public class CloudApiMerchantQueryHandler
 				log.info("商户信息查询，响应结果：{}",result);
 				return result;
 			}
-			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) map.get("baseInfo");
+			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) applyMap.get("baseInfo");
 			BeanUtils.copyProperties(baseInfo, result);
-			MerchantApplyBankInfo bankInfo = (MerchantApplyBankInfo) map.get("bankInfo");
+			MerchantApplyBankInfo bankInfo = (MerchantApplyBankInfo) applyMap.get("bankInfo");
 			BeanUtils.copyProperties(bankInfo, result);
-			MerchantApplyFeeInfo feeInfo = (MerchantApplyFeeInfo) map.get("feeInfo");
+			MerchantApplyFeeInfo feeInfo = (MerchantApplyFeeInfo) applyMap.get("feeInfo");
 			BeanUtils.copyProperties(feeInfo, result);
 		}
 		log.info("商户信息查询，响应结果：{}",result);

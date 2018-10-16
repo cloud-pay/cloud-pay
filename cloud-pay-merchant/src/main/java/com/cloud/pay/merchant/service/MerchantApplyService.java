@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.druid.util.Base64;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.pay.common.contants.ApiErrorCode;
+import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
+import com.cloud.pay.common.mapper.SysConfigMapper;
+import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantApplyDTO;
 import com.cloud.pay.merchant.entity.MerchantApplyAttachementInfo;
@@ -42,6 +47,8 @@ import com.cloud.pay.merchant.util.ImgUtil;
 
 @Service
 public class MerchantApplyService {
+	
+	private Logger log =LoggerFactory.getLogger(MerchantApplyService.class);
 
 	@Autowired
 	private MerchantApplyBaseInfoMapper baseInfoMapper;
@@ -54,6 +61,9 @@ public class MerchantApplyService {
 	
 	@Autowired
 	private MerchantApplyAttachementInfoMapper attachementInfoMapper;
+	
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 	
 	@Autowired
 	private MerchantService merchantService;
@@ -81,7 +91,7 @@ public class MerchantApplyService {
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public String save(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
-			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson) throws IOException {
+			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson,String agentCode,boolean isFromOSS) throws IOException {
 		String code = getMerchantCode();
 		baseInfo.setCode(code);
 		baseInfo.setStatus(MerchantConstant.AUDITING);
@@ -90,11 +100,21 @@ public class MerchantApplyService {
 		bankInfoMapper.insert(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.insert(feeInfo);
-		if(attachementJson != null) {
-			uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), true);
-			uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true);
-			uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true);
-			uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true);
+		//如果从接口上送商户信息，则从OSS服务器读取文件信息
+		if(isFromOSS) {
+			if(null != attachementJson) {
+				uploadImg(attachementJson, "businessPath",  MerchantConstant.BUSINESS,  baseInfo.getId(), true, agentCode);
+				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true, agentCode);
+				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true, agentCode);
+				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true, agentCode);
+			}
+		}else {
+			if(attachementJson != null) {
+				uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), true);
+				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true);
+				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true);
+				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true);
+			}
 		}
 		return code;
 	}
@@ -134,17 +154,27 @@ public class MerchantApplyService {
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public void update(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
-			MerchantApplyFeeInfo feeInfo,  JSONObject attachementJson) throws IOException {
+			MerchantApplyFeeInfo feeInfo,  JSONObject attachementJson,String agentCode,boolean isFromOSS) throws IOException {
 		baseInfoMapper.updateByPrimaryKeySelective(baseInfo);
 		bankInfo.setMerchantId(baseInfo.getId());
 		bankInfoMapper.updateByPrimaryKeySelective(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.updateByPrimaryKeySelective(feeInfo);
-		if(attachementJson != null) {
-			uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), false);
-			uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), false);
-			uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), false);
-			uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), false);
+		//如果从接口上送商户信息，则从OSS服务器读取文件信息
+		if(isFromOSS) {
+			if(null != attachementJson) {
+				uploadImg(attachementJson, "businessPath",  MerchantConstant.BUSINESS,  baseInfo.getId(), false, agentCode);
+				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), false, agentCode);
+				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), false, agentCode);
+				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), false, agentCode);
+			}
+		}else {
+			if(attachementJson != null) {
+				uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), false);
+				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), false);
+				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), false);
+				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), false);
+			}
 		}
 	}
 	
@@ -207,7 +237,44 @@ public class MerchantApplyService {
 			if(save) {
 				attachementInfoMapper.insert(info);
 			} else {
+				//attachementInfoMapper.insert(info);	
+				attachementInfoMapper.updateByMerchantIdAndType(merchantId, type, uploadPath);
+			}
+		}
+	}
+	
+	/**
+	 * 从OSS下载文件到本地服务器
+	 * @param attachementJson
+	 * @param key
+	 * @param type
+	 * @param merchantId
+	 * @param save
+	 * @param agentCode
+	 * @throws IOException
+	 */
+	public void uploadImg(JSONObject attachementJson,String key, Integer type,Integer merchantId,boolean save,String agentCode)throws IOException{
+		String sourceFileFullPath = attachementJson.getString(key);
+		if(notEmpty(sourceFileFullPath)){
+			SysConfig accessKeyIdConfig = null;
+			SysConfig secretAccessKeyConfig = null;
+			try {
+				accessKeyIdConfig = sysConfigMapper.selectByPrimaryKey("ossAccessKeyId");
+				secretAccessKeyConfig = sysConfigMapper.selectByPrimaryKey("ossSecretAccessKey");
+		    }catch(Exception e) {
+		    	log.error("读取OSS服务器配置错误：{}",e);
+		    }
+			InputStream in = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), agentCode, sourceFileFullPath);
+			String filePath = merchantFolder+random(8)+".png";
+			String uploadPath = ImgUtil.uploadImg(root_fold,filePath, in);
+			MerchantApplyAttachementInfo info = new MerchantApplyAttachementInfo();
+			info.setMerchantId(merchantId);
+			info.setAttachementType(type);
+			info.setAttachementPath(uploadPath);
+			if(save) {
 				attachementInfoMapper.insert(info);
+			} else {
+				attachementInfoMapper.updateByMerchantIdAndType(merchantId, type, uploadPath);
 			}
 		}
 	}

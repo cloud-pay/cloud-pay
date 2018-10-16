@@ -11,9 +11,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cloud.pay.client.constants.Constants;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.utils.BeanUtil;
+import com.cloud.pay.client.vo.CloudApiMerchantRegisterParam;
 import com.cloud.pay.client.vo.CloudApiMerchantUpdateParam;
 import com.cloud.pay.client.vo.CloudApiMerchantUpdateResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
@@ -83,7 +85,9 @@ public class CloudApiMerchantUpdateHandler
 				feeInfo = (MerchantApplyFeeInfo) map.get("feeInfo");
 			}
 			BeanUtils.copyProperties(reqParam, feeInfo,BeanUtil.getNullPropertyNames(reqParam));
-			merchantApplyService.update(baseInfo, bankInfo, feeInfo, null);
+			//获取商户文件信息
+			JSONObject attachementJson = createAttachementJson(reqParam);
+			merchantApplyService.update(baseInfo, bankInfo, feeInfo, attachementJson,reqParam.getMchCode(),true);
 		}catch(Exception e) {
 			log.error("修改商户信息失败：{}",e);
 			throw new CloudApiBusinessException(ApiErrorCode.SYSTEM_ERROR,"系统错误"); 
@@ -95,6 +99,32 @@ public class CloudApiMerchantUpdateHandler
 	@Override
 	public Class<CloudApiMerchantUpdateParam> getReqParamType() {
 		return CloudApiMerchantUpdateParam.class;
+	}
+	
+	/**
+	 * 构建文件json数据
+	 * @param reqParam
+	 * @return
+	 */
+	private JSONObject createAttachementJson(CloudApiMerchantUpdateParam reqParam) {
+		if(StringUtils.isNotBlank(reqParam.getBusinessFilePath()) || StringUtils.isNotBlank(reqParam.getCertFilePath())
+				||StringUtils.isNotBlank(reqParam.getBankCardFilePath()) || StringUtils.isNotBlank(reqParam.getProtocolFilePath())) {
+			JSONObject object = new JSONObject();
+			if(StringUtils.isNotBlank(reqParam.getBusinessFilePath())) {
+				object.put("businessPath", reqParam.getBusinessFilePath());
+			}
+			if(StringUtils.isNotBlank(reqParam.getCertFilePath())) {
+				object.put("certPath", reqParam.getCertFilePath());
+			}
+			if(StringUtils.isNotBlank(reqParam.getBankCardFilePath())) {
+				object.put("bankCardPath", reqParam.getBankCardFilePath());
+			}
+			if(StringUtils.isNotBlank(reqParam.getProtocolFilePath())) {
+				object.put("protocolPath", reqParam.getProtocolFilePath());
+			}
+			return object;
+		}
+		return null;
 	}
 	
 	

@@ -81,6 +81,17 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	@NotNull(message = "垫资费率不能为空")
 	private BigDecimal loanFee;
 	
+	//营业执照
+	private String businessFilePath;
+	
+	//身份证
+	private String certFilePath;
+	
+	//银行卡
+	private String bankCardFilePath;
+	
+	//协议文件
+	private String protocolFilePath;
 	
 	public String getName() {
 		return name;
@@ -250,4 +261,35 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 		this.loanFee = loanFee;
 	}
 
+	public String getBusinessFilePath() {
+		return businessFilePath;
+	}
+
+	public void setBusinessFilePath(String businessFilePath) {
+		this.businessFilePath = businessFilePath;
+	}
+
+	public String getCertFilePath() {
+		return certFilePath;
+	}
+
+	public void setCertFilePath(String certFilePath) {
+		this.certFilePath = certFilePath;
+	}
+
+	public String getBankCardFilePath() {
+		return bankCardFilePath;
+	}
+
+	public void setBankCardFilePath(String bankCardFilePath) {
+		this.bankCardFilePath = bankCardFilePath;
+	}
+
+	public String getProtocolFilePath() {
+		return protocolFilePath;
+	}
+
+	public void setProtocolFilePath(String protocolFilePath) {
+		this.protocolFilePath = protocolFilePath;
+	}
 }

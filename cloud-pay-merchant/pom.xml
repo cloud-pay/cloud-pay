@@ -8,4 +8,11 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>cloud-pay-merchant</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>com.cloud.pay</groupId>
+			<artifactId>cloud-pay-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>

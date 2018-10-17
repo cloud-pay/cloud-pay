@@ -1,4 +1,4 @@
-package com.cloud.pay.common;
+package com.cloud.pay.common.mapper;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

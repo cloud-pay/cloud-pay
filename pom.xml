@@ -29,21 +29,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.cloud.pay</groupId>
-			<artifactId>cloud-pay-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.cloud.pay</groupId>
-			<artifactId>cloud-pay-channel</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.cloud.pay</groupId>
-			<artifactId>cloud-pay-channel-interface</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>

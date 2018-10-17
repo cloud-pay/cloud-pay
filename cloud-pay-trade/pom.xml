@@ -15,7 +15,7 @@
   	</dependency>
   	<dependency>
   		<groupId>com.cloud.pay</groupId>
-		<artifactId>cloud-pay-channel-interface</artifactId>
+		<artifactId>cloud-pay-channel</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   	<dependency>

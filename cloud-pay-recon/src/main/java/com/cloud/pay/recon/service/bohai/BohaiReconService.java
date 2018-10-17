@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.service.ICloudApiService;
@@ -26,7 +27,6 @@ import com.cloud.pay.recon.mapper.ReconMapper;
 import com.cloud.pay.recon.service.IReconServiceHandler;
 import com.cloud.pay.recon.service.ReconExceptionService;
 import com.cloud.pay.trade.dto.TradeDTO;
-import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.mapper.TradeMapper;
 
 /**

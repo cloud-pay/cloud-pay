@@ -27,8 +27,10 @@ CREATE TABLE `t_amount_limit` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `type` int(1) DEFAULT NULL COMMENT '限制类型',
   `merchant_id` int(11) DEFAULT NULL COMMENT '商户id',
-  `period` int(1) NULL COMMENT '统计周期',
+  `period` int(1) DEFAULT NULL COMMENT '统计周期',
   `amount_limit` decimal(10,2) DEFAULT NULL,
+  `modifer` varchar(255) DEFAULT NULL COMMENT '修改人',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='限额配置信息';
 

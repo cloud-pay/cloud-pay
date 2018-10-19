@@ -145,6 +145,7 @@ CREATE TABLE `t_merchant_apply_base_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `version` int(3) DEFAULT NULL COMMENT '版本号',
   `org_id` int(11) DEFAULT NULL COMMENT '所属机构ID',
+  `code` varchar(255) DEFAULT NULL COMMENT '商户编码',
   `name` varchar(255) DEFAULT NULL COMMENT '名称',
   `short_name` varchar(255) DEFAULT NULL COMMENT '简称',
   `type` int(1) DEFAULT NULL COMMENT '类型(1代理商，2第三方支付，3垫资商，4企业商户，5个人商户)',

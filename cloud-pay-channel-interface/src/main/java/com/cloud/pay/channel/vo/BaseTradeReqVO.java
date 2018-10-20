@@ -2,6 +2,8 @@ package com.cloud.pay.channel.vo;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
@@ -14,7 +16,7 @@ public class BaseTradeReqVO implements Serializable{
 
 	private static final long serialVersionUID = 5148292360420264520L;
 	
-	@NotBlank(message = "平台商户号不能为空")
+	@NotNull(message = "平台商户号不能为空")
 	private Integer merchantId;//平台商户号
 	
 	@NotBlank(message = "平台订单号不能为空")

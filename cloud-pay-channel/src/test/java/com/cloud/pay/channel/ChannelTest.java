@@ -41,6 +41,7 @@ public class ChannelTest {
 		reqVO.setPayeeName("李白");
 		reqVO.setPayeeBankCode("3100015");
 		reqVO.setAmt(new BigDecimal("99.99"));
+		reqVO.setTradeDate("20181020101615");
 		BaseTradeResVO response = cloudApiService.pay(reqVO);
 		System.out.println("===============================================");
 		System.out.println(response);

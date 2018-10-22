@@ -24,6 +24,7 @@ import com.cloud.pay.merchant.entity.MerchantChannel;
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
 import com.cloud.pay.merchant.entity.MerchantSecret;
+import com.cloud.pay.merchant.entity.UserMerchant;
 import com.cloud.pay.merchant.mapper.MerchantAttachementInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
@@ -31,6 +32,7 @@ import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
 import com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantPrepayInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantSecretMapper;
+import com.cloud.pay.merchant.mapper.UserMerchantMapper;
 import com.cloud.pay.merchant.util.MD5;
 
 @Service
@@ -56,6 +58,9 @@ public class MerchantService {
 	
 	@Autowired
 	private MerchantPrepayInfoMapper merchantPrepayInfoMapper;
+	
+	@Autowired
+	private UserMerchantMapper userMerchantMapper;
 
 	public List<MerchantDTO> getMerchantDTOs(String type) {
 		return baseInfoMapper.getMerchantDTOs(type);
@@ -227,5 +232,9 @@ public class MerchantService {
 	 */
 	public MerchantSecret selectByMerchantId(Integer merchantId) {
 		return merchantSecretMapper.selectByPrimaryKey(merchantId);
+	}
+	
+	public void saveUserMerchant(UserMerchant userMerchant) {
+		userMerchantMapper.insert(userMerchant);
 	}
 }

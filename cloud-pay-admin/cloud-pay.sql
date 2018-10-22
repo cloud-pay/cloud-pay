@@ -392,3 +392,8 @@ insert into t_sys_config values('accessKeySecret','accessKeySecret','短信acces
 insert into t_sys_config values('signName','交子元','短信签名');
 insert into t_sys_config values('verifyMaxTimes','5','短信最大验证次数');
 insert into t_sys_config values('expiryTime','15','短信有效期(分钟)');
+
+CREATE TABLE `t_user_merchant` (
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `merchant_id` int(11) DEFAULT NULL COMMENT '商户ID'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户商户关联表';

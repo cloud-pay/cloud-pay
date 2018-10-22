@@ -128,6 +128,7 @@ div.cbp label.font{
 	                  	<span data-toggle="tooltip" title="给用户分配角色" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRole(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 分配角色</span>
 	                  	<span data-toggle="tooltip" title="编辑用户信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
 	                  	<span data-toggle="tooltip" title="删除用户" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
+	                  	<span data-toggle="tooltip" title="关联商户" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRel(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 关联商户</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${user.user_id == 1 && meid != '1'}">
@@ -225,6 +226,37 @@ div.cbp label.font{
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
 				<button type="submit" class="btn btn-success"  id="roleSubmit" >确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 关联商户模态框 -->
+<div class="modal fade" id="edituserRelModal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="userRoleModelHead">用户关联商户</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal"  role="form">
+				    <input type="hidden" name="userRelId" id="userRelId"/>
+					<div class="form-group" >
+					    <label for="merchantId" class="col-sm-2 control-label">所属商户</label>
+					    <div class="col-sm-10">
+					      <select name="merchantId" class="form-control" id="merchantId">
+					        <option value="">请选择</option>
+					        <option th:each="merchant : ${merchantIds}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+					      </select>
+					    </div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+				<button type="submit" class="btn btn-success"  id="relSubmit" >确定</button>
 			</div>
 		</div>
 	</div>
@@ -443,6 +475,33 @@ function readFile() {
      	$("#showImg").attr("src",this.result);
      }
   }
+  
+//分配商户
+function allotRel(user_id){
+	console.log(user_id);
+	$("input[name='userRelId']").val(user_id);
+	$("#edituserRelModal").modal("show");
+}
+  
+//确认按钮
+$("#relSubmit").click(function(){
+	var userId = $("input[name='userRelId']").val();
+	var merchantId= $("input[name='merchantId']").val();
+	$.ajax({
+		type:"POST",
+		url:_ctx+"/user/userRel",
+		cache:false,
+		dataType:"json",
+		data:{user_id:userId,merchantId:merchantId},
+		success:function(data){
+			if(data.status == 'success'){
+				window.location.href= window.location.href;
+			}else{
+				alert(data.msg);
+			}
+		}
+	});
+});
 </script>
 </body>
 </html>

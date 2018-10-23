@@ -2,7 +2,6 @@ package com.cloud.pay.admin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -115,8 +114,6 @@ public class UserController extends BaseController{
 			userMerchant.setUserId(userId);
 			merchantService.saveUserMerchant(userMerchant);
 		} catch (Exception e) {
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			e.printStackTrace();
 			log.error("error:"+e.getMessage(), e);
 			return ResponseModel.getModel("提交失败", "failed", null);
 		}

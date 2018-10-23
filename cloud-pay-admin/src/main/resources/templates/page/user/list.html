@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:include="include/css-head :: css-head">
 </head>
 <style>
@@ -83,10 +83,6 @@ div.cbp label.font{
 <body>
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <h1>
-    	西游记告诉我们：凡是有后台的妖怪都被接走了，
-    <small>凡是没后台的都被一棒子打死了</small>
-  </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
     <li class="active">用户管理</li>
@@ -97,8 +93,6 @@ div.cbp label.font{
 <section class="content">
 	 <div class="box">
             <div class="box-header">
-              <h3 class="box-title">用户列表</h3>
-              <br><br>
               <button th:if="${QX.add == '1' && QX.query == '1'}" class="btn btn-success btn-sm" id="addUser"><i class="fa fa-plus"></i> &nbsp;&nbsp;添加用户</button>
             </div>
             <!-- /.box-header -->
@@ -143,7 +137,7 @@ div.cbp label.font{
                 </tr>
                 </tbody>
                </table>
-               
+             </div>  
        </div>
 </section>
 
@@ -248,7 +242,7 @@ div.cbp label.font{
 					    <div class="col-sm-10">
 					      <select name="merchantId" class="form-control" id="merchantId">
 					        <option value="">请选择</option>
-					        <option th:each="merchant : ${merchantIds}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+					        <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
 					      </select>
 					    </div>
 					</div>
@@ -486,7 +480,7 @@ function allotRel(user_id){
 //确认按钮
 $("#relSubmit").click(function(){
 	var userId = $("input[name='userRelId']").val();
-	var merchantId= $("input[name='merchantId']").val();
+	var merchantId= $("[name='merchantId']").val();
 	$.ajax({
 		type:"POST",
 		url:_ctx+"/user/userRel",

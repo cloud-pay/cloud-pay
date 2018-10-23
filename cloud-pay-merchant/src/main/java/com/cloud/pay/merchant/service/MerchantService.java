@@ -234,6 +234,7 @@ public class MerchantService {
 		return merchantSecretMapper.selectByPrimaryKey(merchantId);
 	}
 	
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public void saveUserMerchant(UserMerchant userMerchant) {
 		userMerchantMapper.insert(userMerchant);
 	}

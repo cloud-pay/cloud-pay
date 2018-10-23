@@ -236,6 +236,7 @@ div.cbp label.font{
 				  <input type="hidden" name="url" value=""/>
 				  <input type="hidden" name="id" value=""/>
 				  <input type="hidden" name="code" value=""/>
+				  <input type="hidden" name="version" value=""/>
 				  <h2>基础资料： </h2>
 				  <div class="form-group">
 					    <label for="orgId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所属机构</label>
@@ -587,12 +588,45 @@ $(function(){
 	
 	$("#addMerchant").click(function(){
 		reloadModelData(_ctx+"/merchantApply/add","添加商户","添加","");
+		$("input[name='version']").val(1);
+		$("input[name='code']").val('');
+		$("input[name='version']").val('');
+		$("[name='orgId']").val('');
+		$("[name='type']").val('');
+		$("input[name='name']").val('');
+		$("input[name='shortName']").val('');
+		$("input[name='industryCategory']").val('');
+		$("[name='city']").val('');
+		$("input[name='address']").val('');
+		$("input[name='legal']").val('');
+		$("input[name='email']").val('');
+		$("input[name='mobile']").val('');
+		$("input[name='bankInfoId']").val('');
+		$("[name='bankId']").val('');
+		$("input[name='bankName']").val('');
+		$("[name='bankAccountType']").val('');
+		$("input[name='bankCardNo']").val('');
+		$("[name='certType']").val('');
+		$("input[name='bankAccountName']").val('');
+		$("input[name='certNo']").val('');
+		$("input[name='mobileNo']").val('');
+		$("input[name='feeId']").val('');
+		$("[name='payFeeType']").val('');
+		$("input[name='payFee']").val('');
+		$("[name='loanFeeType']").val('');
+		$("input[name='loanFee']").val('');
+		
+		$("#showBusiness").attr("src",'');
+		$("#showBankCard").attr("src",'');
+		$("#showCert").attr("src",'');
+		$("#showProtocol").attr("src",'');
 		$("#merchantModal").modal("show");
 	});
 	
-	var BaseInfo = function(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
+	var BaseInfo = function(id, code, version, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
 		 this.id = id;
 		 this.code = code;
+		 this.version = version;
 		 this.orgId = orgId;
 		 this.name = name;
 		 this.shortName = shortName;
@@ -634,6 +668,7 @@ $(function(){
 		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
 		var code = $("input[name='code']").val();
+		var version = $("input[name='version']").val();
 		var orgId = $("[name='orgId']").val();
 		var type = $("[name='type']").val();
 		var name = $("input[name='name']").val();
@@ -644,7 +679,7 @@ $(function(){
 		var legal= $("input[name='legal']").val();
 		var email= $("input[name='email']").val();
 		var mobile= $("input[name='mobile']").val();
-		var baseInfo = new BaseInfo(id, code, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
+		var baseInfo = new BaseInfo(id, code, version, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
 		//alert(JSON.stringify(baseInfo));
 		var bankInfoId = $("input[name='bankInfoId']").val();
 		var bankId = $("[name='bankId']").val();
@@ -807,6 +842,7 @@ function reloadModelData(url,title,btntext,id){
 			success:function(data){
 				if(data.status == 'success'){
 					$("input[name='code']").val(data.data.baseInfo.code);
+					$("input[name='version']").val(data.data.baseInfo.version);
 					$("[name='orgId']").val(data.data.baseInfo.orgId);
 					$("[name='type']").val(data.data.baseInfo.type);
 					$("input[name='name']").val(data.data.baseInfo.name);

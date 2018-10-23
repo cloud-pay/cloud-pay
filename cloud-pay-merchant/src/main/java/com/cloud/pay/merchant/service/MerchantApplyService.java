@@ -95,6 +95,7 @@ public class MerchantApplyService {
 		String code = getMerchantCode();
 		baseInfo.setCode(code);
 		baseInfo.setStatus(MerchantConstant.AUDITING);
+		log.info("保存商户申请数据:{}", baseInfo);
 		baseInfoMapper.insert(baseInfo);
 		bankInfo.setMerchantId(baseInfo.getId());
 		bankInfoMapper.insert(bankInfo);

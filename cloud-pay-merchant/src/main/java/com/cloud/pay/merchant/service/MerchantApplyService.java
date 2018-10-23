@@ -210,7 +210,12 @@ public class MerchantApplyService {
 					attachements.add(attachement);
 				}
 			}
-			merchantService.save(merchantBaseInfo, merchantBankInfo, merchantFeeInfo, attachements);
+			if(merchantApplyBaseInfo.getVersion() == 1) {
+				merchantService.save(merchantBaseInfo, merchantBankInfo, merchantFeeInfo, attachements);
+			} else {
+				//商户信息变更
+				merchantService.edit(merchantBaseInfo, merchantBankInfo, merchantFeeInfo, attachements);
+			}
 		}
 	}
 	
@@ -363,5 +368,72 @@ public class MerchantApplyService {
 			}
 		}
 		return merchantMap;
+	}
+	
+	/**
+	 * 变更商户
+	 * @param baseInfo
+	 * @param bankInfo
+	 * @param feeInfo
+	 * @param attachementJson
+	 * @return
+	 * @throws IOException
+	 */
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
+	public void change(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
+			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson) throws IOException {
+		Integer originalId = baseInfo.getId();
+		baseInfo.setId(null);
+		baseInfo.setStatus(MerchantConstant.AUDITING);
+		log.info("保存商户变更数据:{}", baseInfo);
+		baseInfoMapper.insert(baseInfo);
+		bankInfo.setMerchantId(baseInfo.getId());
+		bankInfoMapper.insert(bankInfo);
+		feeInfo.setMerchantId(baseInfo.getId());
+		feeInfoMapper.insert(feeInfo);
+		List<MerchantApplyAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(originalId);
+		if(infos != null) {
+			for(MerchantApplyAttachementInfo info : infos) {
+				if(MerchantConstant.BUSINESS == info.getAttachementType()) {
+					if(attachementJson != null && notEmpty(attachementJson.getString("businessPath"))) {
+						uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), true);
+					} else {
+						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.BUSINESS);
+					}
+				} else if(MerchantConstant.BANK_CARD == info.getAttachementType()) {
+					if(attachementJson != null && notEmpty(attachementJson.getString("bankCardPath"))) {
+						uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true);
+					} else {
+						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.BANK_CARD);
+					}
+				} else if(MerchantConstant.CERT == info.getAttachementType()) {
+					if(attachementJson != null && notEmpty(attachementJson.getString("certPath"))) {
+						uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true);
+					} else {
+						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.CERT);
+					}
+				} else if(MerchantConstant.PROTOCOL == info.getAttachementType()) {
+					if(attachementJson != null && notEmpty(attachementJson.getString("protocolPath"))) {
+						uploadImg(attachementJson, "protocolPath", MerchantConstant.PROTOCOL, baseInfo.getId(), true);
+					} else {
+						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.PROTOCOL);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 根据原附件信息保存
+	 * @param info
+	 * @param id
+	 * @param type
+	 */
+	private void saveAttachmentInfo(MerchantApplyAttachementInfo info, Integer id, Integer type) {
+		MerchantApplyAttachementInfo attInfo = new MerchantApplyAttachementInfo();
+		attInfo.setMerchantId(id);
+		attInfo.setAttachementType(type);
+		attInfo.setAttachementPath(info.getAttachementPath());
+		attachementInfoMapper.insert(attInfo);
 	}
 }

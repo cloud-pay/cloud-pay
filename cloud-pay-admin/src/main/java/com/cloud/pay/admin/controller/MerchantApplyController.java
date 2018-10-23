@@ -175,4 +175,39 @@ public class MerchantApplyController extends BaseController{
 		}
 	}
 	
+	/**
+	 * 变更机构申请
+	 * @return
+	 */
+	@RequestMapping(value="/change",method=RequestMethod.POST)
+	@ResponseBody
+	public Object change(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		try {
+			ParameterMap map = this.getParameterMap();
+			String bank = map.getString("bankInfo");
+			String base = map.getString("baseInfo");
+			String fee = map.getString("feeInfo");
+			MerchantApplyBaseInfo baseInfo = JSON.parseObject(base, MerchantApplyBaseInfo.class);
+			baseInfo.setVersion(baseInfo.getVersion() + 1);
+			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
+			baseInfo.setCreator(userId);
+			baseInfo.setCreateTime(new Date());
+			baseInfo.setModifer(userId);
+			baseInfo.setModifyTime(new Date());
+			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
+			bankInfo.setId(null);
+			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
+			feeInfo.setId(null);
+			String attachementInfo = map.getString("attachementInfo");
+			JSONObject json = JSON.parseObject(attachementInfo);
+			merchantApplyService.change(baseInfo, bankInfo, feeInfo, json);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("提交失败", "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", null);
+	}
+	
 }

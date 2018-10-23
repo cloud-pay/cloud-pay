@@ -238,4 +238,40 @@ public class MerchantService {
 	public void saveUserMerchant(UserMerchant userMerchant) {
 		userMerchantMapper.insert(userMerchant);
 	}
+	
+	/**
+	 * 变更商户
+	 * @param baseInfo
+	 * @param bankInfo
+	 * @param feeInfo
+	 * @param infos
+	 * @throws Exception
+	 */
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
+	public void edit(MerchantBaseInfo baseInfo, MerchantBankInfo bankInfo,
+			MerchantFeeInfo feeInfo, List<MerchantAttachementInfo> infos) throws Exception {
+		MerchantBaseInfo orginalMerchantBaseInfo = baseInfoMapper.selectByCode(baseInfo.getCode());
+		baseInfo.setId(orginalMerchantBaseInfo.getId());
+		baseInfoMapper.updateByPrimaryKeySelective(baseInfo);
+		MerchantBankInfo orginalMerchantBankInfo = bankInfoMapper.selectByMerchantId(baseInfo.getId());
+		bankInfo.setId(orginalMerchantBankInfo.getId());
+		bankInfo.setMerchantId(baseInfo.getId());
+		bankInfoMapper.updateByPrimaryKeySelective(bankInfo);
+		MerchantFeeInfo orginalMerchantFeeInfo = feeInfoMapper.selectByMerchantId(baseInfo.getId());
+		feeInfo.setId(orginalMerchantFeeInfo.getId());
+		feeInfo.setMerchantId(baseInfo.getId());
+		feeInfoMapper.updateByPrimaryKeySelective(feeInfo);
+		List<MerchantAttachementInfo> orginalAttInfos = attachementInfoMapper.selectByMerchantId(baseInfo.getId());
+		if(infos != null) {
+			for(MerchantAttachementInfo info : infos) {
+				for(MerchantAttachementInfo orginalInfo : orginalAttInfos) {
+					if(info.getAttachementType() == orginalInfo.getAttachementType()) {
+						info.setId(orginalInfo.getId());
+						info.setMerchantId(baseInfo.getId());
+						attachementInfoMapper.updateByPrimaryKeySelective(info);
+					}
+				}
+			}
+		}
+	}
 }

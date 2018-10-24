@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:include="include/css-head :: css-head">
 </head>
 <style>
@@ -218,11 +218,12 @@ div.cbp label.font{
 				    <div class="form-group">
 					    <label for="feeType" class="col-sm-2 control-label">通道费率</label>
 					    <div class="col-sm-10">
-						    <select name="feeType" class="form-control">
-						      <option value="1" selected="selected" >按比例计算</option>
+						    <select name="feeType" class="form-control" id="feeType">
+						      <option value="" >请选择</option>
+						      <option value="1" >按比例计算</option>
 						      <option value="2">按笔数计算</option>
 						    </select>
-						    <input type="text" class="form-control" name="fee" value="" id="fee" placeholder="费率">（%）
+						    <input type="text" class="form-control" name="fee" value="" id="fee" placeholder="费率"><span id="percent">(%)</span>
 					    </div>
 					  </div>
 				  </div>
@@ -388,6 +389,17 @@ function reloadModelData(url,title,btntext,channelId,channelCode,channelName,cha
 	$("#channelModal [name='feeType']").val(feeType);
 	$("input[name='fee']").val(fee);
 }
+
+//费率改变
+$('#feeType').change(function(){ 
+	if($(this).children('option:selected').val() == 1) {
+		$("#percent").show();
+		$("input[name='fee']").val('');
+	} else {
+		$("#percent").hide();
+		$("input[name='fee']").val('');
+	}
+}) ;
 
 </script>
 </body>

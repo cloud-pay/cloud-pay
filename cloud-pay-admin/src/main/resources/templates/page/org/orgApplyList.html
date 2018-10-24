@@ -343,25 +343,27 @@ div.cbp label.font{
 					  	<input type="hidden" name="feeId" value=""/>
 					    <label for="payFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>代付费率</label>
 					    <div class="col-sm-4">
-						    <select name="payFeeType" class="form-control">
+						    <select name="payFeeType" class="form-control" id="payFeeType">
+						      <option value="">请选择</option>
 						      <option value="1">按比例计算</option>
 						      <option value="2">按笔数计算</option>
 						    </select>
 					    </div>
 					    <div class="col-sm-3">
-						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率（%）">
+						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率"><span id="payPercent">(%)</span>
 					    </div>
 					  </div>
 					  <div class="form-group">
 					    <label for="loanFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>垫资费率</label>
 					    <div class="col-sm-4">
-						    <select name="loanFeeType" class="form-control">
+						    <select name="loanFeeType" class="form-control" id="loanFeeType">
+						      <option value="">请选择</option>
 						      <option value="1">按比例计算</option>
 						      <option value="2">按笔数计算</option>
 						    </select>
 					    </div>
 					    <div class="col-sm-3">
-						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率（%）">
+						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率"><span id="loanPercent">(%)</span>
 					    </div>
 					  </div>
 					  
@@ -991,6 +993,28 @@ function change(id){
 	reloadModelData(_ctx+"/merchantApply/change","变更机构","变更",id);
 	$("#merchantModal").modal("show");
 }
+
+//费率改变
+$('#payFeeType').change(function(){ 
+	if($(this).children('option:selected').val() == 1) {
+		$("#payPercent").show();
+		$("input[name='payFee']").val('');
+	} else {
+		$("#payPercent").hide();
+		$("input[name='payFee']").val('');
+	}
+}) ;
+
+//费率改变
+$('#loanFeeType').change(function(){ 
+	if($(this).children('option:selected').val() == 1) {
+		$("#loanPercent").show();
+		$("input[name='loanFee']").val('');
+	} else {
+		$("#loanPercent").hide();
+		$("input[name='loanFee']").val('');
+	}
+}) ;
 </script>
 </body>
 </html>

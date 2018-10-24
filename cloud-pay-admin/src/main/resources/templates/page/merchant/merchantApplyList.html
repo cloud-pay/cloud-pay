@@ -1011,6 +1011,13 @@ function readFile4() {
     }
  }
  
+//变更机构
+function change(id){
+	console.log(id);
+	reloadModelData(_ctx+"/merchantApply/change","变更机构","变更",id);
+	$("#merchantModal").modal("show");
+}
+ 
 //费率改变
 $('#payFeeType').change(function(){ 
 	if($(this).children('option:selected').val() == 1) {

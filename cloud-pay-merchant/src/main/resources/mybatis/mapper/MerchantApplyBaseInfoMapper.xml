@@ -259,6 +259,7 @@
 			t_merchant_apply_base_info m
 			left join t_merchant_base_info m1 on m.org_id = m1.id
 		where m.type in (4,5)
+		and m.id in (SELECT max(id) from t_merchant_apply_base_info where type in (4,5) group by code)
 	  <if test="orgId != null" >
         and m.org_id = #{orgId,jdbcType=INTEGER}
       </if>
@@ -285,6 +286,7 @@
 			t_merchant_apply_base_info m
 			left join t_merchant_base_info m1 on m.org_id = m1.id
 		where m.type in (1,2,3)
+		and m.id in (SELECT max(id) from t_merchant_apply_base_info where type in (1,2,3) group by code)
 	  <if test="type != null" >
         and m.type = #{type,jdbcType=INTEGER}
       </if>

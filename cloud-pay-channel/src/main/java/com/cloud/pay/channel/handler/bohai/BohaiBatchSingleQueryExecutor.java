@@ -1,5 +1,9 @@
 package com.cloud.pay.channel.handler.bohai;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +11,7 @@ import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.utils.JaxbUtil;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.BatchPaySingleQueryReqVO;
+import com.cloud.pay.channel.vo.bohai.BohaiBatchPayRetryResult;
 import com.cloud.pay.channel.vo.bohai.BohaiBatchSingleQueryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiBatchSingleQueryResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeErrorResult;
@@ -46,8 +51,6 @@ public class BohaiBatchSingleQueryExecutor extends BohaiTradeExecutor<BohaiBatch
 	
 	private BohaiBatchSingleQueryParam createParam(BatchPaySingleQueryReqVO reqVO) {
 		BohaiBatchSingleQueryParam  queryParam = new BohaiBatchSingleQueryParam();
-		queryParam.setInstId("234242");
-		queryParam.setCertId("68756765756343");
 		queryParam.setDate(reqVO.getTradeDate());
 		queryParam.setSerialNo(reqVO.getOrderNo());
 		queryParam.setFileNam(reqVO.getFileName());
@@ -59,18 +62,24 @@ public class BohaiBatchSingleQueryExecutor extends BohaiTradeExecutor<BohaiBatch
 	@Override
 	protected BohaiBatchSingleQueryResult buildResult(String xmlRsp, String serialNo) {
 		BohaiBatchSingleQueryResult result = null;
-		if(xmlRsp.contains("<Error>")) {
-			 //获取错误信息
-			String errorXml = xmlRsp.substring(xmlRsp.indexOf("<Error>"), xmlRsp.indexOf("</Error>")+"</Error>".length());
-			BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(errorXml, BohaiCloudTradeErrorResult.class);
-			result = new BohaiBatchSingleQueryResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
-			BeanUtils.copyProperties(errorResult, result);
-			return result;
+		try {
+			Document document = DocumentHelper.parseText(xmlRsp);
+			Element rootElt = document.getRootElement();
+			//拿到根节点的名称
+			Element message = (Element)rootElt.element("Message");
+			Element error = (Element)message.element("Error");
+			if(null != error){
+				BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(error.asXML(), BohaiCloudTradeErrorResult.class);
+				result = new BohaiBatchSingleQueryResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
+				BeanUtils.copyProperties(errorResult, result);
+				return result;
+			}
+			
+			Element response = (Element)message.element(ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBS);
+			result =  JaxbUtil.fromXml(response.asXML(), BohaiBatchSingleQueryResult.class);
+		} catch (DocumentException e) {
+			log.error("代付，解析xml错误:{}",e);
 		}
-		String startElement = "<"+ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBS+">";
-		String endElement = "</"+ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBS+">";
-		String responseXml = xmlRsp.substring(xmlRsp.indexOf(startElement), xmlRsp.indexOf(endElement)+endElement.length());
-		result =  JaxbUtil.fromXml(responseXml, BohaiBatchSingleQueryResult.class);
 		return result;
 	}
 }

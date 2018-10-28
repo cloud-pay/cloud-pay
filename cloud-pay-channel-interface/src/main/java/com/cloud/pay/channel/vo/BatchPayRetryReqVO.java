@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+
+import com.cloud.pay.common.utils.validation.DateValue;
 
 /**
  *  批量代付重新触发
@@ -18,6 +21,7 @@ public class BatchPayRetryReqVO extends BaseTradeReqVO {
 
 	@NotBlank(message = "交易日期不能为空")
 	@Length(max = 17,message = "交易日期最长17位")
+	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 	  
 	@NotBlank(message = "付款人账号不能为空")
@@ -29,7 +33,6 @@ public class BatchPayRetryReqVO extends BaseTradeReqVO {
 	private String payerName;
 	
 	@NotNull
-	@Length(max = 6,message = "总比数最长6位")
 	private Long totalNum;
 	
 	@NotNull(message = "总金额不能为空")

@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.cloud.pay.common.utils.validation.DateValue;
+
 /**
  * 单笔银联代付请求
  * @author wangy
@@ -18,6 +20,7 @@ public class PayUnionTradeReqVO extends BaseTradeReqVO {
 	
 	@NotBlank(message = "交易时间不能为空")
 	@Length(max = 17,message = "交易时间最长17位")
+	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 
 	@NotBlank(message = "付款人账号不能为空")

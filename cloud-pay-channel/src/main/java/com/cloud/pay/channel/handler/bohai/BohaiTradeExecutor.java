@@ -1,34 +1,29 @@
 package com.cloud.pay.channel.handler.bohai;
 
-import java.security.PrivateKey;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-
-import com.cloud.pay.channel.handler.ITradePayExecutor;
+import com.cloud.pay.channel.handler.bohai.core.ClientOverHTTP;
+import com.cloud.pay.channel.handler.bohai.core.PacUtil;
 import com.cloud.pay.channel.utils.ChannelBeanUtils;
-import com.cloud.pay.channel.utils.DocumentUtils;
-import com.cloud.pay.channel.utils.XmlSignature;
-import com.cloud.pay.channel.vo.CloudTradeParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeParam;
-import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeQueryParam;
-import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeQueryResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeResult;
-import com.cloud.pay.common.contants.BohaiMessageEleEnumTmp;
-import com.cloud.pay.common.contants.ChannelContants;
-import com.cloud.pay.common.contants.ChannelErrorCode;
+
 
 /**
  * 渤海银行模板类
@@ -38,67 +33,142 @@ import com.cloud.pay.common.contants.ChannelErrorCode;
 public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCloudTradeResult> {
 	 
 	protected Logger log = LoggerFactory.getLogger(getClass());
-     
-	@Value("${cloud.bohai.pay.private.key.path}")
-	private String priKeyPath;
-	
-	@Value("${cloud.bohai.pay.public.key.path}")
-	private String pubKeyPath;
-	
-	@Value("${cloud.bohai.pay.private.key.password}")
-	private String priKeyPwd;
-	
-	@Value("${cloud.bohai.pay.private.key.alias}")
-	private String aliasName;
 	
 	private final String charset = "utf-8";
 	
+	@Value("${cloud.pay.bohai.hostUrl}")
+	private String hostUrl;
+	
+	@Value("${cloud.bohai.pay.instId}")
+	private String instId;
+	
+	@Value("${cloud.bohai.pay.certId}")
+	private String certId;
 	
 	protected R request(M param,String reqName) {
-		//log.info("代付-渤海代付{}-请求参数：{}",reqName,param);
+		log.info("代付-渤海代付{}-请求参数：{}",reqName,param);
 		//构建响应参数 
 		try {
 			Map<String, Object> map = ChannelBeanUtils.object2Map(param);
-			String xml = toXml(map,param.getSerialNo(),reqName);
-			log.info("代付-渤海代付{}-请求参数转为xml:{}",reqName,xml);
-			Document doc = DocumentUtils.stringToDoc(xml);
-			PrivateKey privateKey = XmlSignature.getPrivateKey(priKeyPath, priKeyPwd, aliasName);
-			String xmlStr = XmlSignature.generateXMLDigitalSignature1(doc, "", privateKey, priKeyPwd);
-			log.info("代付-渤海代付{}-请求参数加密后:{}",reqName,xmlStr);
-			
-			String rspXml = buildResponseTest(param.getSerialNo(), param.getInstId(), param.getCertId(), reqName);
-			
-			log.info("代付-渤海代付{}-响应报文:{}",reqName,rspXml);
-		    boolean verify = XmlSignature.validateXMLDigitalSignature(rspXml, pubKeyPath);
-		    log.info("代付-渤海代付{}-响应结果验证：{}",reqName,verify);
-		    return buildResult(rspXml,param.getSerialNo());
+			map.put("transType", reqName);
+			map.put("instId", instId);
+			map.put("certId", certId);
+			ClientOverHTTP client = new ClientOverHTTP();
+			String sndMsg = toXml(map,param.getSerialNo(),reqName);
+					//PacUtil.formatData(map, charset);
+			log.info("代付-渤海代付{}-请求参数：{}",reqName,sndMsg);
+			String response = client.issuePac(sndMsg, charset, 60000, hostUrl);
+			log.info("代付-渤海代付{}-响应报文:{}",reqName,response);
+		    return buildResult(response,param.getSerialNo());
 		}catch(Exception e) {
 			log.error("请求渤海代付异常",e);
 		}
 		return null;
 	}
 	
-	/**
-	 * 构建响应结果，通过子类重写实现
-	 * @param xmlRsp
-	 * @return
-	 */
-	protected R buildResult(String xmlRsp,String serialNo) {
-		return null;
+	protected Map<String,String> issuePacFile(String folder4Upload,String uploadFileName) {
+		byte[] sndCont  = formatUpload(folder4Upload, uploadFileName, instId, certId);
+		Map rcvMap = null;
+		try {
+			ClientOverHTTP client = new ClientOverHTTP();
+			rcvMap = client.issuePacFile(sndCont, charset, 60 * 1000, hostUrl
+					+ "uploadFile.do");
+			if (null != rcvMap) {
+				System.out.println("UploadFile result:" + rcvMap);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rcvMap;
+	}
+	
+	
+	private byte[] formatUpload(String folder, String fileName,
+			String instId, String certId) {
+		byte[] sndCont = null;
+		String fileSHA1 = null;
+		String sigAlg = "SHA1WithRSA";
+		byte[] fileCont = null;
+
+		File uploadFile = null;
+		FileInputStream fis = null;
+
+		try {
+			uploadFile = new File(folder, fileName);
+			fis = new FileInputStream(uploadFile);
+
+			fileCont = PacUtil.readAllByteFromStream(fis);
+
+			if (null != fileCont) {
+				fileSHA1 = DigestUtils.shaHex(fileCont);
+			}
+			StringBuffer bufHeader = new StringBuffer();
+			bufHeader.append("instId=");
+			bufHeader.append(instId);
+			bufHeader.append("|");
+			bufHeader.append("certId=");
+			bufHeader.append(certId);
+			bufHeader.append("|");
+			bufHeader.append("fileName=");
+			bufHeader.append(fileName);
+			bufHeader.append("|");
+			bufHeader.append("sigAlg=");
+			bufHeader.append(sigAlg);
+			bufHeader.append("|");
+			bufHeader.append("fileSHA1=");
+			bufHeader.append(fileSHA1);
+			byte[] headerCont = null;
+			try {
+				headerCont = bufHeader.toString().getBytes(charset);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			String strHeaderLen = PacUtil.formatPckLen(headerCont.length);
+			String strTotalLen = PacUtil.formatPckLen(headerCont.length + 8
+					+ fileCont.length);
+			sndCont = new byte[8 + headerCont.length + 8 + fileCont.length];
+			System.arraycopy(strTotalLen.getBytes(), 0, sndCont, 0, 8);
+			System.arraycopy(strHeaderLen.getBytes(), 0, sndCont, 8, 8);
+			System.arraycopy(headerCont, 0, sndCont, 16, headerCont.length);
+			System.arraycopy(fileCont, 0, sndCont, 16 + headerCont.length,
+					fileCont.length);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != uploadFile) {
+				uploadFile = null;
+			}
+			if (null != fis) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				fis = null;
+			}
+		}
+		return sndCont;
 	}
 	
 	/**
+
 	 * 将请求参数转换为xml数据
+
 	 * @param params
+
 	 * @param orderNo
+
 	 * @return
+
 	 */
 	public static String toXml(Map<String, Object> params,String orderNo,String reqName) {
 		StringBuilder buf = new StringBuilder();
 		List<String> keys = new ArrayList<String>(params.keySet());
 		Collections.sort(keys);
+		String reqHeader = reqName+"Req";
+		buf.append("<?xml version='1.0' encoding='utf-8'?><Cbhbpac>");
 		buf.append("<Message id='"+orderNo+"'>");
-		buf.append("<"+reqName+">");
+		buf.append("<"+reqHeader+" id='"+reqHeader+"'>");
 		for (String key : keys) {
 			if("serialVersionUID".equals(key)) {
 				continue;
@@ -108,83 +178,24 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 			}
 			buf.append("<").append(key).append(">");
 			buf.append(params.get(key));
-			buf.append("</").append(key).append(">\n");
+			buf.append("</").append(key).append(">");
 		}
-		buf.append("</"+reqName+">");
+		buf.append("</"+reqHeader+">");
 		buf.append("</Message>");
+		buf.append("</Cbhbpac>");
 		return buf.toString();
-	}
-	
-	/**
-	 * 测试构建响应结果
-	 * @param orderNo
-	 * @param instId
-	 * @param certId
-	 * @param reqName
-	 * @return
-	 * @throws Exception
-	 */
-	private String buildResponseTest(String orderNo,String instId,String certId,String reqName) throws Exception{
-		if(!orderNo.startsWith("2018")) {
-			return buildErrorResponseTest(orderNo, instId, certId, ChannelErrorCode.ERROR_1000, "余额不足");
-		}else {
-		     return buildSuccessResponseTest(orderNo, instId,  certId, reqName);
-		}
-	}
-	
-	
-	/**
-	 * 错误代码，测试用
-	 * @return
-	 */
-    private String buildErrorResponseTest(String orderNo,String instId,String certId,String errorCode,String errorMessage) throws Exception{
-    	StringBuilder buf = new StringBuilder();
-    	buf.append("<Message id='"+orderNo+"'>");
-    	buf.append("<Error>");
-    	buf.append("<version>1.0.0</version>");
-    	buf.append("<instId>"+instId+"</instId>");
-    	buf.append("<certId>"+certId+"</certId>");
-    	buf.append("<errorCode>"+errorCode+"</errorCode>");
-    	buf.append("<errorMessage>"+errorMessage+"</errorMessage>");
-    	buf.append("</Error>");
-    	buf.append("</Message>");
-    	Document doc = DocumentUtils.stringToDoc(buf.toString());
-    	PrivateKey privateKey = XmlSignature.getPrivateKey(priKeyPath, priKeyPwd, aliasName);
-		String xmlStr = XmlSignature.generateXMLDigitalSignature1(doc, "", privateKey, priKeyPwd);
-    	return xmlStr;
-    }  
-    
-    private String buildSuccessResponseTest(String orderNo,String instId,String certId,String reqName)throws Exception{
-    	StringBuilder buf = new StringBuilder();
-    	buf.append("<Message id='"+orderNo+"'>");
-    	buf.append("<"+BohaiMessageEleEnumTmp.getRsp(reqName)+">");
-    	buf.append("<version>1.0.0</version>");
-    	buf.append("<instId>"+instId+"</instId>");
-    	buf.append("<certId>"+certId+"</certId>");
-    	buf.append("<serialNo>"+orderNo+"</serialNo>");
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-    	buf.append("<actDat>"+sdf.format(new Date())+"</actDat>");
-    	buf.append("<rspCode>0</rspCode>");
-    	if(reqName.equals(ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCTQ)) {
-    		buf.append(buildQuerySuccResTest(orderNo, instId, certId, reqName));
-    	}
-    	buf.append("</"+BohaiMessageEleEnumTmp.getRsp(reqName)+">");
-    	buf.append("</Message>");
-    	Document doc = DocumentUtils.stringToDoc(buf.toString());
-    	PrivateKey privateKey = XmlSignature.getPrivateKey(priKeyPath, priKeyPwd, aliasName);
-		String xmlStr = XmlSignature.generateXMLDigitalSignature1(doc, "", privateKey, priKeyPwd);
-		return xmlStr;
-    }
 
-    private String buildQuerySuccResTest(String orderNo,String instId,String certId,String reqName) throws Exception{
-    	StringBuilder buf = new StringBuilder();
-    	buf.append("<pyrAct>111111111111</pyrAct>");
-    	buf.append("<pyrNam>老黑</pyrNam>");
-    	buf.append("<pyeAct>2222222222222</pyeAct>");
-    	buf.append("<pyeNam>孙悟空</pyeNam>");
-    	buf.append("<pyeBnk>3150000</pyeBnk>");
-    	buf.append("<amt>1000.00</amt>");
-    	buf.append("<postscript>代付1000.00给孙悟空</postscript>");
-		return buf.toString();
-    }	
+	}
+	
+	/**
+	 * 构建响应结果，通过子类重写实现
+	 * @param xmlRsp
+	 * @return
+	 * @throws DocumentException 
+	 */
+	protected R buildResult(String xmlRsp,String serialNo) {
+		return null;
+	}
+	
+	
 }

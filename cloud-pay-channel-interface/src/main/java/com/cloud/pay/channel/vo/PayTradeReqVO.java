@@ -4,13 +4,11 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+
+import com.cloud.pay.common.utils.validation.DateValue;
 
 /**
  * 代付渠道请求接口请求参数
@@ -22,6 +20,7 @@ public class PayTradeReqVO extends BaseTradeReqVO {
 	
 	@NotBlank(message = "交易时间不能为空")
 	@Length(max = 17,message = "交易时间最长17位")
+	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 
 	@NotBlank(message = "付款人账号不能为空")

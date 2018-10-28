@@ -1,5 +1,9 @@
 package com.cloud.pay.channel.handler.bohai;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +44,6 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 
 	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryReqVO reqVO) {
 		BohaiCloudBatchTradePayQueryParam batchPayQueryParam = new BohaiCloudBatchTradePayQueryParam();
-		batchPayQueryParam.setCertId("2324242");
-		batchPayQueryParam.setInstId("23423432");
 		batchPayQueryParam.setDate(reqVO.getTradeDate());
 		batchPayQueryParam.setSerialNo(reqVO.getOrderNo());
 		batchPayQueryParam.setTermJnlno(reqVO.getBatchOrderNo());
@@ -52,18 +54,24 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 	@Override
 	protected BohaiCloudBatchTradePayQueryResult buildResult(String xmlRsp, String serialNo) {
 		BohaiCloudBatchTradePayQueryResult  result = null;
-		if(xmlRsp.contains("<Error>")) {
-			 //获取错误信息
-			String errorXml = xmlRsp.substring(xmlRsp.indexOf("<Error>"), xmlRsp.indexOf("</Error>")+"</Error>".length());
-			BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(errorXml, BohaiCloudTradeErrorResult.class);
-			result = new BohaiCloudBatchTradePayQueryResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
-			BeanUtils.copyProperties(errorResult, result);
-			return result;
+		try {
+			Document document = DocumentHelper.parseText(xmlRsp);
+			Element rootElt = document.getRootElement();
+			//拿到根节点的名称
+			Element message = (Element)rootElt.element("Message");
+			Element error = (Element)message.element("Error");
+			if(null != error){
+				BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(error.asXML(), BohaiCloudTradeErrorResult.class);
+				result = new BohaiCloudBatchTradePayQueryResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
+				BeanUtils.copyProperties(errorResult, result);
+				return result;
+			}
+			
+			Element response = (Element)message.element(ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBR);
+			result =  JaxbUtil.fromXml(response.asXML(), BohaiCloudBatchTradePayQueryResult.class);
+		} catch (DocumentException e) {
+			log.error("代付，解析xml错误:{}",e);
 		}
-		String startElement = "<"+ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBR+">";
-		String endElement = "</"+ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBR+">";
-		String responseXml = xmlRsp.substring(xmlRsp.indexOf(startElement), xmlRsp.indexOf(endElement)+endElement.length());
-		result =  JaxbUtil.fromXml(responseXml, BohaiCloudBatchTradePayQueryResult.class);
 		return result;
 	}
 }

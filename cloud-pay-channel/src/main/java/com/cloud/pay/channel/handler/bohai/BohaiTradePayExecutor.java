@@ -7,6 +7,10 @@ import java.util.Date;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +27,7 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeQueryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeResult;
+import com.cloud.pay.channel.vo.bohai.BohaiCloudUnionTradeResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
 
@@ -70,7 +75,6 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 		BohaiCloudTradePayParam payParam = new BohaiCloudTradePayParam();
 		payParam.setDate(reqVO.getTradeDate());
 		payParam.setSerialNo(reqVO.getOrderNo());
-		payParam.setInstId("12345678");
 		payParam.setPyrAct(reqVO.getPayerAccount());
 		payParam.setPyrNam(reqVO.getPayerName());
 		if(StringUtils.isNotBlank(reqVO.getAccountNo())) {
@@ -90,20 +94,28 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 	
 
 	@Override
-	protected BohaiCloudTradePayResult buildResult(String xmlRsp,String serialNo) {
-		BohaiCloudTradePayResult result = null;
-		if(xmlRsp.contains("<Error>")) {
-			 //获取错误信息
-			String errorXml = xmlRsp.substring(xmlRsp.indexOf("<Error>"), xmlRsp.indexOf("</Error>")+"</Error>".length());
-			BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(errorXml, BohaiCloudTradeErrorResult.class);
-			result = new BohaiCloudTradePayResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
-			BeanUtils.copyProperties(errorResult, result);
-			return result;
+	protected BohaiCloudTradePayResult buildResult(String xmlRsp,String serialNo){
+		BohaiCloudTradePayResult result = null;		
+		try {
+			Document document = DocumentHelper.parseText(xmlRsp);
+			Element rootElt = document.getRootElement();
+			//拿到根节点的名称
+			Element message = (Element)rootElt.element("Message");
+			Element error = (Element)message.element("Error");
+			if(null != error){
+				BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(error.asXML(), BohaiCloudTradeErrorResult.class);
+				result = new BohaiCloudTradePayResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
+				BeanUtils.copyProperties(errorResult, result);
+				return result;
+			}
+			
+			Element response = (Element)message.element(ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCS);
+			result =  JaxbUtil.fromXml(response.asXML(), BohaiCloudTradePayResult.class);
+		} catch (DocumentException e) {
+			log.error("代付，解析xml错误:{}",e);
 		}
-		String startElement = "<"+ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCS+">";
-		String endElement = "</"+ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCS+">";
-		String responseXml = xmlRsp.substring(xmlRsp.indexOf(startElement), xmlRsp.indexOf(endElement)+endElement.length());
-		result =  JaxbUtil.fromXml(responseXml, BohaiCloudTradePayResult.class);
 		return result;
 	}
+	
+	
 }

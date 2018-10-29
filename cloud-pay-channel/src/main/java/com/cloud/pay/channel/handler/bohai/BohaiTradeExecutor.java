@@ -57,7 +57,7 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 			String sndMsg = toXml(map,param.getSerialNo(),reqName);
 					//PacUtil.formatData(map, charset);
 			log.info("代付-渤海代付{}-请求参数：{}",reqName,sndMsg);
-			String response = client.issuePac(sndMsg, charset, 60000, hostUrl);
+			String response = client.issuePac(sndMsg, charset, 60000, hostUrl + "connect.do");
 			log.info("代付-渤海代付{}-响应报文:{}",reqName,response);
 		    return buildResult(response,param.getSerialNo());
 		}catch(Exception e) {
@@ -161,7 +161,7 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 	 * @return
 
 	 */
-	public static String toXml(Map<String, Object> params,String orderNo,String reqName) {
+	private static String toXml(Map<String, Object> params,String orderNo,String reqName) {
 		StringBuilder buf = new StringBuilder();
 		List<String> keys = new ArrayList<String>(params.keySet());
 		Collections.sort(keys);
@@ -186,6 +186,43 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 		return buf.toString();
 
 	}
+	
+	/**
+	 * 获取文件的SHA1信息
+	 * @param folder
+	 * @param fileName
+	 * @return
+	 */
+	protected String getFileSHA(String folder, String fileName) {
+    	File uploadFile = null;
+		FileInputStream fis = null;
+		String fileSHA1 = null;
+		try {
+			uploadFile = new File(folder, fileName);
+			fis = new FileInputStream(uploadFile);
+
+			byte[] fileCont = PacUtil.readAllByteFromStream(fis);
+
+			if (null != fileCont) {
+				fileSHA1 = DigestUtils.shaHex(fileCont);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != uploadFile) {
+				uploadFile = null;
+			}
+			if (null != fis) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				fis = null;
+			}
+		}
+		return fileSHA1;
+    }
 	
 	/**
 	 * 构建响应结果，通过子类重写实现

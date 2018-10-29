@@ -45,8 +45,6 @@ public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPay
 		try {
 			//读取文件并生成文件sha1
 			String fileSHA1 = getFileSHA(batchPayFilePath, reqVO.getFileName());
-			Map<String,String> map= issuePacFile(batchPayFilePath, reqVO.getFileName());
-			log.info("渤海批量代付-重新触发-上传文件：{}",map);
 			BohaiBatchPayRetryParam retryParam = createParam(reqVO, fileSHA1);
 			BohaiBatchPayRetryResult result = request(retryParam,  ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBT);
 			if("1".equals(result.getRspCode())) {
@@ -67,42 +65,6 @@ public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPay
 		return resVO;
 	}
 	
-	/**
-	 * 获取文件的SHA1信息
-	 * @param folder
-	 * @param fileName
-	 * @return
-	 */
-    private String getFileSHA(String folder, String fileName) {
-    	File uploadFile = null;
-		FileInputStream fis = null;
-		String fileSHA1 = null;
-		try {
-			uploadFile = new File(folder, fileName);
-			fis = new FileInputStream(uploadFile);
-
-			byte[] fileCont = PacUtil.readAllByteFromStream(fis);
-
-			if (null != fileCont) {
-				fileSHA1 = DigestUtils.shaHex(fileCont);
-			}
-		}catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (null != uploadFile) {
-				uploadFile = null;
-			}
-			if (null != fis) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				fis = null;
-			}
-		}
-		return fileSHA1;
-    }
 
 
 	private BohaiBatchPayRetryParam createParam(BatchPayRetryReqVO reqVO,String fileSHA1) {
@@ -129,8 +91,9 @@ public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPay
 			Element error = (Element)message.element("Error");
 			if(null != error){
 				BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(error.asXML(), BohaiCloudTradeErrorResult.class);
-				result = new BohaiBatchPayRetryResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
+				result = new BohaiBatchPayRetryResult();
 				BeanUtils.copyProperties(errorResult, result);
+				result.setRspCode(ChannelContants.CHANNEL_RESP_CODE_FAIL);
 				return result;
 			}
 			

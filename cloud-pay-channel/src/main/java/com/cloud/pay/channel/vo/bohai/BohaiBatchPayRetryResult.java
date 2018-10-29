@@ -12,6 +12,10 @@ public class BohaiBatchPayRetryResult extends BohaiCloudTradeErrorResult {
 
 	private static final long serialVersionUID = -673796971220176757L;
 
+    public BohaiBatchPayRetryResult() {
+		
+	}
+	
 	public BohaiBatchPayRetryResult(String rspCode){
 		 this.rspCode = rspCode;
 	}

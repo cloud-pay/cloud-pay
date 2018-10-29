@@ -104,8 +104,9 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 			Element error = (Element)message.element("Error");
 			if(null != error){
 				BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(error.asXML(), BohaiCloudTradeErrorResult.class);
-				result = new BohaiCloudTradePayResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
+				result = new BohaiCloudTradePayResult();
 				BeanUtils.copyProperties(errorResult, result);
+				result.setRspCode(ChannelContants.CHANNEL_RESP_CODE_FAIL);
 				return result;
 			}
 			

@@ -156,21 +156,15 @@ public class ClientOverHTTP {
 		byte[] rspByte = PacUtil.readAllByteFromStream(httpConn.getInputStream());
 		if (null != rspByte) {
 			System.out.println("IssueFile rsp:"+new String(rspByte));
-
 			int totalLen = 0;
 			int headerLen = 0;
 			int bodyLen = 0;
 			int readLen = 0;
-
 			totalLen = Integer.parseInt(new String(rspByte, 0, 8).trim());
-
 			headerLen = Integer.parseInt(new String(rspByte, 8, 8).trim());
-
 			bodyLen = totalLen - headerLen - 8;
-
 			rspContent = new String(rspByte, 16, headerLen, charset);
 			String[] params = PacUtil.split(rspContent, '|');
-
 			if (null != params) {
 				String itm = null;
 				int pos = -1;

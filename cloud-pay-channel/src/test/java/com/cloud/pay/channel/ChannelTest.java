@@ -12,6 +12,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.BatchPayRetryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
+import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeResVO;
 import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
@@ -36,13 +40,13 @@ public class ChannelTest {
 		PayTradeReqVO reqVO = new PayTradeReqVO();
 		reqVO.setMerchantId(1);
 		reqVO.setOrderNo("2018082800000001");  //2018开头返回成功，其他失败
-		reqVO.setPayerAccount("4333234234242342342");
-		reqVO.setPayerName("老黑");
+		reqVO.setPayerAccount("2001725998000111");
+		reqVO.setPayerName("2001725998");
 		reqVO.setPayeeAccount("4333234234242342342");
 		reqVO.setPayeeName("李白");
 		reqVO.setPayeeBankCode("3100015");
 		reqVO.setAmt(new BigDecimal("99"));
-		reqVO.setTradeDate("20181028 21:31:15");
+		reqVO.setTradeDate("20181029 21:31:15");
 		BaseTradeResVO response = cloudApiService.pay(reqVO);
 		System.out.println("===============================================");
 		System.out.println(response);
@@ -71,8 +75,8 @@ public class ChannelTest {
 		PayUnionTradeReqVO reqVO = new PayUnionTradeReqVO();
 		reqVO.setMerchantId(1);
 		reqVO.setOrderNo("2018082800000001");  //2018开头返回成功，其他失败
-		reqVO.setPayerAccount("4333234234242342342");
-		reqVO.setPayerName("老黑");
+		reqVO.setPayerAccount("2001725998000111");
+		reqVO.setPayerName("2001725998");
 		reqVO.setPayeeAccount("4333234234242342342");
 		reqVO.setPayeeName("李白");
 		reqVO.setAmt(new BigDecimal("99"));
@@ -103,8 +107,8 @@ public class ChannelTest {
 	public void RetryBatchPay() {
 		BatchPayRetryReqVO reqVO = new BatchPayRetryReqVO();
 		reqVO.setTradeDate("20181028 21:31:15");
-		reqVO.setPayerAccount("4333234234242342342");
-		reqVO.setPayerName("老黑");
+		reqVO.setPayerAccount("2001725998000111");
+		reqVO.setPayerName("2001725998");
 		reqVO.setTotalNum(2l);
 		reqVO.setTotalAmt(new BigDecimal("1000"));
 		reqVO.setChannelId(1);
@@ -112,6 +116,42 @@ public class ChannelTest {
 		reqVO.setOrderNo("2018082800000001");
 		reqVO.setFileName("BD220015201702210001.req");
 		BaseTradeResVO response = cloudApiService.batchPayRetry(reqVO);
+		System.out.println(response);
+	}
+	
+	/**
+	 * 批量代付
+	 */
+	@Test
+	public void batchPay() {
+		BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
+		reqVO.setTradeDate("20181029 21:31:15");
+		reqVO.setPayerAccount("2001725998000111");
+		reqVO.setPayerName("2001725998");
+		reqVO.setTotalNum(2l);
+		reqVO.setTotalAmt(new BigDecimal("1000"));
+		reqVO.setMerchantId(1);
+		reqVO.setOrderNo("2018082800000001");
+		reqVO.setFileName("BD220015201702210001.req");
+		BatchPayTradeResVO response = cloudApiService.batchPay(reqVO);
+	    System.out.println("===================================================");
+	    System.out.println(response);
+	}
+	
+	/**
+	 * 批量结果查询
+	 */
+	@Test
+	public void batchPayQuery() {
+		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
+		reqVO.setTradeDate("20181029 21:31:15");
+		reqVO.setFileName("BD220015201702210001.req");
+		reqVO.setBatchOrderNo("2018082800000001");
+		reqVO.setOrderNo("2018082800000002");
+		reqVO.setChannelId(1);
+		reqVO.setMerchantId(1);
+		BatchPayTradeQueryResVO response = cloudApiService.batchPayQuery(reqVO);
+		System.out.println("===================================================");
 		System.out.println(response);
 	}
 }

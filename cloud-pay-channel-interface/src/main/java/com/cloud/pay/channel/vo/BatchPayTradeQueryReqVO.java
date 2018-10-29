@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.cloud.pay.common.utils.validation.DateValue;
+
 /**
  * 批量代付结果查询
  * @author 
@@ -15,6 +17,7 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
    
 	@NotBlank(message = "交易日期不能为空")
 	@Length(max = 17,message = "交易日期最长32位")
+	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 	
 	@NotBlank(message = "文件名不能为空")

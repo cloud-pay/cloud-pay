@@ -1,6 +1,7 @@
 package com.cloud.pay.channel.handler.bohai;
 
 import java.io.File;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -35,16 +36,9 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 		BatchPayTradeResVO resVO = null;
 		try {
 			//读取文件并生成文件sha1
-			String filePath = "";
-			if(batchPayFilePath.endsWith(File.separator)) {
-				filePath = batchPayFilePath + reqVO.getFileName();
-			}else {
-				filePath = batchPayFilePath + File.separator + reqVO.getFileName();
-			}
-			String fileSHA1 = FileDigestUtil.getFileSHA1(new File(filePath));
-			//TODO...... 上传文件
-			
-			
+			String fileSHA1 = getFileSHA(batchPayFilePath, reqVO.getFileName());
+			Map<String,String> map= issuePacFile(batchPayFilePath, reqVO.getFileName());
+			log.info("渤海批量代付-上传文件：{}",map);
 			//生成批量触发报文
 			BohaiCloudBatchTradePayParam batchPayParam = createParam(reqVO, fileSHA1);
 			BohaiCloudBatchTradePayResult result = request(batchPayParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBP);
@@ -95,8 +89,9 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 			Element error = (Element)message.element("Error");
 			if(null != error){
 				BohaiCloudTradeErrorResult errorResult = JaxbUtil.fromXml(error.asXML(), BohaiCloudTradeErrorResult.class);
-				result = new BohaiCloudBatchTradePayResult(ChannelContants.CHANNEL_RESP_CODE_FAIL);
+				result = new BohaiCloudBatchTradePayResult();
 				BeanUtils.copyProperties(errorResult, result);
+				result.setRspCode(ChannelContants.CHANNEL_RESP_CODE_FAIL);
 				return result;
 			}
 			

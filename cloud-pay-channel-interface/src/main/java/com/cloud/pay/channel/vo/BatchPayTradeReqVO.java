@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.cloud.pay.common.utils.validation.DateValue;
+
 /**
  * 批量代付触发请求
  * @author 
@@ -17,7 +19,8 @@ public class BatchPayTradeReqVO extends BaseTradeReqVO {
 	private static final long serialVersionUID = 543414386150514517L;
 	
 	@NotBlank(message = "交易日期不能为空")
-	@Length(max = 17,message = "交易日期最长32位")
+	@Length(max = 17,message = "交易日期最长17位")
+	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 
 	@NotBlank(message = "付款人账号不能为空")
@@ -29,7 +32,6 @@ public class BatchPayTradeReqVO extends BaseTradeReqVO {
 	private String payerName; //付款人账户名
 	
 	@NotNull(message = "总笔数不能为空")
-	@Length(max = 6,message = "总笔数最长6位")
 	private Long totalNum;
 	
 	@NotNull(message = "总金额不能为空")
@@ -40,9 +42,6 @@ public class BatchPayTradeReqVO extends BaseTradeReqVO {
 	@Length(max = 32,message = "文件名最长32位")
 	private String fileName;
 	
-//	@NotBlank(message = "文件内容SHA1摘要不能为空")
-//	@Length(max = 256,message = "文件内容SHA1摘要最长256位")
-//	private String fileSHA1;
 
 	public String getTradeDate() {
 		return tradeDate;

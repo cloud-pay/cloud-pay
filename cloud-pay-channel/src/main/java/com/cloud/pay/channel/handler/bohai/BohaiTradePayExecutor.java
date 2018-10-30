@@ -52,7 +52,8 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 			 BohaiCloudTradePayResult result = request(payParam, param.getAmt().compareTo(largeSubValue) <= 0 ? 
 					 ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCS:ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCHP);
 			 if(!"0".equals(result.getRspCode())) {
-				  resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				  resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),result.getRspCode(),
+						  result.getErrorCode(),StringUtils.isNotBlank(result.getErrorMessage())?result.getErrorMessage():result.getRspMsg());
 				  log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				  return resVO;
 			 }

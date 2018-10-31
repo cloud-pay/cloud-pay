@@ -55,7 +55,7 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 			map.put("certId", certId);
 			ClientOverHTTP client = new ClientOverHTTP();
 			String sndMsg = toXml(map,param.getSerialNo(),reqName);
-					//PacUtil.formatData(map, charset);
+					
 			log.info("代付-渤海代付{}-请求参数：{}",reqName,sndMsg);
 			String response = client.issuePac(sndMsg, charset, 60000, hostUrl + "connect.do");
 			log.info("代付-渤海代付{}-响应报文:{}",reqName,response);

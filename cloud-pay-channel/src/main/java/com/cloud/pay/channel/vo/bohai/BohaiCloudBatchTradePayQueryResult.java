@@ -7,12 +7,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.cloud.pay.common.contants.ChannelContants;
 
-@XmlRootElement(name = ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBR)
+@XmlRootElement(name = ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBR)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BohaiCloudBatchTradePayQueryResult extends BohaiCloudTradeErrorResult {
 
 	private static final long serialVersionUID = -6518157768712019236L;
 
+	public BohaiCloudBatchTradePayQueryResult() {}
+	
 	public BohaiCloudBatchTradePayQueryResult(String rspCode) {
 		this.rspCode = rspCode;
 	}
@@ -27,6 +29,4 @@ public class BohaiCloudBatchTradePayQueryResult extends BohaiCloudTradeErrorResu
 	public void setFilNam(String filNam) {
 		FilNam = filNam;
 	}
-	
-	
 }

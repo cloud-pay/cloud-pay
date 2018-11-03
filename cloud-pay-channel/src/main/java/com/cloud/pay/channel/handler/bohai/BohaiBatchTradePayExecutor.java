@@ -3,6 +3,7 @@ package com.cloud.pay.channel.handler.bohai;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -39,11 +40,18 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 			String fileSHA1 = getFileSHA(batchPayFilePath, reqVO.getFileName());
 			Map<String,String> map= issuePacFile(batchPayFilePath, reqVO.getFileName());
 			log.info("渤海批量代付-上传文件：{}",map);
+			if(!"0000".equals(map.get("rspCd"))) {
+				resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,
+						ChannelErrorCode.ERROR_1002,"批量文件上传失败");
+				log.info("渤海批量代付-响应参数：{}",resVO);
+				return resVO;
+			}
 			//生成批量触发报文
 			BohaiCloudBatchTradePayParam batchPayParam = createParam(reqVO, fileSHA1);
 			BohaiCloudBatchTradePayResult result = request(batchPayParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBP);
 			if("1".equals(result.getRspCode())) {
-				resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),
+						result.getErrorCode(),StringUtils.isNotBlank(result.getErrorMessage())?result.getErrorMessage():result.getRspMsg());
 				log.info("渤海批量代付-响应参数：{}",resVO);
 				return resVO;
 			}

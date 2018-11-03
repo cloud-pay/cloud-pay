@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.cloud.pay.common.contants.ChannelContants;
 
-@XmlRootElement(name = ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBP)
+@XmlRootElement(name = ChannelContants.CHANNEL_BOHAI_RES_HEADER_SCBP)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BohaiCloudBatchTradePayResult extends BohaiCloudTradeErrorResult {
 

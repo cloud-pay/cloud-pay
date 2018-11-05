@@ -58,10 +58,11 @@ public class PrepayTradeService {
 				String.valueOf(merchantPrepayInfo.getMerchantId()));
 		if(!digest.equals(merchantPrepayInfo.getDigest())) {
 			log.warn("商户预缴户摘要不匹配:{}", merchantPrepayInfo.getMerchantId());
-			throw new TradeException("预缴户摘要不匹配", null);
+//			throw new TradeException("预缴户摘要不匹配", null);
 		}
 		MerchantPrepayJournal journal = new MerchantPrepayJournal();
 		journal.setAmount(trade.getAmount());
+		journal.setType(TradeConstant.TRADE_FEE);
 		if(TradeConstant.RECHAEGE == trade.getTradeType()) {
 			merchantPrepayInfo.setBalance(merchantPrepayInfo.getBalance().add(trade.getAmount()));
 		} else if(TradeConstant.WITHDRAW == trade.getTradeType()) {

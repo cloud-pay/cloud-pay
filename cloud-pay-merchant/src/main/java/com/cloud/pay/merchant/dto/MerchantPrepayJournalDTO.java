@@ -16,6 +16,8 @@ public class MerchantPrepayJournalDTO {
 	private Date createTime;
 
 	private Integer debit;
+	
+	private Integer type;
 
 	public Integer getId() {
 		return id;
@@ -63,6 +65,14 @@ public class MerchantPrepayJournalDTO {
 
 	public void setDebit(Integer debit) {
 		this.debit = debit;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	

@@ -48,7 +48,7 @@ public class MerchantPrepayJournalController extends BaseController {
 		if (!Jurisdiction.buttonJurisdiction(menuUrl, "query", this.getSession())) {
 			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
 		}
-		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();

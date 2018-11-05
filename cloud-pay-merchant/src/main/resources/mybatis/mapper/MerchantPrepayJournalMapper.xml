@@ -10,9 +10,10 @@
     <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="balance" property="balance" jdbcType="DECIMAL" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="type" property="type" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, debit, trade_id, prepay_trade_id, prepay_id, amount, balance, create_time
+    id, debit, trade_id, prepay_trade_id, prepay_id, amount, balance, create_time, type
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -22,16 +23,17 @@
   </select>
   <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantPrepayJournal" >
     insert into t_merchant_prepay_journal (id, debit, trade_id, prepay_trade_id, prepay_id, 
-      amount, balance, create_time
+      amount, balance, create_time, type
       )
     values (#{id,jdbcType=INTEGER}, #{debit,jdbcType=INTEGER}, #{tradeId,jdbcType=INTEGER}, #{prepayTradeId,jdbcType=INTEGER}, #{prepayId,jdbcType=INTEGER}, 
-      #{amount,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}
+      #{amount,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}
       )
   </insert>
   
   <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantPrepayJournalDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="debit" property="debit" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
     <result column="name" property="merchantName" jdbcType="VARCHAR" />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="balance" property="balance" jdbcType="DECIMAL" />
@@ -41,6 +43,7 @@
       SELECT
 			j.id,
 			j.debit,
+			j.type type,
 			m. NAME,
 			j.amount,
 			j.balance,

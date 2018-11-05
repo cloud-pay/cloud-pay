@@ -137,6 +137,7 @@ div.cbp label.font{
 	                <tr>
 	                  <th>商户名称</th>
 					  <th>收支类型</th>
+					  <th>流水类型</th>
 					  <th>金额（元）</th>
 					  <th>余额</th>
 					  <th>創建时间</th>
@@ -147,6 +148,8 @@ div.cbp label.font{
                   <td th:text="${trade.merchantName}"></td>
 				  <td th:if="${trade.debit == 1}" th:text="收入"></td>
 				  <td th:if="${trade.debit == 2}" th:text="支出"></td>
+				  <td th:if="${trade.type == 1}" th:text="交易费"></td>
+				  <td th:if="${trade.type == 2}" th:text="手续费"></td>
 				  <td th:text="${trade.amount}"></td>
 				  <td th:text="${trade.balance}"></td>
 				  <td th:text="${#dates.format(trade.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>

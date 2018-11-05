@@ -51,7 +51,7 @@ public class PrepayTradeController extends BaseController {
 		if (!Jurisdiction.buttonJurisdiction(menuUrl, "query", this.getSession())) {
 			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
 		}
-		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
@@ -97,7 +97,7 @@ public class PrepayTradeController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:" + e.getMessage(), "failed", null);
 		}
 		return ResponseModel.getModel("ok", "success", null);
 	}

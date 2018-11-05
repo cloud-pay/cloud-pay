@@ -37,4 +37,9 @@ public class TradeConstant {
 	public final static int LOANING_NO = 0;
 	/**垫资 */
 	public final static int LOANING_YES = 1;
+	
+	/**交易费 */
+	public final static int TRADE_FEE = 1;
+	/**手续费 */
+	public final static int HADNING_FEE = 2;
 }

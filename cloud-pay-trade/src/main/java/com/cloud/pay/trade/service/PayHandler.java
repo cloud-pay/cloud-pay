@@ -109,8 +109,8 @@ public class PayHandler {
 		reqVO.setPayeeAccount(trade.getPayeeBankCard());
 		reqVO.setPayeeBankCode(trade.getPayeeBankCode());
 		reqVO.setPayeeName(trade.getPayeeName());
-		reqVO.setPayerAccount(bankInfo.getBankCardNo());
-		reqVO.setPayerName(bankInfo.getBankAccountName());
+//		reqVO.setPayerAccount(bankInfo.getBankCardNo());
+//		reqVO.setPayerName(bankInfo.getBankAccountName());
 		reqVO.setPostscript(trade.getRemark());
 		PayTradeResVO resVO = payService.pay(reqVO);
 		log.info("订单号{}调用渠道返回结果{}", trade.getOrderNo(), resVO);

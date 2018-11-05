@@ -1,34 +1,26 @@
 package com.cloud.pay.channel.handler.bohai;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
-
-import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
-import com.cloud.pay.channel.handler.bohai.core.PacUtil;
-import com.cloud.pay.channel.utils.FileDigestUtil;
 import com.cloud.pay.channel.utils.JaxbUtil;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.BatchPayRetryReqVO;
 import com.cloud.pay.channel.vo.bohai.BohaiBatchPayRetryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiBatchPayRetryResult;
-import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeErrorResult;
-import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
+import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudPayException;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 
 @Service("bohaiBatchPayRetryExecutor")
 public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPayRetryParam, BohaiBatchPayRetryResult> 
@@ -37,7 +29,8 @@ public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPay
 	@Value("${cloud.bohai.batch.pay.file.path}")
 	private String batchPayFilePath;  //本地文件路径
 	
-	private final static String charset = "utf-8";
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 
 	@Override
 	public BaseTradeResVO execute(BatchPayRetryReqVO reqVO) {
@@ -67,12 +60,17 @@ public class BohaiBatchPayRetryExecutor extends BohaiTradeExecutor<BohaiBatchPay
 	
 
 
-	private BohaiBatchPayRetryParam createParam(BatchPayRetryReqVO reqVO,String fileSHA1) {
+	private BohaiBatchPayRetryParam createParam(BatchPayRetryReqVO reqVO,String fileSHA1) throws Exception {
 		BohaiBatchPayRetryParam retryParam = new BohaiBatchPayRetryParam();
 		retryParam.setDate(reqVO.getTradeDate());
 		retryParam.setSerialNo(reqVO.getOrderNo());
-		retryParam.setPyrAct(reqVO.getPayerAccount());
-		retryParam.setPyrNam(reqVO.getPayerName());
+		SysConfig payerAccountConfig = sysConfigMapper.selectByPrimaryKey("BHPayerAccount");
+		SysConfig payerNameConfig = sysConfigMapper.selectByPrimaryKey("BHPayerName");
+		if(null == payerAccountConfig || null == payerNameConfig) {
+			throw new Exception("系统错误:渠道系统参数未配置");
+		}
+		retryParam.setPyrAct(payerAccountConfig.getSysValue());
+		retryParam.setPyrNam(payerNameConfig.getSysValue());
 		retryParam.setTotNum(reqVO.getTotalNum());
 		retryParam.setTotAmt(reqVO.getTotalAmt());
 		retryParam.setFileNam(reqVO.getFileName());

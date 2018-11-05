@@ -24,13 +24,13 @@ public class BatchPayRetryReqVO extends BaseTradeReqVO {
 	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 	  
-	@NotBlank(message = "付款人账号不能为空")
-	@Length(max = 32,message = "付款人账号最长32位")
-	private String payerAccount;
-	
-	@NotBlank(message = "付款人账户名不能为空")
-	@Length(max = 120,message = "付款人账户名最长120位")
-	private String payerName;
+//	@NotBlank(message = "付款人账号不能为空")
+//	@Length(max = 32,message = "付款人账号最长32位")
+//	private String payerAccount;
+//	
+//	@NotBlank(message = "付款人账户名不能为空")
+//	@Length(max = 120,message = "付款人账户名最长120位")
+//	private String payerName;
 	
 	@NotNull
 	private Long totalNum;
@@ -52,21 +52,21 @@ public class BatchPayRetryReqVO extends BaseTradeReqVO {
 		this.tradeDate = tradeDate;
 	}
 
-	public String getPayerAccount() {
-		return payerAccount;
-	}
-
-	public void setPayerAccount(String payerAccount) {
-		this.payerAccount = payerAccount;
-	}
-
-	public String getPayerName() {
-		return payerName;
-	}
-
-	public void setPayerName(String payerName) {
-		this.payerName = payerName;
-	}
+//	public String getPayerAccount() {
+//		return payerAccount;
+//	}
+//
+//	public void setPayerAccount(String payerAccount) {
+//		this.payerAccount = payerAccount;
+//	}
+//
+//	public String getPayerName() {
+//		return payerName;
+//	}
+//
+//	public void setPayerName(String payerName) {
+//		this.payerName = payerName;
+//	}
 
 	public Long getTotalNum() {
 		return totalNum;

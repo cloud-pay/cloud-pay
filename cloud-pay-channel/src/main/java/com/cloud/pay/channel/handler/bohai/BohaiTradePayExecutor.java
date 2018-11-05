@@ -30,6 +30,8 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudUnionTradeResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
+import com.cloud.pay.common.entity.SysConfig;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 
 /**
  * 渤海代付接口（参数为泛型）
@@ -43,6 +45,9 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
     
 	@Value("${cloud.bohai.pay.large.sub.value}")
 	private BigDecimal largeSubValue;  //渤海代付大额值
+	
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 	
 	@Override
 	public PayTradeResVO execute(PayTradeReqVO param) {
@@ -71,13 +76,20 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
        * 构建代付参数
      * @param reqVO
      * @return
+	 * @throws Exception 
      */
-	private BohaiCloudTradePayParam createParam(PayTradeReqVO reqVO) {
+	private BohaiCloudTradePayParam createParam(PayTradeReqVO reqVO) throws Exception {
 		BohaiCloudTradePayParam payParam = new BohaiCloudTradePayParam();
 		payParam.setDate(reqVO.getTradeDate());
 		payParam.setSerialNo(reqVO.getOrderNo());
-		payParam.setPyrAct(reqVO.getPayerAccount());
-		payParam.setPyrNam(reqVO.getPayerName());
+		
+		SysConfig payerAccountConfig = sysConfigMapper.selectByPrimaryKey("BHPayerAccount");
+		SysConfig payerNameConfig = sysConfigMapper.selectByPrimaryKey("BHPayerName");
+		if(null == payerAccountConfig || null == payerNameConfig) {
+			throw new Exception("系统错误:渠道系统参数未配置");
+		}
+		payParam.setPyrAct(payerAccountConfig.getSysValue());
+		payParam.setPyrNam(payerNameConfig.getSysValue());
 		if(StringUtils.isNotBlank(reqVO.getAccountNo())) {
 		   payParam.setActNo(reqVO.getAccountNo());
 		}

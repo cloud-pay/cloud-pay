@@ -1,14 +1,12 @@
 package com.cloud.pay.channel.handler.bohai;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
@@ -21,11 +19,16 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudUnionTradeParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudUnionTradeResult;
 import com.cloud.pay.common.contants.ChannelContants;
+import com.cloud.pay.common.entity.SysConfig;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 
 @Service("bohaiUnionTradePayExecutor")
 public class BohaiUnionTradePayExecutor extends BohaiTradeExecutor<BohaiCloudUnionTradeParam, BohaiCloudUnionTradeResult>
                                 implements ITradePayExecutor<PayUnionTradeReqVO, PayTradeResVO> {
 
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
+	
 	@Override
 	public PayTradeResVO execute(PayUnionTradeReqVO reqVO) {
 		PayTradeResVO resVO = null;
@@ -46,12 +49,17 @@ public class BohaiUnionTradePayExecutor extends BohaiTradeExecutor<BohaiCloudUni
 		return resVO;
 	}
 	
-	private BohaiCloudUnionTradeParam createParam(PayUnionTradeReqVO reqVO) {
+	private BohaiCloudUnionTradeParam createParam(PayUnionTradeReqVO reqVO) throws Exception {
 		BohaiCloudUnionTradeParam payParam = new BohaiCloudUnionTradeParam();
 		payParam.setDate(reqVO.getTradeDate());
 		payParam.setSerialNo(reqVO.getOrderNo());
-		payParam.setPyrAct(reqVO.getPayerAccount());
-		payParam.setPyrNam(reqVO.getPayerName());
+		SysConfig payerAccountConfig = sysConfigMapper.selectByPrimaryKey("BHPayerAccount");
+		SysConfig payerNameConfig = sysConfigMapper.selectByPrimaryKey("BHPayerName");
+		if(null == payerAccountConfig || null == payerNameConfig) {
+			throw new Exception("系统错误:渠道系统参数未配置");
+		}
+		payParam.setPyrAct(payerAccountConfig.getSysValue());
+		payParam.setPyrNam(payerNameConfig.getSysValue());
 		if(StringUtils.isNotBlank(reqVO.getAccountNo())) {
 		   payParam.setActNo(reqVO.getAccountNo());
 		}

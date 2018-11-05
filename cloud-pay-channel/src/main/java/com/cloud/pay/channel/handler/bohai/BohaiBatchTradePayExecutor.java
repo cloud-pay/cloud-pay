@@ -9,6 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeErrorResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
+import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudPayException;
+import com.cloud.pay.common.mapper.SysConfigMapper;
 
 @Service("bohaiBatchTradePayExecutor")
 public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayParam, BohaiCloudBatchTradePayResult>
@@ -31,6 +34,9 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 
 	@Value("${cloud.bohai.batch.pay.file.path}")
 	private String batchPayFilePath;  //本地文件路径
+	
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 	
 	@Override
 	public BatchPayTradeResVO execute(BatchPayTradeReqVO reqVO) {
@@ -72,13 +78,19 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 	 * 构建上游请求参数
 	 * @param reqVO
 	 * @return
+	 * @throws Exception 
 	 */
-	private BohaiCloudBatchTradePayParam createParam(BatchPayTradeReqVO reqVO,String fileSHA1) {
+	private BohaiCloudBatchTradePayParam createParam(BatchPayTradeReqVO reqVO,String fileSHA1) throws Exception {
 		BohaiCloudBatchTradePayParam batchPayParam = new BohaiCloudBatchTradePayParam();
 		batchPayParam.setDate(reqVO.getTradeDate());
 		batchPayParam.setSerialNo(reqVO.getOrderNo());
-		batchPayParam.setPyrAct(reqVO.getPayerAccount());
-		batchPayParam.setPyrNam(reqVO.getPayerName());
+		SysConfig payerAccountConfig = sysConfigMapper.selectByPrimaryKey("BHPayerAccount");
+		SysConfig payerNameConfig = sysConfigMapper.selectByPrimaryKey("BHPayerName");
+		if(null == payerAccountConfig || null == payerNameConfig) {
+			throw new Exception("系统错误:渠道系统参数未配置");
+		}
+		batchPayParam.setPyrAct(payerAccountConfig.getSysValue());
+		batchPayParam.setPyrNam(payerNameConfig.getSysValue());
 		batchPayParam.setTotNum(reqVO.getTotalNum());
 		batchPayParam.setTotAmt(reqVO.getTotalAmt());
 		batchPayParam.setFileNam(reqVO.getFileName());

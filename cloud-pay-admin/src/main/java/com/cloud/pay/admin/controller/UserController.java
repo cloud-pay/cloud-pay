@@ -115,7 +115,7 @@ public class UserController extends BaseController{
 			merchantService.saveUserMerchant(userMerchant);
 		} catch (Exception e) {
 			log.error("error:"+e.getMessage(), e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:"+e.getMessage(), "failed", null);
 		}
 		return ResponseModel.getModel("ok", "success", null);
 	}

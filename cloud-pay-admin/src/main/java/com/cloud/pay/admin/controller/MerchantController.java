@@ -96,7 +96,7 @@ public class MerchantController extends BaseController{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:"+e.getMessage(), "failed", null);
 		}
 		return ResponseModel.getModel("ok", "success", null);
 	}
@@ -116,7 +116,7 @@ public class MerchantController extends BaseController{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:"+e.getMessage(), "failed", null);
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class MerchantController extends BaseController{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:"+e.getMessage(), "failed", null);
 		}
 	}
 	
@@ -154,7 +154,7 @@ public class MerchantController extends BaseController{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:"+e.getMessage(), "failed", null);
 		}
 	}
 }

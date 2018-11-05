@@ -87,7 +87,7 @@ public class FillRecordController extends BaseController {
 		   fillRecordService.insert(fillRecord);
 		}catch(Exception e) {
 			log.error("error:{}", e);
-			return ResponseModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败:"+e.getMessage(), "failed", null);
 		}
 		return ResponseModel.getModel("ok", "success", null);
 	}

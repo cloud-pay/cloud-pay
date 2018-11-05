@@ -92,6 +92,7 @@ public class MerchantApplyController extends BaseController{
 			baseInfo.setCreateTime(new Date());
 			baseInfo.setModifer(userId);
 			baseInfo.setModifyTime(new Date());
+			baseInfo.setVersion(1);
 			MerchantApplyBankInfo bankInfo = JSON.parseObject(bank, MerchantApplyBankInfo.class);
 			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
 			JSONObject json = JSON.parseObject(attachementInfo);

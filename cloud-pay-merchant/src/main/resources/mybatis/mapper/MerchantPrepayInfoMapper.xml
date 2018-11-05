@@ -66,4 +66,39 @@
     from t_merchant_prepay_info
     where merchant_id = #{merchantId,jdbcType=INTEGER} for update
   </select>
+  
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantPrepayInfoDTO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="merchant_id" property="merchantId" jdbcType="INTEGER" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="freeze_amount" property="freezeAmount" jdbcType="DECIMAL" />
+    <result column="overdraw" property="overdraw" jdbcType="INTEGER" />
+    <result column="digest" property="digest" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectList" resultMap="BaseResultDTO">
+      SELECT
+			i.id, i.merchant_id, m.name merchant_name,i.balance, i.freeze_amount, i.overdraw, i.digest, i.create_time
+		FROM
+			t_merchant_prepay_info i,
+			t_merchant_base_info m
+		WHERE i.merchant_id = m.id
+      <if test="merchantId != null" >
+        and m.id = #{merchantId,jdbcType=INTEGER}
+      </if>
+      <if test="startTime != null" >
+       and i.create_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null" >
+       and i.create_time &lt; #{endTime}
+      </if>
+      <if test="type == 'merchant'" >
+       and m.type in (4,5)
+      </if>
+      <if test="type == 'org'" >
+       and m.type in (1,2,3)
+      </if>
+      order by i.create_time desc
+  </select>
 </mapper>

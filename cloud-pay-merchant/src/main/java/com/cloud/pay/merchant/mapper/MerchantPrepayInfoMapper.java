@@ -1,7 +1,11 @@
 package com.cloud.pay.merchant.mapper;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
+import com.cloud.pay.merchant.dto.MerchantPrepayInfoDTO;
 import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
 
 public interface MerchantPrepayInfoMapper {
@@ -21,4 +25,16 @@ public interface MerchantPrepayInfoMapper {
      * @return
      */
     MerchantPrepayInfo lockByMerchantId(@Param("merchantId")Integer merchantId);
+    
+    /**
+     * 资金账户列表查询
+     * @param merchantId
+     * @param startTime
+     * @param endTime
+     * @param type org/merchant，商户类型
+     * @return
+     */
+    List<MerchantPrepayInfoDTO> selectList(@Param("merchantId") Integer merchantId,
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+			@Param("type") String type);
 }

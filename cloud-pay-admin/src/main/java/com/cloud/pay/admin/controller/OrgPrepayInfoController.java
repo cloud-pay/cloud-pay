@@ -17,29 +17,29 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
-import com.cloud.pay.merchant.service.MerchantPrepayJournalService;
+import com.cloud.pay.merchant.service.MerchantPrepayInfoService;
 import com.cloud.pay.merchant.service.MerchantService;
 
 /**
- * 预缴户流水
+ * 预缴户信息
  * @author dbnaxlc
  *
  */
 @Controller
-@RequestMapping("/journal")
-public class MerchantPrepayJournalController extends BaseController {
+@RequestMapping("/orgPrepay")
+public class OrgPrepayInfoController extends BaseController {
 
 	@Autowired
-	private MerchantPrepayJournalService merchantPrepayJournalService;
+	private MerchantPrepayInfoService merchantPrepayInfoService;
 
 	@Autowired
 	private MerchantService merchantService;
 
-	private String menuUrl = "journal/list";
+	private String menuUrl = "orgPrepay/list";
 
 	
 	/**
-	 * 流水记录查询
+	 * 预缴户记录查询
 	 * @param model
 	 * @return
 	 */
@@ -48,8 +48,6 @@ public class MerchantPrepayJournalController extends BaseController {
 		if (!Jurisdiction.buttonJurisdiction(menuUrl, "query", this.getSession())) {
 			return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);
 		}
-		model.addAttribute("merchants", merchantService.getMerchantDTOs(null));
-		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
 		String merchant = map.getString("merchantId");
@@ -71,8 +69,10 @@ public class MerchantPrepayJournalController extends BaseController {
 			}
 		} catch (Exception e) {
 		}
-		model.addAttribute("journals", merchantPrepayJournalService.selectList(merchantId, startTime, endTime));
-		return "page/journal/list";
+		model.addAttribute("prepays", merchantPrepayInfoService.selectList(merchantId, startTime, endTime, "org"));
+		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
+		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		return "page/org/prepayList";
 	}
 	
 }

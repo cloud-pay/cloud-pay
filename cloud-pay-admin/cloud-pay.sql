@@ -79,9 +79,9 @@ CREATE TABLE `t_channel` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for t_merchant_applu_fee_conf
+-- Table structure for t_merchant_apply_fee_conf
 -- ----------------------------
-DROP TABLE IF EXISTS `t_merchant_applu_fee_conf`;
+DROP TABLE IF EXISTS `t_merchant_apply_fee_conf`;
 CREATE TABLE `t_merchant_applu_fee_conf` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version` int(3) DEFAULT NULL COMMENT '版本号',
@@ -145,23 +145,24 @@ CREATE TABLE `t_merchant_apply_base_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `version` int(3) DEFAULT NULL COMMENT '版本号',
   `org_id` int(11) DEFAULT NULL COMMENT '所属机构ID',
-  `code` varchar(255) DEFAULT NULL COMMENT '商户编码',
+  `code` varchar(100) DEFAULT NULL COMMENT '商户编号',
   `name` varchar(255) DEFAULT NULL COMMENT '名称',
   `short_name` varchar(255) DEFAULT NULL COMMENT '简称',
   `type` int(1) DEFAULT NULL COMMENT '类型(1代理商，2第三方支付，3垫资商，4企业商户，5个人商户)',
   `industry_category` varchar(255) DEFAULT NULL COMMENT '行业类别',
   `legal` varchar(100) DEFAULT NULL COMMENT '法人',
-  `city` varchar(100) NULL COMMENT '所属城市',
-  `address` varchar(255) NULL COMMENT '详细地址',
+  `city` varchar(100) DEFAULT NULL COMMENT '所属城市',
+  `address` varchar(255) DEFAULT NULL COMMENT '详细地址',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `mobile` varchar(12) DEFAULT NULL COMMENT '手机号码',
   `status` int(1) DEFAULT NULL COMMENT '申请状态(1待审核，2审核通过，3审核不通过)',
+  `audit_optinion` varchar(255) DEFAULT NULL COMMENT '审核意见',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL  COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '修改人',
-  `modify_time` datetime DEFAULT NULL  COMMENT '修改时间',
+  `modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户申请基本信息';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='商户申请基本信息';
 
 -- ----------------------------
 -- Records of t_merchant_apply_base_info

@@ -152,7 +152,7 @@ public class PayHandler {
 	public void updateTradeStatus(Trade trade, PayTradeResVO resVO) throws Exception {
 		log.info("处理商户预缴户");
 		//TODO 设置渠道返回结果
-//		trade.setStatus();
+		trade.setStatus(resVO.getStatus()); 
 		trade.setChannelId(resVO.getChannelId());
 		trade.setReturnCode(resVO.getRespCode());
 		trade.setReturnInfo(resVO.getRespMsg());

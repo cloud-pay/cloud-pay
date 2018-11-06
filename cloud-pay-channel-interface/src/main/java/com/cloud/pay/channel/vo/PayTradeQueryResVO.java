@@ -24,6 +24,8 @@ public class PayTradeQueryResVO extends BaseTradeResVO {
 	
 	private String postscript;
 	
+	private Integer status;
+	
 	private static final long serialVersionUID = -4615181137957415914L;
 	
 	public PayTradeQueryResVO(String errorCode,String errorMessage) {
@@ -106,4 +108,14 @@ public class PayTradeQueryResVO extends BaseTradeResVO {
 	public void setPostscript(String postscript) {
 		this.postscript = postscript;
 	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
+	
 }

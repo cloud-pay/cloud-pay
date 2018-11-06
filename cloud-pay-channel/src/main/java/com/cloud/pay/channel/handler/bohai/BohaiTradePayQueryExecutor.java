@@ -47,15 +47,22 @@ public class BohaiTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudTra
 				if(StringUtils.isBlank(result.getErrorMessage())) {
 					resVO.setRespMsg(result.getRspMsg());
 				}
+				if("1".equals(result.getRspCode())) {
+					resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
+				}else {
+					resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+					
+				}
 				log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				return resVO;
 			}
 			resVO = new PayTradeQueryResVO(reqParam.getMerchantId(), reqParam.getOrderNo(), result.getRspMsg());
-			
+			resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
 			return buildQueryResult(resVO,result);
 		}catch(Exception e) {
 			log.error("代付结果查询-渤海代付查询失败：{}",e);
-			resVO = new PayTradeQueryResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,"9000","系统异常");
+			resVO = new PayTradeQueryResVO(ChannelContants.CHANNEL_RESP_CODE_FAIL,"9000","系统异常");
+			resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
 		}
 		log.info("渠道接口：代付结果查询结束，响应参数：{}",resVO);
 		return resVO;

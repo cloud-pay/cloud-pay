@@ -18,4 +18,6 @@ public interface ChannelErrorCode {
     
     public final static String ERROR_9000 = "9000";//系统异常（如果是代付请求，返回该错误，需要通过获取订单状态）
     
+    public final static String ERROR_9001 = "9001";//其他异常
+    
 }

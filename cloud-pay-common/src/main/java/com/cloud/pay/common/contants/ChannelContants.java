@@ -8,6 +8,15 @@ public interface ChannelContants {
 	
 	public static final String CHANNEL_RESP_CODE_UNKNOWN = "99";
 	
+	//交易状态-成功
+	public static final Integer CHANNEL_RETURN_STATUS_SUCCESS = 0;
+	
+	//交易状态-失败
+	public static final Integer CHANNEL_RETURN_STATUS_FAIL = 1;
+	
+	//交易状态-未知
+	public static final Integer CHANNEL_RETURN_STATUS_UNKNOWN = 99;
+	
 	// 渤海单笔实时代付请求头信息
 	public static final String CHANNEL_BOHAI_REQ_HEADER_SCS = "SCSP";
 	

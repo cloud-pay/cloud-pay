@@ -60,7 +60,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			}
 			//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
 			List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(tradeReq.getMerchantId());
-		    if(null == merchantChannels) {
+		    if(null == merchantChannels || merchantChannels.size() <=0 ) {
 		    	log.error("商户未配置渠道信息");
 				resVO = new PayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
 				return resVO;

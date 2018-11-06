@@ -58,11 +58,18 @@ public class BohaiTradePayExecutor extends BohaiTradeExecutor<BohaiCloudTradePay
 					 ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCS:ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCHP);
 			 if(!"0".equals(result.getRspCode())) {
 				  resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),result.getRspCode(),
-						  result.getErrorCode(),StringUtils.isNotBlank(result.getErrorMessage())?result.getErrorMessage():result.getRspMsg());
+						  StringUtils.isNotBlank(result.getErrorCode())?result.getErrorCode():ChannelErrorCode.ERROR_9001,
+						  StringUtils.isNotBlank(result.getErrorMessage())?result.getErrorMessage():result.getRspMsg());
+				  if("1002".equals(result.getErrorCode())) {
+					  resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+				  }else {
+					  resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
+				  }
 				  log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				  return resVO;
 			 }
 			 resVO = new PayTradeResVO(param.getMerchantId(),param.getOrderNo(),"代付成功",result.getActDat());
+			 resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
 			log.error("渤海代付失败：{}",e);

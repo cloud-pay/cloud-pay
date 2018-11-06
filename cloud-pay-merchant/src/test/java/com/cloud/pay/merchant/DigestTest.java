@@ -6,7 +6,11 @@ public class DigestTest {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println(MD5.md5("0.00" + "|" + "0.00" , 
-				"5"));
+				"8"));
+		System.out.println(MD5.md5("0" + "|" + "0" , 
+				"8"));
+		System.out.println(MD5.md5("0.00|0.00" , 
+				"8"));
 	}
 
 }

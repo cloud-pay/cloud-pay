@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -37,6 +39,8 @@ import com.cloud.pay.merchant.util.MD5;
 
 @Service
 public class MerchantService {
+	
+	private Logger log = LoggerFactory.getLogger(MerchantService.class);
 
 	@Autowired
 	private MerchantBaseInfoMapper baseInfoMapper;
@@ -164,6 +168,7 @@ public class MerchantService {
 	public void save(MerchantBaseInfo baseInfo, MerchantBankInfo bankInfo,
 			MerchantFeeInfo feeInfo, List<MerchantAttachementInfo> infos) throws Exception {
 		baseInfo.setId(null);
+		log.info("新增商户信息:{}", baseInfo);
 		baseInfoMapper.insert(baseInfo);
 		MerchantSecret record = new MerchantSecret();
 		record.setMerchantId(baseInfo.getId());
@@ -171,6 +176,7 @@ public class MerchantService {
 		record.setSecret(MD5.md5(baseInfo.getCode(), sdf.format(baseInfo.getCreateTime())));
 		merchantSecretMapper.insert(record);
 		bankInfo.setMerchantId(baseInfo.getId());
+		log.info("新增商户银行卡信息:{}", bankInfo);
 		bankInfoMapper.insert(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.insert(feeInfo);
@@ -187,10 +193,10 @@ public class MerchantService {
 		perpay.setFreezeAmount(BigDecimal.ZERO);
 		perpay.setOverdraw(MerchantConstant.OVERDRAW_NO);
 		perpay.setCreateTime(new Date());
-		merchantPrepayInfoMapper.insert(perpay);
-		perpay.setDigest(MD5.md5(String.valueOf(perpay.getBalance()) + "|" + perpay.getFreezeAmount() , 
+		perpay.setDigest(MD5.md5("0.00|0.00" , 
 				String.valueOf(perpay.getMerchantId())));
-		merchantPrepayInfoMapper.updateByPrimaryKey(perpay);
+		log.info("新增预缴户信息:{}", perpay);
+		merchantPrepayInfoMapper.insert(perpay);
 	}
 	
 	/**

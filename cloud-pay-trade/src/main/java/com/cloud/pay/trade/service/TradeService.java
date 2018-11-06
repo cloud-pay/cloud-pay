@@ -46,9 +46,9 @@ public class TradeService {
 		resDTO.setOrderNo(trade.getOrderNo());
 		try {
 			payHandler.singlePay(trade);
+			payHandler.freezeMerchantFee(trade);
 			PayTradeResVO resVO = payHandler.invokePay(trade);
 			payHandler.updateTradeStatus(trade, resVO);
-			
 			resDTO.setStatus(trade.getStatus());
 			resDTO.setReturnInfo(trade.getReturnInfo());
 			resDTO.setReturnCode(trade.getReturnCode());

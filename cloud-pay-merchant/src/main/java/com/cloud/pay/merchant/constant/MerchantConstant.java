@@ -34,4 +34,5 @@ public class MerchantConstant {
 	public final static int PER_RATE = 1;
 	/** 按笔数 */
 	public final static int PER = 2;
+	
 }

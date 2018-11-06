@@ -225,4 +225,11 @@
        and mr.modify_time &lt; #{endTime}
       </if>
  </select>
+ <select id="selectByMerchantIdAndChannelId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_route_conf
+    where channel_id = #{channelId,jdbcType=INTEGER}
+      and merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
 </mapper>

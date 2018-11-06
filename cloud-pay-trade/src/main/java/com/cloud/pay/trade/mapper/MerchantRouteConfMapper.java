@@ -26,4 +26,14 @@ public interface MerchantRouteConfMapper {
 			@Param("merchantName") String merchantName, @Param("startTime") Date startTime,
 			@Param("endTime") Date endTime);
 	
+	/**
+	 * 通过商户ID。渠道ID查询路由信息
+	 * @author dbnaxlc
+	 * @date 2018年11月6日 下午2:54:29
+	 * @param merchantId
+	 * @param channelId
+	 * @return
+	 */
+	MerchantRouteConf selectByMerchantIdAndChannelId(@Param("merchantId") Integer merchantId,
+			@Param("channelId") Integer channelId);
 }

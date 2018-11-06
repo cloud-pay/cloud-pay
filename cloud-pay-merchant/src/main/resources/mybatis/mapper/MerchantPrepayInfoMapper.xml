@@ -101,4 +101,15 @@
       </if>
       order by i.create_time desc
   </select>
+  
+  <select id="lockByMerchantIds" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_merchant_prepay_info
+    where merchant_id in 
+    <foreach collection="merchantIds" index="index" item="merchantId" open="(" close=")" separator=",">
+		 #{merchantId}
+	</foreach>
+     for update
+  </select>
 </mapper>

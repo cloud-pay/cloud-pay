@@ -2,6 +2,7 @@ package com.cloud.pay.trade.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -105,12 +106,12 @@ public class PayHandler {
 			log.info("商户{}预缴户被篡改", trade.getMerchantId());
 			throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
 		}
-		if(info.getBalance().subtract(info.getFreezeAmount()).compareTo(trade.getTradeAmount()) < 0) {
+		if(info.getBalance().subtract(info.getFreezeAmount()).compareTo(trade.getTradeAmount().add(trade.getMerchantFeeAmount())) < 0) {
 			log.warn("现有余额为:{}，小于提现金额：{}", 
 					info.getBalance().subtract(info.getFreezeAmount()), trade.getTradeAmount());
 			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()), null);
 		}
-		info.setFreezeAmount(info.getFreezeAmount().add(trade.getMerchantFeeAmount()));
+		info.setFreezeAmount(info.getFreezeAmount().add(trade.getMerchantFeeAmount()).add(trade.getTradeAmount()));
 		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
 				String.valueOf(info.getMerchantId())));
 		log.info("冻结商户信息：{}", info);
@@ -127,12 +128,13 @@ public class PayHandler {
 		reqVO.setAmt(trade.getTradeAmount());
 		//TODO 路由具体渠道时设置
 //		reqVO.setMerchantNo(merchantNo);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		reqVO.setTradeDate(sdf.format(new Date()));
+		reqVO.setAmt(trade.getTradeAmount());
 		reqVO.setOrderNo(trade.getOrderNo());
 		reqVO.setPayeeAccount(trade.getPayeeBankCard());
 		reqVO.setPayeeBankCode(trade.getPayeeBankCode());
 		reqVO.setPayeeName(trade.getPayeeName());
-//		reqVO.setPayerAccount(bankInfo.getBankCardNo());
-//		reqVO.setPayerName(bankInfo.getBankAccountName());
 		reqVO.setPostscript(trade.getRemark());
 		log.info("调用渠道入参：{}", reqVO);
 		PayTradeResVO resVO = payService.pay(reqVO);
@@ -151,10 +153,11 @@ public class PayHandler {
 		log.info("处理商户预缴户");
 		//TODO 设置渠道返回结果
 //		trade.setStatus();
-//		trade.setChannelId(channelId);
-//		trade.setReturnCode(returnCode);
-//		trade.setReturnInfo(returnInfo);
-//		trade.setReconDate(resVO.getAccountDate());
+		trade.setChannelId(resVO.getChannelId());
+		trade.setReturnCode(resVO.getRespCode());
+		trade.setReturnInfo(resVO.getRespMsg());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		trade.setReconDate(sdf.parse(resVO.getAccountDate()));
 		trade.setTradeConfirmTime(new Date());
 		if(TradeConstant.STATUS_SUCCESS == trade.getStatus()) {
 			List<Integer> merchantIds = new ArrayList<Integer>();
@@ -178,6 +181,8 @@ public class PayHandler {
 			}
 			List<MerchantPrepayInfo> infos = merchantPrepayInfoMapper.lockByMerchantIds(merchantIds);
 			Map<Integer, MerchantPrepayInfo> maps = ConvertUtil.convertMap(infos);
+			/** 商户资金变动 */
+			prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.TRADE_FEE, trade.getTradeAmount(), TradeConstant.CREDIT, trade.getId());			
 			/** 商户手续费资金变动 */
 			prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.HADNING_FEE, trade.getMerchantFeeAmount(), TradeConstant.CREDIT, trade.getId());
 			BigDecimal platFee = trade.getMerchantFeeAmount();
@@ -203,7 +208,7 @@ public class PayHandler {
 				log.info("商户{}预缴户被篡改", trade.getMerchantId());
 				throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
 			}
-			info.setFreezeAmount(info.getFreezeAmount().subtract(trade.getMerchantFeeAmount()));
+			info.setFreezeAmount(info.getFreezeAmount().subtract(trade.getMerchantFeeAmount()).subtract(trade.getTradeAmount()));
 			info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
 					String.valueOf(info.getMerchantId())));
 			log.info("回滚冻结金额,{}", info);

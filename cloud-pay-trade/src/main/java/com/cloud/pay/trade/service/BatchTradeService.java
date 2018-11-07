@@ -40,6 +40,7 @@ import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.trade.constant.SmsConstant;
+import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.entity.BatchTrade;
 import com.cloud.pay.trade.entity.PaySms;
@@ -71,8 +72,9 @@ public class BatchTradeService {
 	private JdbcTemplate jdbcTemplate;
 
 	private final static String TRADE_SQL = "insert into t_trade (order_no, merchant_id, trade_amount, "
-			+ "status, payer_id, payee_name, payee_bank_card, payee_bank_code, remark, batch_no, payee_bank_name, payee_bank_acct_type) "
-			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "status, payer_id, payee_name, payee_bank_card, payee_bank_code, remark, batch_no, payee_bank_name, payee_bank_acct_type,"
+			+ "merchant_fee_amount,loan_benefit,org_benefit) "
+			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 	
 	private String sources = "0123456789";
 	
@@ -81,6 +83,9 @@ public class BatchTradeService {
 	
 	@Autowired
 	private SysConfigMapper sysConfigMapper;
+	
+	@Autowired
+	private PayHandler payHandler;
 
 	@SuppressWarnings({ "null", "deprecation" })
 	@Transactional
@@ -188,6 +193,19 @@ public class BatchTradeService {
 				}
 			}
 			if (errorDetails.length() == 0) {
+				//逐笔计算手续费
+				for(Trade temp : trades) {
+					BigDecimal merchantFee = BigDecimal.ZERO;
+					BigDecimal[] fees = payHandler.getFee(trade.getMerchantId(), trade.getTradeAmount());
+					merchantFee = fees[0];
+					if(TradeConstant.LOANING_YES == trade.getLoaning()) {
+						//计算垫资分润
+						temp.setLoanBenefit(fees[1]);
+					}
+					temp.setMerchantFeeAmount(merchantFee.add(trade.getLoanBenefit()));
+					BigDecimal orgFee = payHandler.getOrgFee(trade.getMerchantId(), trade.getTradeAmount());
+					temp.setOrgBenefit(merchantFee.subtract(orgFee));
+				} 
 				batchTrade.setTotalAmount(totalAmount);
 				batchTrade.setTotalCount(count);
 				batchTradeMapper.insert(batchTrade);
@@ -337,6 +355,21 @@ public class BatchTradeService {
 									ps.setInt(11, argument.getPayeeBankAcctType());
 								} else {
 									ps.setNull(11, Types.INTEGER);
+								}
+								if (null != argument.getMerchantFeeAmount()) {
+									ps.setBigDecimal(12, argument.getMerchantFeeAmount());
+								} else {
+									ps.setNull(12, Types.DECIMAL);
+								}
+								if (null != argument.getLoanBenefit()) {
+									ps.setBigDecimal(13, argument.getLoanBenefit());
+								} else {
+									ps.setNull(13, Types.DECIMAL);
+								}
+								if (null != argument.getOrgBenefit()) {
+									ps.setBigDecimal(14, argument.getOrgBenefit());
+								} else {
+									ps.setNull(14, Types.DECIMAL);
 								}
 							}
 						});

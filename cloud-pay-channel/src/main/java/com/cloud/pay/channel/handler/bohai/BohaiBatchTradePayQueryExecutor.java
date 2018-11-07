@@ -31,6 +31,14 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 			BohaiCloudBatchTradePayQueryParam batchQueryParam = createParam(reqVO);
 			BohaiCloudBatchTradePayQueryResult result = request(batchQueryParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBR);
 			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
+			if("4".equals(resVO.getRespCode())) {
+				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
+			}else if("5".equals(resVO.getRespCode()) || "6".equals(resVO.getRespCode())) {
+				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
+			}else {
+				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+			}
+			resVO.setRespCode(ChannelContants.CHANNEL_RESP_CODE_SUCCESS);
 		}catch(Exception e) {
 			log.error("渤海批量代付结果查询失败：{}",e);
 			String msg  = "系统异常";

@@ -4,6 +4,8 @@ public class BatchPayTradeQueryResVO extends BaseTradeResVO{
 
 	private static final long serialVersionUID = -6454477994173419881L;
 	
+	private Integer status; //0-成功，1-失败，99-未知状态
+	
 	public BatchPayTradeQueryResVO(String errorCode,String errorMessage) {
 		super(errorCode, errorMessage);
 	}
@@ -24,6 +26,12 @@ public class BatchPayTradeQueryResVO extends BaseTradeResVO{
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
-	
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 }

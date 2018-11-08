@@ -22,6 +22,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.mapper.ProvincialMapper;
 import com.cloud.pay.common.service.BankService;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
@@ -46,6 +47,9 @@ public class MerchantApplyController extends BaseController{
 	
 	private String menuUrl = "merchantApply/list";
 	
+	@Autowired
+	private ProvincialMapper provincialMapper;
+	
 	/**
 	 * 商戶列表
 	 * @return
@@ -69,6 +73,7 @@ public class MerchantApplyController extends BaseController{
 		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, startTime, endTime));
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
+		model.addAttribute("provincials", provincialMapper.selectList());
 		return "page/merchant/merchantApplyList";
 	}
 	

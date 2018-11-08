@@ -274,8 +274,17 @@ div.cbp label.font{
 						    <input class="form-control" name="industryCategory" value="" id="industryCategory">
 					    </div>
 					    <label for="city" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所在城市</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="city" value="" id="city">
+					    <div class="col-sm-2">
+					    	<select name="provincial" id="provincial" class="form-control">
+						      <option value="">请选择</option>
+						      <option th:each="provincial : ${provincials}" th:value="${provincial.pid}" th:text="${provincial.provincial}">/option>
+						    </select>
+					    </div>
+					    <div class="col-sm-2">
+					    	<select name="city" class="form-control" id="city">
+						      <option value="">请选择</option>
+						      
+						    </select>
 					    </div>
 					  </div>
 					  
@@ -599,6 +608,7 @@ $(function(){
 		$("input[name='name']").val('');
 		$("input[name='shortName']").val('');
 		$("input[name='industryCategory']").val('');
+		$("[name='provincial']").val('');
 		$("[name='city']").val('');
 		$("input[name='address']").val('');
 		$("input[name='legal']").val('');
@@ -626,7 +636,7 @@ $(function(){
 		$("#merchantModal").modal("show");
 	});
 	
-	var BaseInfo = function(id, code, version, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile) {
+	var BaseInfo = function(id, code, version, orgId, name, shortName, type, industryCategory, legal, provincial, city, address, email, mobile) {
 		 this.id = id;
 		 this.code = code;
 		 this.version = version;
@@ -636,6 +646,7 @@ $(function(){
 		 this.type = type;
 		 this.industryCategory = industryCategory;
 		 this.legal = legal;
+		 this.provincial = provincial;
 		 this.city = city;
 		 this.address = address;
 		 this.email = email;
@@ -677,12 +688,13 @@ $(function(){
 		var name = $("input[name='name']").val();
 		var shortName = $("input[name='shortName']").val();
 		var industryCategory= $("input[name='industryCategory']").val();
+		var provincial= $("[name='provincial']").val();
 		var city= $("[name='city']").val();
 		var address= $("input[name='address']").val();
 		var legal= $("input[name='legal']").val();
 		var email= $("input[name='email']").val();
 		var mobile= $("input[name='mobile']").val();
-		var baseInfo = new BaseInfo(id, code, version, orgId, name, shortName, type, industryCategory, legal, city, address, email, mobile, status);
+		var baseInfo = new BaseInfo(id, code, version, orgId, name, shortName, type, industryCategory, legal, provincial, city, address, email, mobile, status);
 		//alert(JSON.stringify(baseInfo));
 		var bankInfoId = $("input[name='bankInfoId']").val();
 		var bankId = $("[name='bankId']").val();
@@ -851,6 +863,7 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='name']").val(data.data.baseInfo.name);
 					$("input[name='shortName']").val(data.data.baseInfo.shortName);
 					$("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
+					$("[name='provincial']").val(data.data.baseInfo.provincial);
 					$("[name='city']").val(data.data.baseInfo.city);
 					$("input[name='address']").val(data.data.baseInfo.address);
 					$("input[name='legal']").val(data.data.baseInfo.legal);
@@ -888,6 +901,7 @@ function reloadModelData(url,title,btntext,id){
 		$("input[name='name']").attr("readOnly","true");
 		$("input[name='shortName']").attr("readOnly","true");
 		$("input[name='industryCategory']").attr("readOnly","true");
+		$("[name='provincial']").attr("readOnly","true");
 		$("[name='city']").attr("readOnly","true");
 		$("input[name='address']").attr("readOnly","true");
 		$("input[name='legal']").attr("readOnly","true");
@@ -913,6 +927,7 @@ function reloadModelData(url,title,btntext,id){
 		$("input[name='name']").attr("readOnly",false);
 		$("input[name='shortName']").attr("readOnly",false);
 		$("input[name='industryCategory']").attr("readOnly",false);
+		$("[name='provincial']").attr("readOnly",false);
 		$("[name='city']").attr("readOnly",false);
 		$("input[name='address']").attr("readOnly",false);
 		$("input[name='legal']").attr("readOnly",false);
@@ -1038,6 +1053,31 @@ $('#loanFeeType').change(function(){
 		$("#loanPercent").hide();
 		$("input[name='loanFee']").val('');
 	}
+}) ;
+
+$('#provincial').change(function(){ 
+	$("#city option").each(function(i){
+		if(i != 0){
+			$(this).remove();
+		}
+	});
+	var pid = $("#provincial").val();
+	$.ajax({
+			type:"GET",
+			url:_ctx+"/city/list",
+			dataType:"json",
+			data:{pid:pid},
+			cache:false,
+			success:function(data){
+				if(data.status == 'success'){
+					$.each(data.data, function(i, obj) {
+						$("#city").append("<option value=" + obj.cid + ">" + obj.city + "</option>");
+					});
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
 }) ;
 </script>
 </body>

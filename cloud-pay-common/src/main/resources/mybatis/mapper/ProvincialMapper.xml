@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.pay.common.mapper.ProvincialMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.common.entity.Provincial" >
+    <id column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="provincial" property="provincial" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pid, provincial
+  </sql>
+  <select id="selectList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_provincial
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_provincial
+    where pid = #{pid,jdbcType=INTEGER}
+  </select>
+</mapper>

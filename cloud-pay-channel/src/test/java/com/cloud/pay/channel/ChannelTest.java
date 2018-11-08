@@ -45,7 +45,7 @@ public class ChannelTest {
 		reqVO.setPayeeBankCode("3085840000145");
 		reqVO.setAmt(new BigDecimal("1"));
 		reqVO.setTradeDate("20181106 22:47:15");
-		BaseTradeResVO response = cloudApiService.pay(reqVO);
+		PayTradeResVO response = cloudApiService.pay(reqVO);
 		System.out.println("===============================================");
 		System.out.println(response);
 	}
@@ -119,12 +119,12 @@ public class ChannelTest {
 	@Test
 	public void batchPay() {
 		BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
-		reqVO.setTradeDate("20181103 23:00:15");
+		reqVO.setTradeDate("20181107 22:28:15");
 		reqVO.setTotalNum(2l);
 		reqVO.setTotalAmt(new BigDecimal("20"));
 		reqVO.setMerchantId(1);
-		reqVO.setOrderNo("2018110300000005");
-		reqVO.setFileName("BD220015201811030002.req");
+		reqVO.setOrderNo("2018110700000007");
+		reqVO.setFileName("BD220015201811070001.req");
 		BatchPayTradeResVO response = cloudApiService.batchPay(reqVO);
 	    System.out.println("===================================================");
 	    System.out.println(response);
@@ -136,10 +136,10 @@ public class ChannelTest {
 	@Test
 	public void batchPayQuery() {
 		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
-		reqVO.setTradeDate("20181103 23:00:15");
-		reqVO.setFileName("BD220015201811030002.req");
-		reqVO.setBatchOrderNo("2018110300000005");
-		reqVO.setOrderNo("2018110300000006");
+		reqVO.setTradeDate("20181107 22:28:15");
+		reqVO.setFileName("BD220015201811070001.req");
+		reqVO.setBatchOrderNo("2018110700000007");
+		reqVO.setOrderNo("2018110700000007");
 		reqVO.setChannelId(1);
 		reqVO.setMerchantId(1);
 		BatchPayTradeQueryResVO response = cloudApiService.batchPayQuery(reqVO);

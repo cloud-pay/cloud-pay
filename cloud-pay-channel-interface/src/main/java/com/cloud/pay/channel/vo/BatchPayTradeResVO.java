@@ -4,6 +4,8 @@ public class BatchPayTradeResVO extends BaseTradeResVO {
 
 	private static final long serialVersionUID = -6954718571400196610L;
 	
+	private Integer status; //0-成功，1-失败，99-未知状态
+	
 	public BatchPayTradeResVO(String errorCode,String errorMessage) {
 		super(errorCode, errorMessage);
 	}
@@ -29,4 +31,13 @@ public class BatchPayTradeResVO extends BaseTradeResVO {
 	public void setChannelId(Integer channelId) {
 		this.channelId = channelId;
 	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
 }

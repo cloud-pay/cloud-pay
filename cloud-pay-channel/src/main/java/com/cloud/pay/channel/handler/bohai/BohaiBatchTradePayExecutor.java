@@ -58,10 +58,17 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 			if("1".equals(result.getRspCode())) {
 				resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),
 						result.getErrorCode(),StringUtils.isNotBlank(result.getErrorMessage())?result.getErrorMessage():result.getRspMsg());
+				if("1002".equals(result.getErrorCode())) {
+					  resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+				}else {
+					  resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
+				}
+				resVO.setRespCode(ChannelContants.CHANNEL_RESP_CODE_SUCCESS);
 				log.info("渤海批量代付-响应参数：{}",resVO);
 				return resVO;
 			}
 			resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
+			resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
 		}catch(Exception e) {
 			log.error("渤海批量代付失败：{}",e);
 			String msg = "系统异常";
@@ -69,6 +76,7 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 				msg  = e.getMessage();
 			}
 			resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,msg);
+			resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
 		}
 		log.info("渤海批量代付-响应参数：{}",resVO);
 		return resVO;

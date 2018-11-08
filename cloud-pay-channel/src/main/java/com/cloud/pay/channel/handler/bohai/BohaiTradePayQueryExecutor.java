@@ -51,8 +51,8 @@ public class BohaiTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudTra
 					resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
 				}else {
 					resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
-					
 				}
+				resVO.setRespCode(ChannelContants.CHANNEL_RESP_CODE_SUCCESS);
 				log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				return resVO;
 			}

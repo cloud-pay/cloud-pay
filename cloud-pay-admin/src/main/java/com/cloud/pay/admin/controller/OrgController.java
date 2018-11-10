@@ -20,6 +20,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.mapper.ProvincialMapper;
 import com.cloud.pay.common.service.BankService;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
@@ -37,6 +38,9 @@ public class OrgController extends BaseController{
 	private BankService bankService;
 	
 	private String menuUrl = "org/list";
+	
+	@Autowired
+	private ProvincialMapper provincialMapper;
 	
 	/**
 	 * 机构列表
@@ -61,6 +65,7 @@ public class OrgController extends BaseController{
 		model.addAttribute("merchants", merchantService.getOrgList(type, code, name, startTime, endTime));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		model.addAttribute("provincials", provincialMapper.selectList());
 		return "page/org/orgList";
 	}
 	

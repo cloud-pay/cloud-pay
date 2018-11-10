@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
+import com.cloud.pay.common.mapper.CityMapper;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantDTO;
 import com.cloud.pay.merchant.entity.MerchantAttachementInfo;
@@ -65,6 +66,9 @@ public class MerchantService {
 	
 	@Autowired
 	private UserMerchantMapper userMerchantMapper;
+	
+	@Autowired
+	private CityMapper cityMapper;
 
 	public List<MerchantDTO> getMerchantDTOs(String type) {
 		return baseInfoMapper.getMerchantDTOs(type);
@@ -109,7 +113,8 @@ public class MerchantService {
 	@Transactional
 	public Map<String, Object> select(Integer id) {
 		Map<String, Object> merchantMap = new HashMap<>();
-		merchantMap.put("baseInfo", baseInfoMapper.selectByPrimaryKey(id));
+		MerchantBaseInfo baseInfo = baseInfoMapper.selectByPrimaryKey(id);
+		merchantMap.put("baseInfo", baseInfo);
 		merchantMap.put("bankInfo", bankInfoMapper.selectByMerchantId(id));
 		merchantMap.put("feeInfo", feeInfoMapper.selectByMerchantId(id));
 		List<MerchantAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(id);
@@ -127,6 +132,7 @@ public class MerchantService {
 				
 			}
 		}
+		merchantMap.put("citys", cityMapper.selectByPid(baseInfo.getProvincial()));
 		return merchantMap;
 	}
 

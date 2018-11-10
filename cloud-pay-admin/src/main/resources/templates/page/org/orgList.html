@@ -235,8 +235,16 @@ div.cbp label.font{
 					  
 					<div class="form-group">
 					    <label for="city" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>所在城市</label>
-					    <div class="col-sm-4">
-						    <input class="form-control" name="city" value="" id="city">
+					    <div class="col-sm-2">
+					    	<select name="provincial" id="provincial" class="form-control" readOnly="true">
+						      <option value="">请选择</option>
+						      <option th:each="provincial : ${provincials}" th:value="${provincial.pid}" th:text="${provincial.provincial}">/option>
+						    </select>
+					    </div>
+					    <div class="col-sm-2">
+					    	<select name="city" class="form-control" id="city">
+						      <option value="">请选择</option>
+						    </select>
 					    </div>
 					    <label for="address" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>详细地址</label>
 					    <div class="col-sm-4">
@@ -628,6 +636,10 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='name']").val(data.data.baseInfo.name);
 					$("input[name='shortName']").val(data.data.baseInfo.shortName);
 					$("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
+					$("[name='provincial']").val(data.data.baseInfo.provincial);
+					$.each(data.data.citys, function(i, obj) {
+						$("#city").append("<option value=" + obj.cid + ">" + obj.city + "</option>");
+					});
 					$("[name='city']").val(data.data.baseInfo.city);
 					$("input[name='address']").val(data.data.baseInfo.address);
 					$("input[name='legal']").val(data.data.baseInfo.legal);

@@ -21,6 +21,7 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.common.mapper.ProvincialMapper;
 import com.cloud.pay.common.service.BankService;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
@@ -38,6 +39,9 @@ public class MerchantController extends BaseController{
 	private BankService bankService;
 	
 	private String menuUrl = "amountLimit/list";
+	
+	@Autowired
+	private ProvincialMapper provincialMapper;
 	
 	/**
 	 * 商戶列表
@@ -73,6 +77,7 @@ public class MerchantController extends BaseController{
 		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
+		model.addAttribute("provincials", provincialMapper.selectList());
 		return "page/merchant/merchantList";
 	}
 	

@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
+import com.cloud.pay.common.mapper.CityMapper;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.constant.MerchantConstant;
@@ -73,6 +74,9 @@ public class MerchantApplyService {
 	
 	@Value("${merchant.folder}")
 	public String merchantFolder;
+	
+	@Autowired
+	private CityMapper cityMapper;
 	
 	private static final String SEQ_OFFSET = "00000000";
 	private AtomicInteger seq = new AtomicInteger(0);
@@ -132,7 +136,8 @@ public class MerchantApplyService {
 	@Transactional
 	public Map<String, Object> select(Integer id) {
 		Map<String, Object> merchantMap = new HashMap<>();
-		merchantMap.put("baseInfo", baseInfoMapper.selectByPrimaryKey(id));
+		MerchantApplyBaseInfo baseInfo = baseInfoMapper.selectByPrimaryKey(id);
+		merchantMap.put("baseInfo", baseInfo);
 		merchantMap.put("bankInfo", bankInfoMapper.selectByMerchantId(id));
 		merchantMap.put("feeInfo", feeInfoMapper.selectByMerchantId(id));
 		List<MerchantApplyAttachementInfo> infos = attachementInfoMapper.selectByMerchantId(id);
@@ -150,6 +155,7 @@ public class MerchantApplyService {
 				
 			}
 		}
+		merchantMap.put("citys", cityMapper.selectByPid(baseInfo.getProvincial()));
 		return merchantMap;
 	}
 	

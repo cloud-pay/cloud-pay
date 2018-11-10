@@ -10,7 +10,8 @@
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="industry_category" property="industryCategory" jdbcType="VARCHAR" />
     <result column="legal" property="legal" jdbcType="VARCHAR" />
-    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="provincial" property="provincial" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="INTEGER" />
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
@@ -21,7 +22,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, org_id, code, name, short_name, type, industry_category, legal, city, address, email, 
+    id, org_id, code, name, short_name, type, industry_category, legal, provincial, city, address, email, 
     mobile, status, creator, create_time, modifer, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -37,13 +38,13 @@
   <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantBaseInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into t_merchant_base_info (id, org_id, code, name, 
       short_name, type, industry_category, 
-      legal, city, address, 
+      legal, provincial, city, address, 
       email, mobile, status, creator, 
       create_time, modifer, modify_time
       )
     values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{shortName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{industryCategory,jdbcType=VARCHAR}, 
-      #{legal,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{legal,jdbcType=VARCHAR}, #{provincial,jdbcType=INTEGER}, #{city,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{modifer,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
       )

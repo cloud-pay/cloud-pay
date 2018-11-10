@@ -283,7 +283,6 @@ div.cbp label.font{
 					    <div class="col-sm-2">
 					    	<select name="city" class="form-control" id="city">
 						      <option value="">请选择</option>
-						      
 						    </select>
 					    </div>
 					  </div>
@@ -864,6 +863,9 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='shortName']").val(data.data.baseInfo.shortName);
 					$("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
 					$("[name='provincial']").val(data.data.baseInfo.provincial);
+					$.each(data.data.citys, function(i, obj) {
+						$("#city").append("<option value=" + obj.cid + ">" + obj.city + "</option>");
+					});
 					$("[name='city']").val(data.data.baseInfo.city);
 					$("input[name='address']").val(data.data.baseInfo.address);
 					$("input[name='legal']").val(data.data.baseInfo.legal);

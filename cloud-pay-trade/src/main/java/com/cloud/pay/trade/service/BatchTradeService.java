@@ -269,13 +269,13 @@ public class BatchTradeService {
 				}
 				//发送渠道
 				BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
-				reqVO.setFileName(FileUtil.createFile(trades, batchTrade.getBatchNo()));
+				//reqVO.setFileName(FileUtil.createFile(trades, batchTrade.getBatchNo()));
 				reqVO.setMerchantId(batchTrade.getPayerMerchantId());
 				reqVO.setOrderNo(batchTrade.getBatchNo());
-				reqVO.setTotalAmt(totalAmount);
+				//reqVO.setTotalAmt(totalAmount);
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 				reqVO.setTradeDate(sdf.format(new Date()));
-				reqVO.setTotalNum(Long.valueOf(count));
+				//reqVO.setTotalNum(Long.valueOf(count));
 				log.info("批量付款入参：{}", reqVO);
 				BatchPayTradeResVO resVO = payService.batchPay(reqVO);
 				log.info("批量付款結果：{}", resVO);
@@ -541,7 +541,7 @@ public class BatchTradeService {
 	public void searchBatchTrade(String batchNo, Integer merchantId) {
 		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
 		reqVO.setBatchOrderNo(batchNo);
-		reqVO.setFileName("/home/batch/" + batchNo + ".txt");
+		//reqVO.setFileName("/home/batch/" + batchNo + ".txt");
 		reqVO.setMerchantId(merchantId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		reqVO.setTradeDate(sdf.format(new Date()));

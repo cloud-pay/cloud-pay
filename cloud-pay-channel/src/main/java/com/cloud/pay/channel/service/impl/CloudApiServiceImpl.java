@@ -160,6 +160,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		}
 		MerchantChannel merchantChannel = merchantChannels.get(0);
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTraeHandler(ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
+		// TODO .... 根据批次号生成批量文件
 		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
 		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		log.info("渠道接口，批量代付，响应结果：{}",resVO);
@@ -180,6 +181,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			return resVO;
 		}
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.getChannelByChannelId(reqVO.getChannelId()));
+		//TODO 根据响应结果构建结果集
 		resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付结果查询，响应结果:{}",resVO);
 		return resVO;

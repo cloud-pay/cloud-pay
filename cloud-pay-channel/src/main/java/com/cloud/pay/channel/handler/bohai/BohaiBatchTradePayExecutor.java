@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.utils.FileDigestUtil;
 import com.cloud.pay.channel.utils.JaxbUtil;
+import com.cloud.pay.channel.vo.BatchPayTradeInnerReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeResVO;
 import com.cloud.pay.channel.vo.bohai.BohaiBatchSingleQueryResult;
@@ -30,7 +31,7 @@ import com.cloud.pay.common.mapper.SysConfigMapper;
 
 @Service("bohaiBatchTradePayExecutor")
 public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayParam, BohaiCloudBatchTradePayResult>
-      implements ITradePayExecutor<BatchPayTradeReqVO, BatchPayTradeResVO> {
+      implements ITradePayExecutor<BatchPayTradeInnerReqVO, BatchPayTradeResVO> {
 
 	@Value("${cloud.bohai.batch.pay.file.path}")
 	private String batchPayFilePath;  //本地文件路径
@@ -39,7 +40,7 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 	private SysConfigMapper sysConfigMapper;
 	
 	@Override
-	public BatchPayTradeResVO execute(BatchPayTradeReqVO reqVO) {
+	public BatchPayTradeResVO execute(BatchPayTradeInnerReqVO reqVO) {
 		BatchPayTradeResVO resVO = null;
 		try {
 			//读取文件并生成文件sha1
@@ -88,7 +89,7 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 	 * @return
 	 * @throws Exception 
 	 */
-	private BohaiCloudBatchTradePayParam createParam(BatchPayTradeReqVO reqVO,String fileSHA1) throws Exception {
+	private BohaiCloudBatchTradePayParam createParam(BatchPayTradeInnerReqVO reqVO,String fileSHA1) throws Exception {
 		BohaiCloudBatchTradePayParam batchPayParam = new BohaiCloudBatchTradePayParam();
 		batchPayParam.setDate(reqVO.getTradeDate());
 		batchPayParam.setSerialNo(reqVO.getOrderNo());

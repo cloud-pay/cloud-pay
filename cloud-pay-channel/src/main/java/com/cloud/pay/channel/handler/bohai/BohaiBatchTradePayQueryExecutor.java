@@ -9,12 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.utils.JaxbUtil;
-import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
-import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
-import com.cloud.pay.channel.vo.BatchPayTradeResVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryInnerReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryInnerResVO;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayQueryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayQueryResult;
-import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeErrorResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
@@ -22,17 +20,18 @@ import com.cloud.pay.common.exception.CloudPayException;
 
 @Service("bohaiBatchTradePayQueryExecutor")
 public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayQueryParam,BohaiCloudBatchTradePayQueryResult>
-      implements ITradePayExecutor<BatchPayTradeQueryReqVO, BatchPayTradeQueryResVO> {
+      implements ITradePayExecutor<BatchPayTradeQueryInnerReqVO, BatchPayTradeQueryInnerResVO> {
 
 	@Override
-	public BatchPayTradeQueryResVO execute(BatchPayTradeQueryReqVO reqVO) {
-		BatchPayTradeQueryResVO  resVO = null;
+	public BatchPayTradeQueryInnerResVO execute(BatchPayTradeQueryInnerReqVO reqVO) {
+		BatchPayTradeQueryInnerResVO  resVO = null;
 		try {
 			BohaiCloudBatchTradePayQueryParam batchQueryParam = createParam(reqVO);
 			BohaiCloudBatchTradePayQueryResult result = request(batchQueryParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBR);
-			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
+			resVO = new BatchPayTradeQueryInnerResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
 			if("4".equals(resVO.getRespCode())) {
 				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
+				resVO.setFileName(result.getFilNam());
 			}else if("5".equals(resVO.getRespCode()) || "6".equals(resVO.getRespCode())) {
 				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
 			}else {
@@ -45,12 +44,12 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 			if(e instanceof CloudPayException) {
 				msg = e.getMessage();
 			}
-			resVO = new BatchPayTradeQueryResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
+			resVO = new BatchPayTradeQueryInnerResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;
 	}
 
-	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryReqVO reqVO) {
+	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryInnerReqVO reqVO) {
 		BohaiCloudBatchTradePayQueryParam batchPayQueryParam = new BohaiCloudBatchTradePayQueryParam();
 		batchPayQueryParam.setDate(reqVO.getTradeDate());
 		batchPayQueryParam.setSerialNo(reqVO.getOrderNo());

@@ -20,10 +20,6 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 	
-	@NotBlank(message = "文件名不能为空")
-	@Length(max = 32,message = "文件名最长32位")
-	private String fileName; 
-	
 	@NotBlank(message = "批量交易流水不能为空")
 	@Length(max = 32,message = "批量交易流水最长32位")
 	private String batchOrderNo;
@@ -37,14 +33,6 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 
 	public void setTradeDate(String tradeDate) {
 		this.tradeDate = tradeDate;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
 	}
 
 	public String getBatchOrderNo() {

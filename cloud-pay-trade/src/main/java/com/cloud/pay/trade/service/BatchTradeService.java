@@ -34,17 +34,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.druid.util.Base64;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.cloud.pay.channel.service.ICloudApiService;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeResVO;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
-import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
-import com.cloud.pay.merchant.mapper.MerchantPrepayInfoMapper;
-import com.cloud.pay.merchant.util.MD5;
 import com.cloud.pay.trade.constant.SmsConstant;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
@@ -55,6 +55,7 @@ import com.cloud.pay.trade.exception.TradeException;
 import com.cloud.pay.trade.mapper.BatchTradeMapper;
 import com.cloud.pay.trade.mapper.PaySmsMapper;
 import com.cloud.pay.trade.mapper.TradeMapper;
+import com.cloud.pay.trade.util.FileUtil;
 
 
 @Service
@@ -92,9 +93,6 @@ public class BatchTradeService {
 	
 	@Autowired
 	private PayHandler payHandler;
-	
-	@Autowired
-	private MerchantPrepayInfoMapper merchantPrepayInfoMapper;
 	
 	@Autowired
 	private PrepayInfoService prepayInfoService;
@@ -259,40 +257,33 @@ public class BatchTradeService {
 				for(Trade temp : trades) {
 					total.add(add(temp.getMerchantFeeAmount(), temp.getLoanBenefit(), temp.getOrgBenefit()));
 				}
-				MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(batchTrade.getPayerMerchantId());
-				log.info("商户预缴户信息:{}", info);
-				String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
-						String.valueOf(info.getMerchantId()));
-				if(!digest.equals(info.getDigest())) {
-					log.info("商户{}预缴户被篡改", trade.getMerchantId());
-					throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
-				}
-				if(info.getBalance().subtract(info.getFreezeAmount()).compareTo(total.add(totalAmount)) < 0) {
-					String msg = "现有余额为:" + info.getBalance().subtract(info.getFreezeAmount()) 
-							+ "，小于付款总金额：" + total.add(totalAmount) ;
-					errorDetails.append(msg);
-					log.warn(msg);
+				try {
+					prepayInfoService.freezePrepayInfo(batchTrade.getPayerMerchantId(), total.add(totalAmount));
+				} catch(Exception e1) {
+					log.warn("冻结商户余额异常：", e1);
+					errorDetails.append(e1.getMessage());
 					//修改批量交易失败
 					tradeMapper.updateStatusByBatchNo(batchTrade.getBatchNo(),
-							msg, TradeConstant.PREPAY_BALANCE_NO_ENOUGH, TradeConstant.STATUS_FAIL, new Date());
-				} else {
-					//冻结金额
-					info.setFreezeAmount(info.getFreezeAmount().add(total).add(totalAmount));
-					info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
-							String.valueOf(info.getMerchantId())));
-					log.info("冻结商户信息：{}", info);
-					merchantPrepayInfoMapper.updateByPrimaryKey(info);
-					//发送渠道
-					BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
-					reqVO.setFileName(fileName);
-					reqVO.setMerchantId(batchTrade.getPayerMerchantId());
-					reqVO.setOrderNo(batchTrade.getBatchNo());
-					reqVO.setTotalAmt(totalAmount);
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-					reqVO.setTradeDate(sdf.format(new Date());
-					reqVO.setTotalNum(Long.valueOf(count));
-					log.info("批量付款入参：{}", reqVO);
-					payService.batchPay(reqVO);
+							e1.getMessage(), TradeConstant.PREPAY_BALANCE_NO_ENOUGH, TradeConstant.STATUS_FAIL, new Date());
+					return errorDetails.toString();
+				}
+				//发送渠道
+				BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
+				reqVO.setFileName(FileUtil.createFile(trades, batchTrade.getBatchNo()));
+				reqVO.setMerchantId(batchTrade.getPayerMerchantId());
+				reqVO.setOrderNo(batchTrade.getBatchNo());
+				reqVO.setTotalAmt(totalAmount);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+				reqVO.setTradeDate(sdf.format(new Date()));
+				reqVO.setTotalNum(Long.valueOf(count));
+				log.info("批量付款入参：{}", reqVO);
+				BatchPayTradeResVO resVO = payService.batchPay(reqVO);
+				log.info("批量付款結果：{}", resVO);
+				if("1".equals(resVO.getRespCode())) {
+					//触发失败，修改交易状态为失败
+					tradeMapper.updateStatusByBatchNo(batchTrade.getBatchNo(),
+							resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
+					prepayInfoService.unfreezePrepayInfo(batchTrade.getPayerMerchantId(), total.add(totalAmount));
 				}
 			}
 		} catch (Exception e) {
@@ -519,6 +510,12 @@ public class BatchTradeService {
 		 return batchTradeMapper.queryBatchByBatchNo(batchNo, merchantId);
 	}
 	
+	/**
+	 * 获取短信验证码
+	 * @param batchNo
+	 * @param payerMerchantId
+	 * @return
+	 */
 	public String getSmsCode(String batchNo, Integer payerMerchantId) {
 		
 		String smsCode = null;
@@ -541,4 +538,15 @@ public class BatchTradeService {
 		return smsCode;
 	}
 	
+	public void searchBatchTrade(String batchNo, Integer merchantId) {
+		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
+		reqVO.setBatchOrderNo(batchNo);
+		reqVO.setFileName("/home/batch/" + batchNo + ".txt");
+		reqVO.setMerchantId(merchantId);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		reqVO.setTradeDate(sdf.format(new Date()));
+		BatchPayTradeQueryResVO resVO = payService.batchPayQuery(reqVO);
+		log.info("批量查询结果：{}", resVO);
+		//TODO依次处理批次文件
+	}
 }

@@ -643,4 +643,26 @@
 	 where t.merchant_id = #{merchantId,jdbcType=INTEGER}
 	 AND DATE_FORMAT(t.recon_date,'%Y-%m-%d 00:00:00') =  #{reconDate,jdbcType=TIMESTAMP}
   </select>
+  
+  <update id="updateStatusByBatchNo" >
+    update t_trade
+    <set >
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="returnCode != null" >
+        return_code = #{returnCode,jdbcType=VARCHAR},
+      </if>
+      <if test="returnInfo != null" >
+        return_info = #{returnInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeConfirmTime != null" >
+        trade_confirm_time = #{tradeConfirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reconDate != null" >
+        recon_date = #{reconDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where batch_no = #{batchNo,jdbcType=VARCHAR}
+  </update>
 </mapper>

@@ -22,6 +22,8 @@ public class TradeConstant {
 	public final static String PREPAY_TRADE_EXCEPTION = "PAY_000002";
 	/**预缴户被篡改*/
 	public final static String PREPAY_CHANGE = "PAY_000003";
+	/**预缴户余额不足*/
+	public final static String PREPAY_BALANCE_NO_ENOUGH = "PAY_000004";
 	
 	/**充值 */
 	public final static int RECHAEGE = 1;

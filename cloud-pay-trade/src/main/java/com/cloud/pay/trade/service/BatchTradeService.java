@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,13 +33,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.Base64;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.cloud.pay.channel.service.ICloudApiService;
+import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.utils.OSSUnit;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
 import com.cloud.pay.merchant.mapper.MerchantBankInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
+import com.cloud.pay.merchant.mapper.MerchantPrepayInfoMapper;
+import com.cloud.pay.merchant.util.MD5;
 import com.cloud.pay.trade.constant.SmsConstant;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
@@ -86,6 +92,15 @@ public class BatchTradeService {
 	
 	@Autowired
 	private PayHandler payHandler;
+	
+	@Autowired
+	private MerchantPrepayInfoMapper merchantPrepayInfoMapper;
+	
+	@Autowired
+	private PrepayInfoService prepayInfoService;
+	
+	@Autowired
+	private ICloudApiService payService;
 
 	@SuppressWarnings({ "null", "deprecation" })
 	@Transactional
@@ -239,6 +254,46 @@ public class BatchTradeService {
 								}
 							}
 						});
+				//判断商户余额
+				BigDecimal total = BigDecimal.ZERO;
+				for(Trade temp : trades) {
+					total.add(add(temp.getMerchantFeeAmount(), temp.getLoanBenefit(), temp.getOrgBenefit()));
+				}
+				MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(batchTrade.getPayerMerchantId());
+				log.info("商户预缴户信息:{}", info);
+				String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
+						String.valueOf(info.getMerchantId()));
+				if(!digest.equals(info.getDigest())) {
+					log.info("商户{}预缴户被篡改", trade.getMerchantId());
+					throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
+				}
+				if(info.getBalance().subtract(info.getFreezeAmount()).compareTo(total.add(totalAmount)) < 0) {
+					String msg = "现有余额为:" + info.getBalance().subtract(info.getFreezeAmount()) 
+							+ "，小于付款总金额：" + total.add(totalAmount) ;
+					errorDetails.append(msg);
+					log.warn(msg);
+					//修改批量交易失败
+					tradeMapper.updateStatusByBatchNo(batchTrade.getBatchNo(),
+							msg, TradeConstant.PREPAY_BALANCE_NO_ENOUGH, TradeConstant.STATUS_FAIL, new Date());
+				} else {
+					//冻结金额
+					info.setFreezeAmount(info.getFreezeAmount().add(total).add(totalAmount));
+					info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
+							String.valueOf(info.getMerchantId())));
+					log.info("冻结商户信息：{}", info);
+					merchantPrepayInfoMapper.updateByPrimaryKey(info);
+					//发送渠道
+					BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
+					reqVO.setFileName(fileName);
+					reqVO.setMerchantId(batchTrade.getPayerMerchantId());
+					reqVO.setOrderNo(batchTrade.getBatchNo());
+					reqVO.setTotalAmt(totalAmount);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+					reqVO.setTradeDate(sdf.format(new Date());
+					reqVO.setTotalNum(Long.valueOf(count));
+					log.info("批量付款入参：{}", reqVO);
+					payService.batchPay(reqVO);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -251,6 +306,19 @@ public class BatchTradeService {
 			}
 		}
 		return errorDetails.toString();
+	}
+	
+	private BigDecimal add(BigDecimal merchantFee, BigDecimal loanBenefit, BigDecimal orgBenefit) {
+		if(merchantFee == null) {
+			merchantFee = BigDecimal.ZERO;
+		}
+		if(loanBenefit == null) {
+			loanBenefit = BigDecimal.ZERO;
+		}
+		if(orgBenefit == null) {
+			orgBenefit = BigDecimal.ZERO;
+		}
+		return merchantFee.add(orgBenefit).add(loanBenefit);
 	}
 	
 	/**

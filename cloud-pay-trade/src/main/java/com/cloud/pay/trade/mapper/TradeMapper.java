@@ -159,4 +159,16 @@ public interface TradeMapper {
 	 * @return
 	 */
 	List<TradeDTO> selectListByMerIdAndReconDate(@Param("merchantId")Integer merchantId,@Param("reconDate")Date reconDate);
+	
+	/**
+	 * 通过批次号修改批量交易状态和确认时间
+	 * @param batchNo
+	 * @param returnInfo
+	 * @param returnCode
+	 * @param status
+	 * @return
+	 */
+	int updateStatusByBatchNo(@Param("batchNo") String batchNo, @Param("returnInfo") String returnInfo, 
+			@Param("returnCode") String returnCode,@Param("status") Integer status,
+			@Param("tradeConfirmTime") Date tradeConfirmTime);
 }

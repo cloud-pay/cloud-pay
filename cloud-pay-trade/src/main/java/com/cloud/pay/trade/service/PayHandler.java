@@ -109,7 +109,7 @@ public class PayHandler {
 		if(info.getBalance().subtract(info.getFreezeAmount()).compareTo(trade.getTradeAmount().add(trade.getMerchantFeeAmount())) < 0) {
 			log.warn("现有余额为:{}，小于提现金额：{}", 
 					info.getBalance().subtract(info.getFreezeAmount()), trade.getTradeAmount());
-			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()), null);
+			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()), TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
 		}
 		info.setFreezeAmount(info.getFreezeAmount().add(trade.getMerchantFeeAmount()).add(trade.getTradeAmount()));
 		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 

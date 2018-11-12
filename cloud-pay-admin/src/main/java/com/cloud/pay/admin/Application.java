@@ -8,6 +8,7 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpStatus;
 
 @MapperScan(basePackages={"com.cloud.pay.admin.dao", 
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 		"com.cloud.pay.merchant.mapper","com.cloud.pay.recon.mapper"})
 @ServletComponentScan
 @SpringBootApplication(scanBasePackages="com.cloud.pay")
+@EnableCaching
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
 	
 	public static void main(String[] args) {

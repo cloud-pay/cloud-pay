@@ -3,6 +3,7 @@ package com.cloud.pay.client.vo;
 import java.math.BigDecimal;
 
 import com.cloud.pay.client.vo.base.CloudApiBaseParam;
+import com.cloud.pay.common.utils.validation.IntegerValue;
 
 /**
  * 商户信息修改
@@ -16,6 +17,7 @@ public class CloudApiMerchantUpdateParam extends CloudApiBaseParam {
 	
 	private String shortName;
 	
+	@IntegerValue(value= {4,5},message="不存在商户类型")
 	private Integer type;
 	
 	private String industryCategory;
@@ -37,10 +39,12 @@ public class CloudApiMerchantUpdateParam extends CloudApiBaseParam {
 	
 	private String bankCardNo;
 	
+	@IntegerValue(value= {1,2},message="不存在账户类型")
 	private Integer bankAccountType;
 	
 	private String bankAccountName;
 	
+	@IntegerValue(value= {1},message="证件类型暂时只支持身份证")
 	private Integer certType;
 	
 	private String certNo;
@@ -48,10 +52,12 @@ public class CloudApiMerchantUpdateParam extends CloudApiBaseParam {
 	private String sMobileNo;
 	
 	//费率信息
+	@IntegerValue(value= {1,2},message="不支持的代付费率类型")
 	private Integer payFeeType;
 	
 	private BigDecimal payFee;
 	
+	@IntegerValue(value= {1,2},message="不支持的垫资费率类型")
 	private Integer loanFeeType;
 
 	private BigDecimal loanFee;

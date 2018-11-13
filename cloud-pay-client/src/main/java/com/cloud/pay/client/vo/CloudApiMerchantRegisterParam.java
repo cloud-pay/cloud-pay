@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.cloud.pay.client.vo.base.CloudApiBaseParam;
+import com.cloud.pay.common.utils.validation.IntegerValue;
 
 /**
  * 商户报备
@@ -23,6 +24,7 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	private String shortName;
 	
 	@NotNull(message = "商户类型不能为空")
+	@IntegerValue(value= {4,5},message="不存在商户类型")
 	private Integer type;
 	
 	@NotEmpty(message = "行业类别不能为空")
@@ -30,6 +32,9 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	
 	@NotEmpty(message = "负责人不能为空")
 	private String legal;
+	
+	@NotEmpty(message = "省份不能为空")
+	private String provincial;
 	
 	@NotEmpty(message = "所在城市不能为空")
 	private String city;
@@ -54,12 +59,14 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	private String bankCardNo;
 	
 	@NotNull(message = "账户类型不能为空")
+	@IntegerValue(value= {1,2},message="不存在账户类型")
 	private Integer bankAccountType;
 	
 	@NotEmpty(message = "户名不能为空")
 	private String bankAccountName;
 	
 	@NotNull(message = "证件类型不能为空")
+	@IntegerValue(value= {1},message="证件类型暂时只支持身份证")
 	private Integer certType;
 	
 	@NotEmpty(message = "证件号码不能为空")
@@ -70,12 +77,14 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	
 	//费率信息
 	@NotNull(message = "代付费率类型不能为空")
+	@IntegerValue(value= {1,2},message="不支持的代付费率类型")
 	private Integer payFeeType;
 	
 	@NotNull(message = "代付费率不能为空")
 	private BigDecimal payFee;
 	
 	@NotNull(message = "垫资费率类型不能为空")
+	@IntegerValue(value= {1,2},message="不支持的垫资费率类型")
 	private Integer loanFeeType;
 	
 	@NotNull(message = "垫资费率不能为空")
@@ -292,4 +301,14 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	public void setProtocolFilePath(String protocolFilePath) {
 		this.protocolFilePath = protocolFilePath;
 	}
+
+	public String getProvincial() {
+		return provincial;
+	}
+
+	public void setProvincial(String provincial) {
+		this.provincial = provincial;
+	}
+	
+	
 }

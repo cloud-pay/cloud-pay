@@ -174,8 +174,9 @@ div.cbp label.font{
                   <td th:text="${trade.auditor}"></td>
                   <td>
                   	<div th:if="${trade.id != 1 || meid == '1'}">
-	                  	<span data-toggle="tooltip" title="删除" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'audit(\''+${trade.id}+'\',\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="审核" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'audit(\''+${trade.id}+'\',\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+	                  	<span data-toggle="tooltip" title="查询" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'queryResult(\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 查询结果</span>
                   	</div>
                   	<div th:if="${trade.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>
@@ -433,6 +434,25 @@ function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,
 	$("[name='loaning']").val(loaning);
 	$("input[name='loaningOrgId']").val(loaningOrgId);
 	$("input[name='loaningAmount']").val(loaningAmount);
+}
+
+//查询结果
+function queryResult(batchNo, merchantId){
+	$.ajax({
+			type:"post",
+			url:_ctx+/batchTrade/queryResult,
+			cache:false,
+			dataType:"json",
+			data:{batchNo:batchNo,merchantId:merchantId},
+			success:function(data){
+				if(data.status == 'success'){
+					alert(data.data);
+					window.location.href=window.location.href;
+				}else{
+					alert(data.msg);
+				}
+			}
+		});
 }
 
 </script>

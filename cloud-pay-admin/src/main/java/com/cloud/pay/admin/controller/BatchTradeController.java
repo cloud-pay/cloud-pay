@@ -31,6 +31,9 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
+import com.cloud.pay.channel.service.ICloudApiService;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.entity.BatchTrade;
 import com.cloud.pay.trade.service.BatchTradeService;
@@ -52,6 +55,9 @@ public class BatchTradeController extends BaseController{
 	private MerchantService merchantService;
 	
 	private String menuUrl = "batchTrade/list";
+	
+	@Autowired
+	private ICloudApiService payService;
 	
 	private static final String SEQ_OFFSET = "00000000";
 	private AtomicInteger seq = new AtomicInteger(0);
@@ -231,4 +237,37 @@ public class BatchTradeController extends BaseController{
 		return ResponseModel.getModel("ok", "success", null);
 	}
 	
+	/**
+	 * 查询批量代付结果
+	 * @return
+	 */
+	@RequestMapping(value="/queryResult",method=RequestMethod.POST)
+	@ResponseBody
+	public Object queryBatchTradeResult(){
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
+		String res = null;
+		try {
+			ParameterMap map = this.getParameterMap();
+			String batchNo = map.getString("batchNo");
+			Integer payerMerchantId = Integer.parseInt(map.getString("merchantId"));
+			BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
+			reqVO.setBatchOrderNo(batchNo);
+			reqVO.setMerchantId(payerMerchantId);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+			reqVO.setTradeDate(sdf.format(new Date()));
+			log.info("批量查询入参：{}", reqVO);
+			BatchPayTradeQueryResVO resVO = payService.batchPayQuery(reqVO);
+			log.info("批量查询结果：{}", resVO);
+			if(resVO == null || resVO.getStatus() == null && 99 == resVO.getStatus()) {
+				//交易结果未知，返回处理中
+				return ResponseModel.getModel("ok", "success", "批量代付处理中");
+			}
+			res = batchTradeService.dealBatchTrade(batchNo, payerMerchantId, resVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error:{}", e);
+			return ResponseModel.getModel("查询失败:"+e.getMessage(), "failed", null);
+		}
+		return ResponseModel.getModel("ok", "success", res);
+	}
 }

@@ -36,7 +36,6 @@ import com.alibaba.druid.util.Base64;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.cloud.pay.channel.dto.TradeDTO;
 import com.cloud.pay.channel.service.ICloudApiService;
-import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeResVO;
@@ -558,24 +557,13 @@ public class BatchTradeService {
 	}
 	
 	/**
-	 * 查询批量代付结果S
+	 * 处理批量代付结果
 	 * @param batchNo
 	 * @param merchantId
 	 * @throws Exception 
 	 */
-	public Integer searchBatchTrade(String batchNo, Integer merchantId) throws Exception {
-		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
-		reqVO.setBatchOrderNo(batchNo);
-		//reqVO.setFileName("/home/batch/" + batchNo + ".txt");
-		reqVO.setMerchantId(merchantId);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-		reqVO.setTradeDate(sdf.format(new Date()));
-		BatchPayTradeQueryResVO resVO = payService.batchPayQuery(reqVO);
-		log.info("批量查询结果：{}", resVO);
-		if(resVO == null || resVO.getStatus() == null && 99 == resVO.getStatus()) {
-			//交易结果未知，返回处理中
-			return TradeConstant.STATUS_PROCESSING;
-		}
+	@Transactional
+	public String dealBatchTrade(String batchNo, Integer merchantId, BatchPayTradeQueryResVO resVO) throws Exception {
 		List<Trade> trades = tradeMapper.selectByBatchNo(batchNo);
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		for(Trade trade : trades) {
@@ -632,14 +620,14 @@ public class BatchTradeService {
 				tradeMapper.updateStatus(trade);
 			}
 			prepayInfoService.updatePrepayInfos(maps.values());
-			return TradeConstant.STATUS_SUCCESS;
+			return "批量代付成功";
 		} else if(resVO.getStatus() != null && 1 == resVO.getStatus()) {
 			//触发失败，修改交易状态为失败
 			tradeMapper.updateStatusByBatchNo(batchNo,
 					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
 			prepayInfoService.unfreezePrepayInfo(merchantId, totalAmount);
-			return TradeConstant.STATUS_FAIL;
+			return "批量代付失败";
 		} 
-		return TradeConstant.STATUS_PROCESSING;
+		return "批量代付处理中";
 	}
 }

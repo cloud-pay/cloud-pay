@@ -10,6 +10,8 @@ public class BatchPayTradeQueryResVO extends BaseTradeResVO{
 	
 	private Integer status; //0-成功，1-失败，99-未知状态
 	
+	private Integer channelId;
+	
 	//批量代付结果集
 	private List<TradeDTO> trades;
 	
@@ -40,6 +42,13 @@ public class BatchPayTradeQueryResVO extends BaseTradeResVO{
 	public void setTrades(List<TradeDTO> trades) {
 		this.trades = trades;
 	}
-	
+
+	public Integer getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
+	}
 	
 }

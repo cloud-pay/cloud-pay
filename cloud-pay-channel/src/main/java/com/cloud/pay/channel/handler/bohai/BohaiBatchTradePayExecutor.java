@@ -28,6 +28,7 @@ import com.cloud.pay.common.contants.ChannelErrorCode;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.mapper.SysConfigMapper;
+import com.cloud.pay.common.utils.DateUtil;
 
 @Service("bohaiBatchTradePayExecutor")
 public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayParam, BohaiCloudBatchTradePayResult>
@@ -44,8 +45,14 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 		BatchPayTradeResVO resVO = null;
 		try {
 			//读取文件并生成文件sha1
-			String fileSHA1 = getFileSHA(batchPayFilePath, reqVO.getFileName());
-			Map<String,String> map= issuePacFile(batchPayFilePath, reqVO.getFileName());
+			String filePath = ""; 
+			if(batchPayFilePath.endsWith(File.separator)) {
+				filePath = batchPayFilePath + DateUtil.getDays() + File.separator;
+			}else {
+				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator;
+			}
+			String fileSHA1 = getFileSHA(filePath, reqVO.getFileName());
+			Map<String,String> map= issuePacFile(filePath, reqVO.getFileName());
 			log.info("渤海批量代付-上传文件：{}",map);
 			if(!"0000".equals(map.get("rspCd"))) {
 				resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,

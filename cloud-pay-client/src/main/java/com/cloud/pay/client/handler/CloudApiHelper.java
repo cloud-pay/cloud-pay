@@ -148,7 +148,6 @@ public class CloudApiHelper {
 		 if(null == secret) {
 			 throw new CloudApiException(ApiErrorCode.MCH_INVALID,"非法商户");
 		 }
-		 String key = "12342432423432423432";//secret.getSecret().toString(); //TODO....key值取值方式待修改
-		 return key;
+		 return  secret.getSecret();
 	 }
 }

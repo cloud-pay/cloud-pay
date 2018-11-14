@@ -116,7 +116,7 @@ public class FileUtils {
         	for(int j = 1;(temp = br.readLine())!=null;j++) {
         		buf = buf.append(temp);
         		//行与行之间得分隔符
-        		buf = buf.append(System.getProperty("line.separator"));
+        		//buf = buf.append(System.getProperty("line.separator"));
         	}
         	buf.append(content);
         	fos = new FileOutputStream(file);

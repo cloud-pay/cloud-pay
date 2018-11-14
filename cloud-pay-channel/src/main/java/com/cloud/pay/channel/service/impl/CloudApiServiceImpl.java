@@ -1,11 +1,13 @@
 package com.cloud.pay.channel.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -67,9 +69,9 @@ public class CloudApiServiceImpl implements ICloudApiService {
 	
 	@Override
 	public PayTradeResVO pay(PayTradeReqVO tradeReq) {
+		PayTradeResVO resVO = null;
 		try {
 			log.info("渠道接口：收到代付请求，请求参数：{}",tradeReq);
-			PayTradeResVO resVO = null;
 			try {
 				ValidationUtils.validate(tradeReq);
 			}catch(CloudApiException e) {
@@ -88,12 +90,12 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradePayHandler(ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
 			resVO = (PayTradeResVO) tradePayExecutor.execute(tradeReq);
 			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
-			log.info("渠道接口：代付，响应参数：{}",resVO);
-			return resVO;
 		}catch(Exception e){
-			e.printStackTrace();
+			log.error("系统异常：{}",e.getMessage());
+			resVO = new PayTradeResVO(ChannelErrorCode.ERROR_9000,"系统异常");
 		}
-		return null;
+		log.info("渠道接口：代付，响应参数：{}",resVO);
+		return resVO;
 	}
 	
   
@@ -109,8 +111,13 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			result = new PayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return result;
 		}
-		ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelId(tradeReq.getChannelId()));
-		 result = (PayTradeQueryResVO) tradePayExecutor.execute(tradeReq);
+		try{
+			ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelId(tradeReq.getChannelId()));
+			result = (PayTradeQueryResVO) tradePayExecutor.execute(tradeReq);
+		}catch(Exception e) {
+			log.error("系统错误:{}",e.getMessage());
+			result = new PayTradeQueryResVO(ChannelErrorCode.ERROR_9000,"系统异常");
+		}
 		log.info("渠道接口：代付结果查询结束，响应参数：{}",result);
 		return result;
 	}
@@ -185,7 +192,13 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		BigDecimal totalAmt = new BigDecimal(0).setScale(2,BigDecimal.ROUND_HALF_DOWN);
 		Long totalNum = 0l;
 		try {
-		    FileUtils.createFile(fileName, batchPayFilePath, FileSuffixEnums.REQ.getSuffix());
+			String filePath = ""; 
+			if(batchPayFilePath.endsWith(File.separator)) {
+				filePath = batchPayFilePath + DateUtil.getDays() + File.separator;
+			}else {
+				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator;
+			}
+		    FileUtils.createFile(fileName, filePath, FileSuffixEnums.REQ.getSuffix());
 		    
 		    SysConfig payerAccountConfig = sysConfigMapper.selectByPrimaryKey("BHPayerAccount");
 			SysConfig payerNameConfig = sysConfigMapper.selectByPrimaryKey("BHPayerName");
@@ -196,28 +209,37 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			//文件内容
 			StringBuffer buf = new StringBuffer();
 			for(TradeDTO tradeDTO:reqVO.getTrades()) {
-				buf = buf.append(String.format("%s~%s~%s~%s~CNY~%f", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
-						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN)));
-        		//行与行之间得分隔符
-        		buf = buf.append(System.getProperty("line.separator"));
-        		totalAmt = totalAmt.add(tradeDTO.getTradeAmount());
+				String amountStr = tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN).toString();
+				//行与行之间得分隔符
+        		buf.append("\n");
+				buf.append(String.format("%s~%s~%s~%s~CNY~%s", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
+						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),amountStr));
+        		totalAmt = totalAmt.add(tradeDTO.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         		totalNum ++;
 			}
 		    //文件头部
-		    String fileHeader = String.format("<Header>~%s~%s~%d~%f~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt);
-		    FileUtils.appendWriteFile(fileHeader, fileName, batchPayFilePath, FileSuffixEnums.REQ.getSuffix());
-		    FileUtils.appendWriteFile(buf.toString(), fileName, batchPayFilePath, FileSuffixEnums.REQ.getSuffix());
-		    log.info("文件名：{}",fileHeader);
+			StringBuffer bufHeader = new StringBuffer();
+			bufHeader.append(String.format("<Header>~%s~%s~%d~%s~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt.toString()));
+			bufHeader.append("\n");
+			
+		    FileUtils.appendWriteFile(bufHeader.toString(), fileName, filePath, FileSuffixEnums.REQ.getSuffix());
+		    FileUtils.appendWriteFile(buf.toString(), fileName, filePath, FileSuffixEnums.REQ.getSuffix());
+		    
+		    BatchPayTradeInnerReqVO innerReqVO = new BatchPayTradeInnerReqVO();
+			BeanUtils.copyProperties(reqVO, innerReqVO);
+			innerReqVO.setTotalAmt(totalAmt);
+			innerReqVO.setTotalNum(totalNum);
+			innerReqVO.setFileName(fileName+FileSuffixEnums.REQ.getSuffix());
+			resVO = (BatchPayTradeResVO) tradePayExecutor.execute(innerReqVO);
+			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		}catch(IOException e) {
 			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_1003,"生成批量文件失败");
 			return resVO;
+		}catch(Exception e) {
+			log.error("系统异常：{}",e.getMessage());
+			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_9000,"系统异常");
+			return resVO;
 		}
-		BatchPayTradeInnerReqVO innerReqVO = new BatchPayTradeInnerReqVO();
-		innerReqVO.setTotalAmt(totalAmt);
-		innerReqVO.setTotalNum(totalNum);
-		innerReqVO.setFileName(fileName+FileSuffixEnums.REQ.getSuffix());
-		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(innerReqVO);
-		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		log.info("渠道接口，批量代付，响应结果：{}",resVO);
 		return resVO;
 	}

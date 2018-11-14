@@ -26,6 +26,9 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 	
 	@NotNull(message = "渠道ID不能为空")
 	private Integer channelId;
+	
+	@NotNull(message = "查询文件名不能为空")
+	private String fileName;
 
 	public String getTradeDate() {
 		return tradeDate;
@@ -50,7 +53,14 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 	public void setChannelId(Integer channelId) {
 		this.channelId = channelId;
 	}
-	
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	
 }
 

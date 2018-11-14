@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.utils.JaxbUtil;
-import com.cloud.pay.channel.vo.BatchPayTradeQueryInnerReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryInnerResVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayQueryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayQueryResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeErrorResult;
@@ -20,10 +20,10 @@ import com.cloud.pay.common.exception.CloudPayException;
 
 @Service("bohaiBatchTradePayQueryExecutor")
 public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayQueryParam,BohaiCloudBatchTradePayQueryResult>
-      implements ITradePayExecutor<BatchPayTradeQueryInnerReqVO, BatchPayTradeQueryInnerResVO> {
+      implements ITradePayExecutor<BatchPayTradeQueryReqVO, BatchPayTradeQueryInnerResVO> {
 
 	@Override
-	public BatchPayTradeQueryInnerResVO execute(BatchPayTradeQueryInnerReqVO reqVO) {
+	public BatchPayTradeQueryInnerResVO execute(BatchPayTradeQueryReqVO reqVO) {
 		BatchPayTradeQueryInnerResVO  resVO = null;
 		try {
 			BohaiCloudBatchTradePayQueryParam batchQueryParam = createParam(reqVO);
@@ -49,7 +49,7 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 		return resVO;
 	}
 
-	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryInnerReqVO reqVO) {
+	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryReqVO reqVO) {
 		BohaiCloudBatchTradePayQueryParam batchPayQueryParam = new BohaiCloudBatchTradePayQueryParam();
 		batchPayQueryParam.setDate(reqVO.getTradeDate());
 		batchPayQueryParam.setSerialNo(reqVO.getOrderNo());

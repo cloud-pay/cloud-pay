@@ -49,7 +49,7 @@ public class ConvertUtil {
 	public static Map<String, TradeDTO> convertTradeDTOMap(List<TradeDTO> trades) {
 		Map<String, TradeDTO> maps = new HashMap<String, TradeDTO>();
 		for(TradeDTO trade : trades) {
-			maps.put(trade.getOrderNo(), trade);
+			maps.put(trade.getSeqNo(), trade);
 		}
 		return maps;
 	}

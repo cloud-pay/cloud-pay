@@ -1,13 +1,9 @@
 package com.cloud.pay.channel.vo;
 
-import java.math.BigDecimal;
-
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-
+import java.util.List;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-
+import com.cloud.pay.channel.dto.TradeDTO;
 import com.cloud.pay.common.utils.validation.DateValue;
 
 /**
@@ -23,6 +19,7 @@ public class BatchPayTradeReqVO extends BaseTradeReqVO {
 	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeDate;
 	
+	private List<TradeDTO> trades;
 
 	public String getTradeDate() {
 		return tradeDate;
@@ -31,5 +28,14 @@ public class BatchPayTradeReqVO extends BaseTradeReqVO {
 	public void setTradeDate(String tradeDate) {
 		this.tradeDate = tradeDate;
 	}
+
+	public List<TradeDTO> getTrades() {
+		return trades;
+	}
+
+	public void setTrades(List<TradeDTO> trades) {
+		this.trades = trades;
+	}
+	
 	
 }

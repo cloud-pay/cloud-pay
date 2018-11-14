@@ -1,6 +1,8 @@
 package com.cloud.pay.channel;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.cloud.pay.channel.dto.TradeDTO;
 import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.BatchPayRetryReqVO;
@@ -119,12 +122,18 @@ public class ChannelTest {
 	@Test
 	public void batchPay() {
 		BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
-		reqVO.setTradeDate("20181107 22:28:15");
-//		reqVO.setTotalNum(2l);
-//		reqVO.setTotalAmt(new BigDecimal("20"));
+		reqVO.setTradeDate("20181114 23:51:15");
 		reqVO.setMerchantId(1);
-		reqVO.setOrderNo("2018110700000007");
-//		reqVO.setFileName("BD220015201811070001.req");
+		reqVO.setOrderNo("2018111400000002");
+		List<TradeDTO> list = new ArrayList<TradeDTO>();
+		TradeDTO tradeDTO1 = new TradeDTO();
+		tradeDTO1.setSeqNo("1");
+		tradeDTO1.setTradeAmount(new BigDecimal(23.56));
+		tradeDTO1.setPayeeAccount("1231312313131312");
+		tradeDTO1.setPayeeName("老黑");
+		tradeDTO1.setPayeeBankCode("3085840000145");
+		list.add(tradeDTO1);
+		reqVO.setTrades(list);
 		BatchPayTradeResVO response = cloudApiService.batchPay(reqVO);
 	    System.out.println("===================================================");
 	    System.out.println(response);
@@ -136,10 +145,10 @@ public class ChannelTest {
 	@Test
 	public void batchPayQuery() {
 		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
-		reqVO.setTradeDate("20181107 22:28:15");
-//		reqVO.setFileName("BD220015201811070001.req");
-		reqVO.setBatchOrderNo("2018110700000007");
-		reqVO.setOrderNo("2018110700000007");
+		reqVO.setTradeDate("20181114 23:51:15");
+		reqVO.setFileName("BD220015201811140001.req");
+		reqVO.setBatchOrderNo("2018111400000001");
+		reqVO.setOrderNo("2018111400000001");
 		reqVO.setChannelId(1);
 		reqVO.setMerchantId(1);
 		BatchPayTradeQueryResVO response = cloudApiService.batchPayQuery(reqVO);

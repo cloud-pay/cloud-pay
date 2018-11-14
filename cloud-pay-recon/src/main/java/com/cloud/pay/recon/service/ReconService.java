@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.common.contants.ChannelType;
+import com.cloud.pay.common.contants.FileSuffixEnums;
 import com.cloud.pay.common.entity.Channel;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
@@ -218,7 +219,7 @@ public class ReconService {
 				filePath =  merchantReconFilePath + File.separator + reconDays;
 			}
 			String fileName =  merchant.getCode() + reconDays;
-			if(FileUtils.createTxtFile(fileName, filePath)) {
+			if(FileUtils.createFile(fileName, filePath,FileSuffixEnums.TXT.getSuffix())) {
 				StringBuffer buf = new StringBuffer();
 				for(TradeDTO trade:trades) {
 					//对账文件内容：商户号~代付交易流水~交易时间~交易金额~收款人姓名~收款人银行账号~收款人联行号~交易状态~交易状态描述
@@ -250,7 +251,7 @@ public class ReconService {
 			filePath =  merchantReconFilePath + File.separator + reconDays;
 		}
 		String fileName =  mchCode + reconDays;
-		return FileUtils.isExist(fileName, filePath);
+		return FileUtils.isExist(fileName, filePath,FileSuffixEnums.TXT.getSuffix());
 	}
 	
 	
@@ -345,7 +346,7 @@ public class ReconService {
 			map.put("filePath", filePath);
 			String fileName =  code + reconDays;
 			map.put("fileName", fileName);
-			FileUtils.createTxtFile(fileName, filePath);
+			FileUtils.createFile(fileName, filePath,FileSuffixEnums.TXT.getSuffix());
 		}catch(IOException e) {
 			log.error("生成代理商{},对账日期：{},对账文件失败：{}",code,reconDate,e);
 		}

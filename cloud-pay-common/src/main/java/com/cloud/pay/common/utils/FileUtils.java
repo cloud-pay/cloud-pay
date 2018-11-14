@@ -27,14 +27,14 @@ public class FileUtils {
 	 * @return false-生成文件失败 true-生成文件成功
 	 * @throws IOException
 	 */
-	public static boolean createTxtFile(String fileName,String filePath) throws IOException{
+	public static boolean createFile(String fileName,String filePath,String suffix) throws IOException{
 		boolean flag = false;
 		String fileFullPath = "";
 		isExist(filePath);
 		if(filePath.endsWith(File.separator)) {
-			fileFullPath = filePath + fileName + ".txt";
+			fileFullPath = filePath + fileName + suffix;
 		}else {
-			fileFullPath = filePath + File.separator + fileName + ".txt";
+			fileFullPath = filePath + File.separator + fileName + suffix;
 		}
 		logger.info("生成文件路径：{}",fileFullPath);
 		File file = new File(fileFullPath);
@@ -55,13 +55,13 @@ public class FileUtils {
 	 * @param filePath
 	 * @return
 	 */
-	public static boolean isExist(String fileName,String filePath) throws IOException{
+	public static boolean isExist(String fileName,String filePath,String suffix) throws IOException{
 		boolean flag = false;
 		String fileFullPath = "";
 		if(filePath.endsWith(File.separator)) {
-			fileFullPath = filePath + fileName + ".txt";
+			fileFullPath = filePath + fileName + suffix;
 		}else {
-			fileFullPath = filePath + File.separator + fileName + ".txt";
+			fileFullPath = filePath + File.separator + fileName + suffix;
 		}
 		File file = new File(fileFullPath);
 		if(file.exists()) {
@@ -89,7 +89,7 @@ public class FileUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static boolean appendWriteTxtFile(String content,String fileName,String filePath) throws IOException{
+	public static boolean appendWriteFile(String content,String fileName,String filePath,String suffix) throws IOException{
 		boolean flag = false;
         String temp = "";
         FileInputStream fis = null;
@@ -102,9 +102,9 @@ public class FileUtils {
         	//文件路径
         	String fileFullPath = "";
         	if(filePath.endsWith(File.separator)) {
-    			fileFullPath = filePath + fileName + ".txt";
+    			fileFullPath = filePath + fileName + suffix;
     		}else {
-    			fileFullPath = filePath + File.separator + fileName + ".txt";
+    			fileFullPath = filePath + File.separator + fileName + suffix;
     		}
         	logger.info("写入文件路径：{}",fileFullPath);
         	File file = new File(fileFullPath);

@@ -1,19 +1,24 @@
 package com.cloud.pay.channel.service.impl;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.TradePayTypeHandlerFactory;
+import com.cloud.pay.channel.dto.TradeDTO;
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.utils.ValidationUtils;
 import com.cloud.pay.channel.vo.BaseTradeResVO;
 import com.cloud.pay.channel.vo.BatchPayRetryReqVO;
 import com.cloud.pay.channel.vo.BatchPaySingleQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeInnerReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
@@ -27,7 +32,12 @@ import com.cloud.pay.channel.vo.ReconDownFileReqVO;
 import com.cloud.pay.channel.vo.ReconDownFileResVO;
 import com.cloud.pay.common.contants.ChannelErrorCode;
 import com.cloud.pay.common.contants.ChannelType;
+import com.cloud.pay.common.contants.FileSuffixEnums;
+import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.exception.CloudApiException;
+import com.cloud.pay.common.mapper.SysConfigMapper;
+import com.cloud.pay.common.utils.DateUtil;
+import com.cloud.pay.common.utils.FileUtils;
 import com.cloud.pay.merchant.entity.MerchantChannel;
 import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
 
@@ -39,12 +49,21 @@ import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
 public class CloudApiServiceImpl implements ICloudApiService {
 	
 	private Logger log = LoggerFactory.getLogger(CloudApiServiceImpl.class);
+	
+	@Value("${cloud.bohai.pay.instId}")
+	private String instId;
+	
+	@Value("${cloud.bohai.batch.pay.file.path}")
+	private String batchPayFilePath;  //本地文件路径
 
 	@Autowired
 	private TradePayTypeHandlerFactory tradePayTypeHandlerFactory; 
 	
 	@Autowired
 	private MerchantChannelMapper merchantChannelMapper;
+	
+	@Autowired
+	private SysConfigMapper sysConfigMapper;
 	
 	@Override
 	public PayTradeResVO pay(PayTradeReqVO tradeReq) {
@@ -90,7 +109,6 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			result = new PayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return result;
 		}
-		//TODO ...根据传入的订单交易渠道获取渠道信息
 		ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelId(tradeReq.getChannelId()));
 		 result = (PayTradeQueryResVO) tradePayExecutor.execute(tradeReq);
 		log.info("渠道接口：代付结果查询结束，响应参数：{}",result);
@@ -160,8 +178,45 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		}
 		MerchantChannel merchantChannel = merchantChannels.get(0);
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTraeHandler(ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
-		// TODO .... 根据批次号生成批量文件
-		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(reqVO);
+		
+		//根据批次号生成批量文件
+		//文件名BD机构标识号YYYYMMDD4至8位的序号
+		String fileName = "BD"+instId+DateUtil.getDays()+reqVO.getOrderNo().substring(reqVO.getOrderNo().length()-4, reqVO.getOrderNo().length());
+		BigDecimal totalAmt = new BigDecimal(0).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+		Long totalNum = 0l;
+		try {
+		    FileUtils.createFile(fileName, batchPayFilePath, FileSuffixEnums.REQ.getSuffix());
+		    
+		    SysConfig payerAccountConfig = sysConfigMapper.selectByPrimaryKey("BHPayerAccount");
+			SysConfig payerNameConfig = sysConfigMapper.selectByPrimaryKey("BHPayerName");
+			if(null == payerAccountConfig || null == payerNameConfig) {
+				resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_9000,"系统错误:渠道系统参数未配置");
+				return resVO;
+			}
+			//文件内容
+			StringBuffer buf = new StringBuffer();
+			for(TradeDTO tradeDTO:reqVO.getTrades()) {
+				buf = buf.append(String.format("%s~%s~%s~%s~CNY~%f", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
+						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN)));
+        		//行与行之间得分隔符
+        		buf = buf.append(System.getProperty("line.separator"));
+        		totalAmt = totalAmt.add(tradeDTO.getTradeAmount());
+        		totalNum ++;
+			}
+		    //文件头部
+		    String fileHeader = String.format("<Header>~%s~%s~%d~%f~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt);
+		    FileUtils.appendWriteFile(fileHeader, fileName, batchPayFilePath, FileSuffixEnums.REQ.getSuffix());
+		    FileUtils.appendWriteFile(buf.toString(), fileName, batchPayFilePath, FileSuffixEnums.REQ.getSuffix());
+		    log.info("文件名：{}",fileHeader);
+		}catch(IOException e) {
+			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_1003,"生成批量文件失败");
+			return resVO;
+		}
+		BatchPayTradeInnerReqVO innerReqVO = new BatchPayTradeInnerReqVO();
+		innerReqVO.setTotalAmt(totalAmt);
+		innerReqVO.setTotalNum(totalNum);
+		innerReqVO.setFileName(fileName+FileSuffixEnums.REQ.getSuffix());
+		resVO = (BatchPayTradeResVO) tradePayExecutor.execute(innerReqVO);
 		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		log.info("渠道接口，批量代付，响应结果：{}",resVO);
 		return resVO;
@@ -225,4 +280,9 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		return resVO;
 	}
 
+	
+	public static void main(String[] args) {
+		String orderNo = "2018111423104500001";
+		System.out.println(orderNo.substring(orderNo.length()-4, orderNo.length()));
+	}
 }

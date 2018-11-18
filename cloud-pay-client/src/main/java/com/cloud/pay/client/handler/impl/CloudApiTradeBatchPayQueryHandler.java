@@ -14,8 +14,7 @@ import com.cloud.pay.client.utils.DateUtil;
 import com.cloud.pay.client.vo.CloudApiTradeBatchPayQueryParam;
 import com.cloud.pay.client.vo.CloudApiTradeBatchPayQueryResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
-import com.cloud.pay.common.exception.CloudApiBusinessException;
-import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.service.BatchTradeService;
@@ -53,7 +52,7 @@ public class CloudApiTradeBatchPayQueryHandler implements ICloudPayApiHandler<Cl
 			log.info("批量代付结果查询，响应结果：{}",result);
 			return result;
 		}
-		MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) merchantMap.get("baseInfo");
+		MerchantBaseInfo baseInfo = (MerchantBaseInfo) merchantMap.get("baseInfo");
 		
 		//查询批次信息
 		BatchTradeDTO batchTrade = batchTradeService.getBatchByBatchNo(reqParam.getBatchNo(), baseInfo.getId());

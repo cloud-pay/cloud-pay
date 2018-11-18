@@ -32,5 +32,5 @@ public interface BatchTradeMapper {
      * @param merchantId
      * @return
      */
-    BatchTradeDTO queryBatchByBatchNo(@Param("BatchNo")String batchNo,@Param("merchantId")Integer merchantId);
+    BatchTradeDTO queryBatchByBatchNo(@Param("batchNo")String batchNo,@Param("merchantId")Integer merchantId);
 }

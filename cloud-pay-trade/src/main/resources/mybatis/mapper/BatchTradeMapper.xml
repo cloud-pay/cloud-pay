@@ -226,7 +226,7 @@
 		t.total_amount,
 		t.total_count,
 		t.payer_merchant_id,
-		t. STATUS,
+		t.STATUS,
 		t.creator,
 		t.create_time,
 		t.auditor,

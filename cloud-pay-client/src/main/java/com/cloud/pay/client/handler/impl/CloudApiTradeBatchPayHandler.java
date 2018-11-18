@@ -14,8 +14,7 @@ import com.cloud.pay.client.utils.DateUtil;
 import com.cloud.pay.client.vo.CloudApiTradeBatchPayParam;
 import com.cloud.pay.client.vo.CloudApiTradeBatchPayResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
-import com.cloud.pay.common.exception.CloudApiBusinessException;
-import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.entity.BatchTrade;
@@ -55,7 +54,7 @@ public class CloudApiTradeBatchPayHandler implements ICloudPayApiHandler<CloudAp
 			log.info("批量代付结果查询，响应结果：{}",result);
 			return result;
 		}
-		MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) merchantMap.get("baseInfo");
+		MerchantBaseInfo baseInfo = (MerchantBaseInfo) merchantMap.get("baseInfo");
 		//商户+批次号需保证唯一
 		BatchTradeDTO batchTradeHis = batchTradeService.getBatchByBatchNo(reqParam.getBatchNo(), baseInfo.getId());
 		if(null != batchTradeHis) {
@@ -72,7 +71,7 @@ public class CloudApiTradeBatchPayHandler implements ICloudPayApiHandler<CloudAp
 		batchTrade.setTotalCount(reqParam.getTotalCount());
 		batchTrade.setTradeTime(DateUtil.getDateTimeFormat(reqParam.getTradeTime()));
 		batchTrade.setStatus(1);
-		String errorDetails = batchTradeService.batchPay(batchTrade,baseInfo.getCode(), reqParam.getFilePath());//如果数据有问题直接全部不处理算了
+		String errorDetails = batchTradeService.batchPay(batchTrade,baseInfo.getCode(), reqParam.getFileName());//如果数据有问题直接全部不处理算了
 		if(StringUtils.isNotBlank(errorDetails)) {
 			result.setResultCode(Constants.RESULT_CODE_FAIL);
 			result.setErrorCode(ApiErrorCode.BATCH_DATA_ERROR);

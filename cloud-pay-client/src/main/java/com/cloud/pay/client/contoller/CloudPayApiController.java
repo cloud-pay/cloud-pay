@@ -65,10 +65,7 @@ public class CloudPayApiController {
 	    	 result = Handler.handle(reqParam);
 	    	 
 	    	 //如果没有传入结构合作码，就说明为商户请求
-	    	 mchNo =  jsonObject.getString("orgCode");
-	    	 if(StringUtils.isBlank(mchNo)) {
-	    		 mchNo =  jsonObject.getString("merchantCode");
-	    	 }
+	    	 mchNo =  jsonObject.getString("mchCode");
 	    	 result.setSign(cloudApiHelper.createSign(mchNo, result));
 	     }catch(CloudApiException e) {
 	    	 log.error("云支付平台，业务交易异常：{}",e);

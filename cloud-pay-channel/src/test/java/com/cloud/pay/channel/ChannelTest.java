@@ -60,8 +60,8 @@ public class ChannelTest {
 	public void tradePayQuery() {
 		PayTradeQueryReqVO tradeReq = new PayTradeQueryReqVO();
 		tradeReq.setMerchantId(1);
-		tradeReq.setTradeDate("20181115 22:17:15");
-		tradeReq.setOrderNo("2018111500000012");
+		tradeReq.setTradeDate("20181118 11:12:15");
+		tradeReq.setOrderNo("2018111800000002");
 		tradeReq.setChannelId(1);
 		PayTradeQueryResVO response = cloudApiService.queryPay(tradeReq);
 		System.out.println("===============================================");
@@ -75,7 +75,7 @@ public class ChannelTest {
 	public void tradeUnionPay() {
 		PayUnionTradeReqVO reqVO = new PayUnionTradeReqVO();
 		reqVO.setMerchantId(1);
-		reqVO.setOrderNo("2018111800000001");  //2018开头返回成功，其他失败
+		reqVO.setOrderNo("2018111800000002");  //2018开头返回成功，其他失败
 		reqVO.setPayeeAccount("1231312313131312");
 		reqVO.setPayeeName("老黑");
 		reqVO.setAmt(new BigDecimal("1"));

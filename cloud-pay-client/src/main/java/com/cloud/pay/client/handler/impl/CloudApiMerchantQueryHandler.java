@@ -18,6 +18,9 @@ import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantBankInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 import com.cloud.pay.merchant.service.MerchantApplyService;
 import com.cloud.pay.merchant.service.MerchantService;
 
@@ -49,11 +52,11 @@ public class CloudApiMerchantQueryHandler
 		//根据商户先查询正式表，正式表没又再获取申请表
 		Map<String, Object> map = merchantService.selectByCode(reqParam.getSubMchCode());
 		if(null != map) {
-			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) map.get("baseInfo");
+			MerchantBaseInfo baseInfo = (MerchantBaseInfo) map.get("baseInfo");
 			BeanUtils.copyProperties(baseInfo, result);
-			MerchantApplyBankInfo bankInfo = (MerchantApplyBankInfo) map.get("bankInfo");
+			MerchantBankInfo bankInfo = (MerchantBankInfo) map.get("bankInfo");
 			BeanUtils.copyProperties(bankInfo, result);
-			MerchantApplyFeeInfo feeInfo = (MerchantApplyFeeInfo) map.get("feeInfo");
+			MerchantFeeInfo feeInfo = (MerchantFeeInfo) map.get("feeInfo");
 			BeanUtils.copyProperties(feeInfo, result);
 			result.setStatus(2);
 		}else {

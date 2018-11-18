@@ -19,6 +19,7 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradePayResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudUnionTradeParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudUnionTradeResult;
 import com.cloud.pay.common.contants.ChannelContants;
+import com.cloud.pay.common.contants.ChannelErrorCode;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 
@@ -36,15 +37,24 @@ public class BohaiUnionTradePayExecutor extends BohaiTradeExecutor<BohaiCloudUni
 			BohaiCloudUnionTradeParam payParam = createParam(reqVO);
 			BohaiCloudUnionTradeResult result = request(payParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCUR);
 			 if(!"0".equals(result.getRspCode())) {
-				  resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getErrorCode(),result.getErrorMessage());
+				  resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),
+						  StringUtils.isNotBlank(result.getErrorCode())?result.getErrorCode():ChannelErrorCode.ERROR_9001,
+								  StringUtils.isNotBlank(result.getErrorMessage())?result.getErrorMessage():result.getRspMsg());
+				  if("1002".equals(result.getErrorCode())) {
+					  resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+				  }else {
+					  resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
+				  }
+				  resVO.setRespCode(ChannelContants.CHANNEL_RESP_CODE_SUCCESS);
 				  log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 				  return resVO;
 			 }
 			 resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),"代付成功",result.getActDat());
+			 resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
-			log.error("渠道接口：单笔银联代付失败，错误消息:{}",e);
-			resVO = new PayTradeResVO(ChannelContants.CHANNEL_RESP_CODE_UNKNOWN,"9000","系统异常");
+			 log.error("渠道接口：单笔银联代付失败，错误消息:{}",e);
+			 resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;
 	}

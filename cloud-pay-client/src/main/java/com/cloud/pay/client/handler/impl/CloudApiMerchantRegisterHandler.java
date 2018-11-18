@@ -1,6 +1,7 @@
 package com.cloud.pay.client.handler.impl;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cloud.pay.client.constants.Constants;
 import com.cloud.pay.client.handler.ICloudPayApiHandler;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterParam;
 import com.cloud.pay.client.vo.CloudApiMerchantRegisterResult;
@@ -19,7 +21,9 @@ import com.cloud.pay.common.exception.CloudApiException;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantApplyService;
+import com.cloud.pay.merchant.service.MerchantService;
 
 /**
  * 商户信息报备
@@ -35,14 +39,26 @@ public class CloudApiMerchantRegisterHandler
 	@Autowired
 	private MerchantApplyService merchantApplyService;
 	
+	@Autowired
+	private MerchantService merchantService;
+	
 	@Override
 	public CloudApiMerchantRegisterResult handle(CloudApiMerchantRegisterParam reqParam) {
 		log.info("商户信息报备，请求参数：{}",reqParam);
 		CloudApiMerchantRegisterResult result = new CloudApiMerchantRegisterResult();
+		//获取机构信息,并判断是否为机构,只有机构才允许调用商户相关接口
+		MerchantBaseInfo orgBaseInfo = (MerchantBaseInfo) merchantService.selectByCode(reqParam.getMchCode()).get("baseInfo");
+		if(null != orgBaseInfo && 1 != orgBaseInfo.getType()) {
+			throw new CloudApiBusinessException(ApiErrorCode.NOT_AUTHORITY, "该商户无此接口权限");
+		}
 		//商户基础资料
 		MerchantApplyBaseInfo baseInfo = new MerchantApplyBaseInfo();
 		BeanUtils.copyProperties(reqParam, baseInfo);
 		baseInfo.setMobile(reqParam.getpMobile());
+		baseInfo.setCreateTime(new Date());
+		baseInfo.setModifyTime(new Date());
+		baseInfo.setOrgId(orgBaseInfo.getId());
+		baseInfo.setVersion(1);
 		//商户结算资料
 		MerchantApplyBankInfo bankInfo = new MerchantApplyBankInfo();
 		BeanUtils.copyProperties(reqParam, bankInfo);

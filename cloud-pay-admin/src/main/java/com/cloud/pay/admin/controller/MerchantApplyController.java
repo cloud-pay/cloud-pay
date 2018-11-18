@@ -208,7 +208,7 @@ public class MerchantApplyController extends BaseController{
 			feeInfo.setId(null);
 			String attachementInfo = map.getString("attachementInfo");
 			JSONObject json = JSON.parseObject(attachementInfo);
-			merchantApplyService.change(baseInfo, bankInfo, feeInfo, json);
+			merchantApplyService.change(baseInfo, bankInfo, feeInfo, json,null,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

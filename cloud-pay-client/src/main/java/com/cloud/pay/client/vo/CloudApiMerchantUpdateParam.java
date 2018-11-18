@@ -24,7 +24,9 @@ public class CloudApiMerchantUpdateParam extends CloudApiBaseParam {
 	
 	private String legal;
 	
-	private String city;
+	private Integer provincial;
+	
+	private Integer city;
 	
 	private String address;
 	
@@ -114,11 +116,19 @@ public class CloudApiMerchantUpdateParam extends CloudApiBaseParam {
 		this.legal = legal;
 	}
 
-	public String getCity() {
+	public Integer getProvincial() {
+		return provincial;
+	}
+
+	public void setProvincial(Integer provincial) {
+		this.provincial = provincial;
+	}
+
+	public Integer getCity() {
 		return city;
 	}
 
-	public void setCity(String city) {
+	public void setCity(Integer city) {
 		this.city = city;
 	}
 

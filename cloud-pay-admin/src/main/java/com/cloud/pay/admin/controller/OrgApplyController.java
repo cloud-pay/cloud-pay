@@ -200,7 +200,7 @@ public class OrgApplyController extends BaseController{
 			MerchantApplyFeeInfo feeInfo = JSON.parseObject(fee, MerchantApplyFeeInfo.class);
 			String attachementInfo = map.getString("attachementInfo");
 			JSONObject json = JSON.parseObject(attachementInfo);
-			merchantApplyService.change(baseInfo, bankInfo, feeInfo, json);
+			merchantApplyService.change(baseInfo, bankInfo, feeInfo, json,null,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:{}", e);

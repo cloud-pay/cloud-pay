@@ -47,6 +47,11 @@ public class CloudApiMerchantQueryHandler
 		if(StringUtils.isBlank(reqParam.getSubMchCode())) {
 			 throw new CloudApiBusinessException(ApiErrorCode.PARAM_ERROR, "商户编码不可为空");
 		}
+		//获取机构信息,并判断是否为机构,只有机构才允许调用商户相关接口
+		MerchantBaseInfo orgBaseInfo = (MerchantBaseInfo) merchantService.selectByCode(reqParam.getMchCode()).get("baseInfo");
+		if(null != orgBaseInfo && 1 != orgBaseInfo.getType()) {
+			throw new CloudApiBusinessException(ApiErrorCode.NOT_AUTHORITY, "该商户无此接口权限");
+		}
 		result.setMchCode(reqParam.getMchCode());
 		result.setSubMchCode(reqParam.getSubMchCode());
 		//根据商户先查询正式表，正式表没又再获取申请表
@@ -54,8 +59,10 @@ public class CloudApiMerchantQueryHandler
 		if(null != map) {
 			MerchantBaseInfo baseInfo = (MerchantBaseInfo) map.get("baseInfo");
 			BeanUtils.copyProperties(baseInfo, result);
+			result.setpMobile(baseInfo.getMobile());
 			MerchantBankInfo bankInfo = (MerchantBankInfo) map.get("bankInfo");
 			BeanUtils.copyProperties(bankInfo, result);
+			result.setsMobileNo(bankInfo.getMobileNo());
 			MerchantFeeInfo feeInfo = (MerchantFeeInfo) map.get("feeInfo");
 			BeanUtils.copyProperties(feeInfo, result);
 			result.setStatus(2);
@@ -70,8 +77,10 @@ public class CloudApiMerchantQueryHandler
 			}
 			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) applyMap.get("baseInfo");
 			BeanUtils.copyProperties(baseInfo, result);
+			result.setpMobile(baseInfo.getMobile());
 			MerchantApplyBankInfo bankInfo = (MerchantApplyBankInfo) applyMap.get("bankInfo");
 			BeanUtils.copyProperties(bankInfo, result);
+			result.setsMobileNo(bankInfo.getMobileNo());
 			MerchantApplyFeeInfo feeInfo = (MerchantApplyFeeInfo) applyMap.get("feeInfo");
 			BeanUtils.copyProperties(feeInfo, result);
 		}

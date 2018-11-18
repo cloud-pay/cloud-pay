@@ -23,7 +23,9 @@ import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantApplyFeeInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantApplyService;
+import com.cloud.pay.merchant.service.MerchantService;
 
 /**
  * 商户信息修改
@@ -38,6 +40,8 @@ public class CloudApiMerchantUpdateHandler
 	@Autowired
 	private MerchantApplyService merchantApplyService;
 	
+	@Autowired
+	private MerchantService merchantService;
 	
 	@Override
 	public CloudApiMerchantUpdateResult handle(CloudApiMerchantUpdateParam reqParam) {
@@ -46,6 +50,12 @@ public class CloudApiMerchantUpdateHandler
 		if(StringUtils.isBlank(reqParam.getSubMchCode())) {
 			 throw new CloudApiBusinessException(ApiErrorCode.PARAM_ERROR, "商户编码不可为空");
 		}
+		
+		//获取机构信息,并判断是否为机构,只有机构才允许调用商户相关接口
+		MerchantBaseInfo orgBaseInfo = (MerchantBaseInfo) merchantService.selectByCode(reqParam.getMchCode()).get("baseInfo");
+		if(null != orgBaseInfo && 1 != orgBaseInfo.getType()) {
+			throw new CloudApiBusinessException(ApiErrorCode.NOT_AUTHORITY, "该商户无此接口权限");
+		}		
 		result.setMchCode(reqParam.getMchCode());
 		result.setSubMchCode(reqParam.getSubMchCode());
 		
@@ -68,7 +78,16 @@ public class CloudApiMerchantUpdateHandler
 				return result;
 			}
 			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) map.get("baseInfo");
+			if(1 == baseInfo.getStatus()) {
+				result.setResultCode(Constants.RESULT_CODE_FAIL);
+				result.setErrorCode(ApiErrorCode.SUB_MCH_STATUS_INVALID);
+				result.setErrorMsg("商户当前状态不允许修改");
+				log.info("商户信息修改，响应结果：{}",result);
+				return result;
+			}
 			BeanUtils.copyProperties(reqParam, baseInfo,BeanUtil.getNullPropertyNames(reqParam));
+			baseInfo.setStatus(1);
+			baseInfo.setVersion(baseInfo.getVersion()+1);
 			//获取商户结算信息
 			MerchantApplyBankInfo bankInfo =  null;
 			if(null == map.get("bankInfo")) {
@@ -87,7 +106,9 @@ public class CloudApiMerchantUpdateHandler
 			BeanUtils.copyProperties(reqParam, feeInfo,BeanUtil.getNullPropertyNames(reqParam));
 			//获取商户文件信息
 			JSONObject attachementJson = createAttachementJson(reqParam);
-			merchantApplyService.update(baseInfo, bankInfo, feeInfo, attachementJson,reqParam.getMchCode(),true);
+			bankInfo.setId(null);
+			feeInfo.setId(null);
+			merchantApplyService.change(baseInfo, bankInfo, feeInfo, attachementJson,reqParam.getMchCode(),true);
 		}catch(Exception e) {
 			log.error("修改商户信息失败：{}",e);
 			throw new CloudApiBusinessException(ApiErrorCode.SYSTEM_ERROR,"系统错误"); 

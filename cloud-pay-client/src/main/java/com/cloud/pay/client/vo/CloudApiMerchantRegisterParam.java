@@ -33,11 +33,11 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	@NotEmpty(message = "负责人不能为空")
 	private String legal;
 	
-	@NotEmpty(message = "省份不能为空")
-	private String provincial;
+	@NotNull(message = "省份不能为空")
+	private Integer provincial;
 	
-	@NotEmpty(message = "所在城市不能为空")
-	private String city;
+	@NotNull(message = "所在城市不能为空")
+	private Integer city;
 	
 	@NotEmpty(message = "详细地址不能为空")
 	private String address;
@@ -142,13 +142,6 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 		this.legal = legal;
 	}
 
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
 
 	public String getAddress() {
 		return address;
@@ -302,13 +295,22 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 		this.protocolFilePath = protocolFilePath;
 	}
 
-	public String getProvincial() {
+	public Integer getProvincial() {
 		return provincial;
 	}
 
-	public void setProvincial(String provincial) {
+	public void setProvincial(Integer provincial) {
 		this.provincial = provincial;
 	}
-	
+
+	public Integer getCity() {
+		return city;
+	}
+
+	public void setCity(Integer city) {
+		this.city = city;
+	}
+
+    
 	
 }

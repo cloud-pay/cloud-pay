@@ -53,7 +53,11 @@ public class CloudPayApiController {
 	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,"请求报文格式错误,缺少字段(tradeType)");
 	    	 return result;
 	     }
-	     String mchNo = "";
+	     String mchNo = jsonObject.getString("mchCode");
+	     if (StringUtils.isBlank(mchNo)) {
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,"请求报文格式错误,缺少字段(mchCode)");
+	    	 return result;
+	     }
 	     try {
 	    	 //获取处理类
 	    	 ICloudPayApiHandler Handler = tradeApiHandlerFactory.getApiHandler(tradeType);
@@ -63,9 +67,6 @@ public class CloudPayApiController {
 	    	 Object reqParam = cloudApiHelper.reqContent2ReqParamWithValidSign(requestContent, reqParamClazz);
 	    	 
 	    	 result = Handler.handle(reqParam);
-	    	 
-	    	 //如果没有传入结构合作码，就说明为商户请求
-	    	 mchNo =  jsonObject.getString("mchCode");
 	    	 result.setSign(cloudApiHelper.createSign(mchNo, result));
 	     }catch(CloudApiException e) {
 	    	 log.error("云支付平台，业务交易异常：{}",e);

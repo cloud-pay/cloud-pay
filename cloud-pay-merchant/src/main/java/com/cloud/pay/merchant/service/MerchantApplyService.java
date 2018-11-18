@@ -105,22 +105,14 @@ public class MerchantApplyService {
 		bankInfoMapper.insert(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.insert(feeInfo);
-		//如果从接口上送商户信息，则从OSS服务器读取文件信息
-		if(isFromOSS) {
-			if(null != attachementJson) {
-				uploadImg(attachementJson, "businessPath",  MerchantConstant.BUSINESS,  baseInfo.getId(), true, agentCode);
-				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true, agentCode);
-				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true, agentCode);
-				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true, agentCode);
-			}
-		}else {
-			if(attachementJson != null) {
-				uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), true);
-				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true);
-				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true);
-				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true);
-			}
+		
+		if(null != attachementJson) {
+			uploadImg(attachementJson, "businessPath",  MerchantConstant.BUSINESS,  baseInfo.getId(), true, agentCode,isFromOSS);
+			uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true, agentCode,isFromOSS);
+			uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true, agentCode,isFromOSS);
+			uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), true, agentCode,isFromOSS);
 		}
+		
 		return code;
 	}
 	
@@ -167,21 +159,12 @@ public class MerchantApplyService {
 		bankInfoMapper.updateByPrimaryKeySelective(bankInfo);
 		feeInfo.setMerchantId(baseInfo.getId());
 		feeInfoMapper.updateByPrimaryKeySelective(feeInfo);
-		//如果从接口上送商户信息，则从OSS服务器读取文件信息
-		if(isFromOSS) {
-			if(null != attachementJson) {
-				uploadImg(attachementJson, "businessPath",  MerchantConstant.BUSINESS,  baseInfo.getId(), false, agentCode);
-				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), false, agentCode);
-				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), false, agentCode);
-				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), false, agentCode);
-			}
-		}else {
-			if(attachementJson != null) {
-				uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), false);
-				uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), false);
-				uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), false);
-				uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), false);
-			}
+		
+		if(null != attachementJson) {
+			uploadImg(attachementJson, "businessPath",  MerchantConstant.BUSINESS,  baseInfo.getId(), false, agentCode,isFromOSS);
+			uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), false, agentCode,isFromOSS);
+			uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), false, agentCode,isFromOSS);
+			uploadImg(attachementJson, "protocolPath",MerchantConstant.PROTOCOL, baseInfo.getId(), false, agentCode,isFromOSS);
 		}
 	}
 	
@@ -265,18 +248,25 @@ public class MerchantApplyService {
 	 * @param agentCode
 	 * @throws IOException
 	 */
-	public void uploadImg(JSONObject attachementJson,String key, Integer type,Integer merchantId,boolean save,String agentCode)throws IOException{
-		String sourceFileFullPath = attachementJson.getString(key);
-		if(notEmpty(sourceFileFullPath)){
-			SysConfig accessKeyIdConfig = null;
-			SysConfig secretAccessKeyConfig = null;
-			try {
-				accessKeyIdConfig = sysConfigMapper.selectByPrimaryKey("ossAccessKeyId");
-				secretAccessKeyConfig = sysConfigMapper.selectByPrimaryKey("ossSecretAccessKey");
-		    }catch(Exception e) {
-		    	log.error("读取OSS服务器配置错误：{}",e);
-		    }
-			InputStream in = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), agentCode, sourceFileFullPath);
+	public void uploadImg(JSONObject attachementJson,String key, Integer type,Integer merchantId,boolean save,String agentCode,boolean isFromOSS)throws IOException{
+		String path = attachementJson.getString(key);
+		if(notEmpty(path)){
+			InputStream in = null;
+			if(isFromOSS) {//如果从接口上送商户信息，则从OSS服务器读取文件信息
+				SysConfig accessKeyIdConfig = null;
+				SysConfig secretAccessKeyConfig = null;
+				try {
+					accessKeyIdConfig = sysConfigMapper.selectByPrimaryKey("ossAccessKeyId");
+					secretAccessKeyConfig = sysConfigMapper.selectByPrimaryKey("ossSecretAccessKey");
+			    }catch(Exception e) {
+			    	log.error("读取OSS服务器配置错误：{}",e);
+			    }
+				in = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), agentCode, path);
+			}else {
+				path = replaceBase64Before(path);
+				byte[] bytes = Base64.base64ToByteArray(path);
+				in = new ByteArrayInputStream(bytes);
+			}
 			String filePath = merchantFolder+random(8)+".png";
 			String uploadPath = ImgUtil.uploadImg(root_fold,filePath, in);
 			MerchantApplyAttachementInfo info = new MerchantApplyAttachementInfo();
@@ -387,7 +377,7 @@ public class MerchantApplyService {
 	 */
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)
 	public void change(MerchantApplyBaseInfo baseInfo, MerchantApplyBankInfo bankInfo,
-			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson) throws IOException {
+			MerchantApplyFeeInfo feeInfo, JSONObject attachementJson,String agentCode,boolean isFromOSS) throws IOException {
 		Integer originalId = baseInfo.getId();
 		baseInfo.setId(null);
 		baseInfo.setStatus(MerchantConstant.AUDITING);
@@ -402,25 +392,25 @@ public class MerchantApplyService {
 			for(MerchantApplyAttachementInfo info : infos) {
 				if(MerchantConstant.BUSINESS == info.getAttachementType()) {
 					if(attachementJson != null && notEmpty(attachementJson.getString("businessPath"))) {
-						uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), true);
+						uploadImg(attachementJson, "businessPath", MerchantConstant.BUSINESS, baseInfo.getId(), true,agentCode,isFromOSS);
 					} else {
 						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.BUSINESS);
 					}
 				} else if(MerchantConstant.BANK_CARD == info.getAttachementType()) {
 					if(attachementJson != null && notEmpty(attachementJson.getString("bankCardPath"))) {
-						uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true);
+						uploadImg(attachementJson, "bankCardPath", MerchantConstant.BANK_CARD, baseInfo.getId(), true,agentCode,isFromOSS);
 					} else {
 						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.BANK_CARD);
 					}
 				} else if(MerchantConstant.CERT == info.getAttachementType()) {
 					if(attachementJson != null && notEmpty(attachementJson.getString("certPath"))) {
-						uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true);
+						uploadImg(attachementJson, "certPath", MerchantConstant.CERT, baseInfo.getId(), true,agentCode,isFromOSS);
 					} else {
 						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.CERT);
 					}
 				} else if(MerchantConstant.PROTOCOL == info.getAttachementType()) {
 					if(attachementJson != null && notEmpty(attachementJson.getString("protocolPath"))) {
-						uploadImg(attachementJson, "protocolPath", MerchantConstant.PROTOCOL, baseInfo.getId(), true);
+						uploadImg(attachementJson, "protocolPath", MerchantConstant.PROTOCOL, baseInfo.getId(), true,agentCode,isFromOSS);
 					} else {
 						this.saveAttachmentInfo(info, baseInfo.getId(), MerchantConstant.PROTOCOL);
 					}

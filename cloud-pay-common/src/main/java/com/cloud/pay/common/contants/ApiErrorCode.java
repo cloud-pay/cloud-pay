@@ -22,7 +22,10 @@ public interface ApiErrorCode {
     String SIGN_ERROR = "signError";
     
     //商户信息不存在
-    String SUB_MCH_INVALID = "subMchInavlid";
+    String SUB_MCH_INVALID = "subMchInvalid";
+    
+    //商户当前状态不允许修改
+    String SUB_MCH_STATUS_INVALID="subMchStatusInvalid";
     
     //订单不存在
     String ORDER_NOT_EXIST= "orderNotExist";
@@ -45,4 +48,5 @@ public interface ApiErrorCode {
     //批次数据异常
     String BATCH_DATA_ERROR = "batchDataError";
 
+    String NOT_AUTHORITY = "notAuthority";
 }

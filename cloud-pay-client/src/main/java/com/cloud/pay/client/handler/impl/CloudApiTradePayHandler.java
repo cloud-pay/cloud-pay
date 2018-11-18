@@ -1,7 +1,6 @@
 package com.cloud.pay.client.handler.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +16,7 @@ import com.cloud.pay.client.vo.CloudApiTradePayParam;
 import com.cloud.pay.client.vo.CloudApiTradePayResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
-import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.PayResponseDTO;
@@ -58,7 +57,7 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 			log.info("单笔代付响应结果：{}",result);
 			return result;
 		}
-		MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) merchantMap.get("baseInfo");
+		MerchantBaseInfo baseInfo = (MerchantBaseInfo) merchantMap.get("baseInfo");
 		//订单号和商户号确保唯一
 		TradeDTO tradeHis = tradeService.selectTradeByMerIdAndOrderNo(baseInfo.getId(), reqParam.getOrderNo());
 		if(null != tradeHis) {
@@ -71,12 +70,13 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 		Trade trade = new Trade();
 		trade.setMerchantId(baseInfo.getId());
 		trade.setOrderNo(reqParam.getOrderNo());
-		trade.setTradeTime(DateUtil.getDateTimeFormat(reqParam.getTradeTime()));
-		
+		//trade.setTradeTime(DateUtil.getDateTimeFormat(reqParam.getTradeTime()));
+		trade.setTradeTime(DateUtil.formatDate(reqParam.getTradeTime(), "yyyyMMdd HH:mm:ss"));
 		trade.setTradeAmount(reqParam.getTradeAmount());
 		trade.setPayeeName(reqParam.getPayeeName());
 		trade.setPayeeBankCard(reqParam.getPayeeBankCard());
 		trade.setPayeeBankCode(reqParam.getPayeeBankCode());
+		trade.setLoaning(reqParam.getLoaning() == null ? 0 : reqParam.getLoaning());
 		try {
 			log.info("单笔代付，请求代付平台参数：{}",trade);
 		    PayResponseDTO payResponse = tradeService.pay(trade);

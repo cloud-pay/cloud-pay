@@ -8,6 +8,8 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.cloud.pay.client.vo.base.CloudApiTradeBaseParam;
+import com.cloud.pay.common.utils.validation.DateValue;
+import com.cloud.pay.common.utils.validation.IntegerValue;
 
 /**
  * 单笔代付请求参数
@@ -20,6 +22,7 @@ public class CloudApiTradePayParam extends CloudApiTradeBaseParam {
   
 	@NotEmpty(message = "交易时间不能为空")
 	@Length(max = 21,message = "交易时间最长21位")
+	@DateValue(format="yyyyMMdd HH:mm:ss")
 	private String tradeTime;
 	
 	@NotNull(message = "交易金额不能为空")
@@ -33,6 +36,9 @@ public class CloudApiTradePayParam extends CloudApiTradeBaseParam {
 	
 	@NotEmpty(message = "收款人联行号不能为空")
 	private String payeeBankCode;
+	
+	@IntegerValue(value= {0,1},message="是否垫资只能为是或者否")
+	private Integer loaning;
 
 	public String getTradeTime() {
 		return tradeTime;
@@ -72,6 +78,14 @@ public class CloudApiTradePayParam extends CloudApiTradeBaseParam {
 
 	public void setPayeeBankCode(String payeeBankCode) {
 		this.payeeBankCode = payeeBankCode;
+	}
+
+	public Integer getLoaning() {
+		return loaning;
+	}
+
+	public void setLoaning(Integer loaning) {
+		this.loaning = loaning;
 	}
 	
 	

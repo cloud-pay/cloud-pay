@@ -366,7 +366,7 @@
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>
   <select id="selectExist" resultMap="BaseResultMap">
-    select orderNo
+    select order_no
     from t_trade
     where order_no = #{orderNo,jdbcType=VARCHAR}
     	and merchant_id = #{merchantId,jdbcType=INTEGER}

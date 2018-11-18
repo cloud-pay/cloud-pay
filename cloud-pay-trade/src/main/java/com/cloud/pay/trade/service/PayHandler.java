@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.PayTradeReqVO;
 import com.cloud.pay.channel.vo.PayTradeResVO;
+import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
@@ -124,7 +125,7 @@ public class PayHandler {
 	 * @date 2018年9月12日 下午5:22:55
 	 */
 	public PayTradeResVO invokePay(Trade trade) {
-		PayTradeReqVO reqVO = new PayTradeReqVO();
+		PayUnionTradeReqVO reqVO = new PayUnionTradeReqVO();
 		reqVO.setAmt(trade.getTradeAmount());
 		//TODO 路由具体渠道时设置
 //		reqVO.setMerchantNo(merchantNo);
@@ -133,11 +134,12 @@ public class PayHandler {
 		reqVO.setAmt(trade.getTradeAmount());
 		reqVO.setOrderNo(trade.getOrderNo());
 		reqVO.setPayeeAccount(trade.getPayeeBankCard());
-		reqVO.setPayeeBankCode(trade.getPayeeBankCode());
+		//reqVO.setPayeeBankCode(trade.getPayeeBankCode());
 		reqVO.setPayeeName(trade.getPayeeName());
 		reqVO.setPostscript(trade.getRemark());
+		reqVO.setMerchantId(trade.getMerchantId());
 		log.info("调用渠道入参：{}", reqVO);
-		PayTradeResVO resVO = payService.pay(reqVO);
+		PayTradeResVO resVO = payService.unionPay(reqVO);//payService.pay(reqVO);
 		log.info("订单号{}调用渠道返回结果{}", trade.getOrderNo(), resVO);
 		return resVO;
 	}
@@ -152,13 +154,18 @@ public class PayHandler {
 	public void updateTradeStatus(Trade trade, PayTradeResVO resVO) throws Exception {
 		log.info("处理商户预缴户");
 		//TODO 设置渠道返回结果
-		trade.setStatus(resVO.getStatus()); 
-		trade.setChannelId(resVO.getChannelId());
-		trade.setReturnCode(resVO.getRespCode());
-		trade.setReturnInfo(resVO.getRespMsg());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		trade.setReconDate(sdf.parse(resVO.getAccountDate()));
-		trade.setTradeConfirmTime(new Date());
+		if("1".equals(resVO.getRespCode())) {
+			trade.setStatus(3); 
+		}else {
+			trade.setStatus(resVO.getStatus()); 
+			trade.setChannelId(resVO.getChannelId());
+			trade.setReturnCode(resVO.getRespCode());
+			trade.setReturnInfo(resVO.getRespMsg());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			trade.setReconDate(sdf.parse(resVO.getAccountDate()));
+			trade.setTradeConfirmTime(new Date());
+		}
+		
 		if(TradeConstant.STATUS_SUCCESS == trade.getStatus()) {
 			List<Integer> merchantIds = new ArrayList<Integer>();
 			Integer orgId = null;

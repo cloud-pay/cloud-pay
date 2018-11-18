@@ -75,7 +75,7 @@ public class ChannelTest {
 	public void tradeUnionPay() {
 		PayUnionTradeReqVO reqVO = new PayUnionTradeReqVO();
 		reqVO.setMerchantId(1);
-		reqVO.setOrderNo("2018111800000002");  //2018开头返回成功，其他失败
+		reqVO.setOrderNo("2018111800000003");  //2018开头返回成功，其他失败
 		reqVO.setPayeeAccount("1231312313131312");
 		reqVO.setPayeeName("老黑");
 		reqVO.setAmt(new BigDecimal("1"));

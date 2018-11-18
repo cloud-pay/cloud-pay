@@ -15,7 +15,7 @@ import com.cloud.pay.client.vo.CloudApiTradePayQueryParam;
 import com.cloud.pay.client.vo.CloudApiTradePayQueryResult;
 import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
-import com.cloud.pay.merchant.entity.MerchantApplyBaseInfo;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.service.TradeService;
@@ -48,7 +48,7 @@ public class CloudApiTradePayQueryHandler implements ICloudPayApiHandler<CloudAp
 		if(null == merchantMap || merchantMap.size() <= 0) {
 			 throw new CloudApiBusinessException(ApiErrorCode.MCH_INVALID, "商户不可用");
 		}
-		MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) merchantMap.get("baseInfo");
+		MerchantBaseInfo baseInfo = (MerchantBaseInfo) merchantMap.get("baseInfo");
 		TradeDTO trade = tradeService.selectTradeByMerIdAndOrderNo(baseInfo.getId(), reqParam.getOrderNo());
 		if(null == trade) {
 		    result.setResultCode(Constants.RESULT_CODE_FAIL);
@@ -63,7 +63,7 @@ public class CloudApiTradePayQueryHandler implements ICloudPayApiHandler<CloudAp
 		result.setPayeeBankCard(trade.getPayeeBankCard());
 		result.setPayeeBankCode(trade.getPayeeBankCode());
 		result.setStatus(trade.getStatus());
-		result.setReconDate(DateUtil.getDateTimeFormat(trade.getReconDate()));
+		result.setReconDate(trade.getReconDate()==null ? "" : DateUtil.getDateTimeFormat(trade.getReconDate()));
 		result.setReconStatus(trade.getReconStatus());
 		log.info("单笔代付结果查询，响应结果：{}",result);
 		return result;

@@ -129,25 +129,30 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		log.info("渠道接口：单笔银联代付，请求参数：{}",reqVO);
 		PayTradeResVO resVO = null;
 		try {
-			ValidationUtils.validate(reqVO);
-		}catch(CloudApiException e) {
-			log.error("参数校验失败:{}",e.getMessage());
-			resVO = new PayTradeResVO(e.getErrorCode(),e.getMessage());
-			return resVO;
+			try {
+				ValidationUtils.validate(reqVO);
+			}catch(CloudApiException e) {
+				log.error("参数校验失败:{}",e.getMessage());
+				resVO = new PayTradeResVO(e.getErrorCode(),e.getMessage());
+				return resVO;
+			}
+			//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
+		    List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(reqVO.getMerchantId());
+		    if(null == merchantChannels || merchantChannels.size() <=0 ) {
+		    	log.error("商户未配置渠道信息");
+				resVO = new PayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
+				return resVO;
+		    }
+		    MerchantChannel merchantChannel = merchantChannels.get(0);
+			ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeUnionPayHandler(
+					ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
+			resVO = (PayTradeResVO) tradePayExecutor.execute(reqVO);
+			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
+		}catch(Exception e){
+			log.error("系统异常：{}",e.getMessage());
+			resVO = new PayTradeResVO(ChannelErrorCode.ERROR_9000,"系统异常");
 		}
-		//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
-	    List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(reqVO.getMerchantId());
-		if(null == merchantChannels) {
-			log.error("商户未配置渠道信息");
-			resVO = new PayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
-			return resVO;
-		}
-		MerchantChannel merchantChannel = merchantChannels.get(0);
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeUnionPayHandler(
-				ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
-		resVO = (PayTradeResVO) tradePayExecutor.execute(reqVO);
-		resVO.setChannelId(ChannelType.BOHAI.getChannelId());
-		log.info("渠道接口：单笔银联代付，响应参数：{}",resVO);
+		log.info("渠道接口：代付，响应参数：{}",resVO);
 		return resVO;
 	}
 
@@ -178,7 +183,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		}
 		//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
 	    List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(reqVO.getMerchantId());
-		if(null == merchantChannels) {
+		if(null == merchantChannels || merchantChannels.size() <=0 ) {
 			log.error("商户未配置渠道信息");
 			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
 			return resVO;

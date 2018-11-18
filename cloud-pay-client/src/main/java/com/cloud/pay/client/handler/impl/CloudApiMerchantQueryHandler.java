@@ -60,12 +60,14 @@ public class CloudApiMerchantQueryHandler
 			MerchantBaseInfo baseInfo = (MerchantBaseInfo) map.get("baseInfo");
 			BeanUtils.copyProperties(baseInfo, result);
 			result.setpMobile(baseInfo.getMobile());
+			if(baseInfo.getStatus() == 1) {
+				result.setStatus(2);
+			}
 			MerchantBankInfo bankInfo = (MerchantBankInfo) map.get("bankInfo");
 			BeanUtils.copyProperties(bankInfo, result);
 			result.setsMobileNo(bankInfo.getMobileNo());
 			MerchantFeeInfo feeInfo = (MerchantFeeInfo) map.get("feeInfo");
 			BeanUtils.copyProperties(feeInfo, result);
-			result.setStatus(2);
 		}else {
 			Map<String, Object> applyMap = merchantApplyService.selectByCode(reqParam.getSubMchCode());
 			if(null == applyMap) {

@@ -58,7 +58,7 @@ public class CloudApiMerchantQueryResult extends CloudApiBaseResult {
 
 	private BigDecimal loanFee;
 	
-	private Integer status;
+	private Integer status; // 0-冻结 1-待审核 2-审核通过 3-审核不通过
 
 	public String getName() {
 		return name;

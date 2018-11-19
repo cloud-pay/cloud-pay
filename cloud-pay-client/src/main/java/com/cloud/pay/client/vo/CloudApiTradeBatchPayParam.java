@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.cloud.pay.client.vo.base.CloudApiTradeBatchBaseParam;
+import com.cloud.pay.common.utils.validation.IntegerValue;
 
 /**
  * 批量代付请求参数
@@ -30,6 +31,9 @@ public class CloudApiTradeBatchPayParam extends CloudApiTradeBatchBaseParam {
 	
 	@NotEmpty(message = "文件名不能为空")
 	private String  fileName;
+	
+	@IntegerValue(value= {0,1},message="是否垫资只能为是或者否")
+	private Integer loaning;
 
 	public String getTradeTime() {
 		return tradeTime;
@@ -63,4 +67,11 @@ public class CloudApiTradeBatchPayParam extends CloudApiTradeBatchBaseParam {
 		this.fileName = fileName;
 	}
 
+	public Integer getLoaning() {
+		return loaning;
+	}
+
+	public void setLoaning(Integer loaning) {
+		this.loaning = loaning;
+	}
 }

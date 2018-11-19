@@ -71,7 +71,7 @@ public class CloudApiTradeBatchPayHandler implements ICloudPayApiHandler<CloudAp
 		batchTrade.setTotalCount(reqParam.getTotalCount());
 		batchTrade.setTradeTime(DateUtil.getDateTimeFormat(reqParam.getTradeTime()));
 		batchTrade.setStatus(1);
-		String errorDetails = batchTradeService.batchPay(batchTrade,baseInfo.getCode(), reqParam.getFileName());//如果数据有问题直接全部不处理算了
+		String errorDetails = batchTradeService.batchPay(batchTrade,baseInfo.getCode(), reqParam.getFileName(),reqParam.getLoaning());//如果数据有问题直接全部不处理算了
 		if(StringUtils.isNotBlank(errorDetails)) {
 			result.setResultCode(Constants.RESULT_CODE_FAIL);
 			result.setErrorCode(ApiErrorCode.BATCH_DATA_ERROR);

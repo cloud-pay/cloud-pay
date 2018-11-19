@@ -310,7 +310,7 @@ public class BatchTradeService {
 	 * @return
 	 */
 	@Transactional
-	public String batchPay(BatchTrade batchTrade, String fileFullPath,String mchCode) {
+	public String batchPay(BatchTrade batchTrade, String fileFullPath,String mchCode,Integer loaning) {
 		StringBuilder errorDetails = new StringBuilder();
 		//step 1 从OSS服务器读取文件流
 		SysConfig accessKeyIdConfig = null;
@@ -335,7 +335,7 @@ public class BatchTradeService {
 				num ++;
 				trade = new Trade();
 				trade.setBatchNo(batchTrade.getBatchNo());
-				
+				trade.setLoaning(loaning);
 				String[] line = lineTxt_cr.split("~");
 				//获取商户信息（考虑机构发批量是发给多个商户发起）
 				String merchantNo = line[0]; //商户号

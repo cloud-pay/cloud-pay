@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cloud.pay.channel.service.ICloudApiService;
-import com.cloud.pay.channel.vo.PayTradeReqVO;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
 import com.cloud.pay.merchant.constant.MerchantConstant;

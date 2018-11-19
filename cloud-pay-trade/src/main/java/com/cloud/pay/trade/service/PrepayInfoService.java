@@ -49,7 +49,7 @@ public class PrepayInfoService {
 	@Transactional
 	public void savePrepayInfoJournal(MerchantPrepayInfo prepayInfo, Integer journalType, BigDecimal amount,
 			Integer creditOrDebit, Integer tradeId) throws Exception {
-		log.info("垫资机构预缴户信息:{}", prepayInfo);
+		log.info("机构预缴户信息:{}", prepayInfo);
 		String orgDigest = MD5.md5(String.valueOf(prepayInfo.getBalance()) + "|" + prepayInfo.getFreezeAmount(),
 				String.valueOf(prepayInfo.getMerchantId()));
 		if (!orgDigest.equals(prepayInfo.getDigest())) {
@@ -72,7 +72,7 @@ public class PrepayInfoService {
 		journal.setType(TradeConstant.HADNING_FEE);
 		journal.setBalance(prepayInfo.getBalance());
 		journal.setCreateTime(new Date());
-		journal.setDebit(TradeConstant.CREDIT);
+		journal.setDebit(creditOrDebit);
 		journal.setPrepayId(prepayInfo.getId());
 		journal.setTradeId(tradeId);
 		log.info("新增预缴户资金流水：{}", journal);

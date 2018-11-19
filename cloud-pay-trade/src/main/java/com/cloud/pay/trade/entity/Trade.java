@@ -668,4 +668,61 @@ public class Trade {
 		this.orgBenefit = orgBenefit;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Trade [id=");
+		builder.append(id);
+		builder.append(", orderNo=");
+		builder.append(orderNo);
+		builder.append(", merchantId=");
+		builder.append(merchantId);
+		builder.append(", tradeTime=");
+		builder.append(tradeTime);
+		builder.append(", tradeAmount=");
+		builder.append(tradeAmount);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", channelId=");
+		builder.append(channelId);
+		builder.append(", returnCode=");
+		builder.append(returnCode);
+		builder.append(", returnInfo=");
+		builder.append(returnInfo);
+		builder.append(", payerId=");
+		builder.append(payerId);
+		builder.append(", payeeName=");
+		builder.append(payeeName);
+		builder.append(", payeeBankCard=");
+		builder.append(payeeBankCard);
+		builder.append(", payeeBankCode=");
+		builder.append(payeeBankCode);
+		builder.append(", tradeConfirmTime=");
+		builder.append(tradeConfirmTime);
+		builder.append(", remark=");
+		builder.append(remark);
+		builder.append(", settleStatus=");
+		builder.append(settleStatus);
+		builder.append(", reconDate=");
+		builder.append(reconDate);
+		builder.append(", reconStatus=");
+		builder.append(reconStatus);
+		builder.append(", batchNo=");
+		builder.append(batchNo);
+		builder.append(", loaning=");
+		builder.append(loaning);
+		builder.append(", payeeBankAcctType=");
+		builder.append(payeeBankAcctType);
+		builder.append(", payeeBankName=");
+		builder.append(payeeBankName);
+		builder.append(", merchantFeeAmount=");
+		builder.append(merchantFeeAmount);
+		builder.append(", loanBenefit=");
+		builder.append(loanBenefit);
+		builder.append(", orgBenefit=");
+		builder.append(orgBenefit);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

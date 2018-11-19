@@ -65,7 +65,7 @@
     delete from t_trade
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.trade.entity.Trade" >
+  <insert id="insert" parameterType="com.cloud.pay.trade.entity.Trade" useGeneratedKeys="true" keyProperty="id">
     insert into t_trade (id, order_no, merchant_id, 
       trade_time, trade_amount, status, channel_id, return_code, return_info, 
       payer_id, payee_name, payee_bank_card, payee_bank_code, trade_confirm_time, remark, 
@@ -365,7 +365,7 @@
     	status = #{status,jdbcType=INTEGER}
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>
-  <select id="selectExist" resultMap="BaseResultMap">
+  <select id="selectExist" resultType="java.lang.String">
     select order_no
     from t_trade
     where order_no = #{orderNo,jdbcType=VARCHAR}

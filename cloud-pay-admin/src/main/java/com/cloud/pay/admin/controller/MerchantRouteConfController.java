@@ -88,8 +88,14 @@ public class MerchantRouteConfController extends BaseController{
 			conf.setMerchantId(Integer.parseInt(map.getString("merchantId")));
 			conf.setChannelId(Integer.parseInt(map.getString("channelId")));
 			conf.setLoaning(Integer.parseInt(map.getString("loaning")));
-			conf.setLoaningOrgId(Integer.parseInt(map.getString("loaningOrgId")));
-			conf.setLoaningAmount(new BigDecimal(map.getString("loaningAmount")));
+			String loaningOrgId = map.getString("loaningOrgId");
+			if(StringUtils.isNotBlank(loaningOrgId)) {
+				conf.setLoaningOrgId(Integer.parseInt(loaningOrgId));
+			}
+			String loaningAmount = map.getString("loaningAmount");
+			if(StringUtils.isNotBlank(loaningOrgId)) {
+				conf.setLoaningAmount(new BigDecimal(loaningAmount));
+			}
 			conf.setStatus(MerchantRouteConstant.NORMAL);
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			conf.setCreator(userId);

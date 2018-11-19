@@ -22,7 +22,6 @@ import com.cloud.pay.admin.entity.ResultEnum;
 import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
-import com.cloud.pay.common.mapper.ProvincialMapper;
 import com.cloud.pay.common.service.BankService;
 import com.cloud.pay.common.service.CityService;
 import com.cloud.pay.merchant.entity.MerchantApplyBankInfo;

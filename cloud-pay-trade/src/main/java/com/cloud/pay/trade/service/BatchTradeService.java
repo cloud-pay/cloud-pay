@@ -139,6 +139,7 @@ public class BatchTradeService {
 				if (row != null) {
 					trade = new Trade();
 					trade.setBatchNo(batchTrade.getBatchNo());
+					trade.setLoaning(loaning);
 					trade.setMerchantId(batchTrade.getPayerMerchantId());
 					if (bankInfo != null) {
 						trade.setPayerId(bankInfo.getId());

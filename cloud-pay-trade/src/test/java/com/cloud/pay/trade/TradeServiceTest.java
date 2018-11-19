@@ -25,7 +25,7 @@ public class TradeServiceTest {
 	public void tradeTest() {
 		Trade trade = new Trade();
 		trade.setMerchantId(1);
-		trade.setOrderNo("20181119091");
+		trade.setOrderNo("20181119094");
 		trade.setPayeeBankAcctType(1);
 		trade.setPayeeBankCard("32165478963258712");
 		trade.setPayeeBankCode("332211452");

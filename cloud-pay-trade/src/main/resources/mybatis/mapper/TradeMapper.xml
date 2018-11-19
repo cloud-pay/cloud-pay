@@ -26,6 +26,7 @@
     <result column="merchant_fee_amount" property="merchantFeeAmount" jdbcType="DECIMAL" />
     <result column="loan_benefit" property="loanBenefit" jdbcType="DECIMAL" />
     <result column="org_benefit" property="orgBenefit" jdbcType="DECIMAL" />
+    <result column="loaning" property="loaning" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.TradeDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
@@ -51,7 +52,7 @@
     <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, order_no, merchant_id, trade_time, trade_amount, status, channel_id, return_code, 
+    id, order_no, merchant_id, trade_time, trade_amount, status, channel_id, loaning, return_code, 
     return_info, payer_id, payee_name, payee_bank_card, payee_bank_code, trade_confirm_time, 
     remark, settle_status, recon_date, recon_status, batch_no, payee_bank_name, payee_bank_acct_type,merchant_fee_amount,loan_benefit,org_benefit
   </sql>
@@ -67,13 +68,13 @@
   </delete>
   <insert id="insert" parameterType="com.cloud.pay.trade.entity.Trade" useGeneratedKeys="true" keyProperty="id">
     insert into t_trade (id, order_no, merchant_id, 
-      trade_time, trade_amount, status, channel_id, return_code, return_info, 
+      trade_time, trade_amount, status, channel_id, loaning, return_code, return_info, 
       payer_id, payee_name, payee_bank_card, payee_bank_code, trade_confirm_time, remark, 
       settle_status, recon_date, recon_status, batch_no, payee_bank_name, payee_bank_acct_type,merchant_fee_amount,loan_benefit,org_benefit
       )
     values (#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, #{merchantId,jdbcType=INTEGER}, 
       #{tradeTime,jdbcType=TIMESTAMP}, #{tradeAmount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, 
-      #{channelId,jdbcType=INTEGER}, #{returnCode,jdbcType=VARCHAR}, #{returnInfo,jdbcType=VARCHAR}, 
+      #{channelId,jdbcType=INTEGER}, #{loaning,jdbcType=INTEGER}, #{returnCode,jdbcType=VARCHAR}, #{returnInfo,jdbcType=VARCHAR}, 
       #{payerId,jdbcType=INTEGER}, #{payeeName,jdbcType=VARCHAR}, #{payeeBankCard,jdbcType=VARCHAR}, 
       #{payeeBankCode,jdbcType=VARCHAR}, #{tradeConfirmTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
       #{settleStatus,jdbcType=INTEGER}, #{reconDate,jdbcType=TIMESTAMP}, #{reconStatus,jdbcType=INTEGER}, #{batchNo,jdbcType=VARCHAR}

@@ -74,6 +74,7 @@ public class PayHandler {
 			log.warn("订单号{}重复", orderNo);
 			throw new TradeException("订单号重复", TradeConstant.ORDER_NO_EXIST);
 		}
+		trade.setStatus(TradeConstant.STATUS_PROCESSING);
 		//计算商户手续费
 		BigDecimal merchantFee = BigDecimal.ZERO;
 		BigDecimal[] fees = getFee(trade.getMerchantId(), trade.getTradeAmount());

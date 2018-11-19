@@ -1,5 +1,6 @@
 package com.cloud.pay.trade.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,11 +57,21 @@ public class TradeService {
 			resDTO.setStatus(TradeConstant.STATUS_FAIL);
 			resDTO.setReturnInfo(e.getMessage());
 			resDTO.setReturnCode(e.getExCode());
+			trade.setStatus(TradeConstant.STATUS_FAIL); 
+			trade.setReturnCode(e.getExCode());
+			trade.setReturnInfo(e.getMessage());
+			trade.setTradeConfirmTime(new Date());
+			tradeMapper.updateStatus(trade);
 		} catch(Exception e) {
 			log.error("单笔代付异常：{}", e);
 			resDTO.setStatus(TradeConstant.STATUS_FAIL);
 			resDTO.setReturnInfo("系统内部异常");
 			resDTO.setReturnCode(TradeConstant.SYS_EXCEPTION);
+			trade.setStatus(TradeConstant.STATUS_FAIL); 
+			trade.setReturnCode(TradeConstant.SYS_EXCEPTION);
+			trade.setReturnInfo(e.getMessage());
+			trade.setTradeConfirmTime(new Date());
+			tradeMapper.updateStatus(trade);
 		}
 		return resDTO;
 	}

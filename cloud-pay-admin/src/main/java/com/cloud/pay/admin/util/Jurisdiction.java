@@ -30,7 +30,8 @@ public class Jurisdiction {
 		List<Menu> menuList = (List<Menu>)session.getAttribute(Const.SESSION_ALL_MENU);
 		for(int i=0;i<menuList.size();i++){
 			for(int j=0;j<menuList.get(i).getSubMenu().size();j++){
-				if(menuUrl.equals(menuList.get(i).getSubMenu().get(j).getMENU_URL())){
+				if(menuUrl.equals(menuList.get(i).getSubMenu().get(j).getMENU_URL())
+						|| ("/"+menuUrl).equals(menuList.get(i).getSubMenu().get(j).getMENU_URL())){
 					//判断有无此菜单权限
 					if(!menuList.get(i).getSubMenu().get(j).isHasMenu()){				
 						return false;

@@ -414,46 +414,46 @@ CREATE TABLE `t_prepay_trade` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='商户预缴户交易';
 
-#省级 t_Provincial
+#省级 t_provincial
 CREATE TABLE `t_provincial` (
   `pid` int(11) NOT NULL,
   `provincial` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-insert into t_Provincial values(1,'北京市');
-insert into t_Provincial values(2,'天津市');
-insert into t_Provincial values(3,'上海市');
-insert into t_Provincial values(4,'重庆市');
-insert into t_Provincial values(5,'河北省');
-insert into t_Provincial values(6,'山西省');
-insert into t_Provincial values(7,'台湾省');
-insert into t_Provincial values(8,'辽宁省');
-insert into t_Provincial values(9,'吉林省');
-insert into t_Provincial values(10,'黑龙江省');
-insert into t_Provincial values(11,'江苏省');
-insert into t_Provincial values(12,'浙江省');
-insert into t_Provincial values(13,'安徽省');
-insert into t_Provincial values(14,'福建省');
-insert into t_Provincial values(15,'江西省');
-insert into t_Provincial values(16,'山东省');
-insert into t_Provincial values(17,'河南省');
-insert into t_Provincial values(18,'湖北省');
-insert into t_Provincial values(19,'湖南省');
-insert into t_Provincial values(20,'广东省');
-insert into t_Provincial values(21,'甘肃省');
-insert into t_Provincial values(22,'四川省');
-insert into t_Provincial values(23,'贵州省');
-insert into t_Provincial values(24,'海南省');
-insert into t_Provincial values(25,'云南省');
-insert into t_Provincial values(26,'青海省');
-insert into t_Provincial values(27,'陕西省');
-insert into t_Provincial values(28,'广西壮族自治区');
-insert into t_Provincial values(29,'西藏自治区');
-insert into t_Provincial values(30,'宁夏回族自治区');
-insert into t_Provincial values(31,'新疆维吾尔自治区');
-insert into t_Provincial values(32,'内蒙古自治区');
-insert into t_Provincial values(33,'澳门特别行政区');
-insert into t_Provincial values(34,'香港特别行政区');
+insert into t_provincial values(1,'北京市');
+insert into t_provincial values(2,'天津市');
+insert into t_provincial values(3,'上海市');
+insert into t_provincial values(4,'重庆市');
+insert into t_provincial values(5,'河北省');
+insert into t_provincial values(6,'山西省');
+insert into t_provincial values(7,'台湾省');
+insert into t_provincial values(8,'辽宁省');
+insert into t_provincial values(9,'吉林省');
+insert into t_provincial values(10,'黑龙江省');
+insert into t_provincial values(11,'江苏省');
+insert into t_provincial values(12,'浙江省');
+insert into t_provincial values(13,'安徽省');
+insert into t_provincial values(14,'福建省');
+insert into t_provincial values(15,'江西省');
+insert into t_provincial values(16,'山东省');
+insert into t_provincial values(17,'河南省');
+insert into t_provincial values(18,'湖北省');
+insert into t_provincial values(19,'湖南省');
+insert into t_provincial values(20,'广东省');
+insert into t_provincial values(21,'甘肃省');
+insert into t_provincial values(22,'四川省');
+insert into t_provincial values(23,'贵州省');
+insert into t_provincial values(24,'海南省');
+insert into t_provincial values(25,'云南省');
+insert into t_provincial values(26,'青海省');
+insert into t_provincial values(27,'陕西省');
+insert into t_provincial values(28,'广西壮族自治区');
+insert into t_provincial values(29,'西藏自治区');
+insert into t_provincial values(30,'宁夏回族自治区');
+insert into t_provincial values(31,'新疆维吾尔自治区');
+insert into t_provincial values(32,'内蒙古自治区');
+insert into t_provincial values(33,'澳门特别行政区');
+insert into t_provincial values(34,'香港特别行政区');
 
 #城市 t_city
 CREATE TABLE `t_city` (

@@ -116,6 +116,7 @@ public class BatchTradeController extends BaseController{
 		try {
 			BatchTrade batchTrade = new BatchTrade();
 			ParameterMap map = this.getParameterMap();
+			Integer loaning = Integer.parseInt(map.getString("loaning"));
 			Integer payerMerchantId = Integer.parseInt(map.getString("payerMerchantId"));
 			batchTrade.setPayerMerchantId(payerMerchantId);
 			batchTrade.setBatchNo(getBatchNo());
@@ -125,7 +126,7 @@ public class BatchTradeController extends BaseController{
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			batchTrade.setCreator(userId);
 			batchTrade.setCreateTime(new Date());
-			String returnInfo = batchTradeService.upload(batchTrade, payFilePath.replace("data:application/vnd.ms-excel;base64,", ""));
+			String returnInfo = batchTradeService.upload(batchTrade, payFilePath.replace("data:application/vnd.ms-excel;base64,", ""), loaning);
 			if(StringUtils.isNotBlank(returnInfo)) {
 				return ResponseModel.getModel("提交失败:" + returnInfo, "failed", null);
 			}

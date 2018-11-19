@@ -81,8 +81,8 @@ public class BatchTradeService {
 
 	private final static String TRADE_SQL = "insert into t_trade (order_no, merchant_id, trade_amount, "
 			+ "status, payer_id, payee_name, payee_bank_card, payee_bank_code, remark, batch_no, payee_bank_name, payee_bank_acct_type,"
-			+ "merchant_fee_amount,loan_benefit,org_benefit) "
-			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+			+ "merchant_fee_amount,loan_benefit,org_benefit, loaning) "
+			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?)";
 	
 	private String sources = "0123456789";
 	
@@ -107,9 +107,16 @@ public class BatchTradeService {
 	@Autowired
 	private BatchTradeHandler batchTradeHandler;
 
+	/**
+	 * 批量文件上传
+	 * @param batchTrade
+	 * @param payFilePath
+	 * @param loaning
+	 * @return
+	 */
 	@SuppressWarnings({ "null", "deprecation" })
 	@Transactional
-	public String upload(BatchTrade batchTrade, String payFilePath) {
+	public String upload(BatchTrade batchTrade, String payFilePath, Integer loaning) {
 		StringBuilder errorDetails = new StringBuilder();
 		Workbook wb = null;
 		int count = 0;
@@ -142,7 +149,7 @@ public class BatchTradeService {
 					int lastCellIndex = row.getLastCellNum();
 					for (int cIndex = firstCellIndex; cIndex < lastCellIndex; cIndex++) { // 遍历列
 						Cell cell = row.getCell(cIndex);
-						if (cell == null && cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+						if (cell == null || cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
 							break;
 						}
 						switch (cIndex) {
@@ -228,6 +235,7 @@ public class BatchTradeService {
 				} 
 				batchTrade.setTotalAmount(totalAmount);
 				batchTrade.setTotalCount(count);
+				log.info("新增批量交易{}", batchTrade);
 				batchTradeMapper.insert(batchTrade);
 				// TODO 批量新增
 				jdbcTemplate.batchUpdate(TRADE_SQL, trades, trades.size(),
@@ -257,6 +265,7 @@ public class BatchTradeService {
 								} else {
 									ps.setNull(11, Types.INTEGER);
 								}
+								ps.setInt(12, loaning);
 							}
 						});
 			}
@@ -487,6 +496,7 @@ public class BatchTradeService {
 		paySms.setSmsBizId(response.getBizId());
 		paySms.setVerfiyResult(SmsConstant.VERIFY_NO);
 		paySms.setVerifyTimes(0);
+		log.info("生成验证码{}", paySms);
 		paySmsMapper.insert(paySms);
 		return smsCode;
 	}

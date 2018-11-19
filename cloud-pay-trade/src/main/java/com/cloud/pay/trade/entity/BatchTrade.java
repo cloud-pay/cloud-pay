@@ -377,4 +377,35 @@ public class BatchTrade {
 		this.auditOptinion = auditOptinion;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("BatchTrade [id=");
+		builder.append(id);
+		builder.append(", batchNo=");
+		builder.append(batchNo);
+		builder.append(", tradeTime=");
+		builder.append(tradeTime);
+		builder.append(", totalAmount=");
+		builder.append(totalAmount);
+		builder.append(", totalCount=");
+		builder.append(totalCount);
+		builder.append(", payerMerchantId=");
+		builder.append(payerMerchantId);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", creator=");
+		builder.append(creator);
+		builder.append(", createTime=");
+		builder.append(createTime);
+		builder.append(", auditor=");
+		builder.append(auditor);
+		builder.append(", auditTime=");
+		builder.append(auditTime);
+		builder.append(", auditOptinion=");
+		builder.append(auditOptinion);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

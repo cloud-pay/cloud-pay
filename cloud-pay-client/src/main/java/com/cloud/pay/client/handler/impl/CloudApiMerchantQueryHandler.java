@@ -58,6 +58,10 @@ public class CloudApiMerchantQueryHandler
 		Map<String, Object> map = merchantService.selectByCode(reqParam.getSubMchCode());
 		if(null != map) {
 			MerchantBaseInfo baseInfo = (MerchantBaseInfo) map.get("baseInfo");
+			//判斷是否為商戶，如果不是商戶，則返回商戶不存在
+			if(4 != baseInfo.getType() && 5 != baseInfo.getType()) {
+				throw new CloudApiBusinessException(ApiErrorCode.SUB_MCH_INVALID, "商户信息不存在");
+			}
 			BeanUtils.copyProperties(baseInfo, result);
 			result.setpMobile(baseInfo.getMobile());
 			if(baseInfo.getStatus() == 1) {
@@ -71,13 +75,13 @@ public class CloudApiMerchantQueryHandler
 		}else {
 			Map<String, Object> applyMap = merchantApplyService.selectByCode(reqParam.getSubMchCode());
 			if(null == applyMap) {
-				result.setResultCode(Constants.RESULT_CODE_FAIL);
-				result.setErrorCode(ApiErrorCode.SUB_MCH_INVALID);
-				result.setErrorMsg("商户信息不存在");
-				log.info("商户信息查询，响应结果：{}",result);
-				return result;
+				throw new CloudApiBusinessException(ApiErrorCode.SUB_MCH_INVALID, "商户信息不存在");
 			}
 			MerchantApplyBaseInfo baseInfo = (MerchantApplyBaseInfo) applyMap.get("baseInfo");
+			//判斷是否為商戶，如果不是商戶，則返回商戶不存在
+			if(4 != baseInfo.getType() && 5 != baseInfo.getType()) {
+				throw new CloudApiBusinessException(ApiErrorCode.SUB_MCH_INVALID, "商户信息不存在");
+			}
 			BeanUtils.copyProperties(baseInfo, result);
 			result.setpMobile(baseInfo.getMobile());
 			MerchantApplyBankInfo bankInfo = (MerchantApplyBankInfo) applyMap.get("bankInfo");
@@ -94,5 +98,4 @@ public class CloudApiMerchantQueryHandler
 	public Class<CloudApiMerchantQueryParam> getReqParamType() {
 		return CloudApiMerchantQueryParam.class;
 	}
-
 }

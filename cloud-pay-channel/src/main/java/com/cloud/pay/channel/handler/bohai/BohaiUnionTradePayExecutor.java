@@ -1,5 +1,7 @@
 package com.cloud.pay.channel.handler.bohai;
 
+import java.net.SocketTimeoutException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -54,6 +56,11 @@ public class BohaiUnionTradePayExecutor extends BohaiTradeExecutor<BohaiCloudUni
 			 log.info("渠道接口：代付处理结束，响应参数：{}",resVO);
 		}catch(Exception e) {
 			 log.error("渠道接口：单笔银联代付失败，错误消息:{}",e);
+			 if(e instanceof SocketTimeoutException) {
+				 resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_SUCCESS,ChannelErrorCode.ERROR_9001,"渠道网络异常");
+				 resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+				 return resVO;
+			 }
 			 resVO = new PayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;

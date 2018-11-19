@@ -214,7 +214,8 @@ public class MerchantService {
 		Map<String, Object> merchantMap = new HashMap<>();
 		MerchantBaseInfo baseInfo = baseInfoMapper.selectByCode(code);
 		if(null == baseInfo) {
-			throw new CloudApiBusinessException(ApiErrorCode.MCH_INVALID, "商户信息不存在");
+			return null;
+			//throw new CloudApiBusinessException(ApiErrorCode.MCH_INVALID, "商户信息不存在");
 		}
 		merchantMap.put("baseInfo", baseInfo);
 		merchantMap.put("bankInfo", bankInfoMapper.selectByMerchantId(baseInfo.getId()));

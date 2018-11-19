@@ -6,11 +6,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.cloud.pay.client.constants.Constants;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 接口响应参数
  * @author 
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CloudApiBaseResult implements Serializable {
 
 	private static final long serialVersionUID = 3959251493603871375L;

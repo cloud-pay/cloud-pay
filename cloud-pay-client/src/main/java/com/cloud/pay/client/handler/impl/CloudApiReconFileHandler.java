@@ -57,7 +57,7 @@ public class CloudApiReconFileHandler
 		MerchantBaseInfo baseInfo = (MerchantBaseInfo) merchantMap.get("baseInfo");
 		//如果为机构获取商户的对账文件，则必须校验subMchCode对应的商户信息是否为商户
 		if(StringUtils.isNotBlank(reqParam.getSubMchCode())) {
-			if(4 != baseInfo.getType() || 5 != baseInfo.getType()) {
+			if(4 != baseInfo.getType() && 5 != baseInfo.getType()) {
 				result.setResultCode(Constants.RESULT_CODE_FAIL);
 				result.setErrorCode(ApiErrorCode.SUB_MCH_TYPE_ERROR);
 				result.setErrorMsg("子商户类型错误");

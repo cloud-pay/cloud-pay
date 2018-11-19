@@ -167,7 +167,7 @@ public class PrepayInfoService {
 		journal.setType(TradeConstant.HADNING_FEE);
 		journal.setBalance(prepayInfo.getBalance());
 		journal.setCreateTime(new Date());
-		journal.setDebit(TradeConstant.CREDIT);
+		journal.setDebit(creditOrDebit);
 		journal.setPrepayId(prepayInfo.getId());
 		journal.setTradeId(tradeId);
 		log.info("新增预缴户资金流水：{}", journal);

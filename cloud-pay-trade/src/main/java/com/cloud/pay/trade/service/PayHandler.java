@@ -157,7 +157,13 @@ public class PayHandler {
 		if("1".equals(resVO.getRespCode())) {
 			trade.setStatus(3); 
 		}else {
-			trade.setStatus(resVO.getStatus()); 
+			if(0 == resVO.getStatus()) {
+				trade.setStatus(TradeConstant.STATUS_SUCCESS);
+			} else if(1 == resVO.getStatus()){
+				trade.setStatus(TradeConstant.STATUS_FAIL);
+			} else if(99 == resVO.getStatus()){
+				trade.setStatus(TradeConstant.STATUS_PROCESSING);
+			}
 			trade.setChannelId(resVO.getChannelId());
 			trade.setReturnCode(resVO.getRespCode());
 			trade.setReturnInfo(resVO.getRespMsg());

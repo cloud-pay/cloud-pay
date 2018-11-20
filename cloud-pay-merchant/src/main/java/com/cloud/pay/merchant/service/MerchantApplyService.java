@@ -1,6 +1,7 @@
 package com.cloud.pay.merchant.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -261,7 +262,9 @@ public class MerchantApplyService {
 			    }catch(Exception e) {
 			    	log.error("读取OSS服务器配置错误：{}",e);
 			    }
-				in = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), agentCode, path);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				String fileFullpath = "merchantFile" +  File.separator + sdf.format(new Date()) + File.separator + path;
+				in = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), agentCode, fileFullpath.replaceAll("\\\\", "/"));
 			}else {
 				path = replaceBase64Before(path);
 				byte[] bytes = Base64.base64ToByteArray(path);

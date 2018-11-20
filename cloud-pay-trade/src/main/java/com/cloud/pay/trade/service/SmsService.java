@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyuncs.DefaultAcsClient;
@@ -23,38 +24,41 @@ import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.trade.exception.TradeException;
 
+@Service
 public class SmsService {
 	
 	private final static Logger log = LoggerFactory.getLogger(SmsService.class);
 	
-	private final static IAcsClient acsClient;
+	private IAcsClient acsClient;
 	// 产品名称:云通信短信API产品,开发者无需替换
-	static final String product = "Dysmsapi";
+	static String product = "Dysmsapi";
 	// 产品域名,开发者无需替换
-	static final String domain = "dysmsapi.aliyuncs.com";
+	static String domain = "dysmsapi.aliyuncs.com";
 
 	@Autowired
-	private static SysConfigMapper sysConfigMapper;
+	private SysConfigMapper sysConfigMapper;
 	
-	static {
-		// 可自助调整超时时间
-		System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
-		System.setProperty("sun.net.client.defaultReadTimeout", "10000");
-		
-		SysConfig idConfig = sysConfigMapper.selectByPrimaryKey("accessKeyId");
-		SysConfig secretConfig = sysConfigMapper.selectByPrimaryKey("accessKeySecret");
+	private synchronized void initClient(){
+		if(acsClient != null) {
+			// 可自助调整超时时间
+			System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
+			System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+			
+			SysConfig idConfig = sysConfigMapper.selectByPrimaryKey("accessKeyId");
+			SysConfig secretConfig = sysConfigMapper.selectByPrimaryKey("accessKeySecret");
 
-		// 初始化acsClient,暂不支持region化
-		IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", idConfig.getSysValue(), secretConfig.getSysValue());
-		try {
-			DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
-		} catch (ClientException e) {
-			log.warn("短信client初始化异常,{}", e);
+			// 初始化acsClient,暂不支持region化
+			IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", idConfig.getSysValue(), secretConfig.getSysValue());
+			try {
+				DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+			} catch (ClientException e) {
+				log.warn("短信client初始化异常,{}", e);
+			}
+			acsClient = new DefaultAcsClient(profile);
 		}
-		acsClient = new DefaultAcsClient(profile);
 	}
 
-	public static SendSmsResponse sendPaySms(String phoneNumber, String smsCode) {
+	public SendSmsResponse sendPaySms(String phoneNumber, String smsCode) {
 
 		// 组装请求对象-具体描述见控制台-文档部分内容
 		SendSmsRequest request = new SendSmsRequest();
@@ -69,6 +73,9 @@ public class SmsService {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("code", smsCode);
 		request.setTemplateParam(JSON.toJSONString(map));
+		if(acsClient != null) {
+			initClient();
+		}
 
 		// hint 此处可能会抛出异常，注意catch
 		SendSmsResponse sendSmsResponse;
@@ -82,7 +89,7 @@ public class SmsService {
 		return sendSmsResponse;
 	}
 
-	public static QuerySendDetailsResponse querySendDetails(String bizId, String phoneNumber) throws ClientException {
+	public QuerySendDetailsResponse querySendDetails(String bizId, String phoneNumber) throws ClientException {
 		// 组装请求对象
 		QuerySendDetailsRequest request = new QuerySendDetailsRequest();
 		// 必填-号码
@@ -96,7 +103,9 @@ public class SmsService {
 		request.setPageSize(10L);
 		// 必填-当前页码从1开始计数
 		request.setCurrentPage(1L);
-
+		if(acsClient != null) {
+			initClient();
+		}
 		// hint 此处可能会抛出异常，注意catch
 		QuerySendDetailsResponse querySendDetailsResponse = acsClient.getAcsResponse(request);
 
@@ -104,9 +113,9 @@ public class SmsService {
 	}
 
 	public static void main(String[] args) throws ClientException, InterruptedException {
-
+		SmsService smsService = new SmsService();
 		// 发短信
-		SendSmsResponse response = sendPaySms("15812345678", "123");
+		SendSmsResponse response = smsService.sendPaySms("15812345678", "123");
 		System.out.println("短信接口返回的数据----------------");
 		System.out.println("Code=" + response.getCode());
 		System.out.println("Message=" + response.getMessage());
@@ -117,7 +126,7 @@ public class SmsService {
 
 		// 查明细
 		if (response.getCode() != null && response.getCode().equals("OK")) {
-			QuerySendDetailsResponse querySendDetailsResponse = querySendDetails(response.getBizId(), "15812345678");
+			QuerySendDetailsResponse querySendDetailsResponse = smsService.querySendDetails(response.getBizId(), "15812345678");
 			System.out.println("短信明细查询接口返回数据----------------");
 			System.out.println("Code=" + querySendDetailsResponse.getCode());
 			System.out.println("Message=" + querySendDetailsResponse.getMessage());

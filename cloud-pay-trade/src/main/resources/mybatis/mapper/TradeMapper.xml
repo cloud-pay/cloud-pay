@@ -660,9 +660,6 @@
       <if test="tradeConfirmTime != null" >
         trade_confirm_time = #{tradeConfirmTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="reconDate != null" >
-        recon_date = #{reconDate,jdbcType=TIMESTAMP},
-      </if>
     </set>
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>

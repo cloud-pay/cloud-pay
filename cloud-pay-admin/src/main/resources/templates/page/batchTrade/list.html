@@ -155,11 +155,21 @@ div.cbp label.font{
                 <tbody>
                 <tr th:if="${QX.query == '1'}" th:each="trade,stat :${batchTrades}">
                   <td th:text="${trade.batchNo}"></td>
-                  <td th:text="${trade.type}"></td>
+                  <td th:if="${trade.type == 1}" th:text="代理商"></td>
+                  <td th:if="${trade.type == 2}" th:text="第三方支付"></td>
+                  <td th:if="${trade.type == 3}" th:text="垫资商"></td>
+                  <td th:if="${trade.type == 4}" th:text="企业商户"></td>
+                  <td th:if="${trade.type == 5}" th:text="个人商户"></td>
                   <td th:if="${trade.type == 1}" th:text="${trade.name}"></td>
-                  <td th:if="${trade.type == 2}"></td>
-                  <td th:if="${trade.type == 1}"></td>
                   <td th:if="${trade.type == 2}" th:text="${trade.name}"></td>
+                  <td th:if="${trade.type == 3}"></td>
+                  <td th:if="${trade.type == 4}"></td>
+                  <td th:if="${trade.type == 5}"></td>
+                  <td th:if="${trade.type == 1}"></td>
+                  <td th:if="${trade.type == 2}"></td>
+                  <td th:if="${trade.type == 3}" th:text="${trade.name}"></td>
+                  <td th:if="${trade.type == 4}" th:text="${trade.name}"></td>
+                  <td th:if="${trade.type == 5}" th:text="${trade.name}"></td>
                   <td th:if="${trade.tradeTime == null}"></td>
                   <td th:if="${trade.tradeTime != null}" th:text="${#dates.format(trade.tradeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
 				  <td th:text="${trade.totalAmount}"></td>
@@ -169,7 +179,7 @@ div.cbp label.font{
 				  <td th:if="${trade.status == 3}" th:text="审核不通过"></td>
 				  <td th:text="${#dates.format(trade.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${trade.creator}"></td>
-                  <td th:if="${trade.auditTime == null}"></td>
+                  <td th:if="${trade.auditTime == null}">   </td>
                   <td th:if="${trade.auditTime != null}" th:text="${#dates.format(trade.auditTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${trade.auditor}"></td>
                   <td>
@@ -440,7 +450,7 @@ function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,
 function queryResult(batchNo, merchantId){
 	$.ajax({
 			type:"post",
-			url:_ctx+/batchTrade/queryResult,
+			url:_ctx+'/batchTrade/queryResult',
 			cache:false,
 			dataType:"json",
 			data:{batchNo:batchNo,merchantId:merchantId},

@@ -106,6 +106,9 @@ public class BatchTradeService {
 	
 	@Autowired
 	private BatchTradeHandler batchTradeHandler;
+	
+	@Autowired
+	private SmsService smsService;
 
 	/**
 	 * 批量文件上传
@@ -133,7 +136,6 @@ public class BatchTradeService {
 			System.out.println("lastRowIndex: " + lastRowIndex);
 			final List<Trade> trades = new ArrayList<Trade>();
 			Trade trade = null;
-			MerchantBankInfo bankInfo = merchantBankInfoMapper.selectByMerchantId(batchTrade.getPayerMerchantId());
 			for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex++) { // 遍历行
 				Row row = sheet.getRow(rIndex);
 				if (row != null) {
@@ -141,9 +143,6 @@ public class BatchTradeService {
 					trade.setBatchNo(batchTrade.getBatchNo());
 					trade.setLoaning(loaning);
 					trade.setMerchantId(batchTrade.getPayerMerchantId());
-					if (bankInfo != null) {
-						trade.setPayerId(bankInfo.getId());
-					}
 					String orderNo = UUID.randomUUID().toString();
 					trade.setOrderNo(orderNo.replace("-", ""));
 					int firstCellIndex = row.getFirstCellNum();
@@ -151,7 +150,11 @@ public class BatchTradeService {
 					for (int cIndex = firstCellIndex; cIndex < lastCellIndex; cIndex++) { // 遍历列
 						Cell cell = row.getCell(cIndex);
 						if (cell == null || cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-							break;
+							if(cIndex == 0) {
+								break;
+							} else {
+								continue;
+							}
 						}
 						switch (cIndex) {
 						case 0:
@@ -229,8 +232,9 @@ public class BatchTradeService {
 					if(TradeConstant.LOANING_YES == trade.getLoaning()) {
 						//计算垫资分润
 						temp.setLoanBenefit(fees[1]);
+						merchantFee = merchantFee.add(fees[1]);
 					}
-					temp.setMerchantFeeAmount(merchantFee.add(trade.getLoanBenefit()));
+					temp.setMerchantFeeAmount(merchantFee);
 					BigDecimal orgFee = payHandler.getOrgFee(trade.getMerchantId(), trade.getTradeAmount());
 					temp.setOrgBenefit(merchantFee.subtract(orgFee));
 				} 
@@ -246,7 +250,7 @@ public class BatchTradeService {
 								ps.setString(1, argument.getOrderNo());
 								ps.setInt(2, argument.getMerchantId());
 								ps.setBigDecimal(3, argument.getTradeAmount());
-								ps.setInt(4, argument.getPayerId());
+								ps.setNull(4, Types.INTEGER);
 								ps.setString(5, argument.getPayeeName());
 								ps.setString(6, argument.getPayeeBankCard());
 								ps.setString(7, argument.getPayeeBankCode());
@@ -266,7 +270,22 @@ public class BatchTradeService {
 								} else {
 									ps.setNull(11, Types.INTEGER);
 								}
-								ps.setInt(12, loaning);
+								if (null != argument.getMerchantFeeAmount()) {
+									ps.setBigDecimal(12, argument.getMerchantFeeAmount());
+								} else {
+									ps.setNull(12, Types.DECIMAL);
+								}
+								if (null != argument.getLoanBenefit()) {
+									ps.setBigDecimal(13, argument.getLoanBenefit());
+								} else {
+									ps.setNull(13, Types.DECIMAL);
+								}
+								if (null != argument.getOrgBenefit()) {
+									ps.setBigDecimal(14, argument.getOrgBenefit());
+								} else {
+									ps.setNull(14, Types.DECIMAL);
+								}
+								ps.setInt(15, loaning);
 							}
 						});
 			}
@@ -406,21 +425,6 @@ public class BatchTradeService {
 								} else {
 									ps.setNull(11, Types.INTEGER);
 								}
-								if (null != argument.getMerchantFeeAmount()) {
-									ps.setBigDecimal(12, argument.getMerchantFeeAmount());
-								} else {
-									ps.setNull(12, Types.DECIMAL);
-								}
-								if (null != argument.getLoanBenefit()) {
-									ps.setBigDecimal(13, argument.getLoanBenefit());
-								} else {
-									ps.setNull(13, Types.DECIMAL);
-								}
-								if (null != argument.getOrgBenefit()) {
-									ps.setBigDecimal(14, argument.getOrgBenefit());
-								} else {
-									ps.setNull(14, Types.DECIMAL);
-								}
 							}
 						});
 			}
@@ -489,7 +493,7 @@ public class BatchTradeService {
 		}
 		smsCode = sbCode.toString();
 		MerchantBaseInfo info = merchantBaseInfoMapper.selectByPrimaryKey(payerMerchantId);
-		SendSmsResponse response = SmsService.sendPaySms(info.getMobile(), smsCode);
+		SendSmsResponse response = smsService.sendPaySms(info.getMobile(), smsCode);
 		PaySms paySms = new PaySms();
 		paySms.setBatchNo(batchNo);
 		paySms.setCreateTime(new Date());

@@ -201,6 +201,7 @@ public class BatchTradeController extends BaseController{
 			ParameterMap map = this.getParameterMap();
 			batchTrade.setStatus(Integer.parseInt(map.getString("status")));
 			batchTrade.setBatchNo(map.getString("batchNo"));
+			batchTrade.setId(Integer.parseInt(map.getString("id")));
 			String smsCode = map.getString("smsCode");
 			//TODO 验证短信验证码
 			log.info("验证短信验证码:{}", smsCode);

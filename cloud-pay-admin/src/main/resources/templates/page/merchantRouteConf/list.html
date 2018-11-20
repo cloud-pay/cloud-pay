@@ -263,7 +263,8 @@ div.cbp label.font{
 				  <div class="form-group">
 					    <label for="loaning" class="col-sm-2 control-label">是否需要垫资</label>
 					    <div class="col-sm-10">
-						    <select name="loaning" class="form-control">
+						    <select name="loaning" class="form-control" id="loaning">
+						      <option value="">请选择</option>
 						      <option value="0">否</option>
 						      <option value="1">是</option>
 						    </select>
@@ -396,16 +397,13 @@ $(function(){
 		var routeId = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
 		var type = $("[name='type']").val();
-		var merchantId = $("input[name='merchantId']").val();
-		var merchantId = $("input[name='merchantId']").val();
-		var channelId= $("input[name='channelId']").val();
+		var merchantId = $("[name='merchantId']").val();
+		var channelId= $("[name='channelId']").val();
 		var loaning= $("[name='loaning']").val();
-		var loaningOrgId= $("input[name='loaningOrgId']").val();
+		var loaningOrgId= $("[name='loaningOrgId']").val();
 		var loaningAmount= $("input[name='loaningAmount']").val();
-		if(url == _ctx+'/merchantRouteConf/add'){
-			if(!checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount)){
-				return false;
-			}
+		if(!checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount)){
+			return false;
 		}
 		$.ajax({
 			type:"post",
@@ -483,18 +481,39 @@ function editRoute(id,type,merchantId,channelId,loaning,loaningOrgId,loaningAmou
 function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmount){
 	if(type == ''){
 		$("input[name='type']").focus();
-		alert("路由名不能为空");
+		alert("主体类型不能为空");
 		return false;
 	}
-	if(type == ''){
-		$("input[name='type']").focus();
-		alert("昵称不能为空");
+	if(merchantId == ''){
+		$("input[name='merchantId']").focus();
+		if(type == 1) {
+			alert("合作机构不能为空");
+		} else {
+			alert("商户不能为空");
+		}
 		return false;
 	}
-	if(type == ''){
-		$("input[name='type']").focus();
-		alert("密码不能为空");
+	if(channelId == ''){
+		$("input[name='channelId']").focus();
+		alert("通道名称不能为空");
 		return false;
+	}
+	if(loaning == ''){
+		$("input[name='loaning']").focus();
+		alert("是否垫资不能为空");
+		return false;
+	}
+	if(loaning == 1) {
+		if(loaningOrgId == '' || loaningOrgId == null){
+			$("input[name='loaningOrgId']").focus();
+			alert("垫资机构不能为空");
+			return false;
+		}
+		if(loaningAmount == '' || loaningAmount == null){
+			$("input[name='loaningAmount']").focus();
+			alert("垫资限额不能为空");
+			return false;
+		}
 	}
 	return true;
 }
@@ -507,10 +526,25 @@ function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,
 	
 	$("input[name='id']").val(id);
 	$("[name='type']").val(type);
-	$("input[name='merchantId']").val(merchantId);
-	$("input[name='channelId']").val(channelId);
+	if(type == 1) {
+		$("#mLabel").html("所属机构");
+		if(orgs != '') {
+			$.each(orgs, function(i, obj) {
+				$("#merchantId").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+			});
+		}
+	} else if(type == 2){
+		$("#mLabel").html("所属商户");
+		if(merchants != '') {
+			$.each(merchants, function(i, obj) {
+				$("#merchantId").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+			});
+		}
+	}
+	$("[name='merchantId']").val(merchantId);
+	$("[name='channelId']").val(channelId);
 	$("[name='loaning']").val(loaning);
-	$("input[name='loaningOrgId']").val(loaningOrgId);
+	$("[name='loaningOrgId']").val(loaningOrgId);
 	$("input[name='loaningAmount']").val(loaningAmount);
 }
 

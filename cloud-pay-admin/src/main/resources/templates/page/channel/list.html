@@ -130,7 +130,7 @@ div.cbp label.font{
 	                  <th>通道名称</th>
 	                  <th>通道类型</th>
 	                  <th>通道商户号</th>
-	                  <th>通道费率(%)</th>
+	                  <th>通道费率</th>
 	                  <th>更新时间</th>
 	                  <th>更新人</th>
 	                  <th>操作</th>
@@ -143,7 +143,8 @@ div.cbp label.font{
                   <td th:text="${channel.channelName}">通道名称</td>
                   <td th:text="代付">通道类型</td>
                   <td th:text="${channel.channelMerchantId}">通道名称</td>
-                  <td th:text="${channel.fee}">通道费率</td>
+                  <td th:if="${channel.feeType == 1}" th:text="${channel.fee}+'%'"></td>
+                  <td th:if="${channel.feeType == 2}" th:text="${channel.fee}"></td>
                   <td th:text="${#dates.format(channel.modifyTime,'yyyy-MM-dd HH:mm:ss')}">更新时间</td>
                   <td th:text="${channel.modifer}">更新人</td>
                   <td>

@@ -170,8 +170,12 @@ div.cbp label.font{
                   <td th:if="${amountLimit.type == 1}" >单笔限额</td>
                   <td th:if="${amountLimit.type == 2}">商户限额</td>
                   <td th:if="${amountLimit.type == 3}">合作机构限额</td>
-                  <td th:text="${amountLimit.orgName}">合作机构名称</td>
-                  <td th:text="${amountLimit.merchantName}">商户名称</td>
+                  <td th:if="${amountLimit.type == 1}" ></td>
+                  <td th:if="${amountLimit.type == 3}" th:text="${amountLimit.merchantName}"></td>
+                  <td th:if="${amountLimit.type == 3}"></td>
+                  <td th:if="${amountLimit.type == 1}" ></td>
+                  <td th:if="${amountLimit.type == 2}"></td>
+                  <td th:if="${amountLimit.type == 2}" th:text="${amountLimit.merchantName}"></td>
                   <td th:if="${amountLimit.period == null}" ></td>
                   <td th:if="${amountLimit.period == 1}">按日</td>
                   <td th:text="${amountLimit.amountLimit}">限制值</td>
@@ -448,7 +452,7 @@ function editAmountLimit(amountLimitId,type,amountLimit,merchantId,period){
 }
 
 //验证数据
-function checkAccount(amountLimit,amountLimit,merchantId,period){
+function checkAccount(amountLimit,type,merchantId,period){
 	if(amountLimit == ''){
 		$("input[name='amountLimit']").focus();
 		alert("限制值不能为空");
@@ -474,6 +478,10 @@ function checkAccount(amountLimit,amountLimit,merchantId,period){
 	return true;
 }
 
+var merchants1 = [[${merchants}]];
+alert(merchants1)
+	var orgs1 = [[${orgs}]];
+
 //加载模态框的数据
 function reloadModelData(url,title,btntext,amountLimitId,amountLimit,merchantId,type,period){
 	$("#amountLimitModal #usermodelHead").text(title);
@@ -481,7 +489,22 @@ function reloadModelData(url,title,btntext,amountLimitId,amountLimit,merchantId,
 	$("input[name='url']").val(url);
 	$("input[name='amountLimitId']").val(amountLimitId);
 	$("input[name='amountLimit']").val(amountLimit);
-	$("input[name='merchantId']").val(merchantId);
+	if(type == 2) {
+		$("#mLabel").html("所属商户");
+		if(merchants1 != '') {
+			$.each(merchants1, function(i, obj) {
+				$("#merchantId").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+			});
+		}
+	} else if(type == 3) {
+		$("#mLabel").html("所属机构");
+		if(orgs1 != '') {
+			$.each(orgs1, function(i, obj) {
+				$("#merchantId").append("<option value=" + obj.id + ">" + obj.name + "</option>");
+			});
+		}
+	} 
+	$("[name='merchantId']").val(merchantId);
 	$("#amountLimitModal [name='type']").val(type);
 	$("#amountLimitModal [name='period']").val(period);
 	if(type == 1) {

@@ -25,4 +25,12 @@ public interface AmountLimitMapper {
 	public List<AmountLimitDTO> getAmountLimitList(@Param("type") Integer type, @Param("orgName") String orgName,
 			@Param("merchantName") String merchantName, @Param("startTime") Date startTime,
 			@Param("endTime") Date endTime);
+	
+	/**
+	 * 查询已存在的限额信息
+	 * @param type
+	 * @param merchantId
+	 * @return
+	 */
+	public List<AmountLimit> selectExist(@Param("type") Integer type, @Param("merchantId") Integer merchantId);
 }

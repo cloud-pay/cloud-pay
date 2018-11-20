@@ -148,4 +148,13 @@
       </if>
 	 </select>
 
+<select id="selectExist" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_amount_limit
+    where type = #{type,jdbcType=INTEGER}
+    <if test="merchantId != null" >
+       and merchant_id = #{merchantId,jdbcType=INTEGER}
+      </if>
+  </select>
 </mapper>

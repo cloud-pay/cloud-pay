@@ -19,12 +19,22 @@ public class BankService {
 	private BankMapper bankMapper;
 	
 	public int update(Bank bank) {
+		List<Bank> banks = bankMapper.getBankList(bank.getBankCode(), null);
+		if(banks != null && banks.size() > 0) {
+			log.info("联行号{}已存在", bank.getBankCode());
+			throw new RuntimeException("联行号" + bank.getBankCode() + "已存在");
+		}
 		log.info("修改bank信息：{}", bank);
 		return bankMapper.updateByPrimaryKeySelective(bank);
 	}
 
 	public int save(Bank bank) {
-		log.info("修改bank信息：{}", bank);
+		List<Bank> banks = bankMapper.getBankList(bank.getBankCode(), null);
+		if(banks != null && banks.size() > 0) {
+			log.info("联行号{}已存在", bank.getBankCode());
+			throw new RuntimeException("联行号" + bank.getBankCode() + "已存在");
+		}
+		log.info("新增bank信息：{}", bank);
 		return bankMapper.insert(bank);
 	}
 

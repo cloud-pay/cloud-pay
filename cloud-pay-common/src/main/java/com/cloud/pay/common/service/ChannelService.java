@@ -20,12 +20,22 @@ public class ChannelService {
 	private ChannelMapper channelMapper;
 	
 	public int update(Channel channel) {
+		List<Channel> channels = channelMapper.getChannelList(channel.getChannelCode(), null);
+		if(channels != null && channels.size() > 0) {
+			log.info("渠道编码{}已存在", channel.getChannelCode());
+			throw new RuntimeException("渠道编码" + channel.getChannelCode() + "已存在");
+		}
 		log.info("修改Channel信息：{}", channel);
 		return channelMapper.updateByPrimaryKeySelective(channel);
 	}
 
 	public int save(Channel channel) {
-		log.info("修改Channel信息：{}", channel);
+		List<Channel> channels = channelMapper.getChannelList(channel.getChannelCode(), null);
+		if(channels != null && channels.size() > 0) {
+			log.info("渠道编码{}已存在", channel.getChannelCode());
+			throw new RuntimeException("渠道编码" + channel.getChannelCode() + "已存在");
+		}
+		log.info("新增Channel信息：{}", channel);
 		return channelMapper.insert(channel);
 	}
 

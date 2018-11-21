@@ -139,11 +139,11 @@ div.cbp label.font{
 	                <tr>
 	                  <th>交易时间</th>
 	                  <th>商户编号</th>
-	                  <th>商户名称</th>
+	                  <th>机构/商户名称</th>
 					  <th>交易状态</th>
 					  <th>交易金额（元）</th>
 					  <th>交易类型</th>
-					  <th>創建时间</th>
+					  <th>创建时间</th>
 					  <th>创建人</th>
 	                </tr>
                 </thead>
@@ -355,6 +355,10 @@ $(function(){
 		if(amount == ''){
 			$("input[name='amount']").focus();
 			alert("金额不能为空");
+			return false;
+		}
+		if(amount <=0) {
+			alert("金额必须大于0");
 			return false;
 		}
 		var remark= $("input[name='remark']").val();

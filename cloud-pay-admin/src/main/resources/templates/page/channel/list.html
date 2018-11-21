@@ -281,7 +281,7 @@ $(function(){
   	    'info'        : true,
   	    'autoWidth'   : false,
   	  	"pagingType"  : "full_numbers",
-  	  	"pageLength"  : 10
+  	  	"pageLength"  : 20
     });
 	
 	$("#addChannel").click(function(){
@@ -299,10 +299,8 @@ $(function(){
 		var channelType= $("[name='channelType']").val();
 		var feeType= $("[name='feeType']").val();
 		var fee= $("input[name='fee']").val();
-		if(url == _ctx+'/channel/add'){
-			if(!checkAccount(channelName,channelCode,channelMerchantId,fee)){
-				return false;
-			}
+		if(!checkAccount(channelName,channelCode,channelMerchantId,fee)){
+			return false;
 		}
 		$.ajax({
 			type:"post",
@@ -372,6 +370,12 @@ function checkAccount(channelName,channelCode,channelMerchantId,fee){
 	if(fee == ''){
 		$("input[name='fee']").focus();
 		alert("费率不能为空");
+		return false;
+	}
+	var feeType= $("[name='feeType']").val();
+	if(feeType == ''){
+		$("input[name='fee']").focus();
+		alert("费率类型不能为空");
 		return false;
 	}
 	return true;

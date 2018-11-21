@@ -108,9 +108,11 @@ public class AmountLimitController extends BaseController{
 		try {
 			AmountLimit amountLimit = new AmountLimit();
 			ParameterMap map = this.getParameterMap();
-			amountLimit.setMerchantId(Integer.parseInt(map.getString("merchantId")));
 			amountLimit.setType(Integer.parseInt(map.getString("type")));
-			amountLimit.setPeriod(Integer.parseInt(map.getString("period")));
+			if(AmountLimitConstant.PER_LIMIT != amountLimit.getType()) {
+				amountLimit.setMerchantId(Integer.parseInt(map.getString("merchantId")));
+				amountLimit.setPeriod(Integer.parseInt(map.getString("period")));
+			}
 			amountLimit.setAmountLimit(new BigDecimal(map.getString("amountLimit")));
 			String userId = ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUsername();
 			amountLimit.setModifer(userId);

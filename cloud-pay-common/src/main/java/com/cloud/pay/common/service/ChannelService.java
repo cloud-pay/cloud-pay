@@ -2,6 +2,7 @@ package com.cloud.pay.common.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +22,16 @@ public class ChannelService {
 	
 	public int update(Channel channel) {
 		List<Channel> channels = channelMapper.getChannelList(channel.getChannelCode(), null);
-		if(channels != null && channels.size() > 0) {
+		if(channels != null && channels.size() > 1) {
 			log.info("渠道编码{}已存在", channel.getChannelCode());
 			throw new RuntimeException("渠道编码" + channel.getChannelCode() + "已存在");
-		}
+		} else if(channels != null && channels.size() == 1) {
+			Channel temp = channels.get(0);
+			if(!Objects.equals(temp.getId(), channel.getId())) {
+				log.info("渠道编码{}已存在", channel.getChannelCode());
+				throw new RuntimeException("渠道编码" + channel.getChannelCode() + "已存在");
+			}
+		} 
 		log.info("修改Channel信息：{}", channel);
 		return channelMapper.updateByPrimaryKeySelective(channel);
 	}

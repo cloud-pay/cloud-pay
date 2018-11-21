@@ -316,9 +316,9 @@ div.cbp label.font{
 					    </div>
 					    <label for="bankId" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>联行号</label>
 					    <div class="col-sm-4">
-						    <select name="bankId" class="form-control">
+						    <select name="bankId" class="form-control" id="bankId">
 						      <option value="">请选择</option>
-						      <option th:each="bank : ${banks}" th:value="${bank.id}" th:text="${bank.bankCode}">/option>
+						      <option th:each="bank : ${banks}" th:value="${bank.id}" th:text="${bank.bankCode}+'-'+${bank.bankName}">/option>
 						    </select>
 					    </div>
 					  </div>
@@ -717,10 +717,8 @@ $(function(){
 		var bankCardPath = $("input[name='bankCardPath']").val();
 		var protocolPath = $("input[name='protocolPath']").val();
 		var attachementInfo = new AttachementInfo(businessPath, certPath, bankCardPath, protocolPath);
-		if(url == _ctx+'/merchantApply/add'){
-			if(!checkAccount()){
-				return false;
-			}
+		if(!checkAccount()){
+			return false;
 		}
 		$.ajax({
 			type:"post",
@@ -818,22 +816,91 @@ function checkAccount(){
 		return false;
 	}
 	var shortName = $("input[name='shortName']").val();
+	if(shortName == ''){
+		$("input[name='shortName']").focus();
+		alert("商户简称不能为空");
+		return false;
+	}
 	var industryCategory= $("input[name='industryCategory']").val();
+	if(industryCategory == ''){
+		alert("行业类型不能为空");
+		return false;
+	}
 	var city= $("[name='city']").val();
+	if(city == ''){
+		alert("所在城市不能为空");
+		return false;
+	}
 	var address= $("input[name='address']").val();
+	if(address == ''){
+		alert("详细地址不能为空");
+		return false;
+	}
 	var legal= $("input[name='legal']").val();
+	if(legal == ''){
+		alert("负责人不能为空");
+		return false;
+	}
 	var email= $("input[name='email']").val();
+	if(email == ''){
+		alert("邮箱不能为空");
+		return false;
+	}
 	var mobile= $("input[name='mobile']").val();
+	if(mobile == ''){
+		alert("负责人手机不能为空");
+		return false;
+	}
 	var bankId = $("[name='bankId']").val();
+	if(bankId == ''){
+		alert("联行号不能为空");
+		return false;
+	}
 	var bankName = $("input[name='bankName']").val();
+	if(bankName == ''){
+		alert("开户银行不能为空");
+		return false;
+	}
 	var bankAccountType = $("[name='bankAccountType']").val();
+	if(bankAccountType == ''){
+		alert("账户类型不能为空");
+		return false;
+	}
 	var bankCardNo = $("input[name='bankCardNo']").val();
+	if(bankCardNo == ''){
+		alert("银行卡号不能为空");
+		return false;
+	}
 	var certType = $("[name='certType']").val();
+	if(certType == ''){
+		alert("证件类型不能为空");
+		return false;
+	}
 	var bankAccountName = $("input[name='bankAccountName']").val();
+	if(bankAccountName == ''){
+		alert("户名不能为空");
+		return false;
+	}
 	var certNo = $("input[name='certNo']").val();
+	if(certNo == ''){
+		alert("证件号码不能为空");
+		return false;
+	}
 	var mobileNo = $("input[name='mobileNo']").val();
+	if(mobileNo == ''){
+		alert("手机号码不能为空");
+		return false;
+	}
 	var payFeeType = $("[name='payFeeType']").val();
+	if(payFeeType == ''){
+		alert("代付费率类型不能为空");
+		return false;
+	}
 	var payFee = $("input[name='payFee']").val();
+	if(payFee == ''){
+		alert("代付费率不能为空");
+		return false;
+	}
 	var loanFeeType = $("[name='loanFeeType']").val();
 	var loanFee = $("input[name='loanFee']").val();
 	return true;
@@ -1080,6 +1147,28 @@ $('#provincial').change(function(){
 			}
 		});
 }) ;
+
+$("#bankName").blur(function(){
+	var bankName = $('#bankName').val();
+	if(bankName != '') {
+		var count = $('#bankId').find('option').length; 
+		var flag = 0;
+	    for(var i=0;i<count;i++) {     
+	    	var str = $('#bankId').get(0).options[i].text.split('-');
+	    	if(bankName == str[1]) {
+	    		 flag = i;
+	    	}
+	    }
+	    if(flag == 0) {
+	    	alert("开户银行不存在");
+	    	$('#bankId').val(0);
+	    	$('#bankName').val('');
+	    } else {
+	    	$('#bankId').val(flag);
+	    }
+	}
+});
+
 </script>
 </body>
 </html>

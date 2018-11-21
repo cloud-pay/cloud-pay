@@ -2,6 +2,7 @@ package com.cloud.pay.trade.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,31 +26,46 @@ public class AmountLimitService {
 
 	@Transactional
 	public int update(AmountLimit amountLimit) {
-		checkExist(amountLimit.getType(), amountLimit.getMerchantId());
+		log.info("查询已存在的限额信息，类型：{}，商户ID：{}", amountLimit.getType(), amountLimit.getMerchantId());
+		List<AmountLimit> limits = amountLimitMapper.selectExist(amountLimit.getType(), amountLimit.getMerchantId());
+		if(limits != null && limits.size() > 1) {
+			buildExMessage(amountLimit.getType(), amountLimit.getMerchantId());
+		} else if(limits != null && limits.size() == 1) {
+			if(!Objects.equals(amountLimit.getId(), limits.get(0).getId())) {
+				buildExMessage(amountLimit.getType(), amountLimit.getMerchantId());
+			}
+		} 
 		log.info("修改AmountLimit信息：{}", amountLimit);
 		return amountLimitMapper.updateByPrimaryKeySelective(amountLimit);
 	}
 
 	@Transactional
 	public int save(AmountLimit amountLimit) {
-		checkExist(amountLimit.getType(), amountLimit.getMerchantId());
+		log.info("查询已存在的限额信息，类型：{}，商户ID：{}", amountLimit.getType(), amountLimit.getMerchantId());
+		List<AmountLimit> limits = amountLimitMapper.selectExist(amountLimit.getType(), amountLimit.getMerchantId());
+		if(limits != null && limits.size() > 0) {
+			buildExMessage(amountLimit.getType(), amountLimit.getMerchantId());
+		}
 		log.info("新增AmountLimit信息：{}", amountLimit);
 		return amountLimitMapper.insert(amountLimit);
 	}
 
-	private void checkExist(Integer type, Integer merchantId) {
-		log.info("查询已存在的限额信息，类型：{}，商户ID：{}", type, merchantId);
-		List<AmountLimit> limits = amountLimitMapper.selectExist(type, merchantId);
-		if(limits != null && limits.size() > 0) {
-			if(AmountLimitConstant.PER_LIMIT == type) {
-				throw new AmountLimitException("单笔限额已存在", null);
-			} else if(AmountLimitConstant.MERCHNAT_LIMIT == type) {
-				throw new AmountLimitException("商户限额已存在", null);
-			} else if(AmountLimitConstant.ORG_LIMIT == type) {
-				throw new AmountLimitException("机构限额已存在", null);
-			} 
-		}
-		
+	/**
+	 * 构造异常信息
+	 * @param type
+	 * @param merchantId
+	 */
+	private void buildExMessage(Integer type, Integer merchantId) {
+		if(AmountLimitConstant.PER_LIMIT == type) {
+			log.warn("单笔限额已存在");
+			throw new AmountLimitException("单笔限额已存在", null);
+		} else if(AmountLimitConstant.MERCHNAT_LIMIT == type) {
+			log.warn("商户{}限额已存在", merchantId);
+			throw new AmountLimitException("商户限额已存在", null);
+		} else if(AmountLimitConstant.ORG_LIMIT == type) {
+			log.warn("机构{}限额已存在", merchantId);
+			throw new AmountLimitException("机构限额已存在", null);
+		} 
 	}
 	
 	@Transactional

@@ -458,20 +458,20 @@ function checkAccount(amountLimit,type,merchantId,period){
 		alert("限制值不能为空");
 		return false;
 	}
-	if(amountLimit == ''){
-		$("input[name='amountLimit']").focus();
-		alert("限制值不能为空");
+	if(type == ''){
+		$("input[name='type']").focus();
+		alert("类型不能为空");
 		return false;
 	}
-	if(amountLimit != 1) {
+	if(type != 1) {
 		if(merchantId == ''){
 			$("input[name='merchantId']").focus();
-			alert("交易限额商户号不能为空");
+			alert("限额商户号不能为空");
 			return false;
 		}
 		if(period == ''){
 			$("input[name='period']").focus();
-			alert("週期不能为空");
+			alert("周期不能为空");
 			return false;
 		}
 	}
@@ -479,7 +479,6 @@ function checkAccount(amountLimit,type,merchantId,period){
 }
 
 var merchants1 = [[${merchants}]];
-alert(merchants1)
 	var orgs1 = [[${orgs}]];
 
 //加载模态框的数据

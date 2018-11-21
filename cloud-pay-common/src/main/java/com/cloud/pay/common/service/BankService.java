@@ -1,6 +1,7 @@
 package com.cloud.pay.common.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,16 @@ public class BankService {
 	
 	public int update(Bank bank) {
 		List<Bank> banks = bankMapper.getBankList(bank.getBankCode(), null);
-		if(banks != null && banks.size() > 0) {
+		if(banks != null && banks.size() > 1) {
 			log.info("联行号{}已存在", bank.getBankCode());
 			throw new RuntimeException("联行号" + bank.getBankCode() + "已存在");
-		}
+		} else if(banks != null && banks.size() == 1) {
+			Bank temp = banks.get(0);
+			if(!Objects.equals(temp.getId(), bank.getId())) {
+				log.info("联行号{}已存在", bank.getBankCode());
+				throw new RuntimeException("联行号" + bank.getBankCode() + "已存在");
+			}
+		} 
 		log.info("修改bank信息：{}", bank);
 		return bankMapper.updateByPrimaryKeySelective(bank);
 	}

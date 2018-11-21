@@ -91,16 +91,16 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 	private BigDecimal loanFee;
 	
 	//营业执照
-	private String businessFilePath;
+	private String businessFileName;
 	
 	//身份证
-	private String certFilePath;
+	private String certFileName;
 	
 	//银行卡
-	private String bankCardFilePath;
+	private String bankCardFileName;
 	
 	//协议文件
-	private String protocolFilePath;
+	private String protocolFileName;
 	
 	public String getName() {
 		return name;
@@ -263,38 +263,6 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 		this.loanFee = loanFee;
 	}
 
-	public String getBusinessFilePath() {
-		return businessFilePath;
-	}
-
-	public void setBusinessFilePath(String businessFilePath) {
-		this.businessFilePath = businessFilePath;
-	}
-
-	public String getCertFilePath() {
-		return certFilePath;
-	}
-
-	public void setCertFilePath(String certFilePath) {
-		this.certFilePath = certFilePath;
-	}
-
-	public String getBankCardFilePath() {
-		return bankCardFilePath;
-	}
-
-	public void setBankCardFilePath(String bankCardFilePath) {
-		this.bankCardFilePath = bankCardFilePath;
-	}
-
-	public String getProtocolFilePath() {
-		return protocolFilePath;
-	}
-
-	public void setProtocolFilePath(String protocolFilePath) {
-		this.protocolFilePath = protocolFilePath;
-	}
-
 	public Integer getProvincial() {
 		return provincial;
 	}
@@ -311,6 +279,36 @@ public class CloudApiMerchantRegisterParam extends CloudApiBaseParam{
 		this.city = city;
 	}
 
-    
+	public String getBusinessFileName() {
+		return businessFileName;
+	}
+
+	public void setBusinessFileName(String businessFileName) {
+		this.businessFileName = businessFileName;
+	}
+
+	public String getCertFileName() {
+		return certFileName;
+	}
+
+	public void setCertFileName(String certFileName) {
+		this.certFileName = certFileName;
+	}
+
+	public String getBankCardFileName() {
+		return bankCardFileName;
+	}
+
+	public void setBankCardFileName(String bankCardFileName) {
+		this.bankCardFileName = bankCardFileName;
+	}
+
+	public String getProtocolFileName() {
+		return protocolFileName;
+	}
+
+	public void setProtocolFileName(String protocolFileName) {
+		this.protocolFileName = protocolFileName;
+	}
 	
 }

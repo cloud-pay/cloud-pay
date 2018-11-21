@@ -86,20 +86,20 @@ public class CloudApiMerchantRegisterHandler
 	 * @return
 	 */
 	private JSONObject createAttachementJson(CloudApiMerchantRegisterParam reqParam) {
-		if(StringUtils.isNotBlank(reqParam.getBusinessFilePath()) || StringUtils.isNotBlank(reqParam.getCertFilePath())
-				||StringUtils.isNotBlank(reqParam.getBankCardFilePath()) || StringUtils.isNotBlank(reqParam.getProtocolFilePath())) {
+		if(StringUtils.isNotBlank(reqParam.getBusinessFileName()) || StringUtils.isNotBlank(reqParam.getCertFileName())
+				||StringUtils.isNotBlank(reqParam.getBankCardFileName()) || StringUtils.isNotBlank(reqParam.getProtocolFileName())) {
 			JSONObject object = new JSONObject();
-			if(StringUtils.isNotBlank(reqParam.getBusinessFilePath())) {
-				object.put("businessPath", reqParam.getBusinessFilePath());
+			if(StringUtils.isNotBlank(reqParam.getBusinessFileName())) {
+				object.put("businessPath", reqParam.getBusinessFileName());
 			}
-			if(StringUtils.isNotBlank(reqParam.getCertFilePath())) {
-				object.put("certPath", reqParam.getCertFilePath());
+			if(StringUtils.isNotBlank(reqParam.getCertFileName())) {
+				object.put("certPath", reqParam.getCertFileName());
 			}
-			if(StringUtils.isNotBlank(reqParam.getBankCardFilePath())) {
-				object.put("bankCardPath", reqParam.getBankCardFilePath());
+			if(StringUtils.isNotBlank(reqParam.getBankCardFileName())) {
+				object.put("bankCardPath", reqParam.getBankCardFileName());
 			}
-			if(StringUtils.isNotBlank(reqParam.getProtocolFilePath())) {
-				object.put("protocolPath", reqParam.getProtocolFilePath());
+			if(StringUtils.isNotBlank(reqParam.getProtocolFileName())) {
+				object.put("protocolPath", reqParam.getProtocolFileName());
 			}
 			return object;
 		}

@@ -31,6 +31,6 @@ public class BatchPayTest {
 		batchTrade.setTradeTime(new Date());
 		batchTrade.setStatus(1);
 		batchTradeService.batchPay(batchTrade, 
-				"batchPayFile/20181007zhengyan01.txt", "zhengyan01",1);
+				"batchPayFile/20181007zhengyan01.txt", "zhengyan01",null,1);
 	}
 }

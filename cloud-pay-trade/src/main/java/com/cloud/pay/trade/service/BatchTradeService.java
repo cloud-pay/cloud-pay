@@ -2,6 +2,7 @@ package com.cloud.pay.trade.service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -329,7 +331,7 @@ public class BatchTradeService {
 	 * @return
 	 */
 	@Transactional
-	public String batchPay(BatchTrade batchTrade, String fileFullPath,String mchCode,Integer loaning) {
+	public String batchPay(BatchTrade batchTrade, String fileName,String mchCode,String subMchCode,Integer loaning) {
 		StringBuilder errorDetails = new StringBuilder();
 		//step 1 从OSS服务器读取文件流
 		SysConfig accessKeyIdConfig = null;
@@ -340,7 +342,10 @@ public class BatchTradeService {
 	    }catch(Exception e) {
 	    	log.error("读取OSS服务器配置错误：{}",e);
 	    }
-		InputStream is = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), mchCode, fileFullPath);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String fileFullpath = "batch" +  File.separator + "request" +  File.separator + 
+				batchTrade.getBatchNo() + File.separator  + sdf.format(new Date())  + File.separator+ fileName;
+		InputStream is = OSSUnit.getOSS2InputStream(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), mchCode, fileFullpath.replaceAll("\\\\", "/"));
 		InputStreamReader read = null;
 		BufferedReader bufferedReader = null;
 		try {
@@ -358,6 +363,14 @@ public class BatchTradeService {
 				String[] line = lineTxt_cr.split("~");
 				//获取商户信息（考虑机构发批量是发给多个商户发起）
 				String merchantNo = line[0]; //商户号
+				//判断请求商户和交易商户是否为同一个(如果有指定下游商户，则需要判断交易商户和指定商户是否一致)
+				if(StringUtils.isNotBlank(subMchCode)) {
+					if(!subMchCode.equals(merchantNo)) {
+						log.info("第{}行，交易商户{}和请求商户{}非同一商户",num,merchantNo,subMchCode);
+						errorDetails.append("第"+num+"行,交易商户和请求商户非同一商户;");
+						continue;
+					}
+				}
 				MerchantBaseInfo merchantBaseInfo = merchantBaseInfoMapper.selectByCode(merchantNo);
 				if(null == merchantBaseInfo) {
 					log.info("第{}行，商户信息{}不存在",num,merchantNo);

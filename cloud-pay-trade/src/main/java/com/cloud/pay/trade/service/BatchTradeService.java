@@ -418,7 +418,7 @@ public class BatchTradeService {
 								ps.setString(1, argument.getOrderNo());
 								ps.setInt(2, argument.getMerchantId());
 								ps.setBigDecimal(3, argument.getTradeAmount());
-								ps.setInt(4, argument.getPayerId());
+								ps.setNull(4, Types.INTEGER);
 								ps.setString(5, argument.getPayeeName());
 								ps.setString(6, argument.getPayeeBankCard());
 								ps.setString(7, argument.getPayeeBankCode());
@@ -438,6 +438,22 @@ public class BatchTradeService {
 								} else {
 									ps.setNull(11, Types.INTEGER);
 								}
+								if (null != argument.getMerchantFeeAmount()) {
+									ps.setBigDecimal(12, argument.getMerchantFeeAmount());
+								} else {
+									ps.setNull(12, Types.DECIMAL);
+								}
+								if (null != argument.getLoanBenefit()) {
+									ps.setBigDecimal(13, argument.getLoanBenefit());
+								} else {
+									ps.setNull(13, Types.DECIMAL);
+								}
+								if (null != argument.getOrgBenefit()) {
+									ps.setBigDecimal(14, argument.getOrgBenefit());
+								} else {
+									ps.setNull(14, Types.DECIMAL);
+								}
+								ps.setInt(15, loaning);
 							}
 						});
 			}

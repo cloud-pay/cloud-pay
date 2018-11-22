@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.aliyun.oss.OSSException;
 import com.cloud.pay.common.contants.ChannelType;
 import com.cloud.pay.common.contants.FileSuffixEnums;
 import com.cloud.pay.common.entity.Channel;
@@ -429,10 +430,10 @@ public class ReconService {
 	 * @param isUploadOss   是否上传到oss服务器(通过页面下载时，不需要上传)
 	 * @return filePath 对账文件路径
 	 */
-    public String queryReconFile(Integer merchantId,String reconDate,Integer mchType,boolean isUploadOss) {
+    public String queryReconFile(Integer merchantId,String mchCode,String reconDate,Integer mchType,boolean isUploadOss) {
     	//查询商户信息
     	MerchantBaseInfo baseInfo = merchantBaseInfoMapper.selectByPrimaryKey(merchantId);
-    	String reconDays = DateUtil.formatDate(DateUtil.fomatDate(reconDate),DateUtil.DATE_DAYS_FORMART);
+    	String reconDays = reconDate;//DateUtil.formatDate(DateUtil.formatDate(reconDate, "yyyyMMdd"),DateUtil.DATE_DAYS_FORMART);
     	String reconFilePath = "";
     	String reconFileName =  baseInfo.getCode() + reconDays + ".txt";;
         //构建对账文件路径
@@ -481,10 +482,10 @@ public class ReconService {
     	try {
 	    	is = new FileInputStream(file);  
 	    	OSSUnit.uploadObject2OSS(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), 
-	    			is, reconFileName, file.length(), baseInfo.getCode(), ossReconFileFullPath);
+	    			is, reconFileName, file.length(), mchCode, ossReconFileFullPath);
 //	    	OSSUnit.uploadObject2OSS(OSSUnit.getOSSClient(accessKeyIdConfig.getSysValue(),secretAccessKeyConfig.getSysValue()), 
 //	    			is, reconFileName, file.length(), "zhengyan01", ossReconFileFullPath);
-    	}catch(IOException e) {
+    	}catch(OSSException e) {
     		log.error("获取对账文件失败，{}",e);
     		return null;
     	}catch(Exception e) {

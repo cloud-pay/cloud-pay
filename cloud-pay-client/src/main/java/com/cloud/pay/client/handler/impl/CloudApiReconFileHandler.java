@@ -70,7 +70,7 @@ public class CloudApiReconFileHandler
 		if(4 == baseInfo.getType() || 5 == baseInfo.getType()) {
 			mchType = 1;
 		}
-		String filePath = reconService.queryReconFile(baseInfo.getId(), reqParam.getReconDate(), mchType, true);
+		String filePath = reconService.queryReconFile(baseInfo.getId(),reqParam.getMchCode(), reqParam.getReconDate(), mchType, true);
 		if(StringUtils.isBlank(filePath)) {
 			result.setResultCode(Constants.RESULT_CODE_FAIL);
 			result.setErrorCode(ApiErrorCode.RECON_FILE_NOT_CREATE);

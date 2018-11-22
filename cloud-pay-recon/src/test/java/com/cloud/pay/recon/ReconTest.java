@@ -40,7 +40,7 @@ public class ReconTest {
 	 */
 	@Test
 	public void getReconFile() {
-		String result = reconService.queryReconFile(5, "2018-10-06", 2, false);
+		String result = reconService.queryReconFile(5, "2018-10-06","2018110520503261500000001", 2, false);
 		System.out.println(result);
 	}
 }

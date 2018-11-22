@@ -330,6 +330,7 @@ div.cbp label.font{
 					    <label for="certType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>证件类型</label>
 					    <div class="col-sm-4">
 						    <select name="certType" class="form-control">
+						      <option value="">请选择</option>
 						      <option value="1">身份证</option>
 						    </select>
 					    </div>
@@ -627,12 +628,12 @@ $(function(){
 		 this.email = email;
 		 this.mobile = mobile;
 	 }
-	var BankInfo = function(id, bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
+	var BankInfo = function(id, bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo) {
 		 this.id = id;
 		 this.bankName = bankName;
 		 this.bankId = bankId;
 		 this.bankCardNo = bankCardNo;
-		 this.bankAccontType = bankAccontType;
+		 this.bankAccountType = bankAccountType;
 		 this.bankAccountName = bankAccountName;
 		 this.certType = certType;
 		 this.certNo = certNo;
@@ -872,7 +873,15 @@ function checkAccount(){
 		return false;
 	}
 	var loanFeeType = $("[name='loanFeeType']").val();
+	if(loanFeeType == ''){
+		alert("垫资费率类型不能为空");
+		return false;
+	}
 	var loanFee = $("input[name='loanFee']").val();
+	if(loanFee == ''){
+		alert("垫资费率不能为空");
+		return false;
+	}
 	return true;
 }
 
@@ -921,6 +930,18 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='payFee']").val(data.data.feeInfo.payFee);
 					$("[name='loanFeeType']").val(data.data.feeInfo.loanFeeType);
 					$("input[name='loanFee']").val(data.data.feeInfo.loanFee);
+					
+					if(data.data.feeInfo.payFeeType == 1) {
+						$("#payPercent").show();
+					} else {
+						$("#payPercent").hide();
+					}
+				
+					if(data.data.feeInfo.loanFeeType == 1) {
+						$("#loanPercent").show();
+					} else {
+						$("#loanPercent").hide();
+					}
 					
 					$("#showBusiness").attr("src",data.data.businessPath);
 					$("#showBankCard").attr("src",data.data.bankCardPath);

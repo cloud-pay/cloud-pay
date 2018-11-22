@@ -399,10 +399,8 @@ initDateTimepicker();
 		var merchantId= $("[name='merchantId']").val();
 		var type= $("[name='type']").val();
 		var period= $("[name='period']").val();
-		if(url == _ctx+'/amountLimit/add'){
-			if(!checkAccount(amountLimit,type,merchantId,period)){
-				return false;
-			}
+		if(!checkAccount(amountLimit,type,merchantId,period)){
+			return false;
 		}
 		$.ajax({
 			type:"post",
@@ -456,6 +454,11 @@ function checkAccount(amountLimit,type,merchantId,period){
 	if(amountLimit == ''){
 		$("input[name='amountLimit']").focus();
 		alert("限制值不能为空");
+		return false;
+	}
+	if(amountLimit <= 0){
+		$("input[name='amountLimit']").focus();
+		alert("限制值必须大于0");
 		return false;
 	}
 	if(type == ''){

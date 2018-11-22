@@ -202,7 +202,7 @@ div.cbp label.font{
 						</span>
 	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
-	                  	<span data-toggle="tooltip" title="变更" th:if="${QX.query == '1' && merchant.status == 2}" class="btn btn-xs btn-info" th:onclick="'change(\''+${merchant.id}+'\');'"><i class="fa fa-edit"></i> 变更</span>
+	                  	<span data-toggle="tooltip" title="变更" th:if="${QX.query == '1' && merchant.status != 1}" class="btn btn-xs btn-info" th:onclick="'change(\''+${merchant.id}+'\');'"><i class="fa fa-edit"></i> 变更</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${merchant.id == 1 && meid != '1'}">
@@ -367,7 +367,7 @@ div.cbp label.font{
 					  	<input type="hidden" name="feeId" value=""/>
 					    <label for="payFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>代付费率</label>
 					    <div class="col-sm-4">
-						    <select name="payFeeType" class="form-control">
+						    <select name="payFeeType" class="form-control" id="payFeeType">
 						      <option value="">请选择</option>
 						      <option value="1">按比例计算</option>
 						      <option value="2">按笔数计算</option>
@@ -380,7 +380,7 @@ div.cbp label.font{
 					  <div class="form-group">
 					    <label for="loanFeeType" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>垫资费率</label>
 					    <div class="col-sm-4">
-						    <select name="loanFeeType" class="form-control">
+						    <select name="loanFeeType" class="form-control" id="loanFeeType">
 						      <option value="">请选择</option>
 						      <option value="1">按比例计算</option>
 						      <option value="2">按笔数计算</option>
@@ -650,12 +650,12 @@ $(function(){
 		 this.email = email;
 		 this.mobile = mobile;
 	 }
-	var BankInfo = function(id, bankName, bankId, bankCardNo, bankAccontType, bankAccountName, certType, certNo, mobileNo) {
+	var BankInfo = function(id, bankName, bankId, bankCardNo, bankAccountType, bankAccountName, certType, certNo, mobileNo) {
 		 this.id = id;
 		 this.bankName = bankName;
 		 this.bankId = bankId;
 		 this.bankCardNo = bankCardNo;
-		 this.bankAccontType = bankAccontType;
+		 this.bankAccountType = bankAccountType;
 		 this.bankAccountName = bankAccountName;
 		 this.certType = certType;
 		 this.certNo = certNo;
@@ -902,7 +902,15 @@ function checkAccount(){
 		return false;
 	}
 	var loanFeeType = $("[name='loanFeeType']").val();
+	if(loanFeeType == ''){
+		alert("垫资费率类型不能为空");
+		return false;
+	}
 	var loanFee = $("input[name='loanFee']").val();
+	if(loanFee == ''){
+		alert("垫资费率不能为空");
+		return false;
+	}
 	return true;
 }
 
@@ -937,8 +945,8 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='legal']").val(data.data.baseInfo.legal);
 					$("input[name='email']").val(data.data.baseInfo.email);
 					$("input[name='mobile']").val(data.data.baseInfo.mobile);
-					$("input[name='bankInfoId']").val(data.data.baseInfo.id);
-					$("[name='bankId']").val(data.data.bankInfo.id);
+					$("input[name='bankInfoId']").val(data.data.bankInfo.id);
+					$("[name='bankId']").val(data.data.bankInfo.bankId);
 					$("input[name='bankName']").val(data.data.bankInfo.bankName);
 					$("[name='bankAccountType']").val(data.data.bankInfo.bankAccountType);
 					$("input[name='bankCardNo']").val(data.data.bankInfo.bankCardNo);

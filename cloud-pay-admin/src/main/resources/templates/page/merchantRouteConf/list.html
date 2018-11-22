@@ -514,6 +514,10 @@ function checkAccount(type,merchantId,channelId,loaning,loaningOrgId,loaningAmou
 			alert("垫资限额不能为空");
 			return false;
 		}
+		if(loaningAmount <=0) {
+			alert("垫资限额必须大于0");
+			return false;
+		}
 	}
 	return true;
 }
@@ -546,6 +550,13 @@ function reloadModelData(url,title,btntext,id,type,merchantId,channelId,loaning,
 	$("[name='loaning']").val(loaning);
 	$("[name='loaningOrgId']").val(loaningOrgId);
 	$("input[name='loaningAmount']").val(loaningAmount);
+	if(loaning == 1) {
+		$("#loaningOrgIdDIV").show();
+		$("#loaningAmountDIV").show();
+	} else if(loaning == 0){
+		$("#loaningOrgIdDIV").hide();
+		$("#loaningAmountDIV").hide();
+	}
 }
 
 var merchants = [[${merchants}]];

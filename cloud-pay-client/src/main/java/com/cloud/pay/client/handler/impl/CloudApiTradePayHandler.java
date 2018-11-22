@@ -47,7 +47,7 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 		result.setMchCode(reqParam.getMchCode());
 		log.info("单笔代付请求参数：{}",reqParam);
 		String mchCode = StringUtils.isNotBlank(reqParam.getSubMchCode())?reqParam.getSubMchCode():reqParam.getMchCode();
-		result.setSubMchCode(StringUtils.isNotBlank(reqParam.getSubMchCode())?reqParam.getSubMchCode():"");
+		result.setSubMchCode(StringUtils.isNotBlank(reqParam.getSubMchCode())?reqParam.getSubMchCode():null);
 		//根据商户号查询商户信息
 		Map<String, Object> merchantMap = merchantService.selectByCode(mchCode);
 		if(null == merchantMap || merchantMap.size() <= 0) {

@@ -44,7 +44,7 @@ public class CloudApiTradeBatchPayHandler implements ICloudPayApiHandler<CloudAp
 		result.setMchCode(reqParam.getMchCode());
 		result.setBatchNo(reqParam.getBatchNo());
 		String mchCode = StringUtils.isNotBlank(reqParam.getSubMchCode())?reqParam.getSubMchCode():reqParam.getMchCode();
-		result.setSubMchCode(StringUtils.isNotBlank(reqParam.getSubMchCode())?reqParam.getSubMchCode():"");
+		result.setSubMchCode(StringUtils.isNotBlank(reqParam.getSubMchCode())?reqParam.getSubMchCode():null);
 		//根据商户号查询商户信息
 		Map<String, Object> merchantMap = merchantService.selectByCode(mchCode);
 		if(null == merchantMap || merchantMap.size() <= 0) {

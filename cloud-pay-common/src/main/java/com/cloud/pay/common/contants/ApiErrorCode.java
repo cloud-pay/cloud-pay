@@ -48,5 +48,6 @@ public interface ApiErrorCode {
     //批次数据异常
     String BATCH_DATA_ERROR = "batchDataError";
 
+    //权限不足
     String NOT_AUTHORITY = "notAuthority";
 }

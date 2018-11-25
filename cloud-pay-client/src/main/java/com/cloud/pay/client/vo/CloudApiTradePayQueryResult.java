@@ -24,7 +24,7 @@ public class CloudApiTradePayQueryResult extends CloudApiTradeBaseResult {
 	
 	private String payeeBankCode;
 	
-	private Integer status;
+	private String status;
 	
 	private String reconDate;
 	
@@ -86,11 +86,11 @@ public class CloudApiTradePayQueryResult extends CloudApiTradeBaseResult {
 		this.reconStatus = reconStatus;
 	}
 
-	public Integer getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

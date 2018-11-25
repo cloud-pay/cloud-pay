@@ -17,6 +17,7 @@ import com.cloud.pay.common.contants.ApiErrorCode;
 import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.service.MerchantService;
+import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.service.TradeService;
 
@@ -62,8 +63,15 @@ public class CloudApiTradePayQueryHandler implements ICloudPayApiHandler<CloudAp
 		result.setPayeeName(trade.getPayeeName());
 		result.setPayeeBankCard(trade.getPayeeBankCard());
 		result.setPayeeBankCode(trade.getPayeeBankCode());
-		result.setStatus(trade.getStatus());
-		result.setReconDate(trade.getReconDate()==null ? "" : DateUtil.getDateTimeFormat(trade.getReconDate()));
+		
+		if(TradeConstant.STATUS_FAIL == trade.getStatus()) {
+	    	result.setStatus(Constants.RESULT_CODE_FAIL);
+	    }else if(TradeConstant.STATUS_SUCCESS == trade.getStatus()){
+	    	result.setStatus(Constants.RESULT_CODE_SUCCESS);
+	    }else {
+	    	result.setStatus(Constants.RESULT_CODE_UNKNOWN);
+	    }
+		result.setReconDate(trade.getReconDate()==null ? null : DateUtil.getDateTimeFormat(trade.getReconDate()));
 		result.setReconStatus(trade.getReconStatus());
 		log.info("单笔代付结果查询，响应结果：{}",result);
 		return result;

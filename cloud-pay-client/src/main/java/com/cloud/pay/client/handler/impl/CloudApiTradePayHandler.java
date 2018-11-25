@@ -81,13 +81,13 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 			log.info("单笔代付，请求代付平台参数：{}",trade);
 		    PayResponseDTO payResponse = tradeService.pay(trade);
 		    log.info("单笔代付，请求代付平台响应结果：{}",payResponse);
-		    
+		    result.setResultCode(Constants.RESULT_CODE_SUCCESS);
 		    if(TradeConstant.STATUS_FAIL == payResponse.getStatus()) {
-		    	result.setResultCode(Constants.RESULT_CODE_FAIL);
+		    	result.setStatus(Constants.RESULT_CODE_FAIL);
 		    }else if(TradeConstant.STATUS_SUCCESS == payResponse.getStatus()){
-		    	result.setResultCode(Constants.RESULT_CODE_SUCCESS);
+		    	result.setStatus(Constants.RESULT_CODE_SUCCESS);
 		    }else {
-		    	result.setResultCode(Constants.RESULT_CODE_UNKNOWN);
+		    	result.setStatus(Constants.RESULT_CODE_UNKNOWN);
 		    }
 		    result.setErrorCode(payResponse.getReturnCode());
 	    	result.setErrorMsg(payResponse.getReturnInfo());

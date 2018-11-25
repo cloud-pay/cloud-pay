@@ -314,8 +314,30 @@
 	 
 	 <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
 	     select 
-	    <include refid="Base_Column_List" />
-	    from t_merchant_apply_base_info
-	    where m.code = #{code,jdbcType=VARCHAR}
+	    m.id,
+		m.version,
+		m.org_id,
+		m.CODE,
+		m.NAME,
+		m.short_name,
+		m.type,
+		m.industry_category,
+		m.legal,
+		m.provincial,
+		m.city,
+		m.address,
+		m.email,
+		m.mobile,
+		m.STATUS,
+		m.audit_optinion,
+		m.creator,
+		m.create_time,
+		m.modifer,
+		m.modify_time
+	    from t_merchant_apply_base_info m
+			left join t_merchant_base_info m1 on m.org_id = m1.id
+		where m.type in (4,5)
+		and m.id in (SELECT max(id) from t_merchant_apply_base_info where type in (4,5) group by code)
+	    and m.CODE = #{code,jdbcType=VARCHAR}
 	 </select>
 </mapper>

@@ -278,6 +278,12 @@
       <if test="endTime != null" >
         and m.modify_time &lt; #{endTime}
       </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (m.id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and m.id = #{userMerchantId,jdbcType=INTEGER}
+      </if>
 	 </select>
 	 <select id="getOrgList" resultMap="BaseResultDTO">
 	 	SELECT m.id, m.org_id, m1.name org_name, m.code, m.name, m.type, 
@@ -300,6 +306,9 @@
       </if>
       <if test="endTime != null" >
         and m.modify_time &lt; #{endTime}
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and m.id = #{userMerchantId,jdbcType=INTEGER} 
       </if>
 	 </select>
 	 

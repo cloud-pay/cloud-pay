@@ -72,7 +72,9 @@ public interface MerchantBaseInfoMapper {
 	 * @return
 	 */
 	List<MerchantDTO> getOrgList(@Param("type") Integer type, @Param("code") String code,
-			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime,
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 
 	/**
 	 * 查询机构/商户列表
@@ -84,7 +86,9 @@ public interface MerchantBaseInfoMapper {
 	 * @return
 	 */
 	List<MerchantDTO> getMerchantList(@Param("orgId") Integer orgId, @Param("code") String code,
-			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("name") String name, @Param("startTime") Date startTime, @Param("endTime") Date endTime, 
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 	
 	/**
 	 * 根据具体类型查找商户

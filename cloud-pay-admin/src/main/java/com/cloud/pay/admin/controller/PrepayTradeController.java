@@ -74,7 +74,9 @@ public class PrepayTradeController extends BaseController {
 			}
 		} catch (Exception e) {
 		}
-		model.addAttribute("trades", tradeService.selectTradeList(merchantId, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("trades", tradeService.selectTradeList(merchantId, startTime, endTime, 
+				user.getMerchantId(), user.getMerchantType()));
 		return "page/prepayTrade/list";
 	}
 	

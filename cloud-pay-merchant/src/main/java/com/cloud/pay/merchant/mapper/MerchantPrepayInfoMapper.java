@@ -36,7 +36,8 @@ public interface MerchantPrepayInfoMapper {
      */
     List<MerchantPrepayInfoDTO> selectList(@Param("merchantId") Integer merchantId,
 			@Param("startTime") Date startTime, @Param("endTime") Date endTime,
-			@Param("type") String type);
+			@Param("type") String type, @Param("userMerchantId")Integer userMerchantId, 
+			@Param("userMerchantType")String userMerchantType);
     
     /**
      * 通过商户ID列表锁定商户预缴户

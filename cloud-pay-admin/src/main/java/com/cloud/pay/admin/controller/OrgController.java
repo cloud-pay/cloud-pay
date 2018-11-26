@@ -62,7 +62,9 @@ public class OrgController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchants", merchantService.getOrgList(type, code, name, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("merchants", merchantService.getOrgList(type, code, name, 
+				startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		model.addAttribute("provincials", provincialMapper.selectList());

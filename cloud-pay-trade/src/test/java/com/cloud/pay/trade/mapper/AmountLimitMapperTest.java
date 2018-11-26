@@ -19,6 +19,6 @@ public class AmountLimitMapperTest {
 	
 	@Test
 	public void getAmountLimitListTest() {
-		System.out.println(amountLimitMapper.getAmountLimitList(1, "mingc","mingc", new Date(), new Date(), 2));
+		System.out.println(amountLimitMapper.getAmountLimitList(1, "mingc","mingc", new Date(), new Date(), 2, "merchant"));
 	}
 }

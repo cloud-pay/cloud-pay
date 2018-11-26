@@ -3,6 +3,11 @@ package com.cloud.pay.merchant.constant;
 public class MerchantConstant {
 
 	//1代理商，2第三方支付，3垫资商，4企业商户，5个人商户
+	public final static int MERCHANT_TYPE_AGENT = 1;
+	public final static int MERCHANT_TYPE_THIRD = 2; 
+	public final static int MERCHANT_TYPE_LOANING = 3;
+	public final static int MERCHANT_TYPE_COMPANY = 4;
+	public final static int MERCHANT_TYPE_PERSON = 5;
 	
 	/** 正常 */
 	public final static int NORMAL = 1;

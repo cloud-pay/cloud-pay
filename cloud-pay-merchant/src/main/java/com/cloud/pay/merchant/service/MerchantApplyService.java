@@ -84,14 +84,14 @@ public class MerchantApplyService {
 	
 	public List<MerchantApplyDTO> getOrgDTOs(Integer type, String code,
 			String name, Integer status,  Date startTime,
-			Date endTime) {
-		return baseInfoMapper.getOrgApplyDTOs(type, code, name, status, startTime, endTime);
+			Date endTime, Integer userMerchantId, String userMerchantType) {
+		return baseInfoMapper.getOrgApplyDTOs(type, code, name, status, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	public List<MerchantApplyDTO> getMerchantDTOs(Integer orgId, String code,
 			String name, Integer status,  Date startTime,
-			Date endTime) {
-		return baseInfoMapper.getMerchantApplyDTOs(orgId, code, name, status, startTime, endTime);
+			Date endTime, Integer userMerchantId, String userMerchantType) {
+		return baseInfoMapper.getMerchantApplyDTOs(orgId, code, name, status, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, timeout = 3)

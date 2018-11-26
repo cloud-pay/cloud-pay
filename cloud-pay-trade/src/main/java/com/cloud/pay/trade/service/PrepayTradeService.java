@@ -42,8 +42,8 @@ public class PrepayTradeService {
 	 * @return
 	 */
 	public List<PrepayTradeDTO> selectTradeList(Integer merchantId, 
-			Date startTime, Date endTime) {
-		return prepayTradeMapper.selectTradeList(merchantId, startTime, endTime);
+			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
+		return prepayTradeMapper.selectTradeList(merchantId, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	@Transactional

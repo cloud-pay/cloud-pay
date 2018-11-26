@@ -71,7 +71,9 @@ public class MerchantPrepayJournalController extends BaseController {
 			}
 		} catch (Exception e) {
 		}
-		model.addAttribute("journals", merchantPrepayJournalService.selectList(merchantId, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("journals", merchantPrepayJournalService.selectList(merchantId, startTime, endTime, 
+				user.getMerchantId(), user.getMerchantType()));
 		return "page/journal/list";
 	}
 	

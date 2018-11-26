@@ -66,7 +66,9 @@ public class OrgApplyController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchantApplys", merchantApplyService.getOrgDTOs(type, code, name, status, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("merchantApplys", merchantApplyService.getOrgDTOs(type, code, name, status, 
+				startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("provincials", provincialMapper.selectList());
 		return "page/org/orgApplyList";

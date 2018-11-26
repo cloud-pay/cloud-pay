@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -36,7 +37,10 @@ import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.admin.util.RightsHelper;
 import com.cloud.pay.admin.util.SHA;
 import com.cloud.pay.admin.util.Tools;
+import com.cloud.pay.merchant.constant.MerchantConstant;
+import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.UserMerchant;
+import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.merchant.mapper.UserMerchantMapper;
 
 @Service
@@ -67,6 +71,9 @@ public class UserService implements IUserService {
 
 	@Autowired
 	private UserMerchantMapper userMerchantMapper;
+	
+	@Autowired
+	private MerchantBaseInfoMapper merchantBaseInfoMapper;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -112,6 +119,14 @@ public class UserService implements IUserService {
 			UserMerchant userMerchant = userMerchantMapper.selectByUserId(Integer.parseInt(user.getUserId()));
 			if(userMerchant != null) {
 				user.setMerchantId(userMerchant.getMerchantId());
+				MerchantBaseInfo baseInfo = merchantBaseInfoMapper.selectByPrimaryKey(userMerchant.getMerchantId());
+				if(Objects.equals(MerchantConstant.MERCHANT_TYPE_AGENT,baseInfo.getType())
+						|| Objects.equals(MerchantConstant.MERCHANT_TYPE_THIRD,baseInfo.getType())
+						|| Objects.equals(MerchantConstant.MERCHANT_TYPE_LOANING,baseInfo.getType())) {
+					user.setMerchantType("org");
+				} else {
+					user.setMerchantType("merchant");
+				}
 			}
 			globalUser.put(userName, user);
 			session.setMaxInactiveInterval(0);

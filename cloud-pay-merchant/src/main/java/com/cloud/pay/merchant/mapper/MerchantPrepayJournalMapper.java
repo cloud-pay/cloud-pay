@@ -14,6 +14,8 @@ public interface MerchantPrepayJournalMapper {
 	MerchantPrepayJournal selectByPrimaryKey(Integer id);
 
 	public List<MerchantPrepayJournalDTO> selectList(@Param("merchantId") Integer merchantId,
-			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime, 
+			@Param("userMerchantId")Integer userMerchantId, 
+			@Param("userMerchantType")String userMerchantType);
 
 }

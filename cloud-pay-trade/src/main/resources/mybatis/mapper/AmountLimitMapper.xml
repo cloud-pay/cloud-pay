@@ -146,8 +146,11 @@
       <if test="endTime != null" >
        and l.modify_time &lt; #{endTime}
       </if>
-      <if test="userMerchantId != null" >
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
        and (l.merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and l.merchant_id = #{userMerchantId,jdbcType=INTEGER}
       </if>
 	 </select>
 

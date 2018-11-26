@@ -64,6 +64,12 @@
       <if test="endTime != null" >
        and j.create_time &lt; #{endTime}
       </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (m.id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and m.id = #{userMerchantId,jdbcType=INTEGER}
+      </if>
       order by j.create_time desc
   </select>
   

@@ -75,9 +75,9 @@ public class AmountLimitService {
 	}
 
 	public List<AmountLimitDTO> getAmountLimitList(Integer type, String orgName, String merchantName, Date startTime,
-			Date endTime, Integer userMerchantId) {
+			Date endTime, Integer userMerchantId, String userMerchantType) {
 		List<AmountLimitDTO> dtos =  amountLimitMapper.getAmountLimitList(type, orgName, merchantName, 
-				startTime, endTime, userMerchantId);
+				startTime, endTime, userMerchantId, userMerchantType);
 		for(AmountLimitDTO dto : dtos) {
 			if(dto.getType() == 3) {
 				dto.setOrgName(dto.getMerchantName());

@@ -73,7 +73,9 @@ public class MerchantController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchants", merchantService.getMerchantList(orgId, code, name, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("merchants", merchantService.getMerchantList(orgId, code, name, 
+				startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());

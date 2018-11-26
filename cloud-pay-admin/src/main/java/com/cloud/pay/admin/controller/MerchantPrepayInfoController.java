@@ -69,7 +69,9 @@ public class MerchantPrepayInfoController extends BaseController {
 			}
 		} catch (Exception e) {
 		}
-		model.addAttribute("prepays", merchantPrepayInfoService.selectList(merchantId, startTime, endTime, "merchant"));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("prepays", merchantPrepayInfoService.selectList(merchantId, startTime, endTime, "merchant", 
+				user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/merchant/prepayList";

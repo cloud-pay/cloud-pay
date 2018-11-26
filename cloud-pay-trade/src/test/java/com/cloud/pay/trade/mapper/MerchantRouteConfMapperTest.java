@@ -19,6 +19,6 @@ public class MerchantRouteConfMapperTest {
 	
 	@Test
 	public void getMerchantRouteConfListTest() {
-		System.out.println(merchantRouteConfMapper.getMerchantRouteConfList(1, 1,"mingc", new Date(), new Date(), 2));
+		System.out.println(merchantRouteConfMapper.getMerchantRouteConfList(1, 1,"mingc", new Date(), new Date(), 2, "merchant"));
 	}
 }

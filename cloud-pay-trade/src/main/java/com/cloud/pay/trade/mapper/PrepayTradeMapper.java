@@ -29,5 +29,7 @@ public interface PrepayTradeMapper {
      * @return
      */
 	List<PrepayTradeDTO> selectTradeList(@Param("merchantId") Integer merchantId, 
-			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime, 
+			@Param("userMerchantId")Integer userMerchantId, 
+			@Param("userMerchantType")String userMerchantType);
 }

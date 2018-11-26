@@ -52,7 +52,8 @@ public interface MerchantApplyBaseInfoMapper {
 	 */
 	List<MerchantApplyDTO> getOrgApplyDTOs(@Param("type") Integer type, @Param("code") String code,
 			@Param("name") String name, @Param("status") Integer status, @Param("startTime") Date startTime,
-			@Param("endTime") Date endTime);
+			@Param("endTime") Date endTime, @Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 
 	/**
 	 * 查询商户申请信息
@@ -66,7 +67,8 @@ public interface MerchantApplyBaseInfoMapper {
 	 */
 	List<MerchantApplyDTO> getMerchantApplyDTOs(@Param("orgId") Integer orgId, @Param("code") String code,
 			@Param("name") String name, @Param("status") Integer status, @Param("startTime") Date startTime,
-			@Param("endTime") Date endTime);
+			@Param("endTime") Date endTime, @Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 
 	/**
 	 * 根据商户编码获取商户基本信息

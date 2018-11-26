@@ -62,7 +62,7 @@ public class AmountLimitController extends BaseController{
 		}
 		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
 		model.addAttribute("amountLimits", amountLimitService.getAmountLimitList(type, orgName, merchantName, startTime, endTime
-				, user.getMerchantId()));
+				, user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));
 		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));

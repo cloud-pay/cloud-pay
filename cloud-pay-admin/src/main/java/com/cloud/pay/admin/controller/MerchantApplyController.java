@@ -70,7 +70,9 @@ public class MerchantApplyController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("merchantApplys", merchantApplyService.getMerchantDTOs(orgId, code, name, status, 
+				startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("banks", bankService.getBankList(null, null));
 		model.addAttribute("provincials", CityService.selectProvincialList());

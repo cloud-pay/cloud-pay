@@ -86,8 +86,9 @@ public class MerchantService {
 	 * @param endTime
 	 * @return
 	 */
-	public List<MerchantDTO> getOrgList(Integer type, String code, String name, Date startTime, Date endTime) {
-		return baseInfoMapper.getOrgList(type, code, name, startTime, endTime);
+	public List<MerchantDTO> getOrgList(Integer type, String code, String name, 
+			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
+		return baseInfoMapper.getOrgList(type, code, name, startTime, endTime, userMerchantId, userMerchantType);
 	}
 
 	/**
@@ -100,8 +101,9 @@ public class MerchantService {
 	 * @param endTime
 	 * @return
 	 */
-	public List<MerchantDTO> getMerchantList(Integer orgId, String code, String name, Date startTime, Date endTime) {
-		return baseInfoMapper.getMerchantList(orgId, code, name, startTime, endTime);
+	public List<MerchantDTO> getMerchantList(Integer orgId, String code, String name, 
+			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
+		return baseInfoMapper.getMerchantList(orgId, code, name, startTime, endTime, userMerchantId, userMerchantType);
 	}
 
 	public int update(MerchantBaseInfo baseInfo) {

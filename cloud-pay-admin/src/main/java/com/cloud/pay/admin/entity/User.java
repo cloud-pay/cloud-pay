@@ -15,12 +15,20 @@ public class User {
 	private String sessionId;
 	
 	private Integer merchantId;
+	private String merchantType;
 	
 	public Integer getMerchantId() {
 		return merchantId;
 	}
 	public void setMerchantId(Integer merchantId) {
 		this.merchantId = merchantId;
+	}
+	
+	public String getMerchantType() {
+		return merchantType;
+	}
+	public void setMerchantType(String merchantType) {
+		this.merchantType = merchantType;
 	}
 	public String getSessionId() {
 		return sessionId;
@@ -129,6 +137,8 @@ public class User {
 		builder.append(sessionId);
 		builder.append(", merchantId=");
 		builder.append(merchantId);
+		builder.append(", merchantType=");
+		builder.append(merchantType);
 		builder.append(", userRole=");
 		builder.append(userRole);
 		builder.append("]");

@@ -46,8 +46,8 @@ public class MerchantRouteConfService {
 	 * @return
 	 */
 	public List<MerchantRouteDTO> getmerchantRouteConfList(Integer type, Integer status, String merchantName, Date startTime,
-			Date endTime, Integer userMerchantId) {
-		return merchantRouteConfMapper.getMerchantRouteConfList(type, status, merchantName, startTime, endTime, userMerchantId);
+			Date endTime, Integer userMerchantId, String userMerchantType) {
+		return merchantRouteConfMapper.getMerchantRouteConfList(type, status, merchantName, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 }

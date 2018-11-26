@@ -22,8 +22,9 @@ public class MerchantPrepayInfoService {
 	 * @param endTime
 	 * @return
 	 */
-	public List<MerchantPrepayInfoDTO> selectList(Integer merchantId, Date startTime, Date endTime, String type) {
-		return merchantPrepayInfoMapper.selectList(merchantId, startTime, endTime, type);
+	public List<MerchantPrepayInfoDTO> selectList(Integer merchantId, Date startTime, Date endTime, String type
+			, Integer userMerchantId, String userMerchantType) {
+		return merchantPrepayInfoMapper.selectList(merchantId, startTime, endTime, type, userMerchantId, userMerchantType);
 	}
 	
 }

@@ -99,6 +99,12 @@
       <if test="type == 'org'" >
        and m.type in (1,2,3)
       </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (m.id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and m.id = #{userMerchantId,jdbcType=INTEGER}
+      </if>
       order by i.create_time desc
   </select>
   

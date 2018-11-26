@@ -26,10 +26,10 @@ public class MerchantApplyBaseInfoMapperTest {
 	
 	@Test
 	public void getMerchantApplyDTOsTest() {
-		System.out.println(merchantBaseInfoMapper.getMerchantApplyDTOs(1, "1", "2", 1, new Date(), new Date()));
+		System.out.println(merchantBaseInfoMapper.getMerchantApplyDTOs(1, "1", "2", 1, new Date(), new Date(), 12, "org"));
 	}
 	
-	@Test
+//	@Test
 	public void insertTest() {
 		MerchantApplyBaseInfo base = new MerchantApplyBaseInfo();
 		merchantBaseInfoMapper.insert(base);

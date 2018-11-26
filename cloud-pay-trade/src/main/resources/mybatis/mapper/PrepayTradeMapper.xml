@@ -72,5 +72,11 @@
       <if test="endTime != null" >
        and t.trade_time &lt; #{endTime}
       </if> 
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (m.id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and m.id = #{userMerchantId,jdbcType=INTEGER}
+      </if>
   </select>
 </mapper>

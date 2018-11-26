@@ -2,7 +2,7 @@ package com.cloud.pay.admin.entity;
 
 /**
  * 系统用户
- * @author rstyro
+ * @author dbnaxlc
  *
  */
 public class User {
@@ -14,7 +14,14 @@ public class User {
 	private String status;
 	private String sessionId;
 	
+	private Integer merchantId;
 	
+	public Integer getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
+	}
 	public String getSessionId() {
 		return sessionId;
 	}
@@ -105,12 +112,27 @@ public class User {
 	}
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", username=" + username
-				+ ", nickName=" + nickName + ", password=" + password
-				+ ", picPath=" + picPath + ", status=" + status
-				+ ", sessionId=" + sessionId + ", userRole=" + userRole + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [userId=");
+		builder.append(userId);
+		builder.append(", username=");
+		builder.append(username);
+		builder.append(", nickName=");
+		builder.append(nickName);
+		builder.append(", password=");
+		builder.append(password);
+		builder.append(", picPath=");
+		builder.append(picPath);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", sessionId=");
+		builder.append(sessionId);
+		builder.append(", merchantId=");
+		builder.append(merchantId);
+		builder.append(", userRole=");
+		builder.append(userRole);
+		builder.append("]");
+		return builder.toString();
 	}
-	
-	
 	
 }

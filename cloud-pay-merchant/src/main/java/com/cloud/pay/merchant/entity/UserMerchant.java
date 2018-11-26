@@ -21,6 +21,16 @@ public class UserMerchant {
 	public void setMerchantId(int merchantId) {
 		this.merchantId = merchantId;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserMerchant [userId=");
+		builder.append(userId);
+		builder.append(", merchantId=");
+		builder.append(merchantId);
+		builder.append("]");
+		return builder.toString();
+	}
 	
 }

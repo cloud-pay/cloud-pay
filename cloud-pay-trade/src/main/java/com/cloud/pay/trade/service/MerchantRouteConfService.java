@@ -35,9 +35,19 @@ public class MerchantRouteConfService {
 		return merchantRouteConfMapper.deleteByPrimaryKey(id);
 	}
 
+	/**
+	 * 查询限额列表
+	 * @param type
+	 * @param status
+	 * @param merchantName
+	 * @param startTime
+	 * @param endTime
+	 * @param userMerchantId
+	 * @return
+	 */
 	public List<MerchantRouteDTO> getmerchantRouteConfList(Integer type, Integer status, String merchantName, Date startTime,
-			Date endTime) {
-		return merchantRouteConfMapper.getMerchantRouteConfList(type, status, merchantName, startTime, endTime);
+			Date endTime, Integer userMerchantId) {
+		return merchantRouteConfMapper.getMerchantRouteConfList(type, status, merchantName, startTime, endTime, userMerchantId);
 	}
 	
 }

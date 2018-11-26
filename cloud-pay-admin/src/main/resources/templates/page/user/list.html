@@ -106,6 +106,7 @@ div.cbp label.font{
 	                  <th>用户名称</th>
 	                  <th>用户昵称</th>
 	                  <th>创建时间</th>
+	                  <th>关联机构/商户</th>
 	                  <th>操作</th>
 	                </tr>
                 </thead>
@@ -117,12 +118,12 @@ div.cbp label.font{
                   <td th:text="${user.username}">用户名称</td>
                   <td th:text="${user.nick_name}">用户昵称</td>
                   <td th:text="${user.create_time}">创建时间</td>
+                  <td th:text="${user.name}"></td>
                   <td>
                   	<div th:if="${user.user_id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="给用户分配角色" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRole(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 分配角色</span>
-	                  	<span data-toggle="tooltip" title="编辑用户信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
+	                  	<span data-toggle="tooltip" title="编辑用户信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\',\''+${user.merchant_id}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
 	                  	<span data-toggle="tooltip" title="删除用户" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
-	                  	<span data-toggle="tooltip" title="关联商户" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRel(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 关联商户</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>
                   	<div th:if="${user.user_id == 1 && meid != '1'}">
@@ -192,6 +193,15 @@ div.cbp label.font{
 				      <input type="password" class="form-control" name="password" value="" id="password" placeholder="请输入密码">
 				    </div>
 				  </div>
+				  <div class="form-group" >
+					    <label for="merchantId" class="col-sm-2 control-label">所属机构/商户</label>
+					    <div class="col-sm-10">
+					      <select name="merchantId" class="form-control" id="merchantId">
+					        <option value="">请选择</option>
+					        <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
+					      </select>
+					    </div>
+					</div>
 				  
 				 </form>
 			</div>
@@ -224,38 +234,6 @@ div.cbp label.font{
 		</div>
 	</div>
 </div>
-<!-- 关联商户模态框 -->
-<div class="modal fade" id="edituserRelModal" tabindex="-1" role="dialog"
-	aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="userRoleModelHead">用户关联商户</h4>
-			</div>
-			<div class="modal-body">
-				<form class="form-horizontal"  role="form">
-				    <input type="hidden" name="userRelId" id="userRelId"/>
-					<div class="form-group" >
-					    <label for="merchantId" class="col-sm-2 control-label">所属商户</label>
-					    <div class="col-sm-10">
-					      <select name="merchantId" class="form-control" id="merchantId">
-					        <option value="">请选择</option>
-					        <option th:each="merchant : ${merchants}" th:value="${merchant.id}" th:text="${merchant.name}">/option>
-					      </select>
-					    </div>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-				<button type="submit" class="btn btn-success"  id="relSubmit" >确定</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 
 <script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
 <script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
@@ -284,7 +262,7 @@ $(function(){
     });
 	
 	$("#addUser").click(function(){
-		reloadModelData(_ctx+"/user/add","添加用户","添加","","","","","","","add");
+		reloadModelData(_ctx+"/user/add","添加用户","添加","","","","","","","add","");
 		$("#userModal").modal("show");
 	});
 	
@@ -297,6 +275,7 @@ $(function(){
 		var username= $("input[name='username']").val();
 		var nickName= $("input[name='nick_name']").val();
 		var password= $("input[name='password']").val();
+		var merchantId= $("[name='merchantId']").val();
 		if(url == _ctx+'/user/add'){
 			if(!checkAccount(username,nickName,password)){
 				return false;
@@ -307,7 +286,7 @@ $(function(){
 			url:url,
 			cache:false,
 			dataType:"json",
-			data:{user_id:userId,oldpath:oldpath,username:username,password:password,nick_name:nickName,pics:base64Img,time:new Date().getTime()},
+			data:{user_id:userId,oldpath:oldpath,username:username,password:password,nick_name:nickName,pics:base64Img,time:new Date().getTime(),merchantId:merchantId},
 			success:function(data){
 				if(data.status == 'success'){
 					$("#userModal").modal("hide");
@@ -398,9 +377,9 @@ function allotRole(userId){
 }
 
 //编辑用户
-function editUser(user_id,username,nickName,path){
+function editUser(user_id,username,nickName,path,merchantId){
 	console.log(user_id+","+username+","+nickName+","+path);
-	reloadModelData(_ctx+"/user/edit","编辑用户","更新",user_id,"",path,username,nickName,"","edit");
+	reloadModelData(_ctx+"/user/edit","编辑用户","更新",user_id,"",path,username,nickName,"","edit",merchantId);
 	$("#userModal").modal("show");
 }
 
@@ -425,11 +404,16 @@ function checkAccount(username,nickName,password){
 		alert("密码个数不能少于4位");
 		return false;
 	}
+	var merchantId= $("[name='merchantId']").val();
+	if(merchantId == ''){
+		alert("所属机构/商户不能为空");
+		return false;
+	}
 	return true;
 }
 
 //加载模态框的数据
-function reloadModelData(url,title,btntext,user_id,pics,oldpath,username,nick_name,password,type){
+function reloadModelData(url,title,btntext,user_id,pics,oldpath,username,nick_name,password,type,merchantId){
 	$("#userModal #usermodelHead").text(title);
 	$("#userModal #imgSubmit").text(btntext);
 	$("#showImg").attr("src",oldpath);
@@ -445,6 +429,7 @@ function reloadModelData(url,title,btntext,user_id,pics,oldpath,username,nick_na
 	}else{
 		$("input[name='username']").attr("disabled",true);
 	}
+	$("[name='merchantId']").val(merchantId);
 }
 
 var input = document.getElementById("imgfile");

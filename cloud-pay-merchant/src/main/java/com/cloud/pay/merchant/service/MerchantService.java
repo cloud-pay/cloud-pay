@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cloud.pay.common.contants.ApiErrorCode;
-import com.cloud.pay.common.exception.CloudApiBusinessException;
 import com.cloud.pay.common.mapper.CityMapper;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.dto.MerchantDTO;

@@ -12,10 +12,12 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.alibaba.druid.util.Base64;
@@ -34,6 +36,8 @@ import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.admin.util.RightsHelper;
 import com.cloud.pay.admin.util.SHA;
 import com.cloud.pay.admin.util.Tools;
+import com.cloud.pay.merchant.entity.UserMerchant;
+import com.cloud.pay.merchant.mapper.UserMerchantMapper;
 
 @Service
 public class UserService implements IUserService {
@@ -56,11 +60,13 @@ public class UserService implements IUserService {
 	@Value("${user.folder}")
 	public String user_folder;
 	
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 //	@Autowired
 //	private RedisTemplate<String, Object> redis;
 
+	@Autowired
+	private UserMerchantMapper userMerchantMapper;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -102,6 +108,11 @@ public class UserService implements IUserService {
 			}
 			user.setSessionId(session.getId());
 			user.setPassword("*****");
+			//添加关联的商户
+			UserMerchant userMerchant = userMerchantMapper.selectByUserId(Integer.parseInt(user.getUserId()));
+			if(userMerchant != null) {
+				user.setMerchantId(userMerchant.getMerchantId());
+			}
 			globalUser.put(userName, user);
 			session.setMaxInactiveInterval(0);
 			session.setAttribute(Const.SESSION_ALL_MENU, oneMenuList);
@@ -190,6 +201,13 @@ public class UserService implements IUserService {
 			}
 			pm.put("create_time", DateUtil.getTime());
 			userDao.saveUser(pm);
+			User temp = userDao.getUserInfo(pm);
+			UserMerchant userMerchant = new UserMerchant();
+			Integer merchantId = Integer.parseInt(pm.getString("merchantId"));
+			userMerchant.setMerchantId(merchantId);
+			userMerchant.setUserId(Integer.parseInt(temp.getUserId()));
+			log.info("新增用户商户关联信息{}", userMerchant);
+			userMerchantMapper.insert(userMerchant);
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			e.printStackTrace();
@@ -200,6 +218,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
+	@Transactional
 	public HashMap<String, Object> edit(ParameterMap pm) {
 		try {
 			if(Tools.isEmpty(pm.getString("user_id"))){
@@ -232,6 +251,23 @@ public class UserService implements IUserService {
 				}
 			}
 			userDao.editUser(pm);
+			UserMerchant userMerchant = userMerchantMapper.selectByUserId(Integer.parseInt(pm.getString("user_id")));
+			Integer merchantId = Integer.parseInt(pm.getString("merchantId"));
+			if(userMerchant == null) {
+				userMerchant = new UserMerchant();
+				userMerchant.setMerchantId(merchantId);
+				userMerchant.setUserId(Integer.parseInt(pm.getString("user_id")));
+				log.info("新增用户商户关联信息{}", userMerchant);
+				userMerchantMapper.insert(userMerchant);
+			} else {
+				if(userMerchant.getMerchantId() != merchantId.intValue()) {
+					userMerchantMapper.deleteByUserId(userMerchant.getUserId());
+					userMerchant.setMerchantId(merchantId);
+					log.info("修改用户商户关联信息{}", userMerchant);
+					userMerchantMapper.insert(userMerchant);
+				}
+			}
+			
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			e.printStackTrace();

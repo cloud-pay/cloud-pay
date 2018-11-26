@@ -64,13 +64,17 @@
 	 
 	 <select id="getUserList" resultType="pm">
 	 	SELECT 
-			user_id,
-			username,
-			nick_name,
-			pic_path,
-			create_time
+			s.user_id,
+			s.username,
+			s.nick_name,
+			s.pic_path,
+			s.create_time,
+			m.merchant_id,
+			b.name
 		FROM 
-			sys_user
+			sys_user s
+			left join t_user_merchant m on s.user_id = m.user_id
+			left join t_merchant_base_info b on m.merchant_id = b.id
 	 </select>
 	 <insert id="saveLoginTime" parameterType="String">
 	 	insert into sys_login(user_id)values(#{user_id})

@@ -224,6 +224,9 @@
       <if test="endTime != null" >
        and mr.modify_time &lt; #{endTime}
       </if>
+      <if test="userMerchantId != null" >
+       and (mr.merchant_id = #{userMerchantId,jdbcType=INTEGER} or mb.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
  </select>
  <select id="selectByMerchantIdAndChannelId" resultMap="BaseResultMap">
     select 

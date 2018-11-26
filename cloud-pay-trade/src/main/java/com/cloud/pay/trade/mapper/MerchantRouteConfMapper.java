@@ -24,7 +24,7 @@ public interface MerchantRouteConfMapper {
 
 	public List<MerchantRouteDTO> getMerchantRouteConfList(@Param("type") Integer type, @Param("status") Integer status,
 			@Param("merchantName") String merchantName, @Param("startTime") Date startTime,
-			@Param("endTime") Date endTime);
+			@Param("endTime") Date endTime, @Param("userMerchantId")Integer userMerchantId);
 	
 	/**
 	 * 通过商户ID。渠道ID查询路由信息

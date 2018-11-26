@@ -64,7 +64,9 @@ public class MerchantRouteConfController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("merchantRoutes", merchantRouteConfService.getmerchantRouteConfList(type, status, merchantName, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("merchantRoutes", merchantRouteConfService.getmerchantRouteConfList(
+				type, status, merchantName, startTime, endTime, user.getMerchantId()));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		model.addAttribute("orgs", merchantService.getMerchantDTOs("org"));
 		model.addAttribute("merchants", merchantService.getMerchantDTOs("merchant"));

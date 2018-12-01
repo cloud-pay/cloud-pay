@@ -67,6 +67,7 @@ public class CloudApiTradeBatchPayQueryHandler implements ICloudPayApiHandler<Cl
 		result.setTotalAmount(batchTrade.getTotalAmount());
 		result.setTotalCount(batchTrade.getTotalCount());
 		result.setStatus(batchTrade.getStatus());
+		result.setPlatBatchNo(batchTrade.getPlatBatchNo());
 		//状态为成功时需要生成批量结果文件 TODO...
 		log.info("批量代付结果查询，响应结果：{}",result);
 		return result;

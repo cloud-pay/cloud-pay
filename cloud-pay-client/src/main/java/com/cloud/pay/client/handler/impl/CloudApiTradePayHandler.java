@@ -89,6 +89,9 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 		    }else {
 		    	result.setStatus(Constants.RESULT_CODE_UNKNOWN);
 		    }
+		    if(StringUtils.isNotBlank(payResponse.getPlatOrderNo())) {
+		        result.setPlatOrderNo(payResponse.getPlatOrderNo());
+		    }
 		    result.setErrorCode(payResponse.getReturnCode());
 	    	result.setErrorMsg(payResponse.getReturnInfo());
 	    }catch(Exception e) {

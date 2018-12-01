@@ -29,6 +29,8 @@ public class BatchTradeDTO {
     private Integer type;
 
     private String name;
+    
+    private String platBatchNo;
 
 	public Integer getId() {
 		return id;
@@ -132,6 +134,14 @@ public class BatchTradeDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPlatBatchNo() {
+		return platBatchNo;
+	}
+
+	public void setPlatBatchNo(String platBatchNo) {
+		this.platBatchNo = platBatchNo;
 	}
     
     

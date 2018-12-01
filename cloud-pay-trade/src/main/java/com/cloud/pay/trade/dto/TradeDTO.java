@@ -44,6 +44,8 @@ public class TradeDTO {
 	    private String payerBankCard;
 	    
 	    private String payerName;
+	    
+	    private String platOrderNo;
 
 		public Integer getId() {
 			return id;
@@ -204,6 +206,13 @@ public class TradeDTO {
 		public void setPayerName(String payerName) {
 			this.payerName = payerName;
 		}
-		
+
+		public String getPlatOrderNo() {
+			return platOrderNo;
+		}
+
+		public void setPlatOrderNo(String platOrderNo) {
+			this.platOrderNo = platOrderNo;
+		}
 		
 }

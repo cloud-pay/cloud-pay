@@ -7,6 +7,8 @@ package com.cloud.pay.client.vo.base;
 public class CloudApiTradeBatchBaseResult extends CloudApiBaseResult {
 
 	private static final long serialVersionUID = 1753680561876722286L;
+	
+	private String platBatchNo;
 
 	private String batchNo;
 
@@ -16,5 +18,13 @@ public class CloudApiTradeBatchBaseResult extends CloudApiBaseResult {
 
 	public void setBatchNo(String batchNo) {
 		this.batchNo = batchNo;
+	}
+
+	public String getPlatBatchNo() {
+		return platBatchNo;
+	}
+
+	public void setPlatBatchNo(String platBatchNo) {
+		this.platBatchNo = platBatchNo;
 	}
 }

@@ -20,6 +20,8 @@ public interface BatchTradeMapper {
 
     int updateByPrimaryKey(BatchTrade record);
     
+    int updateByPrimaryKeySelective(BatchTrade record);
+    
     int audit(BatchTrade record);
     
     List<BatchTradeDTO> getBatchTradeList(@Param("status") Integer status,

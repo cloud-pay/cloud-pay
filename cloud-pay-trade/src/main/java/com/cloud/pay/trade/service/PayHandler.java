@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
+import com.cloud.pay.common.utils.TableCodeUtils;
 import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
@@ -88,6 +89,11 @@ public class PayHandler {
 		trade.setOrgBenefit(merchantFee.subtract(orgFee));
 		log.info("保存交易信息：{}", trade);
 		tradeMapper.insert(trade);
+		SimpleDateFormat sdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
+		String platOrderNo = TableCodeUtils.getTableCode(trade.getId(), sdfTime.format(new Date()));
+		//生成平台订单号
+		trade.setPlatOrderNo(platOrderNo);
+		tradeMapper.updateByPrimaryKeySelective(trade);
 	}
 	
 	/**
@@ -112,8 +118,8 @@ public class PayHandler {
 					info.getBalance().subtract(info.getFreezeAmount()), trade.getTradeAmount());
 			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()), TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
 		}
-		info.setFreezeAmount(info.getFreezeAmount().add(trade.getMerchantFeeAmount()).add(trade.getTradeAmount()));
-		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
+		info.setFreezeAmount(info.getFreezeAmount().add(trade.getMerchantFeeAmount()).add(trade.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_UP));
+		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(), 
 				String.valueOf(info.getMerchantId())));
 		log.info("冻结商户信息：{}", info);
 		merchantPrepayInfoMapper.updateByPrimaryKey(info);
@@ -132,7 +138,7 @@ public class PayHandler {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		reqVO.setTradeDate(sdf.format(new Date()));
 		reqVO.setAmt(trade.getTradeAmount());
-		reqVO.setOrderNo(trade.getOrderNo());
+		reqVO.setOrderNo(trade.getPlatOrderNo());
 		reqVO.setPayeeAccount(trade.getPayeeBankCard());
 		//reqVO.setPayeeBankCode(trade.getPayeeBankCode());
 		reqVO.setPayeeName(trade.getPayeeName());
@@ -167,8 +173,10 @@ public class PayHandler {
 			trade.setChannelId(resVO.getChannelId());
 			trade.setReturnCode(resVO.getRespCode());
 			trade.setReturnInfo(resVO.getRespMsg());
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			trade.setReconDate(sdf.parse(resVO.getAccountDate()));
+			if(StringUtils.isNotBlank(resVO.getAccountDate())) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				trade.setReconDate(sdf.parse(resVO.getAccountDate()));
+			}
 			trade.setTradeConfirmTime(new Date());
 		}
 		
@@ -221,8 +229,8 @@ public class PayHandler {
 				log.info("商户{}预缴户被篡改", trade.getMerchantId());
 				throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
 			}
-			info.setFreezeAmount(info.getFreezeAmount().subtract(trade.getMerchantFeeAmount()).subtract(trade.getTradeAmount()));
-			info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
+			info.setFreezeAmount(info.getFreezeAmount().subtract(trade.getMerchantFeeAmount()).subtract(trade.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_UP));
+			info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(), 
 					String.valueOf(info.getMerchantId())));
 			log.info("回滚冻结金额,{}", info);
 			merchantPrepayInfoMapper.updateByPrimaryKey(info);

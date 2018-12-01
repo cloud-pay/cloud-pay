@@ -20,6 +20,4 @@ public class CloudApiTradePayResult extends CloudApiTradeBaseResult {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	
 }

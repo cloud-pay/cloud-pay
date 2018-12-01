@@ -71,6 +71,9 @@ public class CloudApiTradePayQueryHandler implements ICloudPayApiHandler<CloudAp
 	    }else {
 	    	result.setStatus(Constants.RESULT_CODE_UNKNOWN);
 	    }
+		if(StringUtils.isNotBlank(trade.getPlatOrderNo())) {
+			result.setPlatOrderNo(trade.getPlatOrderNo());
+		}
 		result.setReconDate(trade.getReconDate()==null ? null : DateUtil.getDateTimeFormat(trade.getReconDate()));
 		result.setReconStatus(trade.getReconStatus());
 		log.info("单笔代付结果查询，响应结果：{}",result);

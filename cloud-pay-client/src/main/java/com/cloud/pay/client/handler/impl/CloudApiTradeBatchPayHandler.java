@@ -74,11 +74,15 @@ public class CloudApiTradeBatchPayHandler implements ICloudPayApiHandler<CloudAp
 		batchTrade.setStatus(1);
 		String errorDetails = batchTradeService.batchPay(batchTrade,reqParam.getFileName(),reqParam.getMchCode(),reqParam.getSubMchCode(),reqParam.getLoaning());//如果数据有问题直接全部不处理算了
 		if(StringUtils.isNotBlank(errorDetails)) {
-			result.setResultCode(Constants.RESULT_CODE_FAIL);
-			result.setErrorCode(ApiErrorCode.BATCH_DATA_ERROR);
-			result.setErrorMsg("批次文件数据异常:" + errorDetails);
-			log.info("批量代付，响应结果：{}",result);
-			return result;
+			if(errorDetails.contains("platBatchNo")) {
+				result.setPlatBatchNo(errorDetails.substring(errorDetails.indexOf(":"), errorDetails.indexOf("||")));
+			}else {
+				result.setResultCode(Constants.RESULT_CODE_FAIL);
+				result.setErrorCode(ApiErrorCode.BATCH_DATA_ERROR);
+				result.setErrorMsg("批次文件数据异常:" + errorDetails);
+				log.info("批量代付，响应结果：{}",result);
+				return result;
+			}
 		}
 		//如果提交到上游，需要等待十分钟后再过来查询
 		result.setResultCode(Constants.RESULT_CODE_UNKNOWN);

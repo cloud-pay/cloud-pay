@@ -27,6 +27,7 @@
     <result column="loan_benefit" property="loanBenefit" jdbcType="DECIMAL" />
     <result column="org_benefit" property="orgBenefit" jdbcType="DECIMAL" />
     <result column="loaning" property="loaning" jdbcType="INTEGER" />
+    <result column="plat_order_no" property="platOrderNo" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.TradeDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
@@ -50,6 +51,7 @@
     <result column="payer_name" property="payerName" jdbcType="VARCHAR" />
     <result column="payer_bank_card" property="payerBankCard" jdbcType="VARCHAR" />
     <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="plat_order_no" property="platOrderNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, order_no, merchant_id, trade_time, trade_amount, status, channel_id, loaning, return_code, 
@@ -258,6 +260,9 @@
       </if>
       <if test="batchNo != null" >
         batch_no = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="platOrderNo != null" >
+        plat_order_no = #{platOrderNo,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -622,7 +627,8 @@
        t.channel_id,
        t.payee_bank_card,
        t.payee_bank_code,
-       t.payee_name
+       t.payee_name,
+       t.plat_order_no
 	 from t_trade t
 	 where t.merchant_id = #{merchantId,jdbcType=INTEGER}
 	 and t.order_no = #{orderNo,jdbcType=VARCHAR}

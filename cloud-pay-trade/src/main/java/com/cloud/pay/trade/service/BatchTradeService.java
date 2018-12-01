@@ -41,6 +41,7 @@ import com.cloud.pay.channel.vo.BatchPayTradeResVO;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.utils.OSSUnit;
+import com.cloud.pay.common.utils.TableCodeUtils;
 import com.cloud.pay.merchant.entity.MerchantBankInfo;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
@@ -410,6 +411,12 @@ public class BatchTradeService {
 			if (errorDetails.length() == 0) {
 				//保存批量信息
 				batchTradeMapper.insert(batchTrade);
+				SimpleDateFormat sdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
+				String platBatchNo = TableCodeUtils.getTableCode(batchTrade.getId(), sdfTime.format(new Date()));
+				//生成平台订单号
+				batchTrade.setPlatBatchNo(platBatchNo);
+				batchTradeMapper.updateByPrimaryKeySelective(batchTrade);
+				errorDetails.append("platBatchNo:" + platBatchNo +"||");
 				// TODO 批量新增
 				jdbcTemplate.batchUpdate(TRADE_SQL, trades, trades.size(),
 						new ParameterizedPreparedStatementSetter<Trade>() {

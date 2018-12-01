@@ -13,6 +13,8 @@ public class PayResponseDTO implements Serializable {
 	private static final long serialVersionUID = -8783802253267903564L;
 
 	private String orderNo;
+	
+	private String platOrderNo;
 
 	private Integer status;
 
@@ -52,11 +54,21 @@ public class PayResponseDTO implements Serializable {
 		this.returnInfo = returnInfo;
 	}
 
+	public String getPlatOrderNo() {
+		return platOrderNo;
+	}
+
+	public void setPlatOrderNo(String platOrderNo) {
+		this.platOrderNo = platOrderNo;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PayResponseDTO [orderNo=");
 		builder.append(orderNo);
+		builder.append(", platOrderNo=");
+		builder.append(platOrderNo);
 		builder.append(", status=");
 		builder.append(status);
 		builder.append(", returnCode=");

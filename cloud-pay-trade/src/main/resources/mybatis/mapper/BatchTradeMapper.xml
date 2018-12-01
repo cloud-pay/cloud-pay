@@ -14,6 +14,7 @@
     <result column="auditor" property="auditor" jdbcType="VARCHAR" />
     <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
     <result column="audit_optinion" property="auditOptinion" jdbcType="VARCHAR" />
+    <result column="plat_batch_no" property="platBatchNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, batch_no, trade_time, total_amount, total_count, payer_merchant_id, status, creator, 
@@ -29,7 +30,7 @@
     delete from t_batch_trade
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.trade.entity.BatchTrade" >
+  <insert id="insert" parameterType="com.cloud.pay.trade.entity.BatchTrade"  useGeneratedKeys="true" keyProperty="id">
     insert into t_batch_trade (id, batch_no, trade_time, 
       total_amount, total_count, payer_merchant_id, 
       status, creator, create_time, 
@@ -145,6 +146,9 @@
       <if test="auditTime != null" >
         audit_time = #{auditTime,jdbcType=TIMESTAMP},
       </if>
+       <if test="platBatchNo != null" >
+        plat_batch_no = #{platBatchNo,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -177,6 +181,7 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="auditor" property="auditor" jdbcType="VARCHAR" />
     <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="plat_batch_no" property="platBatchNo" jdbcType="VARCHAR" />
   </resultMap>
   <select id="getBatchTradeList" resultMap="BaseResultDTO" >
 	    SELECT
@@ -230,7 +235,8 @@
 		t.creator,
 		t.create_time,
 		t.auditor,
-		t.audit_time
+		t.audit_time,
+		t.plat_batch_no
 	FROM
 		t_batch_trade t
 	where t.payer_merchant_id = #{merchantId,jdbcType=INTEGER}

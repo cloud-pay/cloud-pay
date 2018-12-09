@@ -3,6 +3,8 @@ package com.cloud.pay.trade.service;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import com.cloud.pay.merchant.mapper.MerchantPrepayJournalMapper;
 import com.cloud.pay.merchant.util.MD5;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.exception.TradeException;
+import com.cloud.pay.trade.util.ConvertUtil;
 
 @Service
 public class PrepayInfoService {
@@ -28,6 +31,40 @@ public class PrepayInfoService {
 
 	@Autowired
 	private MerchantPrepayJournalMapper merchantPrepayJournalMapper;
+	
+	/**
+	 * 根据商户ID锁定预缴户信息
+	 * @param merchantId
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional
+	public MerchantPrepayInfo lockByMerchantId(Integer merchantId) throws Exception {
+		MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(merchantId);
+		log.info("商户预缴户信息:{}", info);
+		String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
+				String.valueOf(info.getMerchantId()));
+		if (!digest.equals(info.getDigest())) {
+			log.warn("商户{}预缴户被篡改", merchantId);
+			throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
+		}
+		return info;
+	}
+	
+	/**
+	 * 锁定预缴户列表
+	 * @param merchantIds
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional
+	public Map<Integer, MerchantPrepayInfo> lockByMerchantIds(List<Integer> merchantIds) throws Exception {
+		List<MerchantPrepayInfo> infos = merchantPrepayInfoMapper.lockByMerchantIds(merchantIds);
+		Map<Integer, MerchantPrepayInfo> maps = ConvertUtil.convertMap(infos);
+		return maps;
+	}
+	
+	
 
 	/**
 	 * 保存预缴户资金流水
@@ -50,12 +87,6 @@ public class PrepayInfoService {
 	public void savePrepayInfoJournal(MerchantPrepayInfo prepayInfo, Integer journalType, BigDecimal amount,
 			Integer creditOrDebit, Integer tradeId) throws Exception {
 		log.info("机构预缴户信息:{}", prepayInfo);
-		String orgDigest = MD5.md5(String.valueOf(prepayInfo.getBalance()) + "|" + prepayInfo.getFreezeAmount(),
-				String.valueOf(prepayInfo.getMerchantId()));
-		if (!orgDigest.equals(prepayInfo.getDigest())) {
-			log.info("{}预缴户被篡改", prepayInfo.getMerchantId());
-			throw new TradeException("预缴户被篡改", TradeConstant.PREPAY_CHANGE);
-		}
 		if (TradeConstant.CREDIT == creditOrDebit) {
 			prepayInfo.setFreezeAmount(prepayInfo.getFreezeAmount().subtract(amount));
 			prepayInfo.setBalance(prepayInfo.getBalance().subtract(amount));
@@ -69,7 +100,7 @@ public class PrepayInfoService {
 		// 新增流水
 		MerchantPrepayJournal journal = new MerchantPrepayJournal();
 		journal.setAmount(amount);
-		journal.setType(TradeConstant.HADNING_FEE);
+		journal.setType(journalType);
 		journal.setBalance(prepayInfo.getBalance());
 		journal.setCreateTime(new Date());
 		journal.setDebit(creditOrDebit);
@@ -88,14 +119,7 @@ public class PrepayInfoService {
 	 */
 	@Transactional
 	public void freezePrepayInfo(Integer merchantId, BigDecimal freezeAmount) throws Exception {
-		MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(merchantId);
-		log.info("商户预缴户信息:{}", info);
-		String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
-				String.valueOf(info.getMerchantId()));
-		if (!digest.equals(info.getDigest())) {
-			log.warn("商户{}预缴户被篡改", merchantId);
-			throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
-		}
+		MerchantPrepayInfo info = lockByMerchantId(merchantId);
 		if (info.getBalance().subtract(info.getFreezeAmount()).compareTo(freezeAmount) < 0) {
 			log.warn("现有余额为:{}，小于提现金额：{}", info.getBalance().subtract(info.getFreezeAmount()), freezeAmount);
 			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()),
@@ -119,14 +143,7 @@ public class PrepayInfoService {
 	 */
 	@Transactional
 	public void unfreezePrepayInfo(Integer merchantId, BigDecimal unfreezeAmount) throws Exception {
-		MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(merchantId);
-		log.info("商户预缴户信息:{}", info);
-		String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
-				String.valueOf(info.getMerchantId()));
-		if (!digest.equals(info.getDigest())) {
-			log.warn("商户{}预缴户被篡改", info.getMerchantId());
-			throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
-		}
+		MerchantPrepayInfo info = lockByMerchantId(merchantId);
 		// 解冻金额
 		info.setFreezeAmount(info.getFreezeAmount().subtract(unfreezeAmount));
 		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
@@ -164,7 +181,7 @@ public class PrepayInfoService {
 		// 新增流水
 		MerchantPrepayJournal journal = new MerchantPrepayJournal();
 		journal.setAmount(amount);
-		journal.setType(TradeConstant.HADNING_FEE);
+		journal.setType(journalType);
 		journal.setBalance(prepayInfo.getBalance());
 		journal.setCreateTime(new Date());
 		journal.setDebit(creditOrDebit);

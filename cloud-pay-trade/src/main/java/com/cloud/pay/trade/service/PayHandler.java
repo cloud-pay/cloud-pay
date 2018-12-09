@@ -25,15 +25,12 @@ import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper;
-import com.cloud.pay.merchant.mapper.MerchantPrepayInfoMapper;
-import com.cloud.pay.merchant.util.MD5;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.entity.MerchantRouteConf;
 import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.exception.TradeException;
 import com.cloud.pay.trade.mapper.MerchantRouteConfMapper;
 import com.cloud.pay.trade.mapper.TradeMapper;
-import com.cloud.pay.trade.util.ConvertUtil;
 
 @Service
 public class PayHandler {
@@ -48,9 +45,6 @@ public class PayHandler {
 
 	@Autowired
 	private TradeMapper tradeMapper;
-	
-	@Autowired
-	private MerchantPrepayInfoMapper merchantPrepayInfoMapper;
 	
 	@Autowired
 	private MerchantBaseInfoMapper merchantBaseInfoMapper;
@@ -105,24 +99,8 @@ public class PayHandler {
 	 */
 	@Transactional
 	public void freezeMerchantFee(Trade trade) throws Exception {
-		MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(trade.getMerchantId());
-		log.info("商户预缴户信息:{}", info);
-		String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
-				String.valueOf(info.getMerchantId()));
-		if(!digest.equals(info.getDigest())) {
-			log.info("商户{}预缴户被篡改", trade.getMerchantId());
-			throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
-		}
-		if(info.getBalance().subtract(info.getFreezeAmount()).compareTo(trade.getTradeAmount().add(trade.getMerchantFeeAmount())) < 0) {
-			log.warn("现有余额为:{}，小于提现金额：{}", 
-					info.getBalance().subtract(info.getFreezeAmount()), trade.getTradeAmount());
-			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()), TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
-		}
-		info.setFreezeAmount(info.getFreezeAmount().add(trade.getMerchantFeeAmount()).add(trade.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_UP));
-		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(), 
-				String.valueOf(info.getMerchantId())));
-		log.info("冻结商户信息：{}", info);
-		merchantPrepayInfoMapper.updateByPrimaryKey(info);
+		BigDecimal freezeAmount = trade.getMerchantFeeAmount().add(trade.getTradeAmount());
+		prepayInfoService.freezePrepayInfo(trade.getMerchantId(), freezeAmount);
 	}
 	
 	/**
@@ -200,8 +178,7 @@ public class PayHandler {
 					merchantIds.add(conf.getLoaningOrgId());
 				}
 			}
-			List<MerchantPrepayInfo> infos = merchantPrepayInfoMapper.lockByMerchantIds(merchantIds);
-			Map<Integer, MerchantPrepayInfo> maps = ConvertUtil.convertMap(infos);
+			Map<Integer, MerchantPrepayInfo> maps = prepayInfoService.lockByMerchantIds(merchantIds);
 			/** 商户资金变动 */
 			prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.TRADE_FEE, trade.getTradeAmount(), TradeConstant.CREDIT, trade.getId());			
 			/** 商户手续费资金变动 */
@@ -221,19 +198,8 @@ public class PayHandler {
 			prepayInfoService.savePrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
 			tradeMapper.updateStatus(trade);
 		} else if(TradeConstant.STATUS_FAIL == trade.getStatus()) {
-			MerchantPrepayInfo info = merchantPrepayInfoMapper.lockByMerchantId(trade.getMerchantId());
-			log.info("商户预缴户信息:{}", info);
-			String digest = MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount() , 
-					String.valueOf(info.getMerchantId()));
-			if(!digest.equals(info.getDigest())) {
-				log.info("商户{}预缴户被篡改", trade.getMerchantId());
-				throw new TradeException("商户预缴户被篡改", TradeConstant.PREPAY_CHANGE);
-			}
-			info.setFreezeAmount(info.getFreezeAmount().subtract(trade.getMerchantFeeAmount()).subtract(trade.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_UP));
-			info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(), 
-					String.valueOf(info.getMerchantId())));
-			log.info("回滚冻结金额,{}", info);
-			merchantPrepayInfoMapper.updateByPrimaryKey(info);
+			BigDecimal unfreezeAmount = trade.getMerchantFeeAmount().add(trade.getTradeAmount());
+			prepayInfoService.unfreezePrepayInfo(trade.getMerchantId(), unfreezeAmount);
 			tradeMapper.updateStatus(trade);
 		} 
 		
@@ -261,7 +227,7 @@ public class PayHandler {
 		} else if(MerchantConstant.PER == feeInfo.getLoanFeeType()) {
 			loanFee = feeInfo.getLoanFee();
 		}
-		return new BigDecimal[]{payFee, loanFee};
+		return new BigDecimal[]{payFee.setScale(2,BigDecimal.ROUND_HALF_UP), loanFee.setScale(2,BigDecimal.ROUND_HALF_UP)};
 	}
 	
 	/**

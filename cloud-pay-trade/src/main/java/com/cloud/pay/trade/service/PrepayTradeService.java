@@ -33,6 +33,9 @@ public class PrepayTradeService {
 	
 	@Autowired
 	private MerchantPrepayJournalMapper merchantPrepayJournalMapper;
+	
+	@Autowired
+	private PrepayInfoService prepayInfoService;
 
 	/**
 	 * 交易列表查询
@@ -52,14 +55,7 @@ public class PrepayTradeService {
 		trade.setTradeTime(new Date());
 		trade.setStatus(TradeConstant.STATUS_SUCCESS);
 		prepayTradeMapper.insert(trade);
-		MerchantPrepayInfo merchantPrepayInfo = merchantPrepayInfoMapper.lockByMerchantId(trade.getMerchantId());
-		log.info("锁定商户预缴户信息:{}", merchantPrepayInfo);
-		String digest =  MD5.md5(String.valueOf(merchantPrepayInfo.getBalance()) + "|" + merchantPrepayInfo.getFreezeAmount() , 
-				String.valueOf(merchantPrepayInfo.getMerchantId()));
-		if(!digest.equals(merchantPrepayInfo.getDigest())) {
-			log.warn("商户预缴户摘要不匹配:{}", merchantPrepayInfo.getMerchantId());
-			throw new TradeException("预缴户摘要不匹配", null);
-		}
+		MerchantPrepayInfo merchantPrepayInfo = prepayInfoService.lockByMerchantId(trade.getMerchantId());
 		MerchantPrepayJournal journal = new MerchantPrepayJournal();
 		journal.setAmount(trade.getAmount());
 		journal.setType(TradeConstant.TRADE_FEE);

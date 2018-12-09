@@ -104,7 +104,8 @@ CREATE TABLE `sys_user` (
   `status` enum('unlock','lock') DEFAULT 'unlock',
   `sessionId` varchar(50) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `UQ_USER_NAME` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------

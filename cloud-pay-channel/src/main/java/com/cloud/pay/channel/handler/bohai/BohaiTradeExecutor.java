@@ -66,6 +66,12 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 		return null;
 	}
 	
+	/**
+	 * 上传文件接口
+	 * @param folder4Upload
+	 * @param uploadFileName
+	 * @return
+	 */
 	protected Map<String,String> issuePacFile(String folder4Upload,String uploadFileName) {
 		byte[] sndCont  = formatUpload(folder4Upload, uploadFileName, instId, certId);
 		Map rcvMap = null;
@@ -81,6 +87,7 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 		}
 		return rcvMap;
 	}
+	
 	
 	
 	private byte[] formatUpload(String folder, String fileName,

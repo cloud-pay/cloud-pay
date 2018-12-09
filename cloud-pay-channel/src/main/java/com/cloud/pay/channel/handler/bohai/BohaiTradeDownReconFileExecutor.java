@@ -2,6 +2,7 @@ package com.cloud.pay.channel.handler.bohai;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloud.pay.channel.handler.ITradePayExecutor;
@@ -17,11 +18,14 @@ public class BohaiTradeDownReconFileExecutor
 	
 	private Logger log = LoggerFactory.getLogger(BohaiTradeDownReconFileExecutor.class);
 	
+	@Value("${cloud.bohai.pay.instId}")
+	private String instId;
+	
 	@Override
 	public ReconDownFileResVO execute(ReconDownFileReqVO reqVO) {
 		ReconDownFileResVO resVO = null;
-		String fileName = "DCHK" + "12345689"+ reqVO.getReconDate();
-			
+		String fileName = "DCHK" + instId+ reqVO.getReconDate();
+		
 		return resVO;
 	}
   

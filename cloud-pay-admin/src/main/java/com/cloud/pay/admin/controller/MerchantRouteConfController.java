@@ -22,9 +22,9 @@ import com.cloud.pay.admin.entity.User;
 import com.cloud.pay.admin.util.Jurisdiction;
 import com.cloud.pay.admin.util.ParameterMap;
 import com.cloud.pay.common.service.ChannelService;
+import com.cloud.pay.merchant.entity.MerchantRouteConf;
 import com.cloud.pay.merchant.service.MerchantService;
 import com.cloud.pay.trade.constant.MerchantRouteConstant;
-import com.cloud.pay.trade.entity.MerchantRouteConf;
 import com.cloud.pay.trade.service.MerchantRouteConfService;
 
 @Controller

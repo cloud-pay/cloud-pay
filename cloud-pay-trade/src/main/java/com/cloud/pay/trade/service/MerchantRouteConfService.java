@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cloud.pay.trade.dto.MerchantRouteDTO;
-import com.cloud.pay.trade.entity.MerchantRouteConf;
-import com.cloud.pay.trade.mapper.MerchantRouteConfMapper;
+import com.cloud.pay.merchant.dto.MerchantRouteDTO;
+import com.cloud.pay.merchant.entity.MerchantRouteConf;
+import com.cloud.pay.merchant.mapper.MerchantRouteConfMapper;
 
 @Service
 public class MerchantRouteConfService {

@@ -23,13 +23,13 @@ import com.cloud.pay.merchant.constant.MerchantConstant;
 import com.cloud.pay.merchant.entity.MerchantBaseInfo;
 import com.cloud.pay.merchant.entity.MerchantFeeInfo;
 import com.cloud.pay.merchant.entity.MerchantPrepayInfo;
+import com.cloud.pay.merchant.entity.MerchantRouteConf;
 import com.cloud.pay.merchant.mapper.MerchantBaseInfoMapper;
 import com.cloud.pay.merchant.mapper.MerchantFeeInfoMapper;
+import com.cloud.pay.merchant.mapper.MerchantRouteConfMapper;
 import com.cloud.pay.trade.constant.TradeConstant;
-import com.cloud.pay.trade.entity.MerchantRouteConf;
 import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.exception.TradeException;
-import com.cloud.pay.trade.mapper.MerchantRouteConfMapper;
 import com.cloud.pay.trade.mapper.TradeMapper;
 
 @Service

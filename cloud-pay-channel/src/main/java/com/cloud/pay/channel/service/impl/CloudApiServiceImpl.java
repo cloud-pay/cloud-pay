@@ -41,7 +41,9 @@ import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.common.utils.DateUtil;
 import com.cloud.pay.common.utils.FileUtils;
 import com.cloud.pay.merchant.entity.MerchantChannel;
+import com.cloud.pay.merchant.entity.MerchantRouteConf;
 import com.cloud.pay.merchant.mapper.MerchantChannelMapper;
+import com.cloud.pay.merchant.mapper.MerchantRouteConfMapper;
 
 /**
  * 渠道接口实现类
@@ -62,7 +64,8 @@ public class CloudApiServiceImpl implements ICloudApiService {
 	private TradePayTypeHandlerFactory tradePayTypeHandlerFactory; 
 	
 	@Autowired
-	private MerchantChannelMapper merchantChannelMapper;
+	private MerchantRouteConfMapper merchantRouteConfMapper;
+//	private MerchantChannelMapper merchantChannelMapper;
 	
 	@Autowired
 	private SysConfigMapper sysConfigMapper;
@@ -80,14 +83,14 @@ public class CloudApiServiceImpl implements ICloudApiService {
 				return resVO;
 			}
 			//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
-			List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(tradeReq.getMerchantId());
-		    if(null == merchantChannels || merchantChannels.size() <=0 ) {
+			List<MerchantRouteConf> merchantRouteConfs = merchantRouteConfMapper.selectByMerchantId(tradeReq.getMerchantId());
+		    if(null == merchantRouteConfs || merchantRouteConfs.size() <=0 ) {
 		    	log.error("商户未配置渠道信息");
 				resVO = new PayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
 				return resVO;
 		    }
-		    MerchantChannel merchantChannel = merchantChannels.get(0);
-			ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradePayHandler(ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
+		    MerchantRouteConf merchantRouteConf = merchantRouteConfs.get(0);
+			ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradePayHandler(ChannelType.getChannelByChannelId(merchantRouteConf.getChannelId()));
 			resVO = (PayTradeResVO) tradePayExecutor.execute(tradeReq);
 			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		}catch(Exception e){
@@ -137,15 +140,15 @@ public class CloudApiServiceImpl implements ICloudApiService {
 				return resVO;
 			}
 			//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
-		    List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(reqVO.getMerchantId());
-		    if(null == merchantChannels || merchantChannels.size() <=0 ) {
+		    List<MerchantRouteConf> merchantRouteConfs = merchantRouteConfMapper.selectByMerchantId(reqVO.getMerchantId());
+		    if(null == merchantRouteConfs || merchantRouteConfs.size() <=0 ) {
 		    	log.error("商户未配置渠道信息");
 				resVO = new PayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
 				return resVO;
 		    }
-		    MerchantChannel merchantChannel = merchantChannels.get(0);
+		    MerchantRouteConf merchantRouteConf = merchantRouteConfs.get(0);
 			ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradeUnionPayHandler(
-					ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
+					ChannelType.getChannelByChannelId(merchantRouteConf.getChannelId()));
 			resVO = (PayTradeResVO) tradePayExecutor.execute(reqVO);
 			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		}catch(Exception e){
@@ -182,14 +185,14 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			return resVO;
 		}
 		//根据请求信息判断走那条渠道，目前只有一条渠道，不根据路由信息制定
-	    List<MerchantChannel> merchantChannels = merchantChannelMapper.selectByMerchantId(reqVO.getMerchantId());
-		if(null == merchantChannels || merchantChannels.size() <=0 ) {
+	    List<MerchantRouteConf> merchantRouteConfs = merchantRouteConfMapper.selectByMerchantId(reqVO.getMerchantId());
+		if(null == merchantRouteConfs || merchantRouteConfs.size() <=0 ) {
 			log.error("商户未配置渠道信息");
 			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_0003,"商户未配置渠道信息");
 			return resVO;
 		}
-		MerchantChannel merchantChannel = merchantChannels.get(0);
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTraeHandler(ChannelType.getChannelByChannelId(merchantChannel.getChannelId()));
+		MerchantRouteConf merchantRouteConf = merchantRouteConfs.get(0);
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTraeHandler(ChannelType.getChannelByChannelId(merchantRouteConf.getChannelId()));
 		
 		//根据批次号生成批量文件
 		//文件名BD机构标识号YYYYMMDD4至8位的序号

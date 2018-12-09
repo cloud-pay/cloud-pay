@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cloud.pay.trade.mapper.MerchantRouteConfMapper" >
-  <resultMap id="BaseResultMap" type="com.cloud.pay.trade.entity.MerchantRouteConf" >
+<mapper namespace="com.cloud.pay.merchant.mapper.MerchantRouteConfMapper" >
+  <resultMap id="BaseResultMap" type="com.cloud.pay.merchant.entity.MerchantRouteConf" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="channel_id" property="channelId" jdbcType="INTEGER" />
@@ -29,7 +29,7 @@
     delete from t_merchant_route_conf
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.pay.trade.entity.MerchantRouteConf" >
+  <insert id="insert" parameterType="com.cloud.pay.merchant.entity.MerchantRouteConf" >
     insert into t_merchant_route_conf (id, type, channel_id, merchant_id, 
       loaning, loaning_org_id, loaning_amount, 
       status, creator, create_time, 
@@ -39,7 +39,7 @@
       #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifer,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.cloud.pay.trade.entity.MerchantRouteConf" >
+  <insert id="insertSelective" parameterType="com.cloud.pay.merchant.entity.MerchantRouteConf" >
     insert into t_merchant_route_conf
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -118,7 +118,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.trade.entity.MerchantRouteConf" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.cloud.pay.merchant.entity.MerchantRouteConf" >
     update t_merchant_route_conf
     <set >
       <if test="type != null" >
@@ -157,7 +157,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.trade.entity.MerchantRouteConf" >
+  <update id="updateByPrimaryKey" parameterType="com.cloud.pay.merchant.entity.MerchantRouteConf" >
     update t_merchant_route_conf
     set type = #{type,jdbcType=INTEGER},
       channel_id = #{channelId,jdbcType=INTEGER},
@@ -173,7 +173,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <resultMap id="BaseResultDTO" type="com.cloud.pay.trade.dto.MerchantRouteDTO" >
+  <resultMap id="BaseResultDTO" type="com.cloud.pay.merchant.dto.MerchantRouteDTO" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="channel_id" property="channelId" jdbcType="INTEGER" />
@@ -237,5 +237,12 @@
     from t_merchant_route_conf
     where channel_id = #{channelId,jdbcType=INTEGER}
       and merchant_id = #{merchantId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByMerchantId" resultMap="BaseResultMap">
+      select 
+    <include refid="Base_Column_List" />
+    from t_merchant_route_conf
+    where merchant_id = #{merchantId,jdbcType=INTEGER}
   </select>
 </mapper>

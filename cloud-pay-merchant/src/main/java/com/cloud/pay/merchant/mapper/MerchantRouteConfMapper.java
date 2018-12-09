@@ -1,12 +1,13 @@
-package com.cloud.pay.trade.mapper;
+package com.cloud.pay.merchant.mapper;
 
 import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.cloud.pay.trade.dto.MerchantRouteDTO;
-import com.cloud.pay.trade.entity.MerchantRouteConf;
+import com.cloud.pay.merchant.dto.MerchantRouteDTO;
+import com.cloud.pay.merchant.entity.MerchantRouteConf;
+
 
 public interface MerchantRouteConfMapper {
 
@@ -37,4 +38,11 @@ public interface MerchantRouteConfMapper {
 	 */
 	MerchantRouteConf selectByMerchantIdAndChannelId(@Param("merchantId") Integer merchantId,
 			@Param("channelId") Integer channelId);
+	
+	/**
+	 * 根据商户ID查询路由信息
+	 * @param merchantId
+	 * @return
+	 */
+	List<MerchantRouteConf> selectByMerchantId(Integer merchantId);
 }

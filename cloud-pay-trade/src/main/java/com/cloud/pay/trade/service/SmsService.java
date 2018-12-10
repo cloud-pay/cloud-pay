@@ -39,7 +39,7 @@ public class SmsService {
 	private SysConfigMapper sysConfigMapper;
 	
 	private synchronized void initClient(){
-		if(acsClient != null) {
+		if(acsClient == null) {
 			// 可自助调整超时时间
 			System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
 			System.setProperty("sun.net.client.defaultReadTimeout", "10000");
@@ -65,7 +65,7 @@ public class SmsService {
 		// 必填:待发送手机号
 		request.setPhoneNumbers(phoneNumber);
 		// 必填:短信签名-可在短信控制台中找到
-		SysConfig config = sysConfigMapper.selectByPrimaryKey("accessKeyId");
+		SysConfig config = sysConfigMapper.selectByPrimaryKey("signName");
 		request.setSignName(config.getSysValue());
 		// 必填:短信模板-可在短信控制台中找到
 		request.setTemplateCode("SMS_147200645");
@@ -73,7 +73,7 @@ public class SmsService {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("code", smsCode);
 		request.setTemplateParam(JSON.toJSONString(map));
-		if(acsClient != null) {
+		if(acsClient == null) {
 			initClient();
 		}
 
@@ -81,6 +81,7 @@ public class SmsService {
 		SendSmsResponse sendSmsResponse;
 		try {
 			sendSmsResponse = acsClient.getAcsResponse(request);
+			log.info("{}", sendSmsResponse);
 		} catch (ClientException e) {
 			log.warn("发送短信验证码异常,{}", e);
 			throw new TradeException(e.getErrCode(), e.getLocalizedMessage());
@@ -103,7 +104,7 @@ public class SmsService {
 		request.setPageSize(10L);
 		// 必填-当前页码从1开始计数
 		request.setCurrentPage(1L);
-		if(acsClient != null) {
+		if(acsClient == null) {
 			initClient();
 		}
 		// hint 此处可能会抛出异常，注意catch

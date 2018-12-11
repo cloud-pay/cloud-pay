@@ -232,4 +232,29 @@ public class MerchantPrepayJournal {
 		this.type = type;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MerchantPrepayJournal [id=");
+		builder.append(id);
+		builder.append(", tradeId=");
+		builder.append(tradeId);
+		builder.append(", prepayId=");
+		builder.append(prepayId);
+		builder.append(", amount=");
+		builder.append(amount);
+		builder.append(", balance=");
+		builder.append(balance);
+		builder.append(", createTime=");
+		builder.append(createTime);
+		builder.append(", debit=");
+		builder.append(debit);
+		builder.append(", type=");
+		builder.append(type);
+		builder.append(", prepayTradeId=");
+		builder.append(prepayTradeId);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

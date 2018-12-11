@@ -258,4 +258,28 @@ public class PaySms {
     public void setVerifyTime(Date verifyTime) {
         this.verifyTime = verifyTime;
     }
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PaySms [id=");
+		builder.append(id);
+		builder.append(", batchNo=");
+		builder.append(batchNo);
+		builder.append(", smsCode=");
+		builder.append(smsCode);
+		builder.append(", smsBizId=");
+		builder.append(smsBizId);
+		builder.append(", createTime=");
+		builder.append(createTime);
+		builder.append(", verfiyResult=");
+		builder.append(verfiyResult);
+		builder.append(", verifyTimes=");
+		builder.append(verifyTimes);
+		builder.append(", verifyTime=");
+		builder.append(verifyTime);
+		builder.append("]");
+		return builder.toString();
+	}
+    
 }

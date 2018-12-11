@@ -382,6 +382,7 @@ public class BatchTradeService {
 	public void audit(BatchTrade batchTrade, String smsCode) throws Exception {
 		if(batchTrade.getStatus() == 2) {
 			BigDecimal total = batchTradeHandler.audit(batchTrade, smsCode);
+			batchTrade = batchTradeMapper.selectByPrimaryKey(batchTrade.getId());
 			BatchPayTradeResVO resVO = batchTradeHandler.invokeBatchPay(batchTrade);
 			batchTradeHandler.dealBatchPayTradeRes(resVO, batchTrade.getBatchNo(), batchTrade.getPayerMerchantId(), total);
 		} else {

@@ -92,6 +92,7 @@ public class BatchTradeHandler {
 	 */
 	@Transactional
 	public BigDecimal audit(BatchTrade batchTrade, String smsCode) throws Exception {
+		log.info("审核信息:{}", batchTrade);
 		batchTradeMapper.audit(batchTrade);
 		batchTrade = batchTradeMapper.selectByPrimaryKey(batchTrade.getId());
 			//验证短信验证码

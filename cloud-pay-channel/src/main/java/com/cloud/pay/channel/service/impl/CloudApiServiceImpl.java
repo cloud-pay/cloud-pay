@@ -115,7 +115,11 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			return result;
 		}
 		try{
-			ITradePayExecutor tradePayExecutor = 	tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelId(tradeReq.getChannelId()));
+			Integer channelId = tradeReq.getChannelId();
+			if(null == tradeReq.getChannelId()) {
+				channelId = 1;
+			}
+			ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getTradePayQueryHandler(ChannelType.getChannelByChannelId(channelId));
 			result = (PayTradeQueryResVO) tradePayExecutor.execute(tradeReq);
 		}catch(Exception e) {
 			log.error("系统错误:{}",e.getMessage());

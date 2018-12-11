@@ -52,7 +52,7 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator;
 			}
 			String fileSHA1 = getFileSHA(filePath, reqVO.getFileName());
-			Map<String,String> map= issuePacFile(filePath, reqVO.getFileName());
+			Map<String,String> map= uploadFile(filePath, reqVO.getFileName());
 			log.info("渤海批量代付-上传文件：{}",map);
 			if(!"0000".equals(map.get("rspCd"))) {
 				resVO = new BatchPayTradeResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,

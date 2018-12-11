@@ -15,7 +15,7 @@ public class PayTradeQueryReqVO extends BaseTradeReqVO {
 
 	private static final long serialVersionUID = -8285637793404662543L;
 
-	@NotNull(message = "交易渠道不能为空")
+//	@NotNull(message = "交易渠道不能为空")
 	private Integer channelId; //交易渠道
 	
 	@NotBlank(message = "交易时间不能为空")

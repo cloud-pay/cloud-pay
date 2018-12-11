@@ -159,6 +159,7 @@ public class TradeService {
 			Trade trade = new Trade();
 			trade.setMerchantId(merchantId);
 			trade.setOrderNo(orderNo);
+			trade.setPlatOrderNo(tradeDTO.getPlatOrderNo());
 			trade.setChannelId(tradeDTO.getChannelId());
 			trade.setTradeTime(tradeDTO.getTradeTime());
 			PayTradeQueryResVO resVO = payHandler.invokeQuery(trade);

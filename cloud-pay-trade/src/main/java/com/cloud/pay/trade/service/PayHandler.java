@@ -267,7 +267,7 @@ public class PayHandler {
 		PayTradeQueryReqVO tradeReq = new PayTradeQueryReqVO();
 		
 		tradeReq.setMerchantId(trade.getMerchantId());
-		tradeReq.setOrderNo(trade.getOrderNo());
+		tradeReq.setOrderNo(trade.getPlatOrderNo());
 		tradeReq.setChannelId(trade.getChannelId());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		tradeReq.setTradeDate(sdf.format(trade.getTradeTime()));

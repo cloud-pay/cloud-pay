@@ -84,4 +84,58 @@ public class CloudPayApiController {
 		 log.info("云支付平台，API接口响应参数:{}",result);
 		 return result;
 	}
+	
+	@RequestMapping(value = "/query", method = RequestMethod.POST)
+	public CloudApiBaseResult handleQuery(@RequestBody String requestContent) {
+		 log.info("云支付平台，查询接口，请求参数：{}",requestContent);
+		 CloudApiBaseResult result = null;
+		 if(StringUtils.isBlank(requestContent)) {
+			 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,"请求报文为空");
+			 return result;
+		 }
+		 JSONObject jsonObject = null;
+		 try {
+	         jsonObject = JSON.parseObject(requestContent);
+	     } catch (Exception e) {
+	    	 log.error("云支付平台,请求参数转换异常:{}",e);
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,"请求报文格式错误");
+	    	 return result;
+	     }
+		 //获取请求接口名称
+	     String tradeType = jsonObject.getString("tradeType");
+	     if (StringUtils.isBlank(tradeType)) {
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,"请求报文格式错误,缺少字段(tradeType)");
+	    	 return result;
+	     }
+	     String mchNo = jsonObject.getString("mchCode");
+	     if (StringUtils.isBlank(mchNo)) {
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,"请求报文格式错误,缺少字段(mchCode)");
+	    	 return result;
+	     }
+	     try {
+	    	 //获取处理类
+	    	 ICloudPayApiHandler Handler = tradeApiHandlerFactory.getApiHandler(tradeType);
+	    	 //获取请求参数类
+	    	 Class reqParamClazz =  Handler.getReqParamType();
+	    	 //转换实体类，并验签
+	    	 Object reqParam = cloudApiHelper.reqContent2ReqParamWithValidSign(requestContent, reqParamClazz);
+	    	 
+	    	 result = Handler.handle(reqParam);
+	    	 result.setSign(cloudApiHelper.createSign(mchNo, result));
+	     }catch(CloudApiException e) {
+	    	 log.error("云支付平台，业务交易异常：{}",e);
+	    	 if(e instanceof CloudApiBusinessException) {
+	    		 //业务类错误，需要对结果加签
+	    		 result = new CloudApiBaseResult(Constants.RESULT_CODE_FAIL,e.getErrorCode(),e.getMessage());
+	    		 result.setSign(cloudApiHelper.createSign(mchNo, result));
+	    		 return result;
+	    	 }
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,Constants.RESULT_CODE_FAIL,e.getErrorCode(),e.getMessage());
+	     }catch(Exception e) {
+	    	 log.error("云支付平台，业务交易异常：{}",e);
+	    	 result = new CloudApiBaseResult(Constants.RETURN_CODE_FAIL,Constants.RESULT_CODE_FAIL,ApiErrorCode.SYSTEM_ERROR,"系统错误");
+	     }
+		 log.info("云支付平台，API接口响应参数:{}",result);
+		 return result;
+	}
 }

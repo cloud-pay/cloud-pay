@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.trade.constant.TradeConstant;
 import com.cloud.pay.trade.dto.FeeStatDTO;
@@ -53,24 +54,24 @@ public class TradeService {
 			resDTO.setReturnInfo(trade.getReturnInfo());
 			resDTO.setReturnCode(trade.getReturnCode());
 		} catch(TradeException e) {
-			resDTO.setStatus(TradeConstant.STATUS_FAIL);
+			resDTO.setStatus(TradeConstant.STATUS_PROCESSING);
 			resDTO.setReturnInfo(e.getMessage());
 			resDTO.setReturnCode(e.getExCode());
-			trade.setStatus(TradeConstant.STATUS_FAIL); 
+			trade.setStatus(TradeConstant.STATUS_PROCESSING); 
 			trade.setReturnCode(e.getExCode());
 			trade.setReturnInfo(e.getMessage());
 			trade.setTradeConfirmTime(new Date());
 			tradeMapper.updateStatus(trade);
 		} catch(Exception e) {
 			log.error("单笔代付异常：{}", e);
-			resDTO.setStatus(TradeConstant.STATUS_FAIL);
+			resDTO.setStatus(TradeConstant.STATUS_PROCESSING);
 			resDTO.setReturnInfo("系统内部异常");
 			resDTO.setReturnCode(TradeConstant.SYS_EXCEPTION);
-			trade.setStatus(TradeConstant.STATUS_FAIL); 
+			trade.setStatus(TradeConstant.STATUS_PROCESSING); 
 			trade.setReturnCode(TradeConstant.SYS_EXCEPTION);
 			trade.setReturnInfo(e.getMessage());
 			trade.setTradeConfirmTime(new Date());
-			tradeMapper.updateStatus(trade);
+//			tradeMapper.updateStatus(trade);
 		}
 		return resDTO;
 	}
@@ -148,6 +149,40 @@ public class TradeService {
 	 * @return
 	 */
 	public TradeDTO selectTradeByMerIdAndOrderNo(Integer merchantId,String orderNo) {
-		 return tradeMapper.selectTradeByMerIdAndOrderNo(merchantId, orderNo);
+		TradeDTO tradeDTO = tradeMapper.selectTradeByMerIdAndOrderNo(merchantId, orderNo);
+		log.info("商户ID[{}],订单号[{}]查询结果为：{}", merchantId, orderNo, tradeDTO);
+		if(TradeConstant.STATUS_SUCCESS == tradeDTO.getStatus()
+			||TradeConstant.STATUS_FAIL == tradeDTO.getStatus()) {
+			return tradeDTO;
+		} else {
+			//查询渠道
+			Trade trade = new Trade();
+			trade.setMerchantId(merchantId);
+			trade.setOrderNo(orderNo);
+			trade.setChannelId(tradeDTO.getChannelId());
+			trade.setTradeTime(tradeDTO.getTradeTime());
+			PayTradeQueryResVO resVO = payHandler.invokeQuery(trade);
+			//TODO 添加channelID，或者在做交易时已经把channelID添加
+			//最好查询。交易都返回同一个DTO
+			PayTradeResVO payVO = new PayTradeResVO(resVO.getErrorCode(), resVO.getErrorMessage());
+			payVO.setStatus(resVO.getStatus());
+			payVO.setAccountDate(resVO.getAccountDate());
+			payVO.setRespCode(resVO.getRespCode());
+			payVO.setRespMsg(resVO.getRespMsg());
+			payVO.setMerchantId(merchantId);
+			payVO.setOrderNo(orderNo);
+			try {
+				payHandler.updateTradeStatus(trade, payVO);
+				tradeDTO.setStatus(trade.getStatus());
+				tradeDTO.setReturnInfo(trade.getReturnInfo());
+				tradeDTO.setReturnCode(trade.getReturnCode());
+			} catch (Exception e) {
+				log.warn("商户ID[{}],订单号[{}]查询异常", merchantId, orderNo, e);
+				tradeDTO.setStatus(TradeConstant.STATUS_PROCESSING); 
+				tradeDTO.setReturnCode(TradeConstant.SYS_EXCEPTION);
+				tradeDTO.setReturnInfo(e.getMessage());
+			}
+			return tradeDTO;
+		}
 	}
 }

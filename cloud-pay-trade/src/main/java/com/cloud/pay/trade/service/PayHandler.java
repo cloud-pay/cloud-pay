@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cloud.pay.channel.service.ICloudApiService;
+import com.cloud.pay.channel.vo.PayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.PayTradeQueryResVO;
 import com.cloud.pay.channel.vo.PayTradeResVO;
 import com.cloud.pay.channel.vo.PayUnionTradeReqVO;
 import com.cloud.pay.common.utils.TableCodeUtils;
@@ -213,6 +215,7 @@ public class PayHandler {
 	 * @param tradeAmount
 	 * @return
 	 */
+	@Transactional
 	public BigDecimal[] getFee(Integer merchantId, BigDecimal tradeAmount) {
 		MerchantFeeInfo feeInfo = merchantFeeInfoMapper.selectByMerchantId(merchantId);
 		BigDecimal payFee = BigDecimal.ZERO;
@@ -239,6 +242,7 @@ public class PayHandler {
 	 * @param loaning
 	 * @return
 	 */
+	@Transactional
 	public BigDecimal getOrgFee(Integer merchantId, BigDecimal tradeAmount) {
 		BigDecimal fee = BigDecimal.ZERO;
 		MerchantBaseInfo baseInfo =  merchantBaseInfoMapper.selectByPrimaryKey(merchantId);
@@ -253,5 +257,23 @@ public class PayHandler {
 			}
 		}
 		return fee;
+	}
+	
+	/**
+	 * 调用渠道单笔查询
+	 * @author dbnaxlc
+	 */
+	public PayTradeQueryResVO invokeQuery(Trade trade) {
+		PayTradeQueryReqVO tradeReq = new PayTradeQueryReqVO();
+		
+		tradeReq.setMerchantId(trade.getMerchantId());
+		tradeReq.setOrderNo(trade.getOrderNo());
+		tradeReq.setChannelId(trade.getChannelId());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		tradeReq.setTradeDate(sdf.format(trade.getTradeTime()));
+		log.info("调用渠道查询入参：{}", tradeReq);
+		PayTradeQueryResVO resVO = payService.queryPay(tradeReq);
+		log.info("订单号{}调用渠道查询返回结果{}", trade.getOrderNo(), resVO);
+		return resVO;
 	}
 }

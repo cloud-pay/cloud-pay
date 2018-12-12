@@ -86,25 +86,26 @@ public class BohaiReconService implements IReconServiceHandler {
 		    	reconExceptionBohaiService.updatePostPoneHis();
 		    	reconExceptionBohaiService.deletePostPoneHis();
 		    }
-			//更新渠道存在但交易表中不存在的记录
+		    log.info("更新渠道存在但交易表中不存在的记录");
 			int shortCount = reconChannelBohaiService.updateShortUnflat(reconDate);
 			if(shortCount > 0) {
 				log.info("更新渠道记录中存在但本地交易记录表中不存在的记录，生成对账异常记录，记录异常数据类型为：短款");
 				reconExceptionBohaiService.insertShortPlat(reconDate,recon.getChannelId(),recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_SHORT.getTypeCode());
 			}
+			log.info("更新交易订单中存在渠道中不存在的记录");
 			List<TradeDTO> postPoneTrade = tradeMapper.selectLongRecord(reconDate);
 			if(null != postPoneTrade && postPoneTrade.size() > 0) {
 				log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
 				reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(postPoneTrade, recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode(),"延期对账"));
 			}
-			
+			log.info("更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败");
 			//step4 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
 	        List<TradeDTO> exceptionTrade = tradeMapper.selectExceptionRecord(reconDate);
 	        if(null != exceptionTrade && exceptionTrade.size() > 0 ) {
 	        	log.info("更新不平帐的记录");
 	        	reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(exceptionTrade, recon.getId(), ReconExceptionTypeEnum.EXCEPTION_TYPE_MISMATH.getTypeCode(),"数据不匹配"));
 	        }
-			//step7 检查异常表中是否存在该渠道的对账日期的异常记录，并汇总
+	        log.info("检查异常表中是否存在该渠道的对账日期的异常记录，并汇总");
 		    int tradeCount = 100;
 		    List<ReconExceptionBohaiDTO> exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId(),recon.getId());
 		    int exceptionC = 0;
@@ -120,11 +121,12 @@ public class BohaiReconService implements IReconServiceHandler {
 		    	if(exceptionC > 0) {
 		    		recon.setReconStatus(2);
 		    		recon.setFailReson("存在异常数据");
-		    	}else {
-		    		recon.setReconStatus(1);
 		    	}
 		    	recon.setExceptionTotal(exceptionC + postPoneC);
-		    }
+		    }else {
+		    	recon.setExceptionTotal(0);
+	    		recon.setReconStatus(1);
+	    	}
 		    reconMapper.updateByPrimaryKey(recon);
 		}catch(Exception e) {
 			log.error("对账异常：{}",e);

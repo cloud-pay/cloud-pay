@@ -455,7 +455,7 @@
 		set t.recon_status = b.TRADE_STATUS,
 		    b.RECON_STATUS = 1,
 		    t.recon_date = SYSDATE()
-		where t.order_no = b.TRADE_ORDER_NO
+		where t.plat_order_no = b.TRADE_ORDER_NO
 		AND t.payee_bank_card = b.PAYEE_ACCOUNT
 		AND t.payee_name = b.PAYEE_NAME
 		AND t.trade_amount = b.TRADE_AMOUNT
@@ -466,7 +466,7 @@
   <update id='updateShortUnflat'>
 	  update  t_recon_channel_bohai b
 	  set b.RECON_STATUS = 2
-	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.order_no) 
+	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.plat_order_no) 
 	and b.RECON_STATUS = 0
   </update>
  

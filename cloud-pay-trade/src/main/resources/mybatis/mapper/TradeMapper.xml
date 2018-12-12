@@ -323,6 +323,7 @@
   <select id="selectLongRecord" resultMap="BaseResultDTO" parameterType="java.lang.String">   
        select t.id,
        t.order_no,
+       t.plat_order_no,
        t.merchant_id,
        t.trade_time,
        t.trade_amount,
@@ -335,7 +336,7 @@
        i.bank_card_no payer_bank_card
        from t_trade t,t_merchant_bank_info i where
        t.payer_id = i.id
-	     AND NOT EXISTS  (select * from t_recon_channel_bohai b where t.order_no = b.trade_order_no)
+	     AND NOT EXISTS  (select * from t_recon_channel_bohai b where t.plat_order_no = b.trade_order_no)
 	     AND t.`status` = 2
          AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
   </select>
@@ -343,6 +344,7 @@
   <select id="selectExceptionRecord" resultMap="BaseResultDTO" parameterType="java.lang.String">
      select  t.id,
        t.order_no,
+       t.plat_order_no,
        t.merchant_id,
        t.trade_time,
        t.trade_amount,
@@ -354,7 +356,7 @@
        i.bank_account_name payer_name,
        i.bank_card_no payer_bank_card
 	 from t_trade t,t_merchant_bank_info i,t_recon_channel_bohai b
-	where t.order_no = b.TRADE_ORDER_NO
+	where t.plat_order_no = b.TRADE_ORDER_NO
 	and b.RECON_STATUS = 0
 	AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
   </select>

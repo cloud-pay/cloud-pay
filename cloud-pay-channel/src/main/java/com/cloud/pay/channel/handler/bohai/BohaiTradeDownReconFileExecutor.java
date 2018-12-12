@@ -34,7 +34,7 @@ public class BohaiTradeDownReconFileExecutor
 		String fileName = "DCHK" + instId+ reqVO.getReconDate();
 		String result = downloadFile(fileName, "BAT ", reconFilePath);
 		if(!"SUCCESS".equals(result)) {
-			resVO =  new ReconDownFileResVO(ChannelErrorCode.ERROR_1002,"批量文件上传失败");
+			resVO =  new ReconDownFileResVO(ChannelErrorCode.ERROR_1002,"获取对账文件失败");
 			log.info("渤海批量代付-响应参数：{}",resVO);
 			return resVO;
 		}

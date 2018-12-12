@@ -495,7 +495,7 @@
 	   #{exceptionType,jdbcType=INTEGER},
 	   SYSDATE()
 	from t_recon_channel_bohai b 
-	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.order_no) 
+	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.plat_order_no) 
 	and b.TRADE_STATUS = 1
   </insert>
   
@@ -550,7 +550,7 @@
 		    b.RECON_STATUS = 1
 		where e.ORDER_NO = t.order_no
 		AND e.ORDER_NO = b.TRADE_ORDER_NO
-		AND t.order_no = b.TRADE_ORDER_NO
+		AND t.plat_order_no = b.TRADE_ORDER_NO
 		AND e.EXCEPTION_TYPE = 2
   </update>
   
@@ -558,7 +558,7 @@
        delete b from  t_trade t,t_recon_channel_bohai b,t_recon_exception_trade e
 	   where e.ORDER_NO = t.order_no
 	   AND e.ORDER_NO = b.TRADE_ORDER_NO
-	   AND t.order_no = b.TRADE_ORDER_NO
+	   AND t.plat_order_no = b.TRADE_ORDER_NO
 	   AND e.EXCEPTION_TYPE = 2
   </delete>
   

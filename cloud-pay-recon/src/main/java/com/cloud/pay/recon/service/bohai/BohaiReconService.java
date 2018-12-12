@@ -145,7 +145,7 @@ public class BohaiReconService implements IReconServiceHandler {
 			reconExceptionBohai.setChannelId(trade.getChannelId());
 			reconExceptionBohai.setReconId(reconId);
 			reconExceptionBohai.setExceptionType(typeCode);
-			reconExceptionBohai.setOrderNo(trade.getOrderNo());
+			reconExceptionBohai.setOrderNo(trade.getPlatOrderNo());
 			reconExceptionBohai.setPayerAccount(trade.getPayerBankCard());
 			reconExceptionBohai.setPayerName(trade.getPayerName());
 			reconExceptionBohai.setPayeeAccount(trade.getPayeeBankCard());

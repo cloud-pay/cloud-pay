@@ -50,9 +50,10 @@ public class ReconChannelBohaiService {
 		 BufferedReader buf = null;
 		 try {
 			 String line = null;
-			 buf = new BufferedReader(new InputStreamReader(new FileInputStream(new File(localPath))));
+			 buf = new BufferedReader(new InputStreamReader(new FileInputStream(new File(localPath)),"gb2312"));
 			 while((line = buf.readLine()) != null){
 				 ReconChannelBohai bohai = new ReconChannelBohai();
+				 log.info("读取对账数据：{}",line.trim());
 				 String[] str = line.trim().split("~");
 				 bohai.setSingleOrBatch(StringUtils.isNotBlank(str[0])?ReconTypeEnum.getByChannelCode(str[0]):ReconTypeEnum.SINGLE.getLocalCode());
 			     bohai.setInstid(StringUtils.isNotBlank(str[1])?str[1]:"");

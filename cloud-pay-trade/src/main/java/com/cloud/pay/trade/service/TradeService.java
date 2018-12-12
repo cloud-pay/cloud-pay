@@ -162,6 +162,7 @@ public class TradeService {
 			trade.setPlatOrderNo(tradeDTO.getPlatOrderNo());
 			trade.setChannelId(tradeDTO.getChannelId());
 			trade.setTradeTime(tradeDTO.getTradeTime());
+			trade.setTradeAmount(tradeDTO.getTradeAmount());
 			PayTradeQueryResVO resVO = payHandler.invokeQuery(trade);
 			//TODO 添加channelID，或者在做交易时已经把channelID添加
 			//最好查询。交易都返回同一个DTO

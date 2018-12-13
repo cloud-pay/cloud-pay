@@ -148,7 +148,7 @@ public class BatchTradeHandler {
 		BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
 		//reqVO.setFileName(FileUtil.createFile(trades, batchTrade.getBatchNo()));
 		reqVO.setMerchantId(batchTrade.getPayerMerchantId());
-		reqVO.setOrderNo(batchTrade.getBatchNo());
+		reqVO.setOrderNo(batchTrade.getPlatBatchNo());
 		//reqVO.setTotalAmt(totalAmount);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		reqVO.setTradeDate(sdf.format(new Date()));

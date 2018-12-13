@@ -139,6 +139,11 @@ public class BatchTradeService {
 			batchTrade.setTotalCount(trades.size());
 			log.info("新增批量交易{}", batchTrade);
 			batchTradeMapper.insert(batchTrade);
+			SimpleDateFormat sdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
+			String platBatchNo = TableCodeUtils.getTableCode(batchTrade.getId(), sdfTime.format(new Date()));
+			//生成平台订单号
+			batchTrade.setPlatBatchNo(platBatchNo);
+			batchTradeMapper.updateByPrimaryKeySelective(batchTrade);
 			// TODO 批量新增
 			jdbcTemplate.batchUpdate(TRADE_SQL, trades, trades.size(),
 					new ParameterizedPreparedStatementSetter<Trade>() {

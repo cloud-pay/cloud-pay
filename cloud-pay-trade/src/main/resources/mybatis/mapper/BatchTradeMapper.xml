@@ -18,7 +18,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, batch_no, trade_time, total_amount, total_count, payer_merchant_id, status, creator, 
-    create_time, auditor, audit_time, audit_optinion
+    create_time, auditor, audit_time, audit_optinion,plat_batch_no
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 

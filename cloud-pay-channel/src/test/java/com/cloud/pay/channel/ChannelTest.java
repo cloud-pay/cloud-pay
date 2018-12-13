@@ -122,14 +122,14 @@ public class ChannelTest {
 	@Test
 	public void batchPay() {
 		BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
-		reqVO.setTradeDate("20181117 11:48:15");
+		reqVO.setTradeDate("20181213 22:26:15");
 		reqVO.setMerchantId(1);
-		reqVO.setOrderNo("2018111700000001");
+		reqVO.setOrderNo("2018121300000007");
 		List<TradeDTO> list = new ArrayList<TradeDTO>();
 		TradeDTO tradeDTO1 = new TradeDTO();
 		tradeDTO1.setSeqNo("1");
 		tradeDTO1.setTradeAmount(new BigDecimal(23.56));
-		tradeDTO1.setPayeeAccount("1231312313131312");
+		tradeDTO1.setPayeeAccount("23424234242342432");
 		tradeDTO1.setPayeeName("老黑");
 		tradeDTO1.setPayeeBankCode("308584000013");
 		list.add(tradeDTO1);
@@ -137,8 +137,8 @@ public class ChannelTest {
 		TradeDTO tradeDTO2 = new TradeDTO();
 		tradeDTO2.setSeqNo("2");
 		tradeDTO2.setTradeAmount(new BigDecimal(23.56));
-		tradeDTO2.setPayeeAccount("345422336554432");
-		tradeDTO2.setPayeeName("老白");
+		tradeDTO2.setPayeeAccount("23423424232342342");
+		tradeDTO2.setPayeeName("老黑");
 		tradeDTO2.setPayeeBankCode("308584000013");
 		list.add(tradeDTO2);
 		reqVO.setTrades(list);
@@ -153,10 +153,10 @@ public class ChannelTest {
 	@Test
 	public void batchPayQuery() {
 		BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
-		reqVO.setTradeDate("20181115 22:17:15");
-		reqVO.setFileName("BD220015201811170001.req");
-		reqVO.setBatchOrderNo("2018111700000001");
-		reqVO.setOrderNo("2018111700000001");
+		reqVO.setTradeDate("20181213 22:26:15");
+		reqVO.setFileName("BD220015201812130007.req");
+		reqVO.setBatchOrderNo("2018121300000007");
+		reqVO.setOrderNo("2018121300000007");
 		reqVO.setChannelId(1);
 		reqVO.setMerchantId(1);
 		BatchPayTradeQueryResVO response = cloudApiService.batchPayQuery(reqVO);

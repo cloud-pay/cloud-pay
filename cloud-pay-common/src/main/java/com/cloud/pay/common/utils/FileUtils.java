@@ -1,11 +1,13 @@
 package com.cloud.pay.common.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -81,6 +83,34 @@ public class FileUtils {
 		isExist("e:\\reconFile\\merchant\\20181009");
 	}
 	
+	public static void writeFileFromList(List<String> list,String fileName,String filePath,String suffix) throws IOException{
+        FileOutputStream fos = null;
+        BufferedWriter out = null;
+        try {
+        	String fileFullPath = "";
+        	if(filePath.endsWith(File.separator)) {
+    			fileFullPath = filePath + fileName + suffix;
+    		}else {
+    			fileFullPath = filePath + File.separator + fileName + suffix;
+    		}
+        	logger.info("写入文件路径：{}",fileFullPath);
+        	File file = new File(fileFullPath);
+        	out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "GBK"));
+        	for (String info : list) {
+                out.write(info);
+                out.newLine();
+            }
+        }finally {
+        	if(null != out) {
+        		out.flush();
+        		out.close();
+        	}
+        	if(null != fos) {
+        		fos.close();
+        	}
+        }
+	}
+	
 	/**
 	 * 追加写文件
 	 * @param content 追加内容
@@ -97,7 +127,7 @@ public class FileUtils {
         BufferedReader br = null;
         
         FileOutputStream fos = null;
-        PrintWriter pw = null;
+        BufferedWriter out = null;
         try {
         	//文件路径
         	String fileFullPath = "";
@@ -120,13 +150,13 @@ public class FileUtils {
         	}
         	buf.append(content);
         	fos = new FileOutputStream(file);
-        	pw = new PrintWriter(fos);
-        	pw.write(buf.toString().toCharArray());
-        	pw.flush();
+        	out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"gb2312"));
+        	out.write(buf.toString().toCharArray());
         	flag = true;
         }finally {
-        	if(null != pw) {
-        		pw.close();
+        	if(null != out) {
+        		out.flush();
+        		out.close();
         	}
         	if(null != fos) {
         		fos.close();
@@ -234,5 +264,38 @@ public class FileUtils {
 	    	}
 	    }
 		return flag;
+	}
+	
+	public static String utf8Togb2312(String str){
+	      StringBuffer sb = new StringBuffer();
+	      for(int i=0; i<str.length(); i++) {
+	          char c = str.charAt(i);
+	          switch (c) {
+	             case '+':
+	                 sb.append(' ');
+	             break;
+	             case '%':
+	                 try {
+	                      sb.append((char)Integer.parseInt(
+	                      str.substring(i+1,i+3),16));
+	                 }
+	                 catch (NumberFormatException e) {
+	                     throw new IllegalArgumentException();
+	                }
+	                i += 2;
+	                break;
+	             default:
+	                sb.append(c);
+	                break;
+	           }
+	      }
+	      String result = sb.toString();
+	      String res=null;
+	      try{
+	          byte[] inputBytes = result.getBytes("8859_1");
+	          res= new String(inputBytes,"gb2312");
+	      }
+	      catch(Exception e){}
+	      return res;
 	}
 }

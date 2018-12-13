@@ -3,6 +3,7 @@ package com.cloud.pay.channel.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -219,24 +220,20 @@ public class CloudApiServiceImpl implements ICloudApiService {
 				return resVO;
 			}
 			//文件内容
-			StringBuffer buf = new StringBuffer();
+			List<String> fileContentList = new ArrayList<String>();
+			fileContentList.add("");
 			for(TradeDTO tradeDTO:reqVO.getTrades()) {
 				String amountStr = tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN).toString();
 				//行与行之间得分隔符
-        		buf.append("\n");
-				buf.append(String.format("%s~%s~%s~%s~CNY~%s", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
+				fileContentList.add(String.format("%s~~~%s~%s~%s~CNY~%s~", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
 						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),amountStr));
         		totalAmt = totalAmt.add(tradeDTO.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         		totalNum ++;
 			}
-		    //文件头部
-			StringBuffer bufHeader = new StringBuffer();
-			bufHeader.append(String.format("<Header>~%s~%s~%d~%s~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt.toString()));
-			bufHeader.append("\n");
-			
-		    FileUtils.appendWriteFile(bufHeader.toString(), fileName, filePath, FileSuffixEnums.REQ.getSuffix());
-		    FileUtils.appendWriteFile(buf.toString(), fileName, filePath, FileSuffixEnums.REQ.getSuffix());
-		    
+			 //文件头部
+			fileContentList.set(0, String.format("<Header>~%s~%s~%d~%s~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt.toString()));
+			FileUtils.writeFileFromList(fileContentList, fileName, filePath, FileSuffixEnums.REQ.getSuffix());
+		   
 		    BatchPayTradeInnerReqVO innerReqVO = new BatchPayTradeInnerReqVO();
 			BeanUtils.copyProperties(reqVO, innerReqVO);
 			innerReqVO.setTotalAmt(totalAmt);
@@ -245,10 +242,11 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = (BatchPayTradeResVO) tradePayExecutor.execute(innerReqVO);
 			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
 		}catch(IOException e) {
+			log.error("系统异常:{}",e);
 			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_1003,"生成批量文件失败");
 			return resVO;
 		}catch(Exception e) {
-			log.error("系统异常：{}",e.getMessage());
+			log.error("系统异常：{}",e);
 			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_9000,"系统异常");
 			return resVO;
 		}

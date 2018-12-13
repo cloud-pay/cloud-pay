@@ -161,44 +161,7 @@ public class PayHandler {
 		}
 		
 		if(TradeConstant.STATUS_SUCCESS == trade.getStatus()) {
-			List<Integer> merchantIds = new ArrayList<Integer>();
-			Integer orgId = null;
-			Integer loanId = null;
-			merchantIds.add(trade.getMerchantId());
-			merchantIds.add(1);//平台账户
-			if(trade.getOrgBenefit() != null) {
-				MerchantBaseInfo baseInfo =  merchantBaseInfoMapper.selectByPrimaryKey(trade.getMerchantId());
-				if(baseInfo.getOrgId() != null) {
-					orgId = baseInfo.getOrgId();
-					merchantIds.add(baseInfo.getOrgId());
-				}
-			}
-			if(trade.getLoanBenefit() != null) {
-				MerchantRouteConf conf = merchantRouteConfMapper.selectByMerchantIdAndChannelId(trade.getMerchantId(), trade.getChannelId());
-				if(conf != null && conf.getLoaningOrgId() != null) {
-					loanId = conf.getLoaningOrgId();
-					merchantIds.add(conf.getLoaningOrgId());
-				}
-			}
-			Map<Integer, MerchantPrepayInfo> maps = prepayInfoService.lockByMerchantIds(merchantIds);
-			/** 商户资金变动 */
-			prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.TRADE_FEE, trade.getTradeAmount(), TradeConstant.CREDIT, trade.getId());			
-			/** 商户手续费资金变动 */
-			prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.HADNING_FEE, trade.getMerchantFeeAmount(), TradeConstant.CREDIT, trade.getId());
-			BigDecimal platFee = trade.getMerchantFeeAmount();
-			/** 机构资金变动 */
-			if(orgId != null) {
-				prepayInfoService.savePrepayInfoJournal(maps.get(orgId), TradeConstant.HADNING_FEE, trade.getOrgBenefit(), TradeConstant.DEBIT, trade.getId());
-				platFee = platFee.subtract(trade.getOrgBenefit());
-			}
-			/** 垫资机构资金变动 */
-			if(loanId != null) {
-				prepayInfoService.savePrepayInfoJournal(maps.get(loanId), TradeConstant.HADNING_FEE, trade.getLoanBenefit(), TradeConstant.DEBIT, trade.getId());
-				platFee = platFee.subtract(trade.getLoanBenefit());
-			}
-			/** 平台资金变动 */
-			prepayInfoService.savePrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
-			tradeMapper.updateStatus(trade);
+			saveJournal(trade);
 		} else if(TradeConstant.STATUS_FAIL == trade.getStatus()) {
 			BigDecimal unfreezeAmount = trade.getMerchantFeeAmount().add(trade.getTradeAmount());
 			prepayInfoService.unfreezePrepayInfo(trade.getMerchantId(), unfreezeAmount);
@@ -275,5 +238,52 @@ public class PayHandler {
 		PayTradeQueryResVO resVO = payService.queryPay(tradeReq);
 		log.info("订单号{}调用渠道查询返回结果{}", trade.getOrderNo(), resVO);
 		return resVO;
+	}
+	
+	/**
+	 * 交易成功后保存账户流水并修改交易状态
+	 * @param trade
+	 * @throws Exception 
+	 */
+	@Transactional
+	public void saveJournal(Trade trade) throws Exception {
+		List<Integer> merchantIds = new ArrayList<Integer>();
+		Integer orgId = null;
+		Integer loanId = null;
+		merchantIds.add(trade.getMerchantId());
+		merchantIds.add(1);//平台账户
+		if(trade.getOrgBenefit() != null) {
+			MerchantBaseInfo baseInfo =  merchantBaseInfoMapper.selectByPrimaryKey(trade.getMerchantId());
+			if(baseInfo.getOrgId() != null) {
+				orgId = baseInfo.getOrgId();
+				merchantIds.add(baseInfo.getOrgId());
+			}
+		}
+		if(trade.getLoanBenefit() != null) {
+			MerchantRouteConf conf = merchantRouteConfMapper.selectByMerchantIdAndChannelId(trade.getMerchantId(), trade.getChannelId());
+			if(conf != null && conf.getLoaningOrgId() != null) {
+				loanId = conf.getLoaningOrgId();
+				merchantIds.add(conf.getLoaningOrgId());
+			}
+		}
+		Map<Integer, MerchantPrepayInfo> maps = prepayInfoService.lockByMerchantIds(merchantIds);
+		/** 商户资金变动 */
+		prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.TRADE_FEE, trade.getTradeAmount(), TradeConstant.CREDIT, trade.getId());			
+		/** 商户手续费资金变动 */
+		prepayInfoService.savePrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.HADNING_FEE, trade.getMerchantFeeAmount(), TradeConstant.CREDIT, trade.getId());
+		BigDecimal platFee = trade.getMerchantFeeAmount();
+		/** 机构资金变动 */
+		if(orgId != null) {
+			prepayInfoService.savePrepayInfoJournal(maps.get(orgId), TradeConstant.HADNING_FEE, trade.getOrgBenefit(), TradeConstant.DEBIT, trade.getId());
+			platFee = platFee.subtract(trade.getOrgBenefit());
+		}
+		/** 垫资机构资金变动 */
+		if(loanId != null) {
+			prepayInfoService.savePrepayInfoJournal(maps.get(loanId), TradeConstant.HADNING_FEE, trade.getLoanBenefit(), TradeConstant.DEBIT, trade.getId());
+			platFee = platFee.subtract(trade.getLoanBenefit());
+		}
+		/** 平台资金变动 */
+		prepayInfoService.savePrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
+		tradeMapper.updateStatus(trade);
 	}
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,6 +186,27 @@ public class TradeService {
 				tradeDTO.setReturnInfo(e.getMessage());
 			}
 			return tradeDTO;
+		}
+	}
+	
+	/**
+	 * 交易调账
+	 * @param trade
+	 * @throws Exception 
+	 */
+	public void reconAdjustTrade(Trade trade) throws Exception {
+		log.info("处理调账交易开始，{}", trade);
+		if(Objects.equals(TradeConstant.STATUS_SUCCESS, trade.getReconStatus())
+				&& Objects.equals(TradeConstant.STATUS_PROCESSING, trade.getStatus())) {
+			log.info("原交易[{}]处理中，对账后成功，继续处理账户", trade.getId());
+			payHandler.saveJournal(trade);
+		} else if(Objects.equals(TradeConstant.STATUS_SUCCESS, trade.getReconStatus())
+				&& Objects.equals(TradeConstant.STATUS_FAIL, trade.getStatus())) {
+			log.info("原交易[{}]失败，对账后成功，调减账户", trade.getId());
+			//先冻结商户资金
+			payHandler.freezeMerchantFee(trade);
+			//处理资金
+			payHandler.saveJournal(trade);
 		}
 	}
 }

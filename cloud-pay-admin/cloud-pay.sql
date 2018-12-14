@@ -307,10 +307,11 @@ CREATE TABLE `t_trade` (
   `merchant_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '商户手续费',
   `org_benefit` decimal(15,2) DEFAULT NULL COMMENT '机构分润费',
   `loan_benefit` decimal(15,2) DEFAULT NULL COMMENT '垫资分润费',
+  `plat_order_no` varchar(32) DEFAULT NULL COMMENT '平台流水号',
   `seq_no` int(5) DEFAULT NULL COMMENT '批次序号',
   PRIMARY KEY (`id`),
   KEY `INX_BATCH_NO` (`batch_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='交易信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COMMENT='交易信息表'
 
 -- ----------------------------
 -- Records of t_trade
@@ -343,8 +344,9 @@ CREATE TABLE `t_batch_trade` (
   `auditor` varchar(255) DEFAULT NULL COMMENT '审核人',
   `audit_time` datetime DEFAULT NULL COMMENT '审核时间',
   `audit_optinion` varchar(255) DEFAULT NULL COMMENT '审核意见',
+  `plat_batch_no` varchar(32) DEFAULT NULL COMMENT '平台流水号',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='批量代付信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='批量代付信息表'
 
 DROP TABLE IF EXISTS `t_merchant_prepay_info`;
 CREATE TABLE `t_merchant_prepay_info` (

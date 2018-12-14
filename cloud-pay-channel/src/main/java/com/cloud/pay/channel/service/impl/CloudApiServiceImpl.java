@@ -201,7 +201,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		
 		//根据批次号生成批量文件
 		//文件名BD机构标识号YYYYMMDD4至8位的序号
-		String fileName = "BD"+instId+DateUtil.getDays()+reqVO.getOrderNo().substring(reqVO.getOrderNo().length()-4, reqVO.getOrderNo().length());
+		String fileName = "YD"+instId+DateUtil.getDays()+reqVO.getOrderNo().substring(reqVO.getOrderNo().length()-4, reqVO.getOrderNo().length());
 		BigDecimal totalAmt = new BigDecimal(0).setScale(2,BigDecimal.ROUND_HALF_DOWN);
 		Long totalNum = 0l;
 		try {
@@ -225,7 +225,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			for(TradeDTO tradeDTO:reqVO.getTrades()) {
 				String amountStr = tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN).toString();
 				//行与行之间得分隔符
-				fileContentList.add(String.format("%s~~~%s~%s~%s~CNY~%s~", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
+				fileContentList.add(String.format("%s~~~%s~%s~%s~~~CNY~%s~", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
 						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),amountStr));
         		totalAmt = totalAmt.add(tradeDTO.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         		totalNum ++;

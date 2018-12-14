@@ -307,6 +307,7 @@ CREATE TABLE `t_trade` (
   `merchant_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '商户手续费',
   `org_benefit` decimal(15,2) DEFAULT NULL COMMENT '机构分润费',
   `loan_benefit` decimal(15,2) DEFAULT NULL COMMENT '垫资分润费',
+  `seq_no` int(5) DEFAULT NULL COMMENT '批次序号',
   PRIMARY KEY (`id`),
   KEY `INX_BATCH_NO` (`batch_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='交易信息表';

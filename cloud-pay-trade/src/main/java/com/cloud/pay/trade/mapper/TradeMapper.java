@@ -171,4 +171,11 @@ public interface TradeMapper {
 	int updateStatusByBatchNo(@Param("batchNo") String batchNo, @Param("returnInfo") String returnInfo, 
 			@Param("returnCode") String returnCode,@Param("status") Integer status,
 			@Param("tradeConfirmTime") Date tradeConfirmTime);
+	
+	/**
+	 * 根据批次号查询渠道入参
+	 * @param batchNo
+	 * @return
+	 */
+	List<com.cloud.pay.channel.dto.TradeDTO> selectByBatchNoOrderBySeq(@Param("batchNo") String batchNo);
 }

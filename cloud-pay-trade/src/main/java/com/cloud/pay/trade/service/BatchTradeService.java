@@ -77,8 +77,8 @@ public class BatchTradeService {
 
 	private final static String TRADE_SQL = "insert into t_trade (order_no, merchant_id, trade_amount, "
 			+ "status, payer_id, payee_name, payee_bank_card, payee_bank_code, remark, batch_no, payee_bank_name, payee_bank_acct_type,"
-			+ "merchant_fee_amount,loan_benefit,org_benefit, loaning) "
-			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?)";
+			+ "merchant_fee_amount,loan_benefit,org_benefit, loaning, seq_no) "
+			+ "values (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?)";
 	
 	private String sources = "0123456789";
 	
@@ -188,6 +188,7 @@ public class BatchTradeService {
 								ps.setNull(14, Types.DECIMAL);
 							}
 							ps.setInt(15, loaning);
+							ps.setInt(16, argument.getSeqNo());
 						}
 					});
 		} catch(TradeException e){

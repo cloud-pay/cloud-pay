@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,7 +33,6 @@ public class ExcelUtil {
 	 * @param payerMerchantId
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	public static List<Trade> readExcel(String payFilePath, String batchNo, Integer loaning,
 			Integer payerMerchantId) {
 		StringBuilder errorDetails = new StringBuilder();
@@ -51,6 +49,7 @@ public class ExcelUtil {
 			System.out.println("lastRowIndex: " + lastRowIndex);
 			final List<Trade> trades = new ArrayList<Trade>();
 			Trade trade = null;
+			int seqNo = 1;
 			for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex++) { // 遍历行
 				Row row = sheet.getRow(rIndex);
 				if (row != null) {
@@ -156,6 +155,7 @@ public class ExcelUtil {
 							break;
 						}
 					}
+					trade.setSeqNo(seqNo++);
 					trades.add(trade);
 				}
 			} 

@@ -152,6 +152,7 @@ public class BatchTradeHandler {
 		//reqVO.setTotalAmt(totalAmount);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		reqVO.setTradeDate(sdf.format(new Date()));
+		reqVO.setTrades(tradeMapper.selectByBatchNoOrderBySeq(batchTrade.getBatchNo()));
 		//reqVO.setTotalNum(Long.valueOf(count));
 		log.info("批量付款入参：{}", reqVO);
 		BatchPayTradeResVO resVO = payService.batchPay(reqVO);

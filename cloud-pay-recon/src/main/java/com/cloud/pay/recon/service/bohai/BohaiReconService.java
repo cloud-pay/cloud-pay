@@ -26,7 +26,9 @@ import com.cloud.pay.recon.mapper.ReconMapper;
 import com.cloud.pay.recon.service.IReconServiceHandler;
 import com.cloud.pay.recon.service.ReconExceptionService;
 import com.cloud.pay.trade.dto.TradeDTO;
+import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.mapper.TradeMapper;
+import com.cloud.pay.trade.service.TradeService;
 
 /**
  * 渤海对账
@@ -47,6 +49,9 @@ public class BohaiReconService implements IReconServiceHandler {
 	
 	@Autowired
 	private TradeMapper tradeMapper;
+	
+	@Autowired
+	private TradeService tradeService;
 	
 	@Autowired
 	private ReconChannelBohaiService reconChannelBohaiService;
@@ -95,18 +100,24 @@ public class BohaiReconService implements IReconServiceHandler {
 			log.info("更新交易订单中存在渠道中不存在的记录");
 			List<TradeDTO> postPoneTrade = tradeMapper.selectLongRecord(reconDate);
 			if(null != postPoneTrade && postPoneTrade.size() > 0) {
-				log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果");
+				log.info("更新交易订单中存在渠道中不存在的记录，记录数据异常类型为：延期，不影响对账结果,总记录{}条",postPoneTrade);
 				reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(postPoneTrade, recon.getId(),ReconExceptionTypeEnum.EXCEPTION_TYPE_POSTPONE.getTypeCode(),"延期对账"));
 			}
 			log.info("更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败");
 			//step4 更新交易订单表和渠道对账表订单号一致，但其他元素不一致的记录的对账状态为失败，并生成异常记录，标识渠道对账表记录为不平账(最后判断订单号一直但是未对账的记录则为不平帐记录)
 	        List<TradeDTO> exceptionTrade = tradeMapper.selectExceptionRecord(reconDate);
 	        if(null != exceptionTrade && exceptionTrade.size() > 0 ) {
-	        	log.info("更新不平帐的记录");
+	        	log.info("更新不平帐的记录,待处理记录{}条",exceptionTrade);
 	        	reconExceptionBohaiService.batchInsert(buildPostPoneExceptionDate(exceptionTrade, recon.getId(), ReconExceptionTypeEnum.EXCEPTION_TYPE_MISMATH.getTypeCode(),"数据不匹配"));
 	        }
+	        List<Trade> waitingAdjusts =  tradeMapper.selectWaitingAdjustTrade(reconDate);
+	        if(null != waitingAdjusts) {
+	           log.info("获取交易订单表失败渠道成功的交易记录，调用调账操作,待处理记录{}条",waitingAdjusts.size());
+	           for(Trade trade:waitingAdjusts) {
+	        	   tradeService.reconAdjustTrade(trade);
+	           }
+	        }
 	        log.info("检查异常表中是否存在该渠道的对账日期的异常记录，并汇总");
-		    int tradeCount = 100;
 		    List<ReconExceptionBohaiDTO> exceptionCount = reconExceptionBohaiService.selectCountByChannelId(recon.getChannelId(),recon.getId());
 		    int exceptionC = 0;
 		    int postPoneC = 0;

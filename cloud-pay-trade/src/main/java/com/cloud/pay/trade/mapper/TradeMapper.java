@@ -178,4 +178,11 @@ public interface TradeMapper {
 	 * @return
 	 */
 	List<com.cloud.pay.channel.dto.TradeDTO> selectByBatchNoOrderBySeq(@Param("batchNo") String batchNo);
+	
+    /**
+     * 查询对账后待调账的交易数据
+     * @param reconDate
+     * @return
+     */
+	List<Trade>  selectWaitingAdjustTrade(String reconDate);
 }

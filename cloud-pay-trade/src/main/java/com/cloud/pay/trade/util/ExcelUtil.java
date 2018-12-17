@@ -165,13 +165,15 @@ public class ExcelUtil {
 			}
 			return trades;
 		} catch (Exception e) {
-			log.info("读取手工代付文件异常，{}", e);
+			log.warn("读取手工代付文件异常，{}", e);
 			throw new TradeException("异常信息:" + e.getMessage(), null);
 		} finally {
 			try {
-				wb.close();
+				if(wb != null)
+					wb.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.warn("关闭文件流异常异常，{}", e);
+				log.warn("忽略该异常");
 			}
 		}
 	} 

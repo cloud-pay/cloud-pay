@@ -26,7 +26,9 @@ public interface BatchTradeMapper {
     
     List<BatchTradeDTO> getBatchTradeList(@Param("status") Integer status,
 			@Param("startTime") Date startTime,
-			@Param("endTime") Date endTime);
+			@Param("endTime") Date endTime,
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
     
     /**
       * 根据批次号查询批次信息

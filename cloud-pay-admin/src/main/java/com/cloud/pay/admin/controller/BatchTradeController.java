@@ -167,7 +167,9 @@ public class BatchTradeController extends BaseController{
 			}
 		} catch(Exception e) {
 		}
-		model.addAttribute("batchTrades", batchTradeService.getBatchTradeList(status, startTime, endTime));
+		User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+		model.addAttribute("batchTrades", batchTradeService.getBatchTradeList(status, startTime, endTime, 
+				user.getMerchantId(), user.getMerchantType()));
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/batchTrade/list";
 	}

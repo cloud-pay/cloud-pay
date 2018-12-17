@@ -212,6 +212,12 @@
       <if test="endTime != null" >
        and t.trade_time &lt; #{endTime}
       </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (t.payer_merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and t.payer_merchant_id = #{userMerchantId,jdbcType=INTEGER}
+      </if>
   </select>
   
   <update id="audit" parameterType="com.cloud.pay.trade.entity.BatchTrade" >

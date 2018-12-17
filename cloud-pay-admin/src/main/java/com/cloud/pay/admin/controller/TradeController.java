@@ -86,8 +86,11 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, startTime, endTime));
-			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, startTime, endTime));
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			model.addAttribute("tradeStat", tradeService.tradeStat(merchantId, orgId, 
+					startTime, endTime, user.getMerchantId(), user.getMerchantType()));
+			model.addAttribute("loanTradeStat", tradeService.loanTradeStat(merchantId, orgId, 
+					startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		}
 		return "page/trade/stat";
 	}
@@ -139,7 +142,9 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("trades", tradeService.selectTradeList(merchantId, orgId, orderNo, batchNo, loan, startTime, endTime));
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			model.addAttribute("trades", tradeService.selectTradeList(merchantId, orgId, orderNo, batchNo, 
+					loan, startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		}
 		return "page/trade/list";
 	}
@@ -185,7 +190,9 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			List<TradeRecordDTO> trades = tradeService.selectTradeList(merchantId, orgId, orderNo, batchNo, loan, startTime, endTime);
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			List<TradeRecordDTO> trades = tradeService.selectTradeList(merchantId, orgId, orderNo, batchNo, 
+					loan, startTime, endTime, user.getMerchantId(), user.getMerchantType());
 			HSSFWorkbook workbook = new HSSFWorkbook();
 	        HSSFSheet sheet = workbook.createSheet("订单");
 	        String fileName = "订单"  + ".xls";
@@ -279,7 +286,9 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("merchantStats", tradeService.selectMerchantFeeStats(merchantId, orgId, startTime, endTime));
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			model.addAttribute("merchantStats", tradeService.selectMerchantFeeStats(merchantId, orgId, 
+					startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		}
 		return "page/trade/merchantFeeStat";
 	}
@@ -318,7 +327,9 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (merchantId != null || orgId != null || startTime != null || endTime != null) {
-			List<FeeStatDTO> fees = tradeService.selectMerchantFeeStats(merchantId, orgId, startTime, endTime);
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			List<FeeStatDTO> fees = tradeService.selectMerchantFeeStats(merchantId, orgId, 
+					startTime, endTime, user.getMerchantId(), user.getMerchantType());
 			HSSFWorkbook workbook = new HSSFWorkbook();
 	        HSSFSheet sheet = workbook.createSheet("商户手续费统计");
 	        String fileName = "商户手续费统计.xls";
@@ -397,7 +408,9 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (orgId != null || startTime != null || endTime != null) {
-			model.addAttribute("orgStats", tradeService.selectOrgFeeStats(orgId, startTime, endTime));
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			model.addAttribute("orgStats", tradeService.selectOrgFeeStats(orgId, 
+					startTime, endTime, user.getMerchantId(), user.getMerchantType()));
 		}
 		return "page/trade/orgFeeStat";
 	}
@@ -431,7 +444,9 @@ public class TradeController extends BaseController {
 		} catch (Exception e) {
 		}
 		if (orgId != null || startTime != null || endTime != null) {
-			List<FeeStatDTO> fees =  tradeService.selectOrgFeeStats(orgId, startTime, endTime);
+			User user = ((User) this.getSession().getAttribute(Const.SESSION_USER));
+			List<FeeStatDTO> fees =  tradeService.selectOrgFeeStats(orgId, 
+					startTime, endTime, user.getMerchantId(), user.getMerchantType());
 			HSSFWorkbook workbook = new HSSFWorkbook();
 	        HSSFSheet sheet = workbook.createSheet("机构手续费统计");
 	        String fileName = "机构手续费统计"  + ".xls";

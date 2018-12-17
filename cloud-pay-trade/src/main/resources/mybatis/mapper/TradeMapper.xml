@@ -389,8 +389,8 @@
   
   <select id="tradeStat" resultMap="BaseStatDTO">
     select count(1) total_count, ifnull(sum(trade_amount),0) total_amount
-    from t_trade
-    where 1 = 1
+    from t_trade t, t_merchant_base_info m
+    where t.merchant_id = m.id
       <if test="merchantId != null" >
         and merchant_id = #{merchantId,jdbcType=INTEGER}
       </if>
@@ -400,12 +400,19 @@
       <if test="endTime != null" >
        and trade_time &lt; #{endTime}
       </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (t.merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and t.merchant_id = #{userMerchantId,jdbcType=INTEGER}
+      </if>
   </select>
   <select id="loanTradeStat" resultMap="BaseStatDTO">
     select count(1) total_count, ifnull(sum(trade_amount),0) total_amount
-    from t_trade t,t_merchant_route_conf c
+    from t_trade t,t_merchant_route_conf c, t_merchant_base_info m
     where t.merchant_id = c.merchant_id
         and t.channel_id = c.channel_id
+        and t.merchant_id = m.id
         and c.loaning = 1
         and t.status = 2
       <if test="merchantId != null" >
@@ -419,6 +426,12 @@
       </if>
       <if test="endTime != null" >
        and t.trade_time &lt; #{endTime}
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (t.merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and t.merchant_id = #{userMerchantId,jdbcType=INTEGER}
       </if>
   </select>
   
@@ -470,6 +483,12 @@
       </if>
       <if test="endTime != null" >
        and t.trade_time &lt; #{endTime}
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'org'" >
+       and (t.merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+      </if>
+      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+       and t.merchant_id = #{userMerchantId,jdbcType=INTEGER}
       </if>
   </select>
   
@@ -529,6 +548,12 @@
 		      <if test="endTime != null" >
 		       and t.trade_time &lt; #{endTime}
 		      </if>
+		      <if test="userMerchantId != null and userMerchantType == 'org'" >
+		       and (t.merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+		      </if>
+		      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+		       and t.merchant_id = #{userMerchantId,jdbcType=INTEGER}
+		      </if>
 		)temp
 		group by stat_date,merchant_code,merchant_name,org_name
   </select>
@@ -571,6 +596,12 @@
 		      </if>
 		      <if test="endTime != null" >
 		       and t.trade_time &lt; #{endTime}
+		      </if>
+		      <if test="userMerchantId != null and userMerchantType == 'org'" >
+		       and (t.merchant_id = #{userMerchantId,jdbcType=INTEGER} or m.org_id = #{userMerchantId,jdbcType=INTEGER})
+		      </if>
+		      <if test="userMerchantId != null and userMerchantType == 'merchant'" >
+		       and t.merchant_id = #{userMerchantId,jdbcType=INTEGER}
 		      </if>
 		)temp
 		group by stat_date,merchant_code,merchant_name

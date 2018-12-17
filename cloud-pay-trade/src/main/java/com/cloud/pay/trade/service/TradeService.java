@@ -77,12 +77,34 @@ public class TradeService {
 		return resDTO;
 	}
 	
-	public TradeStatDTO tradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime) {
-		return tradeMapper.tradeStat(merchantId, orgId, startTime, endTime);
+	/**
+	 * 交易统计
+	 * @param merchantId
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @param userMerchantId
+	 * @param userMerchantType
+	 * @return
+	 */
+	public TradeStatDTO tradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime,
+			Integer userMerchantId, String userMerchantType) {
+		return tradeMapper.tradeStat(merchantId, orgId, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
-	public TradeStatDTO loanTradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime) {
-		return tradeMapper.loanTradeStat(merchantId, orgId, startTime, endTime);
+	/**
+	 * 垫资交易统计
+	 * @param merchantId
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @param userMerchantId
+	 * @param userMerchantType
+	 * @return
+	 */
+	public TradeStatDTO loanTradeStat(Integer merchantId, Integer orgId, Date startTime, Date endTime,
+			Integer userMerchantId, String userMerchantType) {
+		return tradeMapper.loanTradeStat(merchantId, orgId, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	/**
@@ -100,8 +122,9 @@ public class TradeService {
 	 */
 	public List<TradeRecordDTO> selectTradeList(Integer merchantId, Integer orgId,
 		 String orderNo, String batchNo, Integer loaning,
-			Date startTime, Date endTime) {
-		return tradeMapper.selectTradeList(merchantId, orgId, orderNo, batchNo, loaning, startTime, endTime);
+			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
+		return tradeMapper.selectTradeList(merchantId, orgId, orderNo, batchNo, loaning, 
+				startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	/**
@@ -115,13 +138,13 @@ public class TradeService {
 	 * @return
 	 */
 	public List<FeeStatDTO> selectMerchantFeeStats(Integer merchantId, Integer orgId,
-			Date startTime, Date endTime) {
-		return tradeMapper.selectMerchantFeeStats(merchantId, orgId, startTime, endTime);
+			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
+		return tradeMapper.selectMerchantFeeStats(merchantId, orgId, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	public List<FeeStatDTO> selectOrgFeeStats(Integer orgId,
-			Date startTime, Date endTime) {
-		List<FeeStatDTO> orgStats = tradeMapper.selectOrgTradeFeeStats(orgId, startTime, endTime);
+			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
+		List<FeeStatDTO> orgStats = tradeMapper.selectOrgTradeFeeStats(orgId, startTime, endTime, userMerchantId, userMerchantType);
 		List<FeeStatDTO> merchantStats = tradeMapper.selectMerchantFeeByOrg(orgId, startTime, endTime);
 		if(orgStats == null || orgStats.size() == 0) {
 			return merchantStats;

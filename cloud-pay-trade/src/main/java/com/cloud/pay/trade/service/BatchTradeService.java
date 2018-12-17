@@ -375,8 +375,9 @@ public class BatchTradeService {
 		return errorDetails.toString();
 	}
 
-	public List<BatchTradeDTO> getBatchTradeList(Integer status, Date startTime, Date endTime) {
-		return batchTradeMapper.getBatchTradeList(status, startTime, endTime);
+	public List<BatchTradeDTO> getBatchTradeList(Integer status, Date startTime, Date endTime,
+			Integer userMerchantId, String userMerchantType) {
+		return batchTradeMapper.getBatchTradeList(status, startTime, endTime, userMerchantId, userMerchantType);
 	}
 	
 	/**

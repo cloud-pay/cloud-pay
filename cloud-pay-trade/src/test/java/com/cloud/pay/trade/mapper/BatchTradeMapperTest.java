@@ -19,6 +19,6 @@ public class BatchTradeMapperTest {
 	
 	@Test
 	public void getBatchTradeListTest() {
-		System.out.println(batchTradeMapper.getBatchTradeList(1, new Date(), new Date()));
+		System.out.println(batchTradeMapper.getBatchTradeList(1, null, new Date(), 3, "merchant"));
 	}
 }

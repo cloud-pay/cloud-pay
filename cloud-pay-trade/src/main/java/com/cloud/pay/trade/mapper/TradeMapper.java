@@ -79,7 +79,9 @@ public interface TradeMapper {
 	 * @return
 	 */
 	TradeStatDTO tradeStat(@Param("merchantId") Integer merchantId, @Param("orgId") Integer orgId,
-			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 
 	/**
 	 * 商户垫资交易统计
@@ -90,7 +92,9 @@ public interface TradeMapper {
 	 * @return
 	 */
 	TradeStatDTO loanTradeStat(@Param("merchantId") Integer merchantId, @Param("orgId") Integer orgId,
-			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 
 	/**
 	 * 交易列表查询
@@ -104,7 +108,9 @@ public interface TradeMapper {
 	 */
 	List<TradeRecordDTO> selectTradeList(@Param("merchantId") Integer merchantId, @Param("orgId") Integer orgId,
 		 @Param("orderNo") String orderNo, @Param("batchNo") String batchNo, @Param("loaning") Integer loaning,
-			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 	
 	/**
 	 * 商户手续费统计
@@ -117,7 +123,9 @@ public interface TradeMapper {
 	 * @return
 	 */
 	List<FeeStatDTO> selectMerchantFeeStats(@Param("merchantId") Integer merchantId, @Param("orgId") Integer orgId,
-				@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+				@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+				@Param("userMerchantId")Integer userMerchantId,
+				@Param("userMerchantType")String userMerchantType);
 	
 	/**
 	 * 机构交易手续费统计
@@ -129,7 +137,9 @@ public interface TradeMapper {
 	 * @return
 	 */
 	List<FeeStatDTO> selectOrgTradeFeeStats(@Param("orgId") Integer orgId,
-			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+			@Param("userMerchantId")Integer userMerchantId,
+			@Param("userMerchantType")String userMerchantType);
 	
 	/**
 	 * 机构下商户交易分润统计

@@ -19,12 +19,29 @@ public class TradeMapperTest {
 	
 //	@Test
 	public void getBatchTradeListTest() {
-		System.out.println(tradeMapper.tradeStat(1, 1, new Date(), new Date()));
-		System.out.println(tradeMapper.loanTradeStat(1, 1, new Date(), new Date()));
+		System.out.println(tradeMapper.tradeStat(1, 1, null, new Date(), 3, "org"));
+		System.out.println(tradeMapper.loanTradeStat(1, 1, null, new Date(), 3, "merchant"));
+	}
+	
+//	@Test
+	public void selectTradeListTest() {
+		System.out.println(tradeMapper.selectTradeList(3, null, null, null, null, null, new Date(), 3, "merchant"));
+	}
+	
+//	@Test
+	public void selectByBatchNoOrderBySeqTest() {
+		System.out.println(tradeMapper.selectByBatchNoOrderBySeq("2018121408241652800000003"));
+	}
+	
+//	@Test
+	public void selectMerchantFeeStatsTest() {
+		System.out.println(tradeMapper.selectMerchantFeeStats(3, 1, new Date(), new Date(), 3, "merchant"));
+		System.out.println(tradeMapper.selectMerchantFeeStats(3, 1, new Date(), new Date(), 3, "org"));
 	}
 	
 	@Test
-	public void selectByBatchNoOrderBySeqTest() {
-		System.out.println(tradeMapper.selectByBatchNoOrderBySeq("2018121408241652800000003"));
+	public void selectOrgTradeFeeStatsTest() {
+		System.out.println(tradeMapper.selectOrgTradeFeeStats(1, new Date(), new Date(), 3, "merchant"));
+		System.out.println(tradeMapper.selectOrgTradeFeeStats(1, new Date(), new Date(), 3, "org"));
 	}
 }

@@ -14,7 +14,6 @@
 
 	<typeAliases>
 		<typeAlias type="com.cloud.pay.trade.entity.AmountLimit" alias="AmountLimit"  />
-		<typeAlias type="com.cloud.pay.trade.entity.MerchantRouteConf" alias="MerchantRouteConf"  />
 	</typeAliases>
 	
 </configuration>

@@ -17,9 +17,14 @@ public class TradeMapperTest {
 	@Autowired
 	private TradeMapper tradeMapper;
 	
-	@Test
+//	@Test
 	public void getBatchTradeListTest() {
 		System.out.println(tradeMapper.tradeStat(1, 1, new Date(), new Date()));
 		System.out.println(tradeMapper.loanTradeStat(1, 1, new Date(), new Date()));
+	}
+	
+	@Test
+	public void selectByBatchNoOrderBySeqTest() {
+		System.out.println(tradeMapper.selectByBatchNoOrderBySeq("2018121408241652800000003"));
 	}
 }

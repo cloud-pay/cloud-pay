@@ -117,6 +117,7 @@ public class BatchTradeHandler {
 				}
 				paySmsMapper.updateVerifyResult(sms);
 			} else {
+				log.warn("手工代付短信验证码校验未通过");
 				throw new TradeException("验证码不通过", SmsConstant.VERIFY_FAIL_CODE);
 			}
 			tradeMapper.updateByBatchNo(new Date(), 1, batchTrade.getBatchNo());

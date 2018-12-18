@@ -42,5 +42,5 @@ public interface BatchTradeMapper {
      * @param batchNo
      * @return
      */
-    int updateTradeStatus(@Param("status") Integer status, @Param("batchNo")String batchNo);
+    int updateTradeStatus(@Param("tradeStatus") Integer tradeStatus, @Param("batchNo")String batchNo);
 }

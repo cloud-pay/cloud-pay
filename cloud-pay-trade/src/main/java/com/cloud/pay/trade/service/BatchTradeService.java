@@ -452,7 +452,7 @@ public class BatchTradeService {
 					add(add(trade.getMerchantFeeAmount(), trade.getLoanBenefit(), trade.getOrgBenefit()));
 		}
 		if(resVO.getStatus() != null && 0 == resVO.getStatus()) {
-			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUCCESS, batchNo);
+			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUCCESS, batchNo,null);
 			//TODO依次处理批次文件
 			Map<String, Trade> tradeMap = ConvertUtil.convertTradeMap(trades);
 			for(TradeDTO tradeDTO : resVO.getTrades()) {
@@ -504,7 +504,7 @@ public class BatchTradeService {
 			prepayInfoService.updatePrepayInfos(maps.values());
 			return "批量代付成功";
 		} else if(resVO.getStatus() != null && 1 == resVO.getStatus()) {
-			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_FAIL, batchNo);
+			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_FAIL, batchNo,null);
 			//触发失败，修改交易状态为失败
 			tradeMapper.updateStatusByBatchNo(batchNo,
 					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());

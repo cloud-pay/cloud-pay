@@ -6,6 +6,8 @@ public class BatchPayTradeResVO extends BaseTradeResVO {
 	
 	private Integer status; //0-成功，1-失败，99-未知状态
 	
+	private String fileName; //批量文件名
+	
 	public BatchPayTradeResVO(String errorCode,String errorMessage) {
 		super(errorCode, errorMessage);
 	}
@@ -39,5 +41,12 @@ public class BatchPayTradeResVO extends BaseTradeResVO {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 }

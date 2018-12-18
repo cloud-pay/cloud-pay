@@ -346,6 +346,7 @@ CREATE TABLE `t_batch_trade` (
   `audit_optinion` varchar(255) DEFAULT NULL COMMENT '审核意见',
   `plat_batch_no` varchar(32) DEFAULT NULL COMMENT '平台流水号',
   `trade_status` int(1) DEFAULT NULL COMMENT '交易状态（0待处理，2成功，3失败，4提交成功）',
+  `file_name` varchar(50) NULL COMMENT '批量文件名' ,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='批量代付信息表'
 

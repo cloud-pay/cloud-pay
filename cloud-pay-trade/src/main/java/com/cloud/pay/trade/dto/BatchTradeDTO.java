@@ -33,6 +33,8 @@ public class BatchTradeDTO {
     private String platBatchNo;
     
     private Integer tradeStatus;
+    
+    private String fileName;
 
 	public Integer getId() {
 		return id;
@@ -154,6 +156,14 @@ public class BatchTradeDTO {
 		this.tradeStatus = tradeStatus;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -187,6 +197,8 @@ public class BatchTradeDTO {
 		builder.append(platBatchNo);
 		builder.append(", tradeStatus=");
 		builder.append(tradeStatus);
+		builder.append(", fileName=");
+		builder.append(fileName);
 		builder.append("]");
 		return builder.toString();
 	}

@@ -93,7 +93,7 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 		        result.setPlatOrderNo(payResponse.getPlatOrderNo());
 		    }
 		    result.setErrorCode(payResponse.getReturnCode());
-	    	result.setErrorMsg(payResponse.getReturnInfo());
+	    	result.setErrorMsg(TradeConstant.PREPAY_BALANCE_NO_ENOUGH.equals(payResponse.getReturnCode()) ? "余额不足!":payResponse.getReturnInfo());
 	    }catch(Exception e) {
 	    	log.error("调用代付平台失败{}",e);
 	    	throw new CloudApiBusinessException(ApiErrorCode.SYSTEM_ERROR,"系统错误");

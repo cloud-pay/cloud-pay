@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -241,6 +242,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			innerReqVO.setFileName(fileName+FileSuffixEnums.REQ.getSuffix());
 			resVO = (BatchPayTradeResVO) tradePayExecutor.execute(innerReqVO);
 			resVO.setChannelId(ChannelType.BOHAI.getChannelId());
+			resVO.setFileName(fileName+FileSuffixEnums.REQ.getSuffix());
 		}catch(IOException e) {
 			log.error("系统异常:{}",e);
 			resVO = new BatchPayTradeResVO(ChannelErrorCode.ERROR_1003,"生成批量文件失败");
@@ -267,7 +269,14 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			resVO = new BatchPayTradeQueryResVO(e.getErrorCode(),e.getMessage());
 			return resVO;
 		}
-		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.getChannelByChannelId(reqVO.getChannelId()));
+		Integer channelId = reqVO.getChannelId();
+		if(null == reqVO.getChannelId()) {
+			channelId = 1;
+		}
+		if(StringUtils.isBlank(reqVO.getFileName())) {
+			String fileName =  "YD"+instId+DateUtil.getDays()+reqVO.getOrderNo().substring(reqVO.getOrderNo().length()-4, reqVO.getOrderNo().length());
+		}
+		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.getChannelByChannelId(channelId));
 		//TODO 根据响应结果构建结果集
 		resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
 		log.info("渠道接口，批量代付结果查询，响应结果:{}",resVO);

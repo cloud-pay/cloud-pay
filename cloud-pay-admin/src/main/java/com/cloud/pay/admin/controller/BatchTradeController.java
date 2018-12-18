@@ -261,6 +261,8 @@ public class BatchTradeController extends BaseController{
 			reqVO.setMerchantId(payerMerchantId);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 			reqVO.setTradeDate(sdf.format(new Date()));
+			reqVO.setFileName(dto.getFileName());
+			reqVO.setOrderNo(dto.getPlatBatchNo());
 			log.info("批量查询入参：{}", reqVO);
 			BatchPayTradeQueryResVO resVO = payService.batchPayQuery(reqVO);
 			log.info("批量查询结果：{}", resVO);

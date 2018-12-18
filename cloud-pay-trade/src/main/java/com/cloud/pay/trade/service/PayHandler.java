@@ -79,6 +79,8 @@ public class PayHandler {
 		if(TradeConstant.LOANING_YES == trade.getLoaning()) {
 			//计算垫资分润
 			trade.setLoanBenefit(fees[1]);
+		}else {
+			trade.setLoanBenefit(new BigDecimal(0));
 		}
 		trade.setMerchantFeeAmount(merchantFee.add(trade.getLoanBenefit()));
 		BigDecimal orgFee = getOrgFee(trade.getMerchantId(), trade.getTradeAmount());

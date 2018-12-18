@@ -24,10 +24,10 @@ public class BatchPayTradeQueryReqVO extends BaseTradeReqVO {
 	@Length(max = 32,message = "批量交易流水最长32位")
 	private String batchOrderNo;
 	
-	@NotNull(message = "渠道ID不能为空")
+//	@NotNull(message = "渠道ID不能为空")
 	private Integer channelId;
 	
-	@NotNull(message = "查询文件名不能为空")
+//	@NotNull(message = "查询文件名不能为空")
 	private String fileName;
 
 	public String getTradeDate() {

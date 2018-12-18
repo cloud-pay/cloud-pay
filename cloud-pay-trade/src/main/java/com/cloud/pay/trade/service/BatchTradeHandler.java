@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,18 +175,22 @@ public class BatchTradeHandler {
 	@Transactional
 	public void dealBatchPayTradeRes(BatchPayTradeResVO resVO, String batchNo, 
 			Integer payerMerchantId, BigDecimal total) throws Exception {
+		String fileName = "";
+		if(StringUtils.isNotBlank(resVO.getFileName())) {
+			fileName = resVO.getFileName();
+		}
 		if(ChannelContants.CHANNEL_RESP_CODE_FAIL.equals(resVO.getRespCode())) {
 			//触发失败，修改交易状态为失败
 			tradeMapper.updateStatusByBatchNo(batchNo,
 					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
 			prepayInfoService.unfreezePrepayInfo(payerMerchantId, total);
-			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_FAIL, batchNo);
+			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_FAIL, batchNo,fileName);
 		} else if(ChannelContants.CHANNEL_RESP_CODE_SUCCESS.equals(resVO.getRespCode())) {
 			//触发失败，修改交易状态为失败
 			tradeMapper.updateStatusByBatchNo(batchNo,
 					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
 			prepayInfoService.unfreezePrepayInfo(payerMerchantId, total);
-			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUBMIT_SUCCESS, batchNo);
+			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUBMIT_SUCCESS, batchNo,fileName);
 		}
 	}
 	

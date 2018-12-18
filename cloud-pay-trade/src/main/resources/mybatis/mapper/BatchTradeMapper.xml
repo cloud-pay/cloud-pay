@@ -16,10 +16,11 @@
     <result column="audit_optinion" property="auditOptinion" jdbcType="VARCHAR" />
     <result column="plat_batch_no" property="platBatchNo" jdbcType="VARCHAR" />
     <result column="trade_status" property="tradeStatus" jdbcType="INTEGER" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, batch_no, trade_time, total_amount, total_count, payer_merchant_id, status, creator, 
-    create_time, auditor, audit_time, audit_optinion,plat_batch_no,trade_status
+    create_time, auditor, audit_time, audit_optinion,plat_batch_no,trade_status,fileName
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -80,6 +81,9 @@
       <if test="tradeStatus != null" >
         trade_status = #{tradeStatus,jdbcType=INTEGER},
       </if>
+      <if test="fileName != null and fileName != ''" >
+        file_name = #{fileName,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -115,6 +119,7 @@
     <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
     <result column="plat_batch_no" property="platBatchNo" jdbcType="VARCHAR" />
     <result column="trade_status" property="tradeStatus" jdbcType="INTEGER" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
   </resultMap>
   <select id="getBatchTradeList" resultMap="BaseResultDTO" >
 	    SELECT
@@ -177,8 +182,9 @@
 		t.create_time,
 		t.auditor,
 		t.audit_time,
-		t.plat_batch_no
-		t.trade_status
+		t.plat_batch_no,
+		t.trade_status,
+		t.file_name
 	FROM
 		t_batch_trade t
 	where t.payer_merchant_id = #{merchantId,jdbcType=INTEGER}
@@ -186,7 +192,14 @@
   </select>
   <update id="updateTradeStatus" >
     update t_batch_trade
-    set trade_status = #{tradeStatus,jdbcType=INTEGER}
+    <set >
+       <if test="tradeStatus != null" >
+         trade_status = #{tradeStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null and fileName != ''" >
+         file_name = #{fileName,jdbcType=INTEGER},
+       </if>
+    </set>
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>
   

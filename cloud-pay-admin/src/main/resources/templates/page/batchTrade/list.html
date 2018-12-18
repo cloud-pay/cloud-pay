@@ -144,7 +144,8 @@ div.cbp label.font{
 	                  <th>交易时间</th>
 	                  <th>总金额</th>
 					  <th>总笔数</th>
-					  <th>状态</th>
+					  <th>审核状态</th>
+					  <th>代付交易状态</th>
 					  <th>经办时间</th>
 					  <th>经办人</th>
 	                  <th>审核时间</th>
@@ -177,6 +178,10 @@ div.cbp label.font{
 				  <td th:if="${trade.status == 1}" th:text="待审核"></td>
 				  <td th:if="${trade.status == 2}" th:text="审核通过"></td>
 				  <td th:if="${trade.status == 3}" th:text="审核不通过"></td>
+				  <td th:if="${trade.status == 0}" th:text="待处理"></td>
+				  <td th:if="${trade.status == 2}" th:text="成功"></td>
+				  <td th:if="${trade.status == 3}" th:text="失败"></td>
+				  <td th:if="${trade.status == 4}" th:text="提交成功"></td>
 				  <td th:text="${#dates.format(trade.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
                   <td th:text="${trade.creator}"></td>
                   <td th:if="${trade.auditTime == null}">   </td>
@@ -186,7 +191,7 @@ div.cbp label.font{
                   	<div th:if="${trade.id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="审核" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'audit(\''+${trade.id}+'\',\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
-	                  	<span data-toggle="tooltip" title="查询" th:if="${trade.status == 1}" class="btn btn-xs btn-info" th:onclick="'queryResult(\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 查询结果</span>
+	                  	<span data-toggle="tooltip" title="查询" th:if="${trade.status == 2}" class="btn btn-xs btn-info" th:onclick="'queryResult(\''+${trade.batchNo}+'\',\''+${trade.payerMerchantId}+'\');'"><i class="fa fa-edit"></i> 查询结果</span>
                   	</div>
                   	<div th:if="${trade.id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>

@@ -14,8 +14,6 @@ public interface BatchTradeMapper {
 
     int insert(BatchTrade record);
 
-    int insertSelective(BatchTrade record);
-
     BatchTrade selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKey(BatchTrade record);
@@ -37,4 +35,12 @@ public interface BatchTradeMapper {
      * @return
      */
     BatchTradeDTO queryBatchByBatchNo(@Param("batchNo")String batchNo,@Param("merchantId")Integer merchantId);
+    
+    /**
+     * 通过批次号修改交易状态
+     * @param status
+     * @param batchNo
+     * @return
+     */
+    int updateTradeStatus(@Param("status") Integer status, @Param("batchNo")String batchNo);
 }

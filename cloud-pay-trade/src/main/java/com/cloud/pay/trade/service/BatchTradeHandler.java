@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.BatchPayTradeReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeResVO;
+import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.entity.SysConfig;
 import com.cloud.pay.common.mapper.SysConfigMapper;
 import com.cloud.pay.trade.constant.SmsConstant;
@@ -172,11 +173,18 @@ public class BatchTradeHandler {
 	@Transactional
 	public void dealBatchPayTradeRes(BatchPayTradeResVO resVO, String batchNo, 
 			Integer payerMerchantId, BigDecimal total) throws Exception {
-		if("1".equals(resVO.getRespCode())) {
+		if(ChannelContants.CHANNEL_RESP_CODE_FAIL.equals(resVO.getRespCode())) {
 			//触发失败，修改交易状态为失败
 			tradeMapper.updateStatusByBatchNo(batchNo,
 					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
 			prepayInfoService.unfreezePrepayInfo(payerMerchantId, total);
+			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_FAIL, batchNo);
+		} else if(ChannelContants.CHANNEL_RESP_CODE_SUCCESS.equals(resVO.getRespCode())) {
+			//触发失败，修改交易状态为失败
+			tradeMapper.updateStatusByBatchNo(batchNo,
+					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
+			prepayInfoService.unfreezePrepayInfo(payerMerchantId, total);
+			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUBMIT_SUCCESS, batchNo);
 		}
 	}
 	

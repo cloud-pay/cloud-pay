@@ -44,4 +44,13 @@ public class TradeConstant {
 	public final static int TRADE_FEE = 1;
 	/**手续费 */
 	public final static int HADNING_FEE = 2;
+	
+	/**待处理 */
+	public final static int BATCH_STATUS_UNPROCESS = 0;
+	/**成功 */
+	public final static int BATCH_STATUS_SUCCESS = 2;
+	/**失败 */
+	public final static int BATCH_STATUS_FAIL = 3;
+	/**提交成功 */
+	public final static int BATCH_STATUS_SUBMIT_SUCCESS = 4;
 }

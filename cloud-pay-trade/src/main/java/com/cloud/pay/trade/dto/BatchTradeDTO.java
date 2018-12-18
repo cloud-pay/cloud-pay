@@ -31,6 +31,8 @@ public class BatchTradeDTO {
     private String name;
     
     private String platBatchNo;
+    
+    private Integer tradeStatus;
 
 	public Integer getId() {
 		return id;
@@ -143,6 +145,50 @@ public class BatchTradeDTO {
 	public void setPlatBatchNo(String platBatchNo) {
 		this.platBatchNo = platBatchNo;
 	}
-    
+
+	public Integer getTradeStatus() {
+		return tradeStatus;
+	}
+
+	public void setTradeStatus(Integer tradeStatus) {
+		this.tradeStatus = tradeStatus;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("BatchTradeDTO [id=");
+		builder.append(id);
+		builder.append(", batchNo=");
+		builder.append(batchNo);
+		builder.append(", tradeTime=");
+		builder.append(tradeTime);
+		builder.append(", totalAmount=");
+		builder.append(totalAmount);
+		builder.append(", totalCount=");
+		builder.append(totalCount);
+		builder.append(", payerMerchantId=");
+		builder.append(payerMerchantId);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", creator=");
+		builder.append(creator);
+		builder.append(", createTime=");
+		builder.append(createTime);
+		builder.append(", auditor=");
+		builder.append(auditor);
+		builder.append(", auditTime=");
+		builder.append(auditTime);
+		builder.append(", type=");
+		builder.append(type);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append(", platBatchNo=");
+		builder.append(platBatchNo);
+		builder.append(", tradeStatus=");
+		builder.append(tradeStatus);
+		builder.append("]");
+		return builder.toString();
+	}
     
 }

@@ -35,6 +35,7 @@ import com.cloud.pay.channel.service.ICloudApiService;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.merchant.service.MerchantService;
+import com.cloud.pay.trade.dto.BatchTradeDTO;
 import com.cloud.pay.trade.entity.BatchTrade;
 import com.cloud.pay.trade.service.BatchTradeService;
 import com.cloud.pay.trade.service.TradeService;
@@ -254,8 +255,9 @@ public class BatchTradeController extends BaseController{
 			ParameterMap map = this.getParameterMap();
 			String batchNo = map.getString("batchNo");
 			Integer payerMerchantId = Integer.parseInt(map.getString("merchantId"));
+			BatchTradeDTO dto = batchTradeService.getBatchByBatchNo(batchNo, payerMerchantId);
 			BatchPayTradeQueryReqVO reqVO = new BatchPayTradeQueryReqVO();
-			reqVO.setBatchOrderNo(batchNo);
+			reqVO.setBatchOrderNo(dto.getPlatBatchNo());
 			reqVO.setMerchantId(payerMerchantId);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 			reqVO.setTradeDate(sdf.format(new Date()));

@@ -175,6 +175,10 @@ public class TradeService {
 	public TradeDTO selectTradeByMerIdAndOrderNo(Integer merchantId,String orderNo) {
 		TradeDTO tradeDTO = tradeMapper.selectTradeByMerIdAndOrderNo(merchantId, orderNo);
 		log.info("商户ID[{}],订单号[{}]查询结果为：{}", merchantId, orderNo, tradeDTO);
+		if(null == tradeDTO) {
+			log.info("订单号{}不存在",orderNo);
+			return null;
+		}
 		if(TradeConstant.STATUS_SUCCESS == tradeDTO.getStatus()
 			||TradeConstant.STATUS_FAIL == tradeDTO.getStatus()) {
 			return tradeDTO;

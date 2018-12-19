@@ -46,7 +46,7 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 	@Value("${cloud.bohai.pay.certId}")
 	private String certId;
 	
-	protected R request(M param,String reqName) {
+	protected R request(M param,String reqName) throws Exception {
 		log.info("代付-渤海代付{}-请求参数：{}",reqName,param);
 		//构建响应参数 
 		try {
@@ -63,8 +63,8 @@ public class BohaiTradeExecutor<M extends BohaiCloudTradeParam,R extends BohaiCl
 		    return buildResult(response,param.getSerialNo());
 		}catch(Exception e) {
 			log.error("请求渤海代付异常",e);
+			throw e;
 		}
-		return null;
 	}
 	
 	/**

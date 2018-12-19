@@ -70,13 +70,13 @@ public class CloudApiTradePayHandler implements ICloudPayApiHandler<CloudApiTrad
 		Trade trade = new Trade();
 		trade.setMerchantId(baseInfo.getId());
 		trade.setOrderNo(reqParam.getOrderNo());
-		//trade.setTradeTime(DateUtil.getDateTimeFormat(reqParam.getTradeTime()));
 		trade.setTradeTime(DateUtil.formatDate(reqParam.getTradeTime(), "yyyyMMdd HH:mm:ss"));
 		trade.setTradeAmount(reqParam.getTradeAmount());
 		trade.setPayeeName(reqParam.getPayeeName());
 		trade.setPayeeBankCard(reqParam.getPayeeBankCard());
 		trade.setPayeeBankCode(reqParam.getPayeeBankCode());
 		trade.setLoaning(reqParam.getLoaning() == null ? 0 : reqParam.getLoaning());
+		trade.setRemark(reqParam.getRemark());
 		try {
 			log.info("单笔代付，请求代付平台参数：{}",trade);
 		    PayResponseDTO payResponse = tradeService.pay(trade);

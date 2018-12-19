@@ -125,6 +125,7 @@ public class PayHandler {
 		//reqVO.setPayeeBankCode(trade.getPayeeBankCode());
 		reqVO.setPayeeName(trade.getPayeeName());
 		reqVO.setPostscript(trade.getRemark());
+		reqVO.setMerchantId(trade.getMerchantId());
 		log.info("调用渠道入参：{}", reqVO);
 		PayTradeResVO resVO = payService.unionPay(reqVO);//payService.pay(reqVO);
 		log.info("订单号{}调用渠道返回结果{}", trade.getOrderNo(), resVO);

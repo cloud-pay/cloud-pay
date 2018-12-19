@@ -39,6 +39,8 @@ public class CloudApiTradePayParam extends CloudApiTradeBaseParam {
 	
 	@IntegerValue(value= {0,1},message="是否垫资只能为是或者否")
 	private Integer loaning;
+	
+	private String remark;
 
 	public String getTradeTime() {
 		return tradeTime;
@@ -87,6 +89,13 @@ public class CloudApiTradePayParam extends CloudApiTradeBaseParam {
 	public void setLoaning(Integer loaning) {
 		this.loaning = loaning;
 	}
-	
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 	
 }

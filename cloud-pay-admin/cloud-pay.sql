@@ -303,7 +303,7 @@ CREATE TABLE `t_trade` (
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `settle_status` int(1) DEFAULT NULL COMMENT '结算状态（0：未导出，1已导出）',
   `recon_date` datetime DEFAULT NULL COMMENT '对账日期（格式yyyymmdd）',
-  `recon_status` int(1) DEFAULT NULL COMMENT '对账状态(1成功，2失败)',
+  `recon_status` int(1) DEFAULT '0' COMMENT '对账状态(0未对账，1成功，2失败)',
   `merchant_fee_amount` decimal(15,2) DEFAULT NULL COMMENT '商户手续费',
   `org_benefit` decimal(15,2) DEFAULT NULL COMMENT '机构分润费',
   `loan_benefit` decimal(15,2) DEFAULT NULL COMMENT '垫资分润费',

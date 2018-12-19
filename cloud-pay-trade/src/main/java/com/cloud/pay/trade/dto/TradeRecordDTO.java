@@ -22,6 +22,8 @@ public class TradeRecordDTO {
 	private Integer status;
 
 	private Integer loaning;
+	
+	private Integer reconStatus;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -95,4 +97,39 @@ public class TradeRecordDTO {
 		this.loaning = loaning;
 	}
 
+	public Integer getReconStatus() {
+		return reconStatus;
+	}
+
+	public void setReconStatus(Integer reconStatus) {
+		this.reconStatus = reconStatus;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TradeRecordDTO [orderNo=");
+		builder.append(orderNo);
+		builder.append(", batchNo=");
+		builder.append(batchNo);
+		builder.append(", merchantCode=");
+		builder.append(merchantCode);
+		builder.append(", merchantName=");
+		builder.append(merchantName);
+		builder.append(", orgName=");
+		builder.append(orgName);
+		builder.append(", tradeTime=");
+		builder.append(tradeTime);
+		builder.append(", tradeAmount=");
+		builder.append(tradeAmount);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", loaning=");
+		builder.append(loaning);
+		builder.append(", reconStatus=");
+		builder.append(reconStatus);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

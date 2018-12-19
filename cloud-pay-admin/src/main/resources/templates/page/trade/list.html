@@ -184,6 +184,7 @@ div.cbp label.font{
 					  <th>交易状态</th>
 					  <th>交易金额（元）</th>
 					  <th>是否垫资</th>
+					  <th>对账后状态</th>
 	                </tr>
                 </thead>
                 <tbody>
@@ -200,6 +201,9 @@ div.cbp label.font{
 				  <td th:text="${trade.tradeAmount}"></td>
                   <td th:if="${trade.loaning == 1}" th:text="是"></td>
 				  <td th:if="${trade.loaning == 0}" th:text="否"></td>
+				  <td th:if="${trade.reconStatus == 1}" th:text="成功"></td>
+				  <td th:if="${trade.reconStatus == 2}" th:text="失败"></td>
+				  <td th:if="${trade.reconStatus == 0}" th:text="未对账"></td>
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >
                 	<td colspan="7" align="center">
@@ -320,7 +324,7 @@ $(function(){
   	    'info'        : true,
   	    'autoWidth'   : false,
   	  	"pagingType"  : "full_numbers",
-  	  	"pageLength"  : 10
+  	  	"pageLength"  : 25
     });
 	
 })

@@ -445,6 +445,7 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL" />
     <result column="loaning" property="loaning" jdbcType="INTEGER" />
+    <result column="recon_status" property="reconStatus" jdbcType="INTEGER" />
   </resultMap>
   <select id="selectTradeList" resultMap="BaseTradeDTO">
       SELECT
@@ -456,12 +457,11 @@
 			m.`name` merchant_name,
 			t.`status`,
 			t.trade_amount,
-			c.loaning
+			t.loaning,
+			t.recon_status
 		FROM t_trade t
 		LEFT JOIN t_merchant_base_info m ON t.merchant_id = m.id
 		LEFT JOIN t_merchant_base_info o ON m.org_id = o.id
-		LEFT JOIN t_merchant_route_conf c ON t.merchant_id = c.merchant_id
-		AND t.channel_id = c.channel_id
 		where 1 = 1
       <if test="merchantId != null" >
         and t.merchant_id = #{merchantId,jdbcType=INTEGER}

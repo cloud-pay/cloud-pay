@@ -47,9 +47,9 @@ public class BohaiBatchTradePayExecutor extends BohaiTradeExecutor<BohaiCloudBat
 			//读取文件并生成文件sha1
 			String filePath = ""; 
 			if(batchPayFilePath.endsWith(File.separator)) {
-				filePath = batchPayFilePath + DateUtil.getDays() + File.separator;
+				filePath = batchPayFilePath + DateUtil.getDays() + File.separator + reqVO.getOrderNo()  + File.separator;
 			}else {
-				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator;
+				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator + reqVO.getOrderNo()  + File.separator;
 			}
 			String fileSHA1 = getFileSHA(filePath, reqVO.getFileName());
 			Map<String,String> map= uploadFile(filePath, reqVO.getFileName());

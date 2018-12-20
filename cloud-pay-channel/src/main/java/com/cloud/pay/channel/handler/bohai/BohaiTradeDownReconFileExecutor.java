@@ -14,6 +14,7 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
+import com.cloud.pay.common.utils.DateUtil;
 
 @Service("bohaiDownReconFileExecutor")
 public class BohaiTradeDownReconFileExecutor 
@@ -32,18 +33,19 @@ public class BohaiTradeDownReconFileExecutor
 	public ReconDownFileResVO execute(ReconDownFileReqVO reqVO) {
 		ReconDownFileResVO resVO = null;
 		String fileName = "DCHK" + instId+ reqVO.getReconDate();
-		String result = downloadFile(fileName, "BAT ", reconFilePath);
+		String filePath = "";
+		if(reconFilePath.startsWith(File.separator)) {
+			filePath = reconFilePath + DateUtil.getDays() + File.separator;
+		}else {
+			filePath = reconFilePath + File.separator + DateUtil.getDays() + File.separator;
+		}
+		String result = downloadFile(fileName, "BAT", filePath);
 		if(!"SUCCESS".equals(result)) {
 			resVO =  new ReconDownFileResVO(ChannelErrorCode.ERROR_1002,"获取对账文件失败");
 			log.info("渤海批量代付-响应参数：{}",resVO);
 			return resVO;
 		}
-		String fileFullPath = "";
-		if(reconFilePath.startsWith(File.separator)) {
-			fileFullPath = reconFilePath + fileName;
-		}else {
-			fileFullPath = reconFilePath + File.separator+ fileName;
-		}
+		String fileFullPath = filePath + fileName;
 		resVO = new ReconDownFileResVO();
 		resVO.setRespCode(ChannelContants.CHANNEL_RESP_CODE_SUCCESS);
 		resVO.setFilePath(fileFullPath);

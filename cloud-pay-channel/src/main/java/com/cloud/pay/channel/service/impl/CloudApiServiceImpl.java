@@ -208,9 +208,9 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		try {
 			String filePath = ""; 
 			if(batchPayFilePath.endsWith(File.separator)) {
-				filePath = batchPayFilePath + DateUtil.getDays() + File.separator;
+				filePath = batchPayFilePath + DateUtil.getDays() + File.separator + reqVO.getOrderNo()  + File.separator;
 			}else {
-				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator;
+				filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator + reqVO.getOrderNo()  + File.separator;
 			}
 		    FileUtils.createFile(fileName, filePath, FileSuffixEnums.REQ.getSuffix());
 		    

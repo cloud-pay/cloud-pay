@@ -1,37 +1,62 @@
 package com.cloud.pay.channel.handler.bohai;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.cloud.pay.channel.dto.TradeDTO;
 import com.cloud.pay.channel.handler.ITradePayExecutor;
 import com.cloud.pay.channel.utils.JaxbUtil;
+import com.cloud.pay.channel.utils.ReconReturnCodeEnum;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryInnerResVO;
 import com.cloud.pay.channel.vo.BatchPayTradeQueryReqVO;
+import com.cloud.pay.channel.vo.BatchPayTradeQueryResVO;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayQueryParam;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudBatchTradePayQueryResult;
 import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeErrorResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
 import com.cloud.pay.common.exception.CloudPayException;
+import com.cloud.pay.common.utils.DateUtil;
 
 @Service("bohaiBatchTradePayQueryExecutor")
 public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayQueryParam,BohaiCloudBatchTradePayQueryResult>
-      implements ITradePayExecutor<BatchPayTradeQueryReqVO, BatchPayTradeQueryInnerResVO> {
+      implements ITradePayExecutor<BatchPayTradeQueryReqVO, BatchPayTradeQueryResVO> {
 
+	@Value("${cloud.bohai.batch.pay.file.path}")
+	private String batchPayFilePath;  //本地文件路径
+	
 	@Override
-	public BatchPayTradeQueryInnerResVO execute(BatchPayTradeQueryReqVO reqVO) {
-		BatchPayTradeQueryInnerResVO  resVO = null;
+	public BatchPayTradeQueryResVO execute(BatchPayTradeQueryReqVO reqVO) {
+		BatchPayTradeQueryResVO  resVO = null;
 		try {
 			BohaiCloudBatchTradePayQueryParam batchQueryParam = createParam(reqVO);
 			BohaiCloudBatchTradePayQueryResult result = request(batchQueryParam, ChannelContants.CHANNEL_BOHAI_REQ_HEADER_SCBR);
 			resVO = new BatchPayTradeQueryInnerResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),result.getRspCode(),result.getRspMsg());
-			if("4".equals(resVO.getRespCode())) {
+			if("4".equals(resVO.getRespCode()) || "3".equals(resVO.getRespCode())) {
 				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_SUCCESS);
-				resVO.setFileName(result.getFilNam());
+				//resVO.setFileName(result.getFilNam());
+			    //获取结果文件
+				List<TradeDTO> list = getResultList(result.getFilNam(), reqVO.getBatchOrderNo());
+				if(null == list || list.size() <= 0) {
+					resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_UNKNOWN);
+				}else {
+					resVO.setTrades(list);
+				}
 			}else if("5".equals(resVO.getRespCode()) || "6".equals(resVO.getRespCode())) {
 				resVO.setStatus(ChannelContants.CHANNEL_RETURN_STATUS_FAIL);
 			}else {
@@ -47,6 +72,76 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 			resVO = new BatchPayTradeQueryInnerResVO(reqVO.getMerchantId(),reqVO.getOrderNo(),ChannelContants.CHANNEL_RESP_CODE_FAIL,ChannelErrorCode.ERROR_9000,"系统异常");
 		}
 		return resVO;
+	}
+	
+	/**
+	 * 下载并解析结果文件
+	 * @param fileName
+	 * @param batchNo
+	 * @return
+	 */
+	private List<TradeDTO> getResultList(String fileName,String batchNo){
+		String filePath = ""; 
+		if(batchPayFilePath.endsWith(File.separator)) {
+			filePath = batchPayFilePath + DateUtil.getDays() + File.separator + batchNo + File.separator ;
+		}else {
+			filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator + batchNo + File.separator;
+		}
+		//下载文件到本地
+		String getFileResult = downloadFile(fileName, "BAT", filePath);
+		log.info("查询批量文件结果：{}",getFileResult);
+		if("SUCCESS".equals(getFileResult)) {
+			 //解析文件
+			String fileFullPath = filePath + fileName;
+			return analysisResultFile(fileFullPath);
+		}
+		return null;
+	}
+	
+	/**
+	 * 解析结果文件（如果返回空，则应该返回未知状态，避免因解析文件失败导致数据不正确）
+	 * @param fileFullPath
+	 * @return
+	 */
+	private List<TradeDTO> analysisResultFile(String fileFullPath){
+		 List<TradeDTO> list = new ArrayList<TradeDTO>();
+		 BufferedReader buf = null;
+		 try {
+			 String line = null;
+			 buf = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fileFullPath)),"gb2312"));
+			 int i = 0;
+			 while((line = buf.readLine()) != null){
+				 if(i == 0) {
+					 i++;
+					 continue;
+				 }
+				 TradeDTO trade = new TradeDTO();
+				 String[] str = line.trim().split("~");
+				 trade.setSeqNo(StringUtils.isNotBlank(str[0])?str[0]:"");
+				 trade.setPayerAccount(StringUtils.isNotBlank(str[1])?str[1]:"");
+				 trade.setPayerName(StringUtils.isNotBlank(str[2])?str[2]:"");
+				 trade.setPayeeAccount(StringUtils.isNotBlank(str[3])?str[3]:"");
+				 trade.setPayeeName(StringUtils.isNotBlank(str[4])?str[4]:"");
+				 trade.setPayeeBankCode(StringUtils.isNotBlank(str[5])?str[5]:"");
+				 trade.setStatus(StringUtils.isNotBlank(str[9])? ReconReturnCodeEnum.getStatus(str[9]):ReconReturnCodeEnum.RETURN_UNKNOWN.getStatus());
+				 list.add(trade);
+			 }
+		 }catch (FileNotFoundException e) {
+			 log.error("解析结果文件出错：{}",e);
+			 return null;
+		 } catch (IOException e) {
+			 log.error("解析结果文件出错：{}",e);
+			 return null;
+		 }finally {
+			 if(buf != null) {
+				try {
+					buf.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			 }
+		 }
+		 return list;
 	}
 
 	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryReqVO reqVO) {
@@ -81,4 +176,5 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 		}
 		return result;
 	}
+
 }

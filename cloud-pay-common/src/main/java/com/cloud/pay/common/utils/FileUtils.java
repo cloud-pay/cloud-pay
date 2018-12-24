@@ -29,7 +29,7 @@ public class FileUtils {
 	 * @return false-生成文件失败 true-生成文件成功
 	 * @throws IOException
 	 */
-	public static boolean createFile(String fileName,String filePath,String suffix) throws IOException{
+	public static boolean createFile(String fileName,String filePath,String suffix)throws IOException{
 		boolean flag = false;
 		String fileFullPath = "";
 		isExist(filePath);
@@ -52,7 +52,7 @@ public class FileUtils {
 	}
 	
 	/**
-	 * 判断文件按是否存在
+	 * 判断文件是否存在
 	 * @param fileName
 	 * @param filePath
 	 * @return
@@ -72,14 +72,20 @@ public class FileUtils {
 		return flag;
 	}
 	
-	private static void isExist(String path) {
-		File file = new File(path);
-		if(!file.exists()) {
-			file.mkdir();
+	private static void isExist(String path){
+		String paths[] = path.split(File.separator);
+		String dir = paths[0];
+		for (int i = 0; i < paths.length - 1; i++) {
+			 dir = dir + "/" + paths[i + 1];  
+			   File dirFile = new File(dir);  
+			   if (!dirFile.exists()) {  
+			       dirFile.mkdir(); 
+			   } 
 		}
 	}
 	
 	public static void main(String[] args) {
+		System.out.println(File.separator);
 		isExist("e:\\reconFile\\merchant\\20181009");
 	}
 	

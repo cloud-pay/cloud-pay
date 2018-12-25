@@ -122,9 +122,9 @@ public class ChannelTest {
 	@Test
 	public void batchPay() {
 		BatchPayTradeReqVO reqVO = new BatchPayTradeReqVO();
-		reqVO.setTradeDate("20181224 21:13:15");
+		reqVO.setTradeDate("20181225 20:49:15");
 		reqVO.setMerchantId(1);
-		reqVO.setOrderNo("2018122400000001");
+		reqVO.setOrderNo("2018122500000002");
 		List<TradeDTO> list = new ArrayList<TradeDTO>();
 		TradeDTO tradeDTO1 = new TradeDTO();
 		tradeDTO1.setSeqNo("1");

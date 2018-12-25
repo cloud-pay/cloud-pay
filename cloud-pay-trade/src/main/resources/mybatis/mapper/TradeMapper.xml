@@ -721,9 +721,10 @@
     <result column="payee_name" property="payeeName" jdbcType="VARCHAR" />
     <result column="payee_bank_card" property="payeeAccount" jdbcType="VARCHAR" />
     <result column="payee_bank_code" property="payeeBankCode" jdbcType="VARCHAR" />
+    <result column="post_script" property="postScript" jdbcType="VARCHAR" />
   </resultMap>
   <select id="selectByBatchNoOrderBySeq" resultMap="BaseChannelDTO">
-    select CONCAT(seq_no) seqNo,trade_amount,payee_name,payee_bank_card,payee_bank_code 
+    select CONCAT(seq_no) seqNo,trade_amount,payee_name,payee_bank_card,payee_bank_code,remark post_script
     from t_trade
     where batch_no = #{batchNo,jdbcType=VARCHAR}
     ORDER BY seq_no

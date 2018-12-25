@@ -23,6 +23,8 @@ public class TradeDTO {
 	private String payeeAccount;//收款人账号
 	
 	private String payeeBankCode; //收款人清算行行号
+	
+	private String postScript; //附言
 
 	public String getSeqNo() {
 		return seqNo;
@@ -87,5 +89,14 @@ public class TradeDTO {
 	public void setPayeeAccount(String payeeAccount) {
 		this.payeeAccount = payeeAccount;
 	}
+
+	public String getPostScript() {
+		return postScript;
+	}
+
+	public void setPostScript(String postScript) {
+		this.postScript = postScript;
+	}
+	
 	
 }

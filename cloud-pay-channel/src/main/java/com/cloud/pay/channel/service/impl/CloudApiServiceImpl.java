@@ -226,8 +226,9 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			for(TradeDTO tradeDTO:reqVO.getTrades()) {
 				String amountStr = tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN).toString();
 				//行与行之间得分隔符
-				fileContentList.add(String.format("%s~~~%s~%s~%s~~~CNY~%s~", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
-						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),amountStr));
+				fileContentList.add(String.format("%s~~~%s~%s~%s~~~CNY~%s~%s~~", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
+						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),amountStr,
+						StringUtils.isNotBlank(tradeDTO.getPostScript())?tradeDTO.getPostScript():""));
         		totalAmt = totalAmt.add(tradeDTO.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         		totalNum ++;
 			}

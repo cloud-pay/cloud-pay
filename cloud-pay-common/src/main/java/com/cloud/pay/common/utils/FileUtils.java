@@ -78,7 +78,7 @@ public class FileUtils {
 		String dir = paths[0];
 		for (int i = 0; i < paths.length - 1; i++) {
 			 dir = dir + "/" + paths[i + 1];  
-			   File dirFile = new File(dir);  
+			   File dirFile = new File(dir);   
 			   if (!dirFile.exists()) {  
 			       dirFile.mkdir(); 
 			   } 

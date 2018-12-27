@@ -73,8 +73,8 @@ public class FileUtils {
 	}
 	
 	private static void isExist(String path){
-		String paths[] = path.split(File.separator);
-//		String paths[] = path.split("\\\\");
+//		String paths[] = path.split(File.separator);
+		String paths[] = path.split("\\\\");
 		String dir = paths[0];
 		for (int i = 0; i < paths.length - 1; i++) {
 			 dir = dir + "/" + paths[i + 1];  
@@ -102,7 +102,7 @@ public class FileUtils {
     		}
         	logger.info("写入文件路径：{}",fileFullPath);
         	File file = new File(fileFullPath);
-        	out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "GBK"));
+        	out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "gb2312"));
         	for (String info : list) {
                 out.write(info);
                 out.newLine();

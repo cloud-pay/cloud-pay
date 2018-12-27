@@ -226,14 +226,14 @@ public class CloudApiServiceImpl implements ICloudApiService {
 			for(TradeDTO tradeDTO:reqVO.getTrades()) {
 				String amountStr = tradeDTO.getTradeAmount().setScale(2,BigDecimal.ROUND_HALF_DOWN).toString();
 				//行与行之间得分隔符
-				fileContentList.add(String.format("%s~~~%s~%s~%s~~~CNY~%s~%s", tradeDTO.getSeqNo(),tradeDTO.getPayeeAccount(),
+				fileContentList.add(String.format("%s~%s~%s~%s~%s~%s~~~CNY~%s~%s", tradeDTO.getSeqNo(),payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),tradeDTO.getPayeeAccount(),
 						tradeDTO.getPayeeName(),tradeDTO.getPayeeBankCode(),amountStr,
 						StringUtils.isNotBlank(tradeDTO.getPostScript())?tradeDTO.getPostScript():"转账"));
         		totalAmt = totalAmt.add(tradeDTO.getTradeAmount()).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         		totalNum ++;
 			}
 			 //文件头部
-			fileContentList.set(0, String.format("<Header>~%s~%s~%d~%s~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt.toString()));
+			fileContentList.set(0, String.format("<Header>~%s~%s~%d~%s~~~</Header>", payerAccountConfig.getSysValue(),payerNameConfig.getSysValue(),totalNum,totalAmt.toString()));
 			FileUtils.writeFileFromList(fileContentList, fileName, filePath, FileSuffixEnums.REQ.getSuffix());
 		   
 		    BatchPayTradeInnerReqVO innerReqVO = new BatchPayTradeInnerReqVO();

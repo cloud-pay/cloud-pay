@@ -125,6 +125,7 @@ public class BatchTradeHandler {
 			//TODO 异步发起批量交易
 			//判断商户余额
 			List<Trade> trades = tradeMapper.selectByBatchNo(batchTrade.getBatchNo());
+			log.info("根据批次号[{}]查询交易总数为：{}", batchTrade.getBatchNo(), trades.size());
 			BigDecimal total = BigDecimal.ZERO;
 			for(Trade temp : trades) {
 				total.add(temp.getTradeAmount()).add(add(temp.getMerchantFeeAmount(), temp.getLoanBenefit(), temp.getOrgBenefit()));
@@ -133,6 +134,7 @@ public class BatchTradeHandler {
 				prepayInfoService.freezePrepayInfo(batchTrade.getPayerMerchantId(), total);
 			} catch(Exception e1) {
 				log.warn("冻结商户余额异常：", e1);
+				log.info("根据批次号[{}]修改交易状态为失败", batchTrade.getBatchNo());
 				//修改批量交易失败
 				tradeMapper.updateStatusByBatchNo(batchTrade.getBatchNo(),
 						e1.getMessage(), TradeConstant.PREPAY_BALANCE_NO_ENOUGH, TradeConstant.STATUS_FAIL, new Date());

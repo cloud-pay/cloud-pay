@@ -120,6 +120,11 @@ public class PrepayInfoService {
 	@Transactional
 	public void freezePrepayInfo(Integer merchantId, BigDecimal freezeAmount) throws Exception {
 		log.info("冻结商户[{}]指定金额[{}]", merchantId, freezeAmount);
+		if(freezeAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			log.warn("冻结金额为:{}，发起交易失败", freezeAmount);
+			throw new TradeException("系统内部问题，请联系管理员",
+					TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
+		}
 		MerchantPrepayInfo info = lockByMerchantId(merchantId);
 		if (info.getBalance().subtract(info.getFreezeAmount()).compareTo(freezeAmount) < 0) {
 			log.warn("现有余额为:{}，小于提现金额：{}", info.getBalance().subtract(info.getFreezeAmount()), freezeAmount);

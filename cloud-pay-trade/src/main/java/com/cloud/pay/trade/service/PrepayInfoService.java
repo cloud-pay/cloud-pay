@@ -127,17 +127,22 @@ public class PrepayInfoService {
 		}
 		MerchantPrepayInfo info = lockByMerchantId(merchantId);
 		if (info.getBalance().subtract(info.getFreezeAmount()).compareTo(freezeAmount) < 0) {
-			log.warn("现有余额为:{}，小于提现金额：{}", info.getBalance().subtract(info.getFreezeAmount()), freezeAmount);
-			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()),
+			log.warn("现有余额为:{}，小于交易金额：{}", info.getBalance().subtract(info.getFreezeAmount()), freezeAmount);
+			throw new TradeException("现有余额为" + info.getBalance().subtract(info.getFreezeAmount()) + "小于交易金额" ,
 					TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
 		} else {
-			if(info.getBalance().compareTo(BigDecimal.ZERO) == 0) {
+			// 冻结金额
+			info.setFreezeAmount(info.getFreezeAmount().add(freezeAmount));
+			if(info.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
 				log.warn("现有余额为:{}，发起交易失败", info.getBalance());
 				throw new TradeException("现有余额为" + info.getBalance() + "，发起交易失败",
 						TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
 			}
-			// 冻结金额
-			info.setFreezeAmount(info.getFreezeAmount().add(freezeAmount));
+			if(info.getFreezeAmount().compareTo(BigDecimal.ZERO) < 0) {
+				log.warn("现有冻结金额为:{}，发起交易失败", info.getFreezeAmount());
+				throw new TradeException("现有冻结金额为" + info.getFreezeAmount() + "，发起交易失败",
+						TradeConstant.PREPAY_BALANCE_NO_ENOUGH);
+			}
 			info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
 					String.valueOf(info.getMerchantId())));
 			log.info("冻结商户信息：{}", info);

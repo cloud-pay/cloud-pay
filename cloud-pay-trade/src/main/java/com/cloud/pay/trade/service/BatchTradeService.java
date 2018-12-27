@@ -511,6 +511,7 @@ public class BatchTradeService {
 			prepayInfoService.unfreezePrepayInfo(merchantId, totalAmount);
 			return "批量代付失败";
 		} 
-		return "批量代付处理中";
+		return resVO.getRespMsg();
+//		return "批量代付处理中";
 	}
 }

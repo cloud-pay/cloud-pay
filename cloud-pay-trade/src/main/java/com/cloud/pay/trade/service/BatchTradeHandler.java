@@ -128,7 +128,7 @@ public class BatchTradeHandler {
 			log.info("根据批次号[{}]查询交易总数为：{}", batchTrade.getBatchNo(), trades.size());
 			BigDecimal total = BigDecimal.ZERO;
 			for(Trade temp : trades) {
-				total.add(temp.getTradeAmount()).add(add(temp.getMerchantFeeAmount(), temp.getLoanBenefit(), temp.getOrgBenefit()));
+				total = total.add(temp.getTradeAmount()).add(add(temp.getMerchantFeeAmount(), temp.getLoanBenefit(), temp.getOrgBenefit()));
 			}
 			try {
 				prepayInfoService.freezePrepayInfo(batchTrade.getPayerMerchantId(), total);

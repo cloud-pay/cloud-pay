@@ -73,8 +73,8 @@ public class FileUtils {
 	}
 	
 	private static void isExist(String path){
-//		String paths[] = path.split(File.separator);
-		String paths[] = path.split("\\\\");
+		String paths[] = path.split(File.separator);
+//		String paths[] = path.split("\\\\");
 		String dir = paths[0];
 		for (int i = 0; i < paths.length - 1; i++) {
 			 dir = dir + "/" + paths[i + 1];  

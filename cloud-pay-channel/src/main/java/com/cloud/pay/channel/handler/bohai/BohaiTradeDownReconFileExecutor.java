@@ -15,6 +15,7 @@ import com.cloud.pay.channel.vo.bohai.BohaiCloudTradeResult;
 import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
 import com.cloud.pay.common.utils.DateUtil;
+import com.cloud.pay.common.utils.FileUtils;
 
 @Service("bohaiDownReconFileExecutor")
 public class BohaiTradeDownReconFileExecutor 
@@ -39,6 +40,8 @@ public class BohaiTradeDownReconFileExecutor
 		}else {
 			filePath = reconFilePath + File.separator + DateUtil.getDays() + File.separator;
 		}
+		//创建文件目录
+		FileUtils.isExist(filePath);
 		String result = downloadFile(fileName, "BAT", filePath);
 		if(!"SUCCESS".equals(result)) {
 			resVO =  new ReconDownFileResVO(ChannelErrorCode.ERROR_1002,"获取对账文件失败");

@@ -32,6 +32,7 @@ import com.cloud.pay.common.contants.ChannelContants;
 import com.cloud.pay.common.contants.ChannelErrorCode;
 import com.cloud.pay.common.exception.CloudPayException;
 import com.cloud.pay.common.utils.DateUtil;
+import com.cloud.pay.common.utils.FileUtils;
 
 @Service("bohaiBatchTradePayQueryExecutor")
 public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiCloudBatchTradePayQueryParam,BohaiCloudBatchTradePayQueryResult>
@@ -88,7 +89,8 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 			filePath = batchPayFilePath + File.separator + DateUtil.getDays() + File.separator + batchNo + File.separator;
 		}
 		//下载文件到本地
-		String getFileResult = downloadFile(fileName, "BAT", filePath);
+		FileUtils.isExist(filePath);
+		String getFileResult = downloadFile(fileName, "BPI", filePath);
 		log.info("查询批量文件结果：{}",getFileResult);
 		if("SUCCESS".equals(getFileResult)) {
 			 //解析文件

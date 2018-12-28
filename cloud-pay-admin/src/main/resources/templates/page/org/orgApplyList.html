@@ -200,8 +200,12 @@ div.cbp label.font{
 							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
 							<i class="fa fa-edit"></i> 编辑
 						</span>
+						<span data-toggle="tooltip" title="编辑" th:if="${QX.edit == '1' && merchant.status == 3}" class="btn btn-xs btn-info" 
+							th:onclick="'editMerchant(\''+${merchant.id}+'\');'">
+							<i class="fa fa-edit"></i> 编辑
+						</span>
 	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
-	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1'}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
+	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1' && merchant.status == 2}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
 	                  	<span data-toggle="tooltip" title="变更" th:if="${QX.query == '1' && merchant.status == 2}" class="btn btn-xs btn-info" th:onclick="'change(\''+${merchant.id}+'\');'"><i class="fa fa-edit"></i> 变更</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
                   	</div>

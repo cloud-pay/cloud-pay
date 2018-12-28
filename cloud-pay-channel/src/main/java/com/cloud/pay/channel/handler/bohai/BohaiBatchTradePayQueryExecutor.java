@@ -117,6 +117,7 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 					 i++;
 					 continue;
 				 }
+				 
 				 TradeDTO trade = new TradeDTO();
 				 String[] str = line.trim().split("~");
 				 trade.setSeqNo(StringUtils.isNotBlank(str[0])?str[0]:"");

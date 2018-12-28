@@ -38,10 +38,10 @@ public class ConvertUtil {
 	 * @param trades
 	 * @return
 	 */
-	public static Map<String, Trade> convertTradeMap(List<Trade> trades) {
-		Map<String, Trade> maps = new HashMap<String, Trade>();
+	public static Map<Integer, Trade> convertTradeMap(List<Trade> trades) {
+		Map<Integer, Trade> maps = new HashMap<Integer, Trade>();
 		for(Trade trade : trades) {
-			maps.put(trade.getOrderNo(), trade);
+			maps.put(trade.getSeqNo(), trade);
 		}
 		return maps;
 	}

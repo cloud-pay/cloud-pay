@@ -454,9 +454,9 @@ public class BatchTradeService {
 		if(resVO.getStatus() != null && 0 == resVO.getStatus()) {
 			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUCCESS, batchNo,null);
 			//TODO依次处理批次文件
-			Map<String, Trade> tradeMap = ConvertUtil.convertTradeMap(trades);
+			Map<Integer, Trade> tradeMap = ConvertUtil.convertTradeMap(trades);
 			for(TradeDTO tradeDTO : resVO.getTrades()) {
-				Trade trade = tradeMap.get(tradeDTO.getSeqNo());
+				Trade trade = tradeMap.get(Integer.parseInt(tradeDTO.getSeqNo()));
 				trade.setStatus(tradeDTO.getStatus());
 				trade.setChannelId(resVO.getChannelId());
 			}

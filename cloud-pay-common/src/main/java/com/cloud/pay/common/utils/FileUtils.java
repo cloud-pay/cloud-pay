@@ -72,7 +72,7 @@ public class FileUtils {
 		return flag;
 	}
 	
-	private static void isExist(String path){
+	public static void isExist(String path){
 		String paths[] = path.split(File.separator);
 //		String paths[] = path.split("\\\\");
 		String dir = paths[0];

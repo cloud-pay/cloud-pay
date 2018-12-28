@@ -52,27 +52,6 @@ public class BatchTradeHandler {
 	@Autowired
 	private ICloudApiService payService;
 	
-	
-	/**
-	 * 计算总金额
-	 * @param merchantFee
-	 * @param loanBenefit
-	 * @param orgBenefit
-	 * @return
-	 */
-	private BigDecimal add(BigDecimal merchantFee, BigDecimal loanBenefit, BigDecimal orgBenefit) {
-		if(merchantFee == null) {
-			merchantFee = BigDecimal.ZERO;
-		}
-		if(loanBenefit == null) {
-			loanBenefit = BigDecimal.ZERO;
-		}
-		if(orgBenefit == null) {
-			orgBenefit = BigDecimal.ZERO;
-		}
-		return merchantFee.add(orgBenefit).add(loanBenefit);
-	}
-	
 	/**
 	 * 审批不通过
 	 * @param batchTrade
@@ -128,7 +107,7 @@ public class BatchTradeHandler {
 			log.info("根据批次号[{}]查询交易总数为：{}", batchTrade.getBatchNo(), trades.size());
 			BigDecimal total = BigDecimal.ZERO;
 			for(Trade temp : trades) {
-				total = total.add(temp.getTradeAmount()).add(add(temp.getMerchantFeeAmount(), temp.getLoanBenefit(), temp.getOrgBenefit()));
+				total = total.add(temp.getTradeAmount()).add(temp.getMerchantFeeAmount());
 			}
 			try {
 				prepayInfoService.freezePrepayInfo(batchTrade.getPayerMerchantId(), total);

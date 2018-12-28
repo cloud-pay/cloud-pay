@@ -117,6 +117,7 @@ public class BatchTradeController extends BaseController{
 		try {
 			BatchTrade batchTrade = new BatchTrade();
 			ParameterMap map = this.getParameterMap();
+			log.info("手工代付上传交易入参：{}", map);
 			Integer loaning = Integer.parseInt(map.getString("loaning"));
 			Integer payerMerchantId = Integer.parseInt(map.getString("payerMerchantId"));
 			batchTrade.setPayerMerchantId(payerMerchantId);
@@ -202,6 +203,7 @@ public class BatchTradeController extends BaseController{
 		try {
 			BatchTrade batchTrade = new BatchTrade();
 			ParameterMap map = this.getParameterMap();
+			log.info("批量交易审核入参：{}", map);
 			batchTrade.setStatus(Integer.parseInt(map.getString("status")));
 			batchTrade.setBatchNo(map.getString("batchNo"));
 			batchTrade.setId(Integer.parseInt(map.getString("id")));
@@ -253,6 +255,7 @@ public class BatchTradeController extends BaseController{
 		String res = null;
 		try {
 			ParameterMap map = this.getParameterMap();
+			log.info("批量交易代付结果查询入参：{}", map);
 			String batchNo = map.getString("batchNo");
 			Integer payerMerchantId = Integer.parseInt(map.getString("merchantId"));
 			BatchTradeDTO dto = batchTradeService.getBatchByBatchNo(batchNo, payerMerchantId);
@@ -268,6 +271,9 @@ public class BatchTradeController extends BaseController{
 			log.info("批量查询结果：{}", resVO);
 			if(resVO == null || resVO.getStatus() == null && 99 == resVO.getStatus()) {
 				//交易结果未知，返回处理中
+				if(resVO.getRespMsg() != null) {
+					return ResponseModel.getModel("ok", "success", "批量代付处理中，" + resVO.getRespMsg());
+				}
 				return ResponseModel.getModel("ok", "success", "批量代付处理中");
 			}
 			res = batchTradeService.dealBatchTrade(batchNo, payerMerchantId, resVO);

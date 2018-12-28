@@ -14,6 +14,8 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +39,8 @@ import com.cloud.pay.trade.service.TradeService;
 @Controller
 @RequestMapping("/trade")
 public class TradeController extends BaseController {
+	
+	private Logger log = LoggerFactory.getLogger(TradeController.class);
 
 	@Autowired
 	private TradeService tradeService;
@@ -61,6 +65,7 @@ public class TradeController extends BaseController {
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("汇总数据查询入参：{}", map);
 		String merchant = map.getString("merchantId");
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
@@ -110,6 +115,7 @@ public class TradeController extends BaseController {
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("交易记录查询入参：{}", map);
 		String merchant = map.getString("merchantId");
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
@@ -158,6 +164,7 @@ public class TradeController extends BaseController {
 	public void exportList(HttpServletResponse res) {
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("导出交易记录入参：{}", map);
 		String merchant = map.getString("merchantId");
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
@@ -261,6 +268,7 @@ public class TradeController extends BaseController {
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("商户手续费统计查询入参：{}", map);
 		String merchant = map.getString("merchantId");
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
@@ -302,6 +310,7 @@ public class TradeController extends BaseController {
 	public void exportMerchantFeeStat(HttpServletResponse res) {
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("导出商户手续费查询入参：{}", map);
 		String merchant = map.getString("merchantId");
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
@@ -388,6 +397,7 @@ public class TradeController extends BaseController {
 		model.addAttribute("meid", ((User) this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("机构手续费统计查询入参：{}", map);
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
 		String createDateEnd = map.getString("createDateEnd");
@@ -424,6 +434,7 @@ public class TradeController extends BaseController {
 	public void exportOrgFeeStat(HttpServletResponse res) {
 		// 统计查询
 		ParameterMap map = this.getParameterMap();
+		log.info("导出机构手续费统计查询入参：{}", map);
 		String org = map.getString("orgId");
 		String createDateBegin = map.getString("createDateBegin");
 		String createDateEnd = map.getString("createDateEnd");

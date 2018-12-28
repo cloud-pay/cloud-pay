@@ -5,7 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,7 +18,7 @@ import com.cloud.pay.admin.util.ParameterMap;
 
 public class BaseController {
 	
-	protected Logger log = Logger.getLogger(this.getClass());
+	protected Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * springMVC 获取requset
@@ -87,6 +88,7 @@ public class BaseController {
 	public ParameterMap getParameterMap() {
 		ParameterMap pm = new ParameterMap(this.getRequest());
 		pm.put("rip", getRemortIP());
+		log.info("controller入参：{}", pm);
 		return pm;
 	}
 

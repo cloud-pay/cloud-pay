@@ -145,7 +145,9 @@ public class TradeService {
 	public List<FeeStatDTO> selectOrgFeeStats(Integer orgId,
 			Date startTime, Date endTime, Integer userMerchantId, String userMerchantType) {
 		List<FeeStatDTO> orgStats = tradeMapper.selectOrgTradeFeeStats(orgId, startTime, endTime, userMerchantId, userMerchantType);
+		log.info("机构交易手续费统计记录：{}", orgStats);
 		List<FeeStatDTO> merchantStats = tradeMapper.selectMerchantFeeByOrg(orgId, startTime, endTime);
+		log.info("机构下商户交易分润统计记录：{}", merchantStats);
 		if(orgStats == null || orgStats.size() == 0) {
 			return merchantStats;
 		} else {

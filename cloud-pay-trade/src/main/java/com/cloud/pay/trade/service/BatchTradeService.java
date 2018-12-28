@@ -132,7 +132,9 @@ public class BatchTradeService {
 				}
 				temp.setMerchantFeeAmount(merchantFee);
 				BigDecimal orgFee = payHandler.getOrgFee(temp.getMerchantId(), temp.getTradeAmount());
-				temp.setOrgBenefit(merchantFee.subtract(orgFee));
+				if(orgFee.compareTo(BigDecimal.ZERO) > 0) {
+					temp.setOrgBenefit(merchantFee.subtract(orgFee));
+				}
 				totalAmount = totalAmount.add(temp.getTradeAmount());
 			} 
 			batchTrade.setTotalAmount(totalAmount);

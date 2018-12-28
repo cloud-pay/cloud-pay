@@ -79,12 +79,14 @@ public class PayHandler {
 		if(TradeConstant.LOANING_YES == trade.getLoaning()) {
 			//计算垫资分润
 			trade.setLoanBenefit(fees[1]);
+			trade.setMerchantFeeAmount(merchantFee.add(trade.getLoanBenefit()));
 		}else {
-			trade.setLoanBenefit(new BigDecimal(0));
+			trade.setMerchantFeeAmount(merchantFee);
 		}
-		trade.setMerchantFeeAmount(merchantFee.add(trade.getLoanBenefit()));
 		BigDecimal orgFee = getOrgFee(trade.getMerchantId(), trade.getTradeAmount());
-		trade.setOrgBenefit(merchantFee.subtract(orgFee));
+		if(orgFee.compareTo(BigDecimal.ZERO) > 0) {
+			trade.setOrgBenefit(merchantFee.subtract(orgFee));
+		}
 		log.info("保存交易信息：{}", trade);
 		tradeMapper.insert(trade);
 		SimpleDateFormat sdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -221,7 +223,7 @@ public class PayHandler {
 				} 
 			}
 		}
-		return fee;
+		return fee.setScale(2,BigDecimal.ROUND_HALF_UP);
 	}
 	
 	/**
@@ -254,14 +256,14 @@ public class PayHandler {
 		Integer loanId = null;
 		merchantIds.add(trade.getMerchantId());
 		merchantIds.add(1);//平台账户
-		if(trade.getOrgBenefit() != null) {
+		if(trade.getOrgBenefit() != null && trade.getOrgBenefit().compareTo(BigDecimal.ZERO) > 0) {
 			MerchantBaseInfo baseInfo =  merchantBaseInfoMapper.selectByPrimaryKey(trade.getMerchantId());
 			if(baseInfo.getOrgId() != null) {
 				orgId = baseInfo.getOrgId();
 				merchantIds.add(baseInfo.getOrgId());
 			}
 		}
-		if(trade.getLoanBenefit() != null) {
+		if(trade.getLoanBenefit() != null && trade.getLoanBenefit().compareTo(BigDecimal.ZERO) > 0) {
 			MerchantRouteConf conf = merchantRouteConfMapper.selectByMerchantIdAndChannelId(trade.getMerchantId(), trade.getChannelId());
 			if(conf != null && conf.getLoaningOrgId() != null) {
 				loanId = conf.getLoaningOrgId();

@@ -335,6 +335,7 @@ div.cbp label.font{
 					    </div>
 					    <div class="col-sm-3">
 						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率（%）">
+						    	<span id="payPercent">(%)</span><span id="perPayPercent">元/笔</span>
 					    </div>
 					  </div>
 					  <div class="form-group">
@@ -347,6 +348,7 @@ div.cbp label.font{
 					    </div>
 					    <div class="col-sm-3">
 						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率（%）">
+						    	<span id="loanPercent">(%)</span><span id="perLoanPercent">元/笔</span>
 					    </div>
 					  </div>
 					  
@@ -646,7 +648,7 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='email']").val(data.data.baseInfo.email);
 					$("input[name='mobile']").val(data.data.baseInfo.mobile);
 					$("input[name='bankInfoId']").val(data.data.baseInfo.id);
-					$("[name='bankId']").val(data.data.bankInfo.id);
+					$("[name='bankId']").val(data.data.bankInfo.bankId);
 					$("input[name='bankName']").val(data.data.bankInfo.bankName);
 					$("[name='bankAccountType']").val(data.data.bankInfo.bankAccountType);
 					$("input[name='bankCardNo']").val(data.data.bankInfo.bankCardNo);
@@ -664,6 +666,21 @@ function reloadModelData(url,title,btntext,id){
 					$("#showBankCard").attr("src",data.data.bankCardPath);
 					$("#showCert").attr("src",data.data.certPath);
 					$("#showProtocol").attr("src",data.data.protocolPath);
+					if(data.data.feeInfo.payFeeType == 1) {
+						$("#payPercent").show();
+						$("#perPayPercent").hide();
+					} else {
+						$("#payPercent").hide();
+						$("#perPayPercent").show();
+					}
+				
+					if(data.data.feeInfo.loanFeeType == 1) {
+						$("#loanPercent").show();
+						$("#perLoanPercent").hide();
+					} else {
+						$("#loanPercent").hide();
+						$("#perLoanPercent").show();
+					}
 				}else{
 					alert(data.msg);
 				}

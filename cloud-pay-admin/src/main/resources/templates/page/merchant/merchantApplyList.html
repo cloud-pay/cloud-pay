@@ -374,7 +374,8 @@ div.cbp label.font{
 						    </select>
 					    </div>
 					    <div class="col-sm-3">
-						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率"><span id="payPercent">(%)</span>
+						    <input type="text" class="form-control" name="payFee" value="" id="payFee" placeholder="费率">
+						    	<span id="payPercent">(%)</span><span id="perPayPercent">元/笔</span>
 					    </div>
 					  </div>
 					  <div class="form-group">
@@ -387,7 +388,8 @@ div.cbp label.font{
 						    </select>
 					    </div>
 					    <div class="col-sm-3">
-						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率"><span id="loanPercent">(%)</span>
+						    <input type="text" class="form-control" name="loanFee" value="" id="loanFee" placeholder="费率">
+						    	<span id="loanPercent">(%)</span><span id="perLoanPercent">元/笔</span>
 					    </div>
 					  </div>
 					  
@@ -762,7 +764,15 @@ $("#auditSubmit").click(function(){
 	var id = $("input[name='id']").val();
 	var url = $("input[name='url']").val();
 	var auditStatus = $("[name='auditStatus']").val();
+	if(auditStatus == ''){
+		alert("请选择审核状态");
+		return false;
+	}
 	var auditOptinion = $("[name='auditOptinion']").val();
+	if(auditOptinion == ''){
+		alert("审核意见不可为空");
+		return false;
+	}
 	var msg='';
     if(auditStatus == 2) {
     	msg = '你确定此商户审核通过吗？';
@@ -964,6 +974,21 @@ function reloadModelData(url,title,btntext,id){
 					$("#showBankCard").attr("src",data.data.bankCardPath);
 					$("#showCert").attr("src",data.data.certPath);
 					$("#showProtocol").attr("src",data.data.protocolPath);
+					if(data.data.feeInfo.payFeeType == 1) {
+						$("#payPercent").show();
+						$("#perPayPercent").hide();
+					} else {
+						$("#payPercent").hide();
+						$("#perPayPercent").show();
+					}
+				
+					if(data.data.feeInfo.loanFeeType == 1) {
+						$("#loanPercent").show();
+						$("#perLoanPercent").hide();
+					} else {
+						$("#loanPercent").hide();
+						$("#perLoanPercent").show();
+					}
 				}else{
 					alert(data.msg);
 				}
@@ -1113,9 +1138,11 @@ function change(id){
 $('#payFeeType').change(function(){ 
 	if($(this).children('option:selected').val() == 1) {
 		$("#payPercent").show();
+		$("#perPayPercent").hide();
 		$("input[name='payFee']").val('');
 	} else {
 		$("#payPercent").hide();
+		$("#perPayPercent").show();
 		$("input[name='payFee']").val('');
 	}
 }) ;
@@ -1124,9 +1151,11 @@ $('#payFeeType').change(function(){
 $('#loanFeeType').change(function(){ 
 	if($(this).children('option:selected').val() == 1) {
 		$("#loanPercent").show();
+		$("#perLoanPercent").hide();
 		$("input[name='loanFee']").val('');
 	} else {
 		$("#loanPercent").hide();
+		$("#perLoanPercent").show();
 		$("input[name='loanFee']").val('');
 	}
 }) ;

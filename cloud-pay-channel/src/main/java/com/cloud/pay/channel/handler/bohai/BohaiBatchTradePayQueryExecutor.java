@@ -105,7 +105,7 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 	 * @param fileFullPath
 	 * @return
 	 */
-	private List<TradeDTO> analysisResultFile(String fileFullPath){
+	private static List<TradeDTO> analysisResultFile(String fileFullPath){
 		 List<TradeDTO> list = new ArrayList<TradeDTO>();
 		 BufferedReader buf = null;
 		 try {
@@ -117,6 +117,7 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 					 i++;
 					 continue;
 				 }
+				 
 				 TradeDTO trade = new TradeDTO();
 				 String[] str = line.trim().split("~");
 				 trade.setSeqNo(StringUtils.isNotBlank(str[0])?str[0]:"");
@@ -129,10 +130,10 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 				 list.add(trade);
 			 }
 		 }catch (FileNotFoundException e) {
-			 log.error("解析结果文件出错：{}",e);
+			 //log.error("解析结果文件出错：{}",e);
 			 return null;
 		 } catch (IOException e) {
-			 log.error("解析结果文件出错：{}",e);
+			 //log.error("解析结果文件出错：{}",e);
 			 return null;
 		 }finally {
 			 if(buf != null) {
@@ -144,6 +145,10 @@ public class BohaiBatchTradePayQueryExecutor extends BohaiTradeExecutor<BohaiClo
 			 }
 		 }
 		 return list;
+	}
+	
+	public static void main(String[] args) {
+		analysisResultFile("C:\\Users\\THINKPAD\\Desktop\\YD1200612018122700000023.rsp");
 	}
 
 	private BohaiCloudBatchTradePayQueryParam createParam(BatchPayTradeQueryReqVO reqVO) {

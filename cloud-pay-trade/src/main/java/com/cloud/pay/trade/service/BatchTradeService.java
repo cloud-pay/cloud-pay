@@ -507,7 +507,7 @@ public class BatchTradeService {
 					prepayInfoService.insertPrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
 				} else if(TradeConstant.STATUS_FAIL == trade.getStatus()) {
 					log.info("交易ID[{}]失败，回滚资金", trade.getId());
-					prepayInfoService.unfreezePrepayInfoWithoutUpdate(merchantId, trade.getTradeAmount().add(trade.getMerchantFeeAmount()));
+					prepayInfoService.unfreezePrepayInfoWithoutUpdate(maps.get(merchantId), trade.getTradeAmount().add(trade.getMerchantFeeAmount()));
 				}
 				log.info("修改交易状态[{}]", trade);
 				tradeMapper.updateStatus(trade);

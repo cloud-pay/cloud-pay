@@ -176,8 +176,7 @@ public class PrepayInfoService {
 	 * @throws Exception
 	 */
 	@Transactional
-	public void unfreezePrepayInfoWithoutUpdate(Integer merchantId, BigDecimal unfreezeAmount) throws Exception {
-		MerchantPrepayInfo info = lockByMerchantId(merchantId);
+	public void unfreezePrepayInfoWithoutUpdate(MerchantPrepayInfo info, BigDecimal unfreezeAmount) throws Exception {
 		// 解冻金额
 		info.setFreezeAmount(info.getFreezeAmount().subtract(unfreezeAmount));
 		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),

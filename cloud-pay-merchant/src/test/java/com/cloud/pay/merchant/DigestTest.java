@@ -10,7 +10,7 @@ public class DigestTest {
 		System.out.println(MD5.md5("0" + "|" + "0" , 
 				"8"));
 		System.out.println(MD5.md5("0.00|0.00" , 
-				"8"));
+				"1"));
 	}
 
 }

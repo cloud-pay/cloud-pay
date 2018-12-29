@@ -504,6 +504,10 @@ public class BatchTradeService {
 				prepayInfoService.insertPrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
 				tradeMapper.updateStatus(trade);
 			}
+			log.info("根据批次号[{}]修改交易状态为[{}]返回信息[{}]返回码[{}]渠道ID[{}]", batchNo, TradeConstant.STATUS_SUCCESS,
+					resVO.getRespMsg(), resVO.getRespCode(), resVO.getChannelId());
+			tradeMapper.updateStatusByBatchNo(batchNo,
+					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_SUCCESS, new Date());
 			prepayInfoService.updatePrepayInfos(maps.values());
 			return "批量代付成功";
 		} else if(resVO.getStatus() != null && 1 == resVO.getStatus()) {

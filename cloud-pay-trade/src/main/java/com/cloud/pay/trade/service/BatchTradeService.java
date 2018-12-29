@@ -455,6 +455,7 @@ public class BatchTradeService {
 					add(add(trade.getMerchantFeeAmount(), trade.getLoanBenefit(), trade.getOrgBenefit()));
 		}
 		if(resVO.getStatus() != null && 0 == resVO.getStatus()) {
+			log.info("批次号[{}]交易成功，修改批次状态", batchNo);
 			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_SUCCESS, batchNo,null);
 			//TODO依次处理批次文件
 			Map<Integer, Trade> tradeMap = ConvertUtil.convertTradeMap(trades);
@@ -485,34 +486,40 @@ public class BatchTradeService {
 			List<MerchantPrepayInfo> infos = merchantPrepayInfoMapper.lockByMerchantIds(merchantIds);
 			Map<Integer, MerchantPrepayInfo> maps = ConvertUtil.convertMap(infos);
 			for(Trade trade : trades) {
-				/** 商户资金变动 */
-				prepayInfoService.insertPrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.TRADE_FEE, trade.getTradeAmount(), TradeConstant.CREDIT, trade.getId());			
-				/** 商户手续费资金变动 */
-				prepayInfoService.insertPrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.HADNING_FEE, trade.getMerchantFeeAmount(), TradeConstant.CREDIT, trade.getId());
-				BigDecimal platFee = trade.getMerchantFeeAmount();
-				/** 机构资金变动 */
-				if(orgId != null) {
-					prepayInfoService.insertPrepayInfoJournal(maps.get(orgId), TradeConstant.HADNING_FEE, trade.getOrgBenefit(), TradeConstant.DEBIT, trade.getId());
-					platFee = platFee.subtract(trade.getOrgBenefit());
+				if(TradeConstant.STATUS_SUCCESS == trade.getStatus()) {
+					log.info("交易ID[{}]成功，处理资金", trade.getId());
+					/** 商户资金变动 */
+					prepayInfoService.insertPrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.TRADE_FEE, trade.getTradeAmount(), TradeConstant.CREDIT, trade.getId());			
+					/** 商户手续费资金变动 */
+					prepayInfoService.insertPrepayInfoJournal(maps.get(trade.getMerchantId()), TradeConstant.HADNING_FEE, trade.getMerchantFeeAmount(), TradeConstant.CREDIT, trade.getId());
+					BigDecimal platFee = trade.getMerchantFeeAmount();
+					/** 机构资金变动 */
+					if(orgId != null) {
+						prepayInfoService.insertPrepayInfoJournal(maps.get(orgId), TradeConstant.HADNING_FEE, trade.getOrgBenefit(), TradeConstant.DEBIT, trade.getId());
+						platFee = platFee.subtract(trade.getOrgBenefit());
+					}
+					/** 垫资机构资金变动 */
+					if(loanId != null) {
+						prepayInfoService.insertPrepayInfoJournal(maps.get(loanId), TradeConstant.HADNING_FEE, trade.getLoanBenefit(), TradeConstant.DEBIT, trade.getId());
+						platFee = platFee.subtract(trade.getLoanBenefit());
+					}
+					/** 平台资金变动 */
+					prepayInfoService.insertPrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
+				} else if(TradeConstant.STATUS_FAIL == trade.getStatus()) {
+					log.info("交易ID[{}]失败，回滚资金", trade.getId());
+					prepayInfoService.unfreezePrepayInfoWithoutUpdate(merchantId, trade.getTradeAmount().add(trade.getMerchantFeeAmount()));
 				}
-				/** 垫资机构资金变动 */
-				if(loanId != null) {
-					prepayInfoService.insertPrepayInfoJournal(maps.get(loanId), TradeConstant.HADNING_FEE, trade.getLoanBenefit(), TradeConstant.DEBIT, trade.getId());
-					platFee = platFee.subtract(trade.getLoanBenefit());
-				}
-				/** 平台资金变动 */
-				prepayInfoService.insertPrepayInfoJournal(maps.get(1), TradeConstant.HADNING_FEE, platFee, TradeConstant.DEBIT, trade.getId());
+				log.info("修改交易状态[{}]", trade);
 				tradeMapper.updateStatus(trade);
 			}
-			log.info("根据批次号[{}]修改交易状态为[{}]返回信息[{}]返回码[{}]渠道ID[{}]", batchNo, TradeConstant.STATUS_SUCCESS,
-					resVO.getRespMsg(), resVO.getRespCode(), resVO.getChannelId());
-			tradeMapper.updateStatusByBatchNo(batchNo,
-					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_SUCCESS, new Date());
 			prepayInfoService.updatePrepayInfos(maps.values());
 			return "批量代付成功";
 		} else if(resVO.getStatus() != null && 1 == resVO.getStatus()) {
+			log.info("批次号[{}]交易失败，修改批次状态", batchNo);
 			batchTradeMapper.updateTradeStatus(TradeConstant.BATCH_STATUS_FAIL, batchNo,null);
 			//触发失败，修改交易状态为失败
+			log.info("根据批次号[{}]修改交易状态为[{}]返回信息[{}]返回码[{}]渠道ID[{}]", batchNo, TradeConstant.STATUS_FAIL,
+					resVO.getRespMsg(), resVO.getRespCode(), resVO.getChannelId());
 			tradeMapper.updateStatusByBatchNo(batchNo,
 					resVO.getRespMsg(), resVO.getRespCode(), TradeConstant.STATUS_FAIL, new Date());
 			prepayInfoService.unfreezePrepayInfo(merchantId, totalAmount);

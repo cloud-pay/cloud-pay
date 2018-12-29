@@ -164,8 +164,25 @@ public class PrepayInfoService {
 		info.setFreezeAmount(info.getFreezeAmount().subtract(unfreezeAmount));
 		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
 				String.valueOf(info.getMerchantId())));
-		log.info("冻结商户信息：{}", info);
+		log.info("解冻商户信息：{}", info);
 		merchantPrepayInfoMapper.updateByPrimaryKey(info);
+	}
+	
+	/**
+	 * 解冻指定金额但是不修改账户
+	 * 
+	 * @param merchantId
+	 * @param unfreezeAmount
+	 * @throws Exception
+	 */
+	@Transactional
+	public void unfreezePrepayInfoWithoutUpdate(Integer merchantId, BigDecimal unfreezeAmount) throws Exception {
+		MerchantPrepayInfo info = lockByMerchantId(merchantId);
+		// 解冻金额
+		info.setFreezeAmount(info.getFreezeAmount().subtract(unfreezeAmount));
+		info.setDigest(MD5.md5(String.valueOf(info.getBalance()) + "|" + info.getFreezeAmount(),
+				String.valueOf(info.getMerchantId())));
+		log.info("解冻商户信息：{}", info);
 	}
 	
 	/**

@@ -205,6 +205,7 @@ div.cbp label.font{
 							<i class="fa fa-edit"></i> 编辑
 						</span>
 	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 1}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
+	                  	<span data-toggle="tooltip" title="审核" th:if="${merchant.status == 3}" class="btn btn-xs btn-danger" th:onclick="'audit(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 审核</span>
 	                  	<span data-toggle="tooltip" title="详情" th:if="${QX.query == '1' && merchant.status == 2}" class="btn btn-xs btn-info" th:onclick="'detail(\''+${merchant.id}+'\');'"><i class="fa fa-trash-o"></i> 详情</span>
 	                  	<span data-toggle="tooltip" title="变更" th:if="${QX.query == '1' && merchant.status == 2}" class="btn btn-xs btn-info" th:onclick="'change(\''+${merchant.id}+'\');'"><i class="fa fa-edit"></i> 变更</span>
 	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
@@ -442,33 +443,8 @@ div.cbp label.font{
 					      <div><img src="" data-toggle="tooltip" title="协议" id="showProtocol" style="width: 50px;"></div>
 					    </div>
 					  </div>
-	                
-				  
-				 </form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-				<button type="submit" class="btn btn-success"  id="imgSubmit" >确定</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- 审批模态框 -->
-<div class="modal fade" id="auditModal" tabindex="-1" role="dialog"
-	aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="usermodelHead">审核</h4>
-			</div>
-			<div class="modal-body">
-				<form class="form-horizontal" role="form">
-				  <input type="hidden" name="auditUrl" value=""/>
-				  <input type="hidden" name="auditId" value=""/>
-				  <div class="form-group">
+					  
+					  <div class="form-group" id="auditStatusDIV">
 					    <label for="auditStatus" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>审核状态</label>
 					    <div class="col-sm-10">
 						    <select name="auditStatus" class="form-control">
@@ -479,18 +455,19 @@ div.cbp label.font{
 					    </div>
 					  </div>
 				
-				  <div class="form-group">
+				  <div class="form-group" id="auditOptinionDIV">
 					    <label for="name" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>审核意见</label>
 					    <div class="col-sm-10">
 					        <textarea class="form-control" rows="3" name="auditOptinion" id="name"></textarea>
 					    </div>
 					  </div>
+	                
 				  
 				 </form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-				<button type="submit" class="btn btn-success"  id="auditSubmit" >确定</button>
+				<button type="submit" class="btn btn-success"  id="imgSubmit" >确定</button>
 			</div>
 		</div>
 	</div>
@@ -663,6 +640,10 @@ $(function(){
 	$("#imgSubmit").click(function(){
 		var id = $("input[name='id']").val();
 		var url = $("input[name='url']").val();
+		if(url == "audit") {
+			auditConfirm();
+			return;
+		}
 		var code = $("input[name='code']").val();
 		var version = $("input[name='version']").val();
 		var type = $("[name='type']").val();
@@ -732,16 +713,12 @@ function detail(id){
 //审核机构
 function audit(id){
 	console.log(id);
-	reloadModel(_ctx+"/merchantApply/audit","审核机构","审核",id);
-	$("#auditModal").modal("show");
+	reloadModelData("audit","审核机构","审核",id);
+	$("#merchantModal").modal("show");
 }
 
-function reloadModel(url,title,btntext,id){
-	$("input[name='url']").val(url);
-	$("input[name='id']").val(id);
-}
-//确认按钮
-$("#auditSubmit").click(function(){
+//确认按钮$
+function auditConfirm(){
 	var id = $("input[name='id']").val();
 	var url = $("input[name='url']").val();
 	var auditStatus = $("[name='auditStatus']").val();
@@ -777,7 +754,7 @@ $("#auditSubmit").click(function(){
 			}
 		});
 	}
-});
+}
 
 //编辑机构
 function editMerchant(id){
@@ -971,8 +948,16 @@ function reloadModelData(url,title,btntext,id){
 			}
 		});
 	}
-	if("detail" == url) {
-		$("#imgSubmit").hide();
+	if("detail" == url || "audit" == url ) {
+		if("audit" == url) {
+			$("#imgSubmit").show();
+			$("#auditStatusDIV").show();
+			$("#auditOptinionDIV").show();
+		} else {
+			$("#imgSubmit").hide();
+			$("#auditStatusDIV").hide();
+			$("#auditOptinionDIV").hide();
+		}
 		$("[name='orgId']").attr("readOnly","true");
 		$("[name='type']").attr("readOnly","true");
 		$("input[name='name']").attr("readOnly","true");

@@ -297,6 +297,12 @@ div.cbp label.font{
 						    <input class="form-control" name="mobile" value="" id="mobile">
 					    </div>
 					  </div>
+					  <div class="form-group" id="busiDIV">
+					    <label for="businessLicence" class="col-sm-2 control-label"><span style="color:#FF0000;">*</span>营业执照</label>
+					    <div class="col-sm-4">
+						    <input class="form-control" name="businessLicence" value="" id="businessLicence">
+					    </div>
+					  </div>
 					  <h2>结算资料： </h2>
 					  <div class="form-group">
 					  	<input type="hidden" name="bankInfoId" value=""/>
@@ -387,13 +393,6 @@ div.cbp label.font{
 					    <label for="businessImg" class="col-sm-2 control-label">营业执照</label>
 					    <div class="col-sm-5">
 					      <a href="javascript:void(0)"><input type="file" class="form-control file" name="businessImg" value="" id="businessImg" placeholder="请选择文件"></a>
-					    </div>
-					  </div>
-					  
-					  <div class="form-group">
-					    <label for="businessImg" class="col-sm-2 control-label"></label>
-					    <div class="col-sm-5">
-					      <div><img src="" data-toggle="tooltip" title="营业执照" id="showBusiness" style="width: 50px;"></div>
 					    </div>
 					  </div>
 					  
@@ -752,6 +751,7 @@ function reloadModelData(url,title,btntext,id){
 	$("#merchantModal #imgSubmit").text(btntext);
 	$("input[name='url']").val(url);
 	$("input[name='id']").val(id);
+	$("#busiDIV").hide();
 	if(id != '') {
 		$.ajax({
 			type:"GET",
@@ -764,6 +764,10 @@ function reloadModelData(url,title,btntext,id){
 					$("input[name='code']").val(data.data.baseInfo.code);
 					$("[name='orgId']").val(data.data.baseInfo.orgId);
 					$("[name='type']").val(data.data.baseInfo.type);
+					if(data.data.baseInfo.type == 4) {
+						$("#busiDIV").show();
+						$("input[name='businessLicence']").val(data.data.baseInfo.businessLicence);
+					}
 					$("input[name='name']").val(data.data.baseInfo.name);
 					$("input[name='shortName']").val(data.data.baseInfo.shortName);
 					$("input[name='industryCategory']").val(data.data.baseInfo.industryCategory);
@@ -841,6 +845,7 @@ function reloadModelData(url,title,btntext,id){
 		$("input[name='payFee']").attr("readOnly","true");
 		$("[name='loanFeeType']").attr("readOnly","true");
 		$("input[name='loanFee']").attr("readOnly","true");
+		$("input[name='businessLicence']").attr("readOnly","true");
 	} 
 }
 

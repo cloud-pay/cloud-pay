@@ -20,10 +20,11 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modifer" property="modifer" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="business_licence" property="businessLicence" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, org_id, code, name, short_name, type, industry_category, legal, provincial, city, address, email, 
-    mobile, status, creator, create_time, modifer, modify_time
+    mobile, status, creator, create_time, modifer, modify_time, business_licence
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -40,13 +41,12 @@
       short_name, type, industry_category, 
       legal, provincial, city, address, 
       email, mobile, status, creator, 
-      create_time, modifer, modify_time
-      )
+      create_time, modifer, modify_time, business_licence)
     values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{shortName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{industryCategory,jdbcType=VARCHAR}, 
       #{legal,jdbcType=VARCHAR}, #{provincial,jdbcType=INTEGER}, #{city,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{modifer,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      #{createTime,jdbcType=TIMESTAMP}, #{modifer,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}, #{businessLicence,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cloud.pay.merchant.entity.MerchantBaseInfo" >

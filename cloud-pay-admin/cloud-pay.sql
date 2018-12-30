@@ -158,9 +158,10 @@ CREATE TABLE `t_merchant_apply_base_info` (
   `status` int(1) DEFAULT NULL COMMENT '申请状态(1待审核，2审核通过，3审核不通过)',
   `audit_optinion` varchar(255) DEFAULT NULL COMMENT '审核意见',
   `creator` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '修改人',
-  `modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `business_licence` varchar(255) DEFAULT NULL COMMENT '营业执行',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='商户申请基本信息';
 
@@ -228,6 +229,7 @@ CREATE TABLE `t_merchant_base_info` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modifer` varchar(100) DEFAULT NULL COMMENT '修改人',
   `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `business_licence` varchar(255) DEFAULT NULL COMMENT '营业执行',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='商户基本信息';
 

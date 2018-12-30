@@ -157,6 +157,7 @@
       <if test="userMerchantId != null and userMerchantType == 'merchant'" >
        and t.payer_merchant_id = #{userMerchantId,jdbcType=INTEGER}
       </if>
+      order by t.create_time desc
   </select>
   
   <update id="audit" parameterType="com.cloud.pay.trade.entity.BatchTrade" >

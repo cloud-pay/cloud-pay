@@ -60,6 +60,7 @@ public class BatchTradeHandler {
 	 */
 	@Transactional
 	public void auditNo(BatchTrade batchTrade, String smsCode) throws Exception {
+		batchTrade.setTradeStatus(TradeConstant.STATUS_FAIL);
 		batchTradeMapper.audit(batchTrade);
 		//审核不通过，则交易置为失败
 		tradeMapper.updateByBatchNo(new Date(), 3, batchTrade.getBatchNo());

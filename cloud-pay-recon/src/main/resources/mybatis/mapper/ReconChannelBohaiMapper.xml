@@ -451,23 +451,29 @@
    
   <!-- 更新平帐得交易记录 -->
   <update id="updateReconStatusFlat" parameterType="java.lang.String">
-     update t_trade t,t_recon_channel_bohai b
-		set t.recon_status = b.TRADE_STATUS,
-		    b.RECON_STATUS = 1,
+     update t_trade t,t_recon_channel_bohai c, t_batch_trade b
+		set t.recon_status = c.TRADE_STATUS,
+		    c.RECON_STATUS = 1,
 		    t.recon_date = SYSDATE()
-		where t.plat_order_no = b.TRADE_ORDER_NO
-		AND t.payee_bank_card = b.PAYEE_ACCOUNT
-		AND t.payee_name = b.PAYEE_NAME
-		AND t.trade_amount = b.TRADE_AMOUNT
+		where ((t.plat_order_no = c.TRADE_ORDER_NO and t.batch_no is null)
+        or (t.batch_no = b.batch_no AND b.file_name is not null 
+        AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO))
+		AND t.payee_bank_card = c.PAYEE_ACCOUNT
+		AND t.payee_name = c.PAYEE_NAME
+		AND t.trade_amount = c.TRADE_AMOUNT
 	    AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate}
   </update>
   
   <!-- 更新短款记录未不平帐 -->
   <update id='updateShortUnflat'>
-	  update  t_recon_channel_bohai b
-	  set b.RECON_STATUS = 2
-	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.plat_order_no) 
-	and b.RECON_STATUS = 0
+	  update  t_recon_channel_bohai c
+	  set c.RECON_STATUS = 2
+	where
+	  not EXISTS (select * from t_trade t,t_batch_trade b 
+               where (c.TRADE_ORDER_NO = t.plat_order_no and t.batch_no is null)
+               or (t.batch_no = b.batch_no AND b.file_name is not null 
+        AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO)) 
+	and c.RECON_STATUS = 0
   </update>
  
 </mapper>

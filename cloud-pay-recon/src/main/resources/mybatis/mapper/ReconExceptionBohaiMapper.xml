@@ -482,21 +482,25 @@
 	select 
 	   #{channelId,jdbcType=INTEGER},
 	   #{reocnId,jdbcType=INTEGER},
-	   b.TRADE_ORDER_NO,
-	   b.PAYER_ACCOUNT,
-	   b.PAYER_NAME,
-	   b.PAYEE_ACCOUNT,
-	   b.PAYEE_NAME,
-	   b.BANK_CODE,
-	   b.TRADE_AMOUNT,
-	   b.TRADE_STATUS,
-	   b.TRADE_STATUS_DESC,
+	   c.TRADE_ORDER_NO,
+	   c.PAYER_ACCOUNT,
+	   c.PAYER_NAME,
+	   c.PAYEE_ACCOUNT,
+	   c.PAYEE_NAME,
+	   c.BANK_CODE,
+	   c.TRADE_AMOUNT,
+	   c.TRADE_STATUS,
+	   c.TRADE_STATUS_DESC,
 	   '【短款】系统不存在该订单',
 	   #{exceptionType,jdbcType=INTEGER},
 	   SYSDATE()
-	from t_recon_channel_bohai b 
-	where not EXISTS(select * from t_trade t where b.TRADE_ORDER_NO = t.plat_order_no) 
-	and b.TRADE_STATUS = 1
+	from t_recon_channel_bohai c 
+	where 
+    not EXISTS (select * from t_trade t,t_batch_trade b 
+               where (c.TRADE_ORDER_NO = t.plat_order_no and t.batch_no is null)
+               or (t.batch_no = b.batch_no AND b.file_name is not null 
+        AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO))
+	and c.TRADE_STATUS = 1
   </insert>
   
   <select id="selectCountByChannelId" parameterType="java.lang.Integer" resultMap= "BaseResultDTO" >
@@ -544,22 +548,39 @@
   </select>
   
   <update id="updatePostPoneHis">
-      update t_trade t,t_recon_channel_bohai b,t_recon_exception_trade e
+      update t_trade t,t_recon_channel_bohai c,t_recon_exception_trade e,t_batch_trade b
 	  set t.recon_status = b.TRADE_STATUS,
 		    t.recon_date = SYSDATE(),
 		    b.RECON_STATUS = 1
-		where e.ORDER_NO = t.order_no
-		AND e.ORDER_NO = b.TRADE_ORDER_NO
-		AND t.plat_order_no = b.TRADE_ORDER_NO
+		where (
+		( e.ORDER_NO = t.plat_order_no and t.batch_no is null )
+          or (t.batch_no = b.batch_no AND b.file_name is not null 
+          AND  concat_ws('-',left(b.file_name,24),t.seq_no) = e.ORDER_NO)
+        )
+		AND e.ORDER_NO = c.TRADE_ORDER_NO
+		AND (
+		( c.TRADE_ORDER_NO = t.plat_order_no and t.batch_no is null)
+          or (t.batch_no = b.batch_no AND b.file_name is not null 
+          AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO)
+        )
 		AND e.EXCEPTION_TYPE = 2
   </update>
   
   <delete id="deletePostPoneHis">
-       delete b from  t_trade t,t_recon_channel_bohai b,t_recon_exception_trade e
+       delete e from  t_trade t,t_recon_channel_bohai c,t_recon_exception_trade e,t_batch_trade b
 	   where e.ORDER_NO = t.order_no
-	   AND e.ORDER_NO = b.TRADE_ORDER_NO
-	   AND t.plat_order_no = b.TRADE_ORDER_NO
-	   AND e.EXCEPTION_TYPE = 2
+	   AND (
+		( e.ORDER_NO = t.plat_order_no and t.batch_no is null )
+          or (t.batch_no = b.batch_no AND b.file_name is not null 
+          AND  concat_ws('-',left(b.file_name,24),t.seq_no) = e.ORDER_NO)
+        )
+		AND e.ORDER_NO = c.TRADE_ORDER_NO
+		AND (
+		( c.TRADE_ORDER_NO = t.plat_order_no and t.batch_no is null)
+          or (t.batch_no = b.batch_no AND b.file_name is not null 
+          AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO)
+        )
+		AND e.EXCEPTION_TYPE = 2
   </delete>
   
   <insert id="batchInsert">

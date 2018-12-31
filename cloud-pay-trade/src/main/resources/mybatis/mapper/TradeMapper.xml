@@ -325,7 +325,7 @@
   <select id="selectLongRecord" resultMap="BaseResultDTO" parameterType="java.lang.String">   
        select t.id,
        t.order_no,
-       t.plat_order_no,
+       CASE WHEN t.plat_order_no IS NULL THEN concat_ws('-',left(b.file_name,24),t.seq_no) ELSE t.plat_order_no end as plat_order_no,
        t.merchant_id,
        t.trade_time,
        t.trade_amount,
@@ -333,20 +333,22 @@
        t.channel_id,
        t.payee_bank_card,
        t.payee_bank_code,
-       t.payee_name,
-       i.bank_account_name payer_name,
-       i.bank_card_no payer_bank_card
-       from t_trade t,t_merchant_bank_info i where
-       t.payer_id = i.id
-	     AND NOT EXISTS  (select * from t_recon_channel_bohai b where t.plat_order_no = b.trade_order_no)
-	     AND t.`status` = 2
+       t.payee_name
+       from t_trade t, t_batch_trade b
+	    where t.batch_no = b.batch_no
+        AND t.`status` = 1
+        AND NOT EXISTS  
+           (select * from t_recon_channel_bohai c
+             where (t.plat_order_no = c.TRADE_ORDER_NO and t.batch_no is null) 
+             or (b.file_name is not null 
+         AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO))
          AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
   </select>
   
   <select id="selectExceptionRecord" resultMap="BaseResultDTO" parameterType="java.lang.String">
      select  t.id,
        t.order_no,
-       t.plat_order_no,
+       CASE WHEN t.plat_order_no IS NULL THEN concat_ws('-',left(b.file_name,24),t.seq_no) ELSE t.plat_order_no end as plat_order_no,
        t.merchant_id,
        t.trade_time,
        t.trade_amount,
@@ -354,13 +356,13 @@
        t.channel_id,
        t.payee_bank_card,
        t.payee_bank_code,
-       t.payee_name,
-       i.bank_account_name payer_name,
-       i.bank_card_no payer_bank_card
-	 from t_trade t,t_merchant_bank_info i,t_recon_channel_bohai b
-	where t.plat_order_no = b.TRADE_ORDER_NO
-	and b.RECON_STATUS = 0
-	AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=VARCHAR}
+       t.payee_name
+	 from t_trade t,t_recon_channel_bohai c,t_batch_trade b
+	where ((t.plat_order_no = c.TRADE_ORDER_NO and t.batch_no is null)
+        or (t.batch_no = b.batch_no AND b.file_name is not null 
+        AND  concat_ws('-',left(b.file_name,24),t.seq_no) = c.TRADE_ORDER_NO))
+	and c.RECON_STATUS = 0
+	AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =   #{reconDate,jdbcType=VARCHAR}
   </select>
   
   <select id="selectByBatchNo" resultMap="BaseResultMap">
@@ -705,7 +707,7 @@
     where batch_no = #{batchNo,jdbcType=VARCHAR}
   </update>
   
-  <select id="selectWaitingAdjustTrade">
+  <select id="selectWaitingAdjustTrade"  resultMap="BaseResultMap">
      select 
     <include refid="Base_Column_List" />
     from t_trade t

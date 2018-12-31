@@ -89,6 +89,7 @@ public class BohaiReconService implements IReconServiceHandler {
 		    if(null != postPoneRecord && postPoneRecord.size() > 0) {
 		    	log.info("处理历史延期对账数据");
 		    	reconExceptionBohaiService.updatePostPoneHis();
+		    	//删除延期对账数据
 		    	reconExceptionBohaiService.deletePostPoneHis();
 		    }
 		    log.info("更新渠道存在但交易表中不存在的记录");

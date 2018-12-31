@@ -160,6 +160,7 @@ public class ReconService {
 		createAgentReconFile(reconDate);
 		log.info("对账结束");
 	}
+
 	
 	/**
 	 * 生成商户对账文件
@@ -176,7 +177,7 @@ public class ReconService {
 		//step 1 判断是否所有的渠道都已完成对账
 	    List<Recon> recons =  reconMapper.selectListByReconDate(DateUtil.fomatDate(reconDate));
 	    for(Recon recon:recons) {
-	    	if(1 != recon.getReconStatus() || 2 != recon.getReconStatus()) {
+	    	if(1 != recon.getReconStatus() && 2 != recon.getReconStatus()) {
 	    		log.info("渠道：{}未完成对账，无法生成对账文件",recon.getChannelId());
 	    		return 0;
 	    	}
@@ -271,7 +272,7 @@ public class ReconService {
 		//step 1 判断是否所有的渠道都已完成对账
 	    List<Recon> recons =  reconMapper.selectListByReconDate(DateUtil.fomatDate(reconDate));
 	    for(Recon recon:recons) {
-	    	if(1 != recon.getReconStatus() || 2 != recon.getReconStatus()) {
+	    	if(1 != recon.getReconStatus() && 2 != recon.getReconStatus()) {
 	    		log.info("渠道：{}未完成对账，无法生成对账文件",recon.getChannelId());
 	    		return 0;
 	    	}

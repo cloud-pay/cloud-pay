@@ -277,6 +277,7 @@ public class ReconService {
 	    		return 0;
 	    	}
 	    }
+	    
 		//step 2 获取所有的有效机构代理商
 	    Integer[] types = {1};
 	    List<MerchantDTO>  merchants = merchantBaseInfoMapper.getAllNormalMerchant(types,null);

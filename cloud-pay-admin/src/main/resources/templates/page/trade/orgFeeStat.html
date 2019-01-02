@@ -142,6 +142,7 @@ div.cbp label.font{
 	                  <th>付款成功总笔数</th>
 	                  <th>付款成功总金额(元)</th>
 					  <th>垫资总金额(元)</th>
+					  <th>机构手续费金额(元)</th>
 					  <th>分润金额(元)</th>
 	                </tr>
                 </thead>
@@ -154,6 +155,7 @@ div.cbp label.font{
 				  <td th:text="${org.totalAmount}"></td>
 				  <td th:text="${org.loaningTotalAmount}"></td>
 				  <td th:text="${org.feeAmount}"></td>
+				  <td th:text="${org.orgBenefit}"></td>
                   </td>
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >

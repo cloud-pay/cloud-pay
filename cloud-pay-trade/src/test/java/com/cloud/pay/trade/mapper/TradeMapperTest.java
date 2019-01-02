@@ -33,7 +33,7 @@ public class TradeMapperTest {
 		System.out.println(tradeMapper.selectByBatchNoOrderBySeq("2018121408241652800000003"));
 	}
 	
-//	@Test
+	@Test
 	public void selectMerchantFeeStatsTest() {
 		System.out.println(tradeMapper.selectMerchantFeeStats(3, 1, new Date(), new Date(), 3, "merchant"));
 		System.out.println(tradeMapper.selectMerchantFeeStats(3, 1, new Date(), new Date(), 3, "org"));

@@ -21,7 +21,7 @@ public class TradeServiceTest {
 	@Autowired
 	private TradeService tradeService;
 	
-	@Test
+//	@Test
 	public void tradeTest() {
 		Trade trade = new Trade();
 		trade.setMerchantId(1);
@@ -36,5 +36,10 @@ public class TradeServiceTest {
 		trade.setLoaning(1);
 		trade.setTradeAmount(new BigDecimal(30));
 		tradeService.pay(trade);
+	} 
+	
+	@Test
+	public void selectOrgFeeStatsTest() {
+		System.out.println(tradeService.selectOrgFeeStats(null, null, null, null, null));
 	} 
 }

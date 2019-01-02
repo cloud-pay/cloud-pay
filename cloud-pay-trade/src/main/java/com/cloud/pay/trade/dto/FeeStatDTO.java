@@ -12,6 +12,7 @@ public class FeeStatDTO {
 	private BigDecimal totalAmount;
 	private BigDecimal loaningTotalAmount;
 	private BigDecimal feeAmount;
+	private BigDecimal orgBenefit;
 
 	public String getStatDate() {
 		return statDate;
@@ -70,6 +71,8 @@ public class FeeStatDTO {
 	}
 
 	public BigDecimal getFeeAmount() {
+		if(feeAmount == null)
+			feeAmount = BigDecimal.ZERO;
 		return feeAmount;
 	}
 
@@ -77,4 +80,39 @@ public class FeeStatDTO {
 		this.feeAmount = feeAmount;
 	}
 
+	public BigDecimal getOrgBenefit() {
+		if(orgBenefit == null)
+			orgBenefit = BigDecimal.ZERO;
+		return orgBenefit;
+	}
+
+	public void setOrgBenefit(BigDecimal orgBenefit) {
+		this.orgBenefit = orgBenefit;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FeeStatDTO [statDate=");
+		builder.append(statDate);
+		builder.append(", merchantCode=");
+		builder.append(merchantCode);
+		builder.append(", merchantName=");
+		builder.append(merchantName);
+		builder.append(", orgName=");
+		builder.append(orgName);
+		builder.append(", totalCount=");
+		builder.append(totalCount);
+		builder.append(", totalAmount=");
+		builder.append(totalAmount);
+		builder.append(", loaningTotalAmount=");
+		builder.append(loaningTotalAmount);
+		builder.append(", feeAmount=");
+		builder.append(feeAmount);
+		builder.append(", orgBenefit=");
+		builder.append(orgBenefit);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

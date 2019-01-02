@@ -1,5 +1,7 @@
 package com.cloud.pay.trade.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -148,24 +150,22 @@ public class TradeService {
 		log.info("机构交易手续费统计记录：{}", orgStats);
 		List<FeeStatDTO> merchantStats = tradeMapper.selectMerchantFeeByOrg(orgId, startTime, endTime);
 		log.info("机构下商户交易分润统计记录：{}", merchantStats);
-		if(orgStats == null || orgStats.size() == 0) {
-			return merchantStats;
-		} else {
-			Map<String, FeeStatDTO> feeMap = new HashMap<String, FeeStatDTO>();
-			for(FeeStatDTO stat : orgStats) {
+		log.info("合并机构交易手续费");
+		Map<String, FeeStatDTO> feeMap = new HashMap<String, FeeStatDTO>();
+		for(FeeStatDTO stat : orgStats) {
+			feeMap.put(stat.getStatDate() + stat.getMerchantCode(), stat);
+		}
+		for(FeeStatDTO stat : merchantStats) {
+			if(feeMap.get(stat.getStatDate() + stat.getMerchantCode()) == null) {
+				stat.setOrgBenefit(stat.getFeeAmount());
+				stat.setFeeAmount(BigDecimal.ZERO);
 				feeMap.put(stat.getStatDate() + stat.getMerchantCode(), stat);
-			}
-			for(FeeStatDTO stat : merchantStats) {
-				if(feeMap.get(stat.getStatDate() + stat.getMerchantCode()) == null) {
-					feeMap.put(stat.getStatDate() + stat.getMerchantCode(), stat);
-				} else {
-					FeeStatDTO orgStat = feeMap.get(stat.getStatDate() + stat.getMerchantCode());
-					orgStat.setFeeAmount(stat.getFeeAmount().add(orgStat.getFeeAmount()));
-					feeMap.put(stat.getStatDate() + stat.getMerchantCode(), orgStat);
-				}
+			} else {
+				FeeStatDTO orgStat = feeMap.get(stat.getStatDate() + stat.getMerchantCode());
+				orgStat.setOrgBenefit(stat.getFeeAmount());
 			}
 		}
-		return merchantStats;
+		return new ArrayList<>(feeMap.values());
 	}
 	
 	/**

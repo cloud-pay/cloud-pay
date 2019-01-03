@@ -461,6 +461,11 @@ public class BatchTradeService {
 			Map<Integer, Trade> tradeMap = ConvertUtil.convertTradeMap(trades);
 			for(TradeDTO tradeDTO : resVO.getTrades()) {
 				Trade trade = tradeMap.get(Integer.parseInt(tradeDTO.getSeqNo()));
+				if(1 == tradeDTO.getStatus()) {
+					trade.setStatus(TradeConstant.STATUS_SUCCESS);
+				} else if(2 == tradeDTO.getStatus()) {
+					trade.setStatus(TradeConstant.STATUS_FAIL);
+				} 
 				trade.setStatus(tradeDTO.getStatus());
 				trade.setChannelId(resVO.getChannelId());
 			}

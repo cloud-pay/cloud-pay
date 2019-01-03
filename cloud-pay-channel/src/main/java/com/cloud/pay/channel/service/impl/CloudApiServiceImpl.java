@@ -280,6 +280,7 @@ public class CloudApiServiceImpl implements ICloudApiService {
 		ITradePayExecutor tradePayExecutor = tradePayTypeHandlerFactory.getBatchTradeQueryHandler(ChannelType.getChannelByChannelId(channelId));
 		//TODO 根据响应结果构建结果集
 		resVO = (BatchPayTradeQueryResVO) tradePayExecutor.execute(reqVO);
+		resVO.setChannelId(channelId);
 		log.info("渠道接口，批量代付结果查询，响应结果:{}",resVO);
 		return resVO;
 	}

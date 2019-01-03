@@ -97,6 +97,30 @@ public class TradeDTO {
 	public void setPostScript(String postScript) {
 		this.postScript = postScript;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TradeDTO [seqNo=");
+		builder.append(seqNo);
+		builder.append(", tradeAmount=");
+		builder.append(tradeAmount);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", payerAccount=");
+		builder.append(payerAccount);
+		builder.append(", payerName=");
+		builder.append(payerName);
+		builder.append(", payeeName=");
+		builder.append(payeeName);
+		builder.append(", payeeAccount=");
+		builder.append(payeeAccount);
+		builder.append(", payeeBankCode=");
+		builder.append(payeeBankCode);
+		builder.append(", postScript=");
+		builder.append(postScript);
+		builder.append("]");
+		return builder.toString();
+	}
 	
 }

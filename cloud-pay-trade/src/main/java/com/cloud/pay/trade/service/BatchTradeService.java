@@ -485,7 +485,7 @@ public class BatchTradeService {
 			}
 			List<MerchantPrepayInfo> infos = merchantPrepayInfoMapper.lockByMerchantIds(merchantIds);
 			Map<Integer, MerchantPrepayInfo> maps = ConvertUtil.convertMap(infos);
-			for(Trade trade : trades) {
+			for(Trade trade : tradeMap.values()) {
 				if(TradeConstant.STATUS_SUCCESS == trade.getStatus()) {
 					log.info("交易ID[{}]成功，处理资金", trade.getId());
 					/** 商户资金变动 */

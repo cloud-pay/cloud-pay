@@ -44,17 +44,13 @@ public class BatchTradeServiceTest {
 		List<TradeDTO> trades = new ArrayList<>();
 		TradeDTO dto1 = new TradeDTO();
 		dto1.setSeqNo("1");
-		dto1.setStatus(2);
+		dto1.setStatus(1);
 		trades.add(dto1);
 		TradeDTO dto2 = new TradeDTO();
 		dto2.setSeqNo("2");
 		dto2.setStatus(2);
 		trades.add(dto2);
-		TradeDTO dto3 = new TradeDTO();
-		dto3.setSeqNo("3");
-		dto3.setStatus(3);
-		trades.add(dto3);
 		resVO.setTrades(trades);
-		tradeService.dealBatchTrade("2018121808245289800000002", 7, resVO);
+		tradeService.dealBatchTrade("2018122803533828000000002", 1, resVO);
 	} 
 }

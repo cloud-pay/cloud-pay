@@ -466,7 +466,6 @@ public class BatchTradeService {
 				} else if(2 == tradeDTO.getStatus()) {
 					trade.setStatus(TradeConstant.STATUS_FAIL);
 				} 
-				trade.setStatus(tradeDTO.getStatus());
 				trade.setChannelId(resVO.getChannelId());
 			}
 			List<Integer> merchantIds = new ArrayList<Integer>();

@@ -705,6 +705,13 @@
     AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') = #{reconDate,jdbcType=VARCHAR}
   </select>
   
+  <select id="selectAllReconTrade" resultMap="BaseStatDTO">
+    select count(1) total_count, ifnull(sum(trade_amount),0) total_amount
+    from t_trade 
+    where  t.recon_status in (1,2)
+    AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') = #{reconDate,jdbcType=VARCHAR}
+  </select>
+  
   <resultMap id="BaseChannelDTO" type="com.cloud.pay.channel.dto.TradeDTO" >
     <result column="seqNo" property="seqNo" jdbcType="VARCHAR" />
     <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL" />

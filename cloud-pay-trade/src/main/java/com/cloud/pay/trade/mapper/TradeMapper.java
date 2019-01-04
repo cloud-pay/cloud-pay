@@ -195,4 +195,11 @@ public interface TradeMapper {
      * @return
      */
 	List<Trade>  selectWaitingAdjustTrade(String reconDate);
+	
+	/**
+	 * 汇总对账数据
+	 * @param reconDate
+	 * @return
+	 */
+	TradeStatDTO selectAllReconTrade(String reconDate);
 }

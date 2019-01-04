@@ -26,6 +26,7 @@ import com.cloud.pay.recon.mapper.ReconMapper;
 import com.cloud.pay.recon.service.IReconServiceHandler;
 import com.cloud.pay.recon.service.ReconExceptionService;
 import com.cloud.pay.trade.dto.TradeDTO;
+import com.cloud.pay.trade.dto.TradeStatDTO;
 import com.cloud.pay.trade.entity.Trade;
 import com.cloud.pay.trade.mapper.TradeMapper;
 import com.cloud.pay.trade.service.TradeService;
@@ -139,6 +140,11 @@ public class BohaiReconService implements IReconServiceHandler {
 		    	recon.setExceptionTotal(0);
 	    		recon.setReconStatus(1);
 	    	}
+		    TradeStatDTO tradeStatDTO = tradeMapper.selectAllReconTrade(reconDate);
+		    if(null != tradeStatDTO) {
+		    	recon.setTradeTotal(tradeStatDTO.getTotalCount());
+		    	recon.setTradeAmtTotal(tradeStatDTO.getTotalAmount());
+		    }
 		    reconMapper.updateByPrimaryKey(recon);
 		}catch(Exception e) {
 			log.error("对账异常：{}",e);

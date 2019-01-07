@@ -168,7 +168,7 @@ public interface TradeMapper {
 	 * @param reconDate
 	 * @return
 	 */
-	List<TradeDTO> selectListByMerIdAndReconDate(@Param("merchantId")Integer merchantId,@Param("reconDate")Date reconDate);
+	List<TradeDTO> selectListByMerIdAndReconDate(@Param("merchantId")Integer merchantId,@Param("reconDate")String reconDate);
 	
 	/**
 	 * 通过批次号修改批量交易状态和确认时间

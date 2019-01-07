@@ -1,5 +1,7 @@
 package com.cloud.pay.recon;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.cloud.pay.recon.service.ReconService;
+import com.cloud.pay.trade.dto.TradeDTO;
+import com.cloud.pay.trade.mapper.TradeMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

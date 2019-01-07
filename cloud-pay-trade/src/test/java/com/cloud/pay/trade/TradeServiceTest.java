@@ -2,6 +2,7 @@ package com.cloud.pay.trade;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.cloud.pay.trade.dto.TradeDTO;
 import com.cloud.pay.trade.entity.Trade;
+import com.cloud.pay.trade.mapper.TradeMapper;
 import com.cloud.pay.trade.service.TradeService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,4 +45,15 @@ public class TradeServiceTest {
 	public void selectOrgFeeStatsTest() {
 		System.out.println(tradeService.selectOrgFeeStats(null, null, null, null, null));
 	} 
+	
+	
+	
+	@Autowired
+	private TradeMapper tradeMapper;
+	
+	@Test
+    public void selectListByMerIdAndReconDate() {
+		List<TradeDTO> trades = tradeMapper.selectListByMerIdAndReconDate(2, "2019-01-04");	  
+		System.out.println(trades.size());
+    }
 }

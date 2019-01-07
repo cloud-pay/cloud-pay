@@ -228,7 +228,7 @@ public class ReconService {
 	    //step 3 获取商户的交易信息
 	    for(MerchantDTO merchant:merchants) {
 	    	log.info("为商户{}生成对账文件",merchant.getName());
-	    	List<TradeDTO> trades = tradeMapper.selectListByMerIdAndReconDate(merchant.getId(), DateUtil.fomatDate(reconDate));	    
+	    	List<TradeDTO> trades = tradeMapper.selectListByMerIdAndReconDate(merchant.getId(), reconDate);	    
 	    	//step 4 根据交易表中的对账生成对账文件		
 	        createMerchantReconFile(trades,merchant,reconDate);
 	    }
@@ -323,8 +323,8 @@ public class ReconService {
 	    }
 		//step 3 获取机构和下属商户的所有交易并根据交易表中的对账结果生成对账文件
 	    for(MerchantDTO merchant:merchants) {
-	    	log.info("为商户{}生成对账文件",merchant.getName());
-	    	List<TradeDTO> trades = tradeMapper.selectListByMerIdAndReconDate(merchant.getId(), DateUtil.fomatDate(reconDate));	    
+	    	log.info("为代理商{}生成对账文件",merchant.getName());
+	    	List<TradeDTO> trades = tradeMapper.selectListByMerIdAndReconDate(merchant.getId(), reconDate);	    
 	    	//step 4 根据交易表中的对账生成对账文件		
 	    	createAgentReconFile(trades,merchant,reconDate);
 	    }
@@ -416,7 +416,7 @@ public class ReconService {
 			for(MerchantDTO merchant:merchants) {
 				//判断商户是否已经生成对账文件
 				if(!isExistMchReconFile(merchant.getCode(), reconDate)) {
-					log.info("代理商{}下级商户{}暂生成对账文件",agentId,merchant.getCode());
+					log.info("代理商{}下级商户{}暂未生成对账文件",agentId,merchant.getCode());
 					continue;
 				}
 				//判断代理商是否已经生成对账文件

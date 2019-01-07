@@ -119,5 +119,11 @@ public interface ReconMapper {
      * @return
      */
     List<Recon> selectListByReconDate(Date reconDate);
+    
+    /**
+     * 获取最后一次初始化的对账数据
+     * @return
+     */
+    Recon selectLastRecon();
 
 }

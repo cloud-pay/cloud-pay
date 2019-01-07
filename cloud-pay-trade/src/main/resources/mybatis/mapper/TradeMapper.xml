@@ -673,7 +673,7 @@
        t.recon_status
 	 from t_trade t
 	 where t.merchant_id = #{merchantId,jdbcType=INTEGER}
-	 AND DATE_FORMAT(t.recon_date,'%Y-%m-%d 00:00:00') =  #{reconDate,jdbcType=TIMESTAMP}
+	 AND DATE_FORMAT(t.trade_time,'%Y-%m-%d') =  #{reconDate,jdbcType=TIMESTAMP}
   </select>
   
   <update id="updateStatusByBatchNo" >

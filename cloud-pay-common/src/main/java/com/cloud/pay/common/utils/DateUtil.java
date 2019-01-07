@@ -3,8 +3,12 @@ package com.cloud.pay.common.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * 这是一个日期 格式转换 的类
@@ -255,6 +259,27 @@ public class DateUtil {
 			System.out.println("时间戳转换失败");
 			return "";
 		}
+	}
+	
+	/**
+	 * 获取两个日期之间的日期
+	 * @param start 开始日期
+	 * @param end 结束日期
+	 * @return 日期集合
+	 */
+	public static List<Date> getBetweenDates(Date start, Date end) {
+	    List<Date> result = new ArrayList<Date>();
+	    Calendar tempStart = Calendar.getInstance();
+	    tempStart.setTime(start);
+	    tempStart.add(Calendar.DAY_OF_YEAR, 1);
+	    
+	    Calendar tempEnd = Calendar.getInstance();
+	    tempEnd.setTime(end);
+	    while (tempStart.before(tempEnd)) {
+	        result.add(tempStart.getTime());
+	        tempStart.add(Calendar.DAY_OF_YEAR, 1);
+	    }
+	    return result;
 	}
 
 	public static void main(String[] args) {

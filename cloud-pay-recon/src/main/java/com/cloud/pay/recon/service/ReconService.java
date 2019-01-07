@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,6 +83,7 @@ public class ReconService {
 	 */
 	public void initRecon(String date) throws CloudPayException{
 		log.info("初始化对账数据,初始化日期：{}",date);
+		List<Date> accountDates = new ArrayList<Date>();
 		Date accountDate = null;
 		if(StringUtils.isNotBlank(date)) {
 			DateUtil.fomatDate(date);
@@ -90,6 +92,40 @@ public class ReconService {
 			calendar.add(Calendar.DATE,  -1);
 			accountDate = calendar.getTime();
 		}
+		//获取所有待初始化的日期
+		Recon lastRecon =  reconMapper.selectLastRecon();
+		if(null != lastRecon) {
+			//获取未生成初始化对账的日期
+			List<Date> unInitRecons = DateUtil.getBetweenDates(lastRecon.getAccountDate(), accountDate);
+			unInitRecons.add(accountDate);
+			for(Date unInitDate:unInitRecons) {
+				try {
+					initReconDate(unInitDate);
+				}catch(CloudPayException e) {
+					continue;
+				}
+			}
+		}else {
+			initReconDate(accountDate);
+		}
+		
+	}
+	
+	public static void main(String[] args) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date start = sdf.parse("2019-01-03");
+			Date end = sdf.parse("2019-01-06");
+			List<Date> lists = DateUtil.getBetweenDates(start, end);
+			for(Date date:lists) {
+				System.out.println(sdf.format(date));
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void initReconDate(Date accountDate) throws CloudPayException{
 		List<Channel> channels = channelService.getUnInitChannelList(accountDate);
 		if(null == channels || channels.size() <= 0) {
 			throw new CloudPayException("所有渠道数据都已初始化");

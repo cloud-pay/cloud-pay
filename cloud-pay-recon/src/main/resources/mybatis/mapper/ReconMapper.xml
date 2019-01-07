@@ -412,4 +412,8 @@
       from t_recon
       where ACCOUNT_DATE = #{reconDate,jdbcType=DATE}
   </select>
+  
+  <select id="selectLastRecon" resultMap="BaseResultMap">
+      select * from `t_recon` order by `ACCOUNT_DATE` DESC  LIMIT  0,1
+  </select>
 </mapper>

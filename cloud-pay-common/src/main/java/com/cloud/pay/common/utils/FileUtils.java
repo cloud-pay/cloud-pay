@@ -38,7 +38,7 @@ public class FileUtils {
 		}else {
 			fileFullPath = filePath + File.separator + fileName + suffix;
 		}
-		logger.info("生成文件路径：{}",fileFullPath);
+		logger.info("生成文件全路径：{}",fileFullPath);
 		File file = new File(fileFullPath);
 		if(!file.exists()) {
 			 file.createNewFile();
@@ -74,10 +74,10 @@ public class FileUtils {
 	
 	public static void isExist(String path){
 		String paths[] = path.split(File.separator);
-//		String paths[] = path.split("\\\\");
+		logger.info("生成文件路径：{}",path);
 		String dir = paths[0];
 		for (int i = 0; i < paths.length - 1; i++) {
-			 dir = dir + "/" + paths[i + 1];  
+			 dir = dir + File.separator + paths[i + 1];  
 			   File dirFile = new File(dir);   
 			   if (!dirFile.exists()) {  
 			       dirFile.mkdir(); 
@@ -86,7 +86,6 @@ public class FileUtils {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(File.separator);
 		isExist("e:\\reconFile\\merchant\\20181009");
 	}
 	
